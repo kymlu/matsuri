@@ -1,0 +1,44 @@
+{
+  "name": "matsuri",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@base-ui-components/react": "^1.0.0-beta.2",
+    "classnames": "^2.5.1",
+    "cra-template-pwa-typescript": "2.0.0",
+    "konva": "^9.3.22",
+    "prop-types": "^15.8.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-konva": "^19.0.7",
+    "react-router-dom": "^7.8.2",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
