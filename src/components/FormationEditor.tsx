@@ -7,41 +7,40 @@ import { GRID_SIZE } from "../data/consts.ts";
 import { FormationStateContext } from "../contexts/FormationEditorContext.tsx";
 import { ParticipantType } from "../models/Participant.ts";
 import MeterMarker from "./formationObjects/MeterMarker.tsx";
+import { UserContext } from "../contexts/UserContext.tsx";
 
 export interface FormationEditorProps {
-  children: React.ReactNode,
-  height?: number,
-  width?: number,
-  showPrevious?: boolean
-  showNext?: boolean
+  height: number,
+  width: number,
 }
 
 export default function FormationEditor(props: FormationEditorProps) {
+  const {showPrevious, showNext} = useContext(UserContext);
   const {participantPositions, propPositions, updateFormationState} = useContext(FormationStateContext);
-  const height = props.height ?? window.innerHeight;
-  const width = props.width ?? window.innerWidth;
+  const canvasHeight = (props.height + 4) * GRID_SIZE;
+  const canvasWidth = (props.width + 4) * GRID_SIZE;
   const transformerRef = useRef(null);
 
   return (
     <div>
-      <Stage width={width} height={height} style={{ border: '1px solid black', background: 'none' }}>
+      <Stage width={canvasWidth} height={canvasHeight} style={{ background: 'pink' }}>
         <Layer key={"Grid"}>
-          {[...Array(Math.ceil(width/GRID_SIZE))].map((_, i) => (
-            <Line key={i} points={[0, i * GRID_SIZE, height, i * GRID_SIZE]} dash={[2, 2]} stroke={basePalette.grey[400]} strokeWidth={1} />
+          {[...Array(Math.ceil(canvasWidth/GRID_SIZE))].map((_, i) => (
+            <Line key={i} points={[0, (i-1) * GRID_SIZE, canvasHeight, (i-1) * GRID_SIZE]} dash={[2, 2]} stroke={basePalette.grey[400]} strokeWidth={1} />
           ))}
-          {[...Array(Math.ceil(height/GRID_SIZE))].map((_, i) => (
-            <Line key={i} points={[i * GRID_SIZE, 0, i * GRID_SIZE, width]} dash={[2, 2]} stroke={basePalette.grey[400]} strokeWidth={1} />
+          {[...Array(Math.ceil(canvasHeight/GRID_SIZE))].map((_, i) => (
+            <Line key={i} points={[i * GRID_SIZE, 0, i * GRID_SIZE, canvasWidth]} dash={[2, 2]} stroke={basePalette.grey[400]} strokeWidth={1} />
           ))}
         </Layer>
         <Layer key={"Meter"}>
-          {[...Array(Math.ceil(height/GRID_SIZE))].map((_, i) => (
-            <MeterMarker startX={0} startY={i * GRID_SIZE - GRID_SIZE/4} value={i-1}/>
+          {[...Array(props.height)].map((_, i) => (
+            <MeterMarker startX={canvasWidth - 4 * GRID_SIZE} startY={i * GRID_SIZE + 7 * GRID_SIZE/4} value={i}/>
           ))}
-          {[...Array(Math.ceil(width/GRID_SIZE))].map((_, i) => (
-            <MeterMarker startY={10} startX={i * GRID_SIZE - GRID_SIZE/4} value={i-1}/>
+          {[...Array(props.width)].map((_, i) => (
+            <MeterMarker startY={GRID_SIZE * 1.25} startX={i * GRID_SIZE + 7 * GRID_SIZE/4} value={i}/>
           ))}
         </Layer>
-        { props.showPrevious && 
+        { showPrevious && 
           <Layer>
           </Layer>
         }
@@ -82,12 +81,11 @@ export default function FormationEditor(props: FormationEditorProps) {
           <PropObject name="Flag" colour={objectPalette.purple.light} length={1} startX={10} startY={300}/>
           <PropObject name="Flag2" colour={objectPalette.purple.light} length={2} startX={20} startY={30}/>
         </Layer>
-        { props.showNext && 
+        { showNext && 
         <Layer>
           </Layer>
         }
       </Stage>
-      {props.children}
     </div>
   )
 }

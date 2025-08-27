@@ -24,7 +24,7 @@ export default function FormationEditorPage () {
           </header>
         <FormationLeftPanel/>
         <div className='overflow-scroll'>
-          <FormationEditor><></></FormationEditor>
+          <FormationEditor width={selectedFormation?.width ?? 20} height={selectedFormation?.length ?? 20}/>
         </div>
         {/* todo: warnings if some people aren't in all sections */}
         {/* todo: warning if some people are in other categories */}

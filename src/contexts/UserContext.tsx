@@ -11,6 +11,8 @@ export interface AppState {
   selectedSection: FormationSongSection | null,
   selectedItem: ParticipantPosition | PropPosition | null,
   snapToGrid: boolean,
+  showPrevious: boolean,
+  showNext: boolean,
   updateState: (newState: Partial<AppState>) => void
 }
 
@@ -22,6 +24,8 @@ export const defaultState: AppState = {
   selectedItem: null,
   selectedSection: null,
   snapToGrid: true,
+  showPrevious: false,
+  showNext: false,
   updateState: (newState: Partial<AppState>) => {},
 }
 
