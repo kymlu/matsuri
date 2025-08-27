@@ -1,6 +1,6 @@
 import React from "react";
 import { Group, Rect, Text } from "react-konva";
-import { BLOCK_SNAP_SIZE, FONT_SIZE, GRID_SIZE } from "../../data/consts.ts";
+import { BLOCK_SNAP_SIZE, FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
 
 export interface PropObjectProps {
   name: string,

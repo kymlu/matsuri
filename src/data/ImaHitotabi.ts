@@ -1,9 +1,11 @@
 import { Festival } from "../models/Festival.ts";
 import { Formation, FormationType } from "../models/Formation.ts";
 import { Participant, ParticipantType } from "../models/Participant.ts";
+import { ParticipantCategory } from "../models/ParticipantCategory.ts";
 import { Prop } from "../models/Prop.ts";
 import { Song } from "../models/Song.ts";
 import { SongSection } from "../models/SongSection.ts";
+import { objectColorSettings } from "../themes/colours.ts";
 
 export const festivalList: Array<Festival> = [
   {
@@ -179,10 +181,69 @@ export const formationList: Array<Formation> = [
 ]
 
 export const participantsList: Array<Participant> = [
-  {id: "1", name: "ケイティー", type: ParticipantType.dancer},
-  {id: "2", name: "パピ吉", type: ParticipantType.dancer},
-  {id: "3", name: "ぺぺっと", type: ParticipantType.staff},
-  {id: "4", name: "くぼた", type: ParticipantType.dancer},
+  {id: "1", name: "ころな", type: ParticipantType.dancer},
+  {id: "2", name: "クリーム", type: ParticipantType.dancer},
+  {id: "3", name: "らくだガール", type: ParticipantType.dancer},
+  {id: "4", name: "しぶかわに", type: ParticipantType.dancer},
+  {id: "5", name: "エリザベス", type: ParticipantType.dancer},
+  {id: "6", name: "まいん", type: ParticipantType.dancer},
+  {id: "7", name: "普通ぅ", type: ParticipantType.dancer},
+  {id: "8", name: "ちはや", type: ParticipantType.dancer},
+  {id: "9", name: "ふぁんた", type: ParticipantType.dancer},
+  {id: "10", name: "がーすー", type: ParticipantType.dancer},
+  {id: "11", name: "バタチキ", type: ParticipantType.dancer},
+  {id: "12", name: "ぽて林寺", type: ParticipantType.dancer},
+  {id: "13", name: "ピーナッツ", type: ParticipantType.dancer},
+  {id: "14", name: "みゆきち", type: ParticipantType.dancer},
+  {id: "15", name: "ちゃん", type: ParticipantType.dancer},
+  {id: "16", name: "まりあ", type: ParticipantType.dancer},
+  {id: "17", name: "しまたろう", type: ParticipantType.dancer},
+  {id: "18", name: "パピ吉", type: ParticipantType.dancer},
+  {id: "19", name: "ピノ", type: ParticipantType.dancer},
+  {id: "20", name: "おやびん。", type: ParticipantType.dancer},
+  {id: "21", name: "犬", type: ParticipantType.dancer},
+  {id: "22", name: "ラフレシア", type: ParticipantType.dancer},
+  {id: "23", name: "かずま", type: ParticipantType.dancer},
+  {id: "24", name: "ジャコ", type: ParticipantType.dancer},
+  {id: "25", name: "はる", type: ParticipantType.dancer},
+  {id: "26", name: "アーモンド", type: ParticipantType.dancer},
+  {id: "27", name: "ゆず太くん", type: ParticipantType.dancer},
+  {id: "28", name: "ばるちょ", type: ParticipantType.dancer},
+  {id: "29", name: "ペペット", type: ParticipantType.dancer},
+  {id: "30", name: "南", type: ParticipantType.dancer},
+  {id: "31", name: "ふちお", type: ParticipantType.dancer},
+  {id: "32", name: "ココッシュ", type: ParticipantType.dancer},
+  {id: "33", name: "きこりん", type: ParticipantType.dancer},
+  {id: "34", name: "みっふぃ", type: ParticipantType.dancer},
+  {id: "35", name: "まだ未定です", type: ParticipantType.dancer},
+  {id: "36", name: "kubota", type: ParticipantType.dancer},
+  {id: "37", name: "小籔", type: ParticipantType.dancer},
+  {id: "38", name: "やのぴす", type: ParticipantType.dancer},
+  {id: "39", name: "ほっぴー（白）", type: ParticipantType.dancer},
+  {id: "40", name: "えごま", type: ParticipantType.dancer},
+  {id: "41", name: "ピエロ", type: ParticipantType.dancer},
+  {id: "42", name: "えくぼ先生", type: ParticipantType.dancer},
+  {id: "43", name: "ぽぽたん", type: ParticipantType.dancer},
+  {id: "44", name: "かいりき", type: ParticipantType.dancer},
+  {id: "45", name: "あつみあむもるつ", type: ParticipantType.dancer},
+  {id: "46", name: "けんじろう", type: ParticipantType.dancer},
+  {id: "47", name: "ちょま", type: ParticipantType.dancer},
+  {id: "48", name: "なし", type: ParticipantType.dancer},
+  {id: "49", name: "さわやか", type: ParticipantType.dancer},
+  {id: "50", name: "comeri", type: ParticipantType.dancer},
+  {id: "51", name: "直太朗", type: ParticipantType.dancer},
+  {id: "52", name: "ミライ坂⊿", type: ParticipantType.dancer},
+  {id: "53", name: "すぎ", type: ParticipantType.dancer},
+  {id: "54", name: "メイプル超合金", type: ParticipantType.dancer},
+  {id: "55", name: "とらはむ", type: ParticipantType.dancer},
+  {id: "56", name: "ぽんたろ", type: ParticipantType.dancer},
+  {id: "57", name: "オーラ", type: ParticipantType.dancer},
+  {id: "58", name: "円空", type: ParticipantType.dancer},
+  {id: "59", name: "いちご大福の首領", type: ParticipantType.dancer},
+  {id: "60", name: "タイガ", type: ParticipantType.dancer},
+  {id: "61", name: "ケイティー", type: ParticipantType.dancer},
+  {id: "-1", name: "踊り子", type: ParticipantType.dancer, isPlaceholder: true},
+  {id: "-2", name: "スタッフ", type: ParticipantType.staff, isPlaceholder: true},
 ]
 
 export const propsList: Array<Prop> = [
@@ -191,6 +252,18 @@ export const propsList: Array<Prop> = [
   }
 ]
 
-export const categoryList: Array<string> = [
-  "奇", "偶"
+//奇、偶、座り、中、高、左隊、右隊、旗、山伏、前隊、後隊
+export const categoryList: Array<ParticipantCategory> = [
+  { id: "0", name: "一般", color: objectColorSettings["amberLight"], order: 0, showInLegend: true, showInParadeGuide: false },
+  { id: "1", name: "奇", color: objectColorSettings["redLight"], order: 1, showInLegend: false, showInParadeGuide: false },
+  { id: "2", name: "偶", color: objectColorSettings["blueLight"], order: 2, showInLegend: true, showInParadeGuide: false },
+  { id: "3", name: "座り", color: objectColorSettings["greenLight"], order: 3, showInLegend: true, showInParadeGuide: false },
+  { id: "4", name: "中", color: objectColorSettings["violetLight"], order: 4, showInLegend: true, showInParadeGuide: false },
+  { id: "5", name: "高", color: objectColorSettings["purpleLight"], order: 5, showInLegend: true, showInParadeGuide: false },
+  { id: "6", name: "左隊", color: objectColorSettings["cyanLight"], order: 6, showInLegend: true, showInParadeGuide: false },
+  { id: "7", name: "右隊", color: objectColorSettings["orangeLight"], order: 7, showInLegend: true, showInParadeGuide: false },
+  { id: "8", name: "旗", color: objectColorSettings["amberLight"], order: 8, showInLegend: false, showInParadeGuide: false },
+  { id: "9", name: "山伏", color: objectColorSettings["limeLight"], order: 9, showInLegend: false, showInParadeGuide: false },
+  { id: "10", name: "前隊", color: objectColorSettings["violetLight"], order: 10, showInLegend: false, showInParadeGuide: true },
+  { id: "11", name: "後隊", color: objectColorSettings["pinkLight"], order: 11, showInLegend: false, showInParadeGuide: true },
 ]

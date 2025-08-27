@@ -2,7 +2,8 @@ export interface Participant {
   id: string,
   name: string,
   type: ParticipantType
-  category?: string
+  category?: string,
+  isPlaceholder?: boolean
 }
 
 export enum ParticipantType {

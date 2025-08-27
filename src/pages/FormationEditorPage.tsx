@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import Button from '../components/Button.tsx';
-import FormationLeftPanel from '../components/FormationLeftPanel.tsx';
-import FormationRightPanel from '../components/FormationRightPanel.tsx';
+import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
+import FormationRightPanel from '../components/rightPanel/FormationRightPanel.tsx';
 import { useNavigate } from 'react-router-dom';
-import FormationEditor from '../components/FormationEditor.tsx';
+import FormationEditor from '../components/editor/FormationEditor.tsx';
 
 export default function FormationEditorPage () {
-  const {selectedFestival, selectedFormation} = useContext(UserContext)
+  const {selectedFestival, selectedFormation, selectedSection} = useContext(UserContext)
   const navigate = useNavigate()
   return (
     <div className='h-full overflow-hidden'>
@@ -17,10 +17,12 @@ export default function FormationEditorPage () {
           {
           selectedFormation && selectedFestival && 
           <h1>
-            Editing {selectedFormation?.name} @ {selectedFestival?.name}
+            Editing {selectedSection?.songSection?.name} {selectedFormation?.name} @ {selectedFestival?.name}
           </h1>
           }
-          <Button>エキスポート</Button>
+          <Button onClick={() => {
+                localStorage.removeItem("formationManager")
+          }}>Delete cache</Button>
           </header>
         <FormationLeftPanel/>
         <div className='overflow-scroll'>

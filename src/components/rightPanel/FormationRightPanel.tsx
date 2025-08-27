@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { UserContext } from "../contexts/UserContext.tsx";
-import Button from "./Button.tsx";
-import ExpandableSection from "./ExpandableSection.tsx";
-import CustomSwitch from "./CustomSwitch.tsx";
-import NumberTextField from "./NumberTextField.tsx";
+import { UserContext } from "../../contexts/UserContext.tsx";
+import Button from "../Button.tsx";
+import ExpandableSection from "../ExpandableSection.tsx";
+import CustomSwitch from "../CustomSwitch.tsx";
+import NumberTextField from "../NumberTextField.tsx";
 
 export default function FormationRightPanel () {
   const {selectedItem, snapToGrid, updateState} = useContext(UserContext)

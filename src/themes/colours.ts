@@ -78,3 +78,189 @@ export const objectPalette = {
 };
 
 export type ObjectPalette = typeof objectPalette;
+
+export type ColorStyle = {
+  bgColour: string;
+  textColour: string;
+  borderColour: string;
+};
+
+export type ColorNames = "redMain" | "redLight" | "redLightest" |
+  "orangeMain" | "orangeLight" | "orangeLightest" |
+  "amberMain" | "amberLight" | "amberLightest" |
+  "limeMain" | "limeLight" | "limeLightest" |
+  "greenMain" | "greenLight" | "greenLightest" |
+  "cyanMain" | "cyanLight" | "cyanLightest" |
+  "blueMain" | "blueLight" | "blueLightest" |
+  "indigoMain" | "indigoLight" | "indigoLightest" |
+  "violetMain" | "violetLight" | "violetLightest" |
+  "purpleMain" | "purpleLight" | "purpleLightest" |
+  "black" | "white" | "grey";
+
+export const objectColorSettings: Record<ColorNames, ColorStyle> = {
+  redMain: {
+    bgColour: objectPalette.red.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  redLight: {
+    bgColour: objectPalette.red.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  redLightest: {
+    bgColour: objectPalette.red.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  orangeMain: {
+    bgColour: objectPalette.orange.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  orangeLight: {
+    bgColour: objectPalette.orange.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  orangeLightest: {
+    bgColour: objectPalette.orange.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  amberMain: {
+    bgColour: objectPalette.amber.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  amberLight: {
+    bgColour: objectPalette.amber.light,  
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  amberLightest: {
+    bgColour: objectPalette.amber.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  limeMain: {
+    bgColour: objectPalette.lime.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  limeLight: {
+    bgColour: objectPalette.lime.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  limeLightest: {
+    bgColour: objectPalette.lime.lightest, 
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  greenMain: {
+    bgColour: objectPalette.green.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  greenLight: {
+    bgColour: objectPalette.green.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  greenLightest: {
+    bgColour: objectPalette.green.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  cyanMain: {
+    bgColour: objectPalette.cyan.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  cyanLight: {
+    bgColour: objectPalette.cyan.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  cyanLightest: {
+    bgColour: objectPalette.cyan.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  blueMain: {
+    bgColour: objectPalette.blue.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  blueLight: {
+    bgColour: objectPalette.blue.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  blueLightest: {
+    bgColour: objectPalette.blue.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  indigoMain: {
+    bgColour: objectPalette.indigo.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  indigoLight: {
+    bgColour: objectPalette.indigo.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  indigoLightest: {
+    bgColour: objectPalette.indigo.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  violetMain: {
+    bgColour: objectPalette.violet.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  violetLight: {
+    bgColour: objectPalette.violet.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  violetLightest: {
+    bgColour: objectPalette.violet.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  purpleMain: {
+    bgColour: objectPalette.purple.main,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  purpleLight: {
+    bgColour: objectPalette.purple.light,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  purpleLightest: {
+    bgColour: objectPalette.purple.lightest,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  black: {
+    bgColour: basePalette.black,
+    textColour: basePalette.white,
+    borderColour: basePalette.grey[500],
+  },
+  white: {
+    bgColour: basePalette.white,
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  grey: {
+    bgColour: basePalette.grey[500],
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  }
+};
