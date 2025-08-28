@@ -93,7 +93,8 @@ export class IndexedDBController {
                       songSectionId: section.id,
                       formation: formation,
                       formationId: formation.id
-                    } as FormationSongSection)))));
+                    } as FormationSongSection))))
+                .flatMap(x => x));
       }
     })
   }

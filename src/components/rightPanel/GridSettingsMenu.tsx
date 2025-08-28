@@ -11,7 +11,7 @@ export default function GridSettingsMenu() {
   }
 
   return (
-    <ExpandableSection title="表示設定">
+    <ExpandableSection title="表示設定" defaultIsExpanded>
       <CustomSwitch label="グリッドにスナップ" defaultChecked={snapToGrid} onChange={(checked) => onChangeSnapToGrid(checked)}/>
       <CustomSwitch label="前と比べる"/>
       <CustomSwitch label="次と比べる"/>

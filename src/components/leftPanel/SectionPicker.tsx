@@ -14,7 +14,7 @@ export default function SectionPicker () {
   }
 
   return (
-    <ExpandableSection title="セクション">
+    <ExpandableSection title="セクション" defaultIsExpanded>
       <div className="overflow-scroll">
         <div className="flex flex-col">
           {songList

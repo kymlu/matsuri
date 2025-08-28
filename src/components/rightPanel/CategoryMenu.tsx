@@ -48,7 +48,8 @@ export default function CategoryMenu() {
   function selectColor(color: ColorStyle, category: ParticipantCategory) {
     var newCategory = {...category, color: color} as ParticipantCategory
     db.upsertItem("category", newCategory);
-    updateFormationState({categories: [...categories.filter(c => strEquals(c.id, category.id)), newCategory]})
+    updateFormationState({categories: [...categories.filter(c => !strEquals(c.id, category.id)), newCategory]})
+    setEditingId(null);
   }
 
   return (
