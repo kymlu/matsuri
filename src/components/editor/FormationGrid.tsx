@@ -10,6 +10,7 @@ export interface FormationGridProps {
   canvasWidth: number,
   height: number,
   width: number,
+  isParade?: boolean // todo: implement
 }
 
 export default function FormationGrid(props: FormationGridProps) {

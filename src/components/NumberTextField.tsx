@@ -2,10 +2,11 @@ import { NumberField } from "@base-ui-components/react";
 import React from "react";
 
 export interface NumberTextFieldProps {
-  label: string,
+  label?: string,
   default: number,
   min?: number,
   max?: number,
+  onChange?: () => void,
 }
 
 export default function NumberTextField (props: NumberTextFieldProps) {
@@ -17,26 +18,28 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       className="flex flex-col items-start gap-1"
       min={props?.min ?? 0}
       max={props?.max ?? 1000}>
-      <NumberField.ScrubArea className="cursor-ew-resize">
-        <label
-          htmlFor={id}
-          className="cursor-ew-resize text-sm font-medium text-gray-900">
-          {props.label}
-        </label>
-        <NumberField.ScrubAreaCursor className="drop-shadow-[0_1px_1px_#0008] filter">
-          <CursorGrowIcon />
-        </NumberField.ScrubAreaCursor>
-      </NumberField.ScrubArea>
+      <div className="flex flex-row items-center gap-1">
+        <NumberField.ScrubArea className="cursor-ew-resize">
+          { props.label && <label
+            htmlFor={id}
+            className="text-sm font-medium text-gray-900 cursor-ew-resize">
+            {props.label}
+          </label> }
+          <NumberField.ScrubAreaCursor className="drop-shadow-[0_1px_1px_#0008] filter">
+            <CursorGrowIcon />
+          </NumberField.ScrubAreaCursor>
+        </NumberField.ScrubArea>
 
-      <NumberField.Group className="flex border-gray-200 border-2 focus-within:border-primary rounded-md">
-        <NumberField.Decrement className="flex w-5 h-8 items-center justify-center bg-clip-padding text-gray-900 select-none hover:bg-gray-100 active:bg-gray-100">
-          <MinusIcon />
-        </NumberField.Decrement>
-        <NumberField.Input className="h-8 w-14 text-center text-base text-gray-900 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
-        <NumberField.Increment className="flex w-5 h-8 items-center justify-center bg-clip-padding text-gray-900 select-none hover:bg-gray-100 active:bg-gray-100">
-          <PlusIcon />
-        </NumberField.Increment>
-      </NumberField.Group>
+        <NumberField.Group className="flex border-2 border-gray-200 rounded-md focus-within:border-primary">
+          <NumberField.Decrement className="flex items-center justify-center w-5 h-8 text-gray-900 select-none bg-clip-padding hover:bg-gray-100 active:bg-gray-100">
+            <MinusIcon />
+          </NumberField.Decrement>
+          <NumberField.Input className="h-8 text-base text-center text-gray-900 w-14 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
+          <NumberField.Increment className="flex items-center justify-center w-5 h-8 text-gray-900 select-none bg-clip-padding hover:bg-gray-100 active:bg-gray-100">
+            <PlusIcon />
+          </NumberField.Increment>
+        </NumberField.Group>
+      </div>
     </NumberField.Root>
   )
 }

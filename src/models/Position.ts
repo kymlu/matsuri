@@ -10,6 +10,7 @@ export interface Position {
   y2: number,
   x: number,
   y: number,
+  isSelected: boolean
 }
 
 export interface ParticipantPosition extends Position {

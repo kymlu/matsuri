@@ -25,7 +25,8 @@ export default function PropPicker () {
         x2: 0,
         y: 0,
         y2: 0,
-        color: objectColorSettings.black
+        color: objectColorSettings.black,
+        isSelected: false
       };
 
         updateFormationState({propPositions: [...propPositions, newPosition]});

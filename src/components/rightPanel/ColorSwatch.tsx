@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React from "react";
+import { strEquals } from "../helpers/GlobalHelper.ts";
 
 export type ColorSwatchProps = {
   onClick: () => void,
@@ -8,7 +9,7 @@ export type ColorSwatchProps = {
 
 export default function ColorSwatch(props: ColorSwatchProps) {
   var c = classNames("size-4 rounded-md", props.tailwindColorClassName, {
-    "border-grey-500 border border-solid": props.tailwindColorClassName.localeCompare("bg-white") === 0
+    "border-grey-500 border border-solid": strEquals(props.tailwindColorClassName, "bg-white")
   });
   return (
         <button

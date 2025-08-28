@@ -8,6 +8,7 @@ import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
 import { db } from "../../App.tsx";
+import { strEquals } from "../helpers/GlobalHelper.ts";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
@@ -23,8 +24,8 @@ export default function ParticipantPicker () {
   
   function selectParticipant(newParticipant: Participant) {
     if (selectedParticipants.includes(newParticipant.id) && !newParticipant.isPlaceholder) {
-      setSelectedParticipants(prev => (prev.filter(id => id.localeCompare(newParticipant.id) !== 0)))
-      updateFormationState({participantPositions: participantPositions.filter(x => x.participant.id.localeCompare(newParticipant.id) !== 0)});
+      setSelectedParticipants(prev => (prev.filter(id => strEquals(id, newParticipant.id))))
+      updateFormationState({participantPositions: participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id))});
     } else {
       if (newParticipant.isPlaceholder) {
         // For dancer and staff, allow multiple
@@ -41,6 +42,7 @@ export default function ParticipantPicker () {
         y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
         y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
         category: categoryList[0],
+        isSelected: false
       };
       updateFormationState({participantPositions: [...participantPositions, newPosition]});
       db.upsertItem("participantPosition", newPosition);

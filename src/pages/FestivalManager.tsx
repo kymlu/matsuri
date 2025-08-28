@@ -25,23 +25,27 @@ export default function FestivalManager () {
   }
 
   return (
-    <div className='flex flex-col gap-2'>
-      祭り
-      {
-        festivalList.map(festival =>
-          <div key={festival.id}>
-            <h1>{festival.name}</h1>
-            {festival.formations
-              .map(formation => 
-                <Button 
-                  key={formation.id}
-                  onClick={(event) => {onClick(festival, formation)}}>
-                    {formation.name}
-                </Button>
-            )}
-          </div>
-        )
-      }
+    <div className='flex flex-col gap-2 p-20'>
+      <h1 className='text-3xl font-bold'>祭り</h1>
+      <div className='grid grid-cols-[auto,1fr] gap-3'>
+        {
+          festivalList.map(festival =>
+            <>
+              <h2 className='text-2xl'>{festival.name}</h2>
+              <div className='flex flex-row gap-3'>
+                {festival.formations
+                  .map(formation => 
+                    <Button 
+                      key={formation.id}
+                      onClick={(event) => {onClick(festival, formation)}}>
+                        {formation.name}
+                    </Button>
+                )}
+              </div>
+            </>
+          )
+        }
+      </div>
     </div>
   )
 }

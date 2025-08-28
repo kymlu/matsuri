@@ -1,3 +1,4 @@
+import { strEquals } from "../components/helpers/GlobalHelper.ts";
 import { FormationSongSection } from "../models/FormationSection.ts";
 import { categoryList, festivalList, participantsList, songList } from "./ImaHitotabi.ts";
 
@@ -84,7 +85,7 @@ export class IndexedDBController {
             festivalList.flatMap(festival => 
               festival.formations
                 .map(formation => 
-                  songList.find(song => song.id.localeCompare(formation.songId) === 0)
+                  songList.find(song => strEquals(song.id, formation.songId))
                   ?.sections?.map(section => (
                     {
                       id: crypto.randomUUID().toString(),

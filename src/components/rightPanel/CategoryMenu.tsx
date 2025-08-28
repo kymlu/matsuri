@@ -6,6 +6,7 @@ import { db } from "../../App.tsx";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
 import ColorSwatch from "./ColorSwatch.tsx";
+import { strEquals } from "../helpers/GlobalHelper.ts";
 
 export default function CategoryMenu() {
   const [editingId, setEditingId] = useState<string | undefined | null>(null)
@@ -37,7 +38,7 @@ export default function CategoryMenu() {
   }
 
   function selectCategoryToEdit(id: string) {
-    if (editingId?.localeCompare(id) === 0){
+    if (strEquals(editingId, id)){
       setEditingId(null);
     } else {
       setEditingId(id);
@@ -47,7 +48,7 @@ export default function CategoryMenu() {
   function selectColor(color: ColorStyle, category: ParticipantCategory) {
     var newCategory = {...category, color: color} as ParticipantCategory
     db.upsertItem("category", newCategory);
-    updateFormationState({categories: [...categories.filter(c => c.id.localeCompare(category.id) !== 0), newCategory]})
+    updateFormationState({categories: [...categories.filter(c => strEquals(c.id, category.id)), newCategory]})
   }
 
   return (
@@ -67,7 +68,7 @@ export default function CategoryMenu() {
                 </div>
                 <ColorSwatch onClick={() => selectCategoryToEdit(category.id)} tailwindColorClassName={category?.color?.twColor}/>
                 {
-                  editingId?.localeCompare(category.id) === 0 && 
+                  strEquals(editingId, category.id) && 
                   <div className="absolute grid flex-wrap grid-cols-6 gap-1 p-3 bg-white border-2 border-solid mt-52 border-primary">
                     {
                       Object.values(objectColorSettings).map(color => 

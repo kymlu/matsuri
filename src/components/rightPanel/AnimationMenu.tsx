@@ -4,7 +4,7 @@ import Button from "../Button.tsx";
 
 export default function AnimationMenu() {
   return (
-    <ExpandableSection title="Animation">
+    <ExpandableSection title="アニメーション">
       <Button>Show transition from previous</Button>
       <Button>Show transition for all</Button>
     </ExpandableSection>

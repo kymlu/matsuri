@@ -13,12 +13,12 @@ export default function FormationEditorPage () {
   return (
       <div className='h-full overflow-hidden'>
         <div className='h-full overflow-hidden grid grid-cols-[300px,auto,300px] grid-rows-[auto,1fr]'>
-          <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 bg-fuchsia-300'>
+          <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-black border-solid'>
             <Button onClick={() => {navigate("../")}}>ホームに戻る</Button>
             {
             selectedFormation && selectedFestival && 
-            <h1>
-              Editing {selectedSection?.songSection?.name} {selectedFormation?.name} @ {selectedFestival?.name}
+            <h1 className='font-bold'>
+              Editing {selectedSection?.songSection?.name} {selectedFormation?.name} ({selectedFormation.length} x {selectedFormation.width}) @ {selectedFestival?.name}
             </h1>
             }
             <Button onClick={() => {

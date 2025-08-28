@@ -11,6 +11,7 @@ import Button from "../Button.tsx";
 import { db } from "../../App.tsx";
 import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import { FormationSongSection } from "../../models/FormationSection.ts";
+import { strEquals } from "../helpers/GlobalHelper.ts";
 
 export interface FormationEditorProps {
   height: number,
@@ -18,7 +19,7 @@ export interface FormationEditorProps {
 }
 
 export default function FormationEditor(props: FormationEditorProps) {
-  const {showPrevious, showNext, updateState} = useContext(UserContext);
+  const {selectedItem, showPrevious, showNext, updateState} = useContext(UserContext);
   const {participantPositions, propPositions, updateFormationState} = useContext(FormationStateContext);
   const canvasHeight = (props.height + 2) * GRID_SIZE;
   const canvasWidth = (Math.ceil(props.width/2) * 2 + 2) * GRID_SIZE;
@@ -43,7 +44,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         db.getAll("formationSection")]).then(([participantPosition, propPosition, formationSongSections]) => {
       try {
         updateState({
-          sections: formationSongSections as Array<FormationSongSection>
+          sections: (formationSongSections as Array<FormationSongSection>)
         });
         updateFormationState({
           participantPositions: participantPosition as Array<ParticipantPosition>,
@@ -66,6 +67,18 @@ export default function FormationEditor(props: FormationEditorProps) {
       participant.y2 = (participant.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
       console.log('Updated position for', participant.participant.name, 'to', participant.x2, participant.y2);
       db.upsertItem("participantPosition", {...participant, x: participant.x2, y: participant.y2});
+    }
+  }
+
+  // todo: redundant, fix
+  function selectParticipant(participant: ParticipantPosition) {
+    if (selectedItem === null || !strEquals(selectedItem.id, participant.id)) {
+      updateState({selectedItem: participant});
+      participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      participant.isSelected = true;
+    } else {
+      updateState({selectedItem: null});
+      participant.isSelected = false;
     }
   }
 
@@ -120,7 +133,9 @@ export default function FormationEditor(props: FormationEditorProps) {
                 colour={placement.category?.color || objectColorSettings["amberLight"]} 
                 startX={placement.x * GRID_SIZE} 
                 startY={placement.y * GRID_SIZE}
-                updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)} 
+                isSelected={placement.isSelected}
+                updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
+                onClick={() => selectParticipant(placement)} 
               />)
             )
           }
