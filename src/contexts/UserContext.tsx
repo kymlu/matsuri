@@ -1,4 +1,3 @@
-import { createContext, useState } from 'react';
 import { Festival } from '../models/Festival.ts';
 import React from 'react';
 import { Formation } from '../models/Formation.ts';
@@ -10,6 +9,7 @@ export interface AppState {
   selectedFormation: Formation | null,
   selectedSection: FormationSongSection | null,
   selectedItem: ParticipantPosition | PropPosition | null,
+  sections: Array<FormationSongSection>,
   snapToGrid: boolean,
   showPrevious: boolean,
   showNext: boolean,
@@ -23,6 +23,7 @@ export const defaultState: AppState = {
   selectedFormation: null,
   selectedItem: null,
   selectedSection: null,
+  sections: [],
   snapToGrid: true,
   showPrevious: false,
   showNext: false,

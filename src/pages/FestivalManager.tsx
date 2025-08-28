@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import '../index.css';
 import Button from '../components/Button.tsx';
-import { festivalList, formationList, songSectionList } from '../data/ImaHitotabi.ts';
+import { festivalList } from '../data/ImaHitotabi.ts';
 import { Festival } from '../models/Festival.ts';
 import { UserContext } from '../contexts/UserContext.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -31,8 +31,7 @@ export default function FestivalManager () {
         festivalList.map(festival =>
           <div key={festival.id}>
             <h1>{festival.name}</h1>
-            {formationList
-              .filter(formation => formation.festivalId === festival.id)
+            {festival.formations
               .map(formation => 
                 <Button 
                   key={formation.id}

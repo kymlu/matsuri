@@ -4,7 +4,7 @@ import SongSectionButton from "../SongSectionButton.tsx";
 import Button from "../Button.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationSongSection } from "../../models/FormationSection.ts";
-import { songSectionList } from "../../data/ImaHitotabi.ts";
+import { songList } from "../../data/ImaHitotabi.ts";
 
 export default function SectionPicker () {
   const {selectedFormation, selectedSection, updateState} = useContext(UserContext);
@@ -14,11 +14,12 @@ export default function SectionPicker () {
   }
 
   return (
-    <ExpandableSection title="Sections">
-      <div className="max-h-40 overflow-scroll">
+    <ExpandableSection title="セクション">
+      <div className="overflow-scroll">
         <div className="flex flex-col">
-          {songSectionList
-            .filter(section => section.songId === selectedFormation?.songId)
+          {songList
+            .filter(song => song.id === selectedFormation?.songId)
+            .flatMap(song => song.sections)
             .sort(section => section.order)
             .map((section, index, array) => 
               <SongSectionButton 
@@ -30,7 +31,7 @@ export default function SectionPicker () {
           )}
         </div>
       </div>
-      <Button>Reset formation</Button>
+      <Button>隊列をクリアする</Button>
     </ExpandableSection>
   )
 }

@@ -33,7 +33,7 @@ export default function PropPicker () {
   }
   
   return (
-    <ExpandableSection title="Props">
+    <ExpandableSection title="大道具">
         <div className="flex flex-col gap-2">
         {propsList
           .sort((a, b) => a.name.localeCompare(b.name))

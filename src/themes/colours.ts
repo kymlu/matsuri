@@ -81,6 +81,7 @@ export type ObjectPalette = typeof objectPalette;
 
 export type ColorStyle = {
   bgColour: string;
+  twColor: string;
   textColour: string;
   borderColour: string;
 };
@@ -100,166 +101,199 @@ export type ColorNames = "redMain" | "redLight" | "redLightest" |
 export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   redMain: {
     bgColour: objectPalette.red.main,
+    twColor: "bg-red",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   redLight: {
     bgColour: objectPalette.red.light,
+    twColor: "bg-red-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   redLightest: {
     bgColour: objectPalette.red.lightest,
+    twColor: "bg-red-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   orangeMain: {
     bgColour: objectPalette.orange.main,
+    twColor: "bg-orange",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   orangeLight: {
     bgColour: objectPalette.orange.light,
+    twColor: "bg-orange-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   orangeLightest: {
     bgColour: objectPalette.orange.lightest,
+    twColor: "bg-orange-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   amberMain: {
     bgColour: objectPalette.amber.main,
+    twColor: "bg-amber",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   amberLight: {
     bgColour: objectPalette.amber.light,  
+    twColor: "bg-amber-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   amberLightest: {
     bgColour: objectPalette.amber.lightest,
+    twColor: "bg-amber-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   limeMain: {
     bgColour: objectPalette.lime.main,
+    twColor: "bg-lime",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   limeLight: {
     bgColour: objectPalette.lime.light,
+    twColor: "bg-lime-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   limeLightest: {
     bgColour: objectPalette.lime.lightest, 
+    twColor: "bg-lime-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   greenMain: {
     bgColour: objectPalette.green.main,
+    twColor: "bg-green",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   greenLight: {
     bgColour: objectPalette.green.light,
+    twColor: "bg-green-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   greenLightest: {
     bgColour: objectPalette.green.lightest,
+    twColor: "bg-green-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   cyanMain: {
     bgColour: objectPalette.cyan.main,
+    twColor: "bg-cyan",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   cyanLight: {
     bgColour: objectPalette.cyan.light,
+    twColor: "bg-cyan-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   cyanLightest: {
     bgColour: objectPalette.cyan.lightest,
+    twColor: "bg-cyan-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   blueMain: {
     bgColour: objectPalette.blue.main,
+    twColor: "bg-blue",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   blueLight: {
     bgColour: objectPalette.blue.light,
+    twColor: "bg-blue-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   blueLightest: {
     bgColour: objectPalette.blue.lightest,
+    twColor: "bg-blue-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   indigoMain: {
     bgColour: objectPalette.indigo.main,
+    twColor: "bg-indigo",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   indigoLight: {
     bgColour: objectPalette.indigo.light,
+    twColor: "bg-indigo-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   indigoLightest: {
     bgColour: objectPalette.indigo.lightest,
+    twColor: "bg-indigo-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   violetMain: {
     bgColour: objectPalette.violet.main,
+    twColor: "bg-violet",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   violetLight: {
     bgColour: objectPalette.violet.light,
+    twColor: "bg-violet-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   violetLightest: {
     bgColour: objectPalette.violet.lightest,
+    twColor: "bg-violet-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   purpleMain: {
     bgColour: objectPalette.purple.main,
+    twColor: "bg-purple",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   purpleLight: {
     bgColour: objectPalette.purple.light,
+    twColor: "bg-purple-light",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   purpleLightest: {
     bgColour: objectPalette.purple.lightest,
+    twColor: "bg-purple-lightest",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   black: {
     bgColour: basePalette.black,
+    twColor: "bg-black",
     textColour: basePalette.white,
     borderColour: basePalette.grey[500],
   },
   white: {
     bgColour: basePalette.white,
+    twColor: "bg-white",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
   grey: {
     bgColour: basePalette.grey[500],
+    twColor: "bg-grey-500",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   }

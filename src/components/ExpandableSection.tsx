@@ -6,14 +6,24 @@ export interface ExpandableSectionProps {
 }
 
 export default function ExpandableSection(props: ExpandableSectionProps) {
+  const [expanded, setExpanded] = React.useState(true);
+
+  function toggle() {
+    setExpanded(prev => !prev)
+  }
+  
   return (
-    <div>
-      <h1>
-        {props.title}
-      </h1>
-      <div>
+    <div className={expanded ? "flex-1 min-h-0 overflow-hidden max-h-fit" : "flex-none"}>
+      <button
+        className="flex flex-row justify-between w-full font-bold h-7"
+        onClick={() => toggle()}>
+        <span className="">{props.title}</span>
+        <span className="w-8 text-center">{expanded ? "—" : "+"}</span>
+      </button>
+      {expanded && 
+      <div className="flex-1 mt-2 overflow-auto">
         {props.children}
-      </div>
+      </div>}
     </div>
   )
 }

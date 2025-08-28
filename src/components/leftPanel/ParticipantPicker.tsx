@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import { categoryList, participantsList } from "../../data/ImaHitotabi.ts";
-import { Participant, ParticipantType } from "../../models/Participant.ts";
+import { Participant } from "../../models/Participant.ts";
 import ExpandableSection from "../ExpandableSection.tsx";
 import ItemButton from "../ItemButton.tsx";
 import SearchParticipantComponent from "../SearchParticipantComponent.tsx";
-import { GRID_SIZE } from "../../data/consts.ts";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
+import { db } from "../../App.tsx";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
@@ -23,8 +23,8 @@ export default function ParticipantPicker () {
   
   function selectParticipant(newParticipant: Participant) {
     if (selectedParticipants.includes(newParticipant.id) && !newParticipant.isPlaceholder) {
-      setSelectedParticipants(prev => (prev.filter(id => id !== newParticipant.id)))
-      // updateFormationState({participantPositions: participantPositions.filter(x => x.participant.id != newPosition.participant.id)});
+      setSelectedParticipants(prev => (prev.filter(id => id.localeCompare(newParticipant.id) !== 0)))
+      updateFormationState({participantPositions: participantPositions.filter(x => x.participant.id.localeCompare(newParticipant.id) !== 0)});
     } else {
       if (newParticipant.isPlaceholder) {
         // For dancer and staff, allow multiple
@@ -40,30 +40,29 @@ export default function ParticipantPicker () {
         x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
         y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-        category: categoryList[newParticipant.name.length % categoryList.length],
+        category: categoryList[0],
       };
-        updateFormationState({participantPositions: [...participantPositions, newPosition]});
+      updateFormationState({participantPositions: [...participantPositions, newPosition]});
+      db.upsertItem("participantPosition", newPosition);
     }
   }
   
   return (
-    <ExpandableSection title="Participants">
+    <ExpandableSection title="参加者">
         <SearchParticipantComponent onValueChanged={(value) => setFilterTextWrapper(value)}/>
-          <div className="max-h-40 overflow-scroll">
-            <div className="flex flex-row flex-wrap gap-2">
-              {participantsList
-                .filter(x => x.name.includes(filterText))
-                .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name))
-                .map(participant => 
-                  <ItemButton
-                  key={participant.id}
-                  item={participant}
-                  isDisabled={selectedParticipants.includes(participant.id)}
-                  onClick={() => selectParticipant(participant)}/>)} 
-            {/* todo: disable if used */}
-            {/* todo: add undecided */}
-            </div>
-        </div>
-      </ExpandableSection>
+        <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-scroll">
+          {participantsList
+            .filter(x => x.name.includes(filterText))
+            .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name))
+            .map(participant => 
+              <ItemButton
+              key={participant.id}
+              item={participant}
+              isDisabled={selectedParticipants.includes(participant.id)}
+              onClick={() => selectParticipant(participant)}/>)} 
+        {/* todo: disable if used */}
+        {/* todo: add undecided */}
+      </div>
+    </ExpandableSection>
   )
 }

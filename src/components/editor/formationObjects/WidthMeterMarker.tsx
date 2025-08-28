@@ -14,7 +14,7 @@ export default function WidthMeterMarker(props: MeterMarkerProps) {
   return (
     <Group>
       <Circle x={props.startX} y={props.startY} radius={8} fill={basePalette.primary.main}/>
-      <Text x={props.startX - 12}
+      <Text x={props.startX - 10}
         y={props.startY - 4}
         width={GRID_SIZE/2}
         fontSize={10}

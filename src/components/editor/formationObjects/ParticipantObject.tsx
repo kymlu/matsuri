@@ -3,10 +3,10 @@ import { Circle, Group, Text } from "react-konva";
 import { BLOCK_SNAP_SIZE, FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { ColorStyle } from "../../../themes/colours.ts";
+import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 
 export interface ParticipantObjectProps {
   name: string,
-  role: string,
   colour: ColorStyle,
   startX: number,
   startY: number,

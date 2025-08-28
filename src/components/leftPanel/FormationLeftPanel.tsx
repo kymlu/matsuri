@@ -2,12 +2,15 @@ import React from "react";
 import SectionPicker from "./SectionPicker.tsx";
 import ParticipantPicker from "./ParticipantPicker.tsx";
 import PropPicker from "./PropPicker.tsx";
+import Divider from "../Divider.tsx";
 
 export default function FormationLeftPanel () {
   return (
-    <div className="flex flex-col gap-5 h-full p-5 bg-white border-r-2 border-teal-700 border-solid overflow-y-scroll">
+    <div className="flex flex-col h-full max-h-full p-5 overflow-y-auto bg-white border-r-2 border-teal-700 border-solid">
       <SectionPicker/>
+      <Divider/>
       <ParticipantPicker/>
+      <Divider/>
       <PropPicker/>
     </div>
   )
