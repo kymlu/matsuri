@@ -10,6 +10,7 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import ColorPicker from "./ColorPicker.tsx";
 
 export default function CategoryMenu() {
   const {selectedItem, updateState} = useContext(UserContext);
@@ -63,11 +64,7 @@ export default function CategoryMenu() {
                 {
                   strEquals(editingId, category.id) && 
                   <div className="absolute grid flex-wrap grid-cols-6 gap-1 p-3 bg-white border-2 border-solid mt-52 border-primary">
-                    {
-                      Object.values(objectColorSettings).map(color => 
-                        <ColorSwatch tailwindColorClassName={color.twColor} onClick={() => selectColor(color, category)}/>
-                      )
-                    }
+                    <ColorPicker selectColor={(color) => {selectColor(color, category)}}/>
                   </div>
                 }
               </div>

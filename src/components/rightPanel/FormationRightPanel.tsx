@@ -14,8 +14,12 @@ export default function FormationRightPanel () {
     <div className="right-0 flex flex-col h-full max-h-full p-5 overflow-y-auto border-l-2 border-teal-700 border-solid">
       {selectedItem !== null &&
         <>
-          <CategoryMenu/>
-          <Divider/>
+          {/* { "name" in selectedItem && todo: make this work */
+            <>
+              <CategoryMenu/>
+              <Divider/>
+            </>
+          }
           <PositionMenu/>
           <Divider/>
           <SwapMenu/>

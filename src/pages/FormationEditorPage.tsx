@@ -54,7 +54,7 @@ export default function FormationEditorPage () {
 
   return (
       <div className='h-full overflow-hidden'>
-        <div className='h-full overflow-hidden grid grid-cols-[300px,auto,300px] grid-rows-[auto,1fr]'>
+        <div className='h-full min-h-0 overflow-hidden grid grid-cols-[300px,auto,300px] grid-rows-[auto,1fr]'>
           <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-black border-solid'>
             <Button onClick={() => {navigate("../")}}>ホームに戻る</Button>
             {
@@ -70,7 +70,7 @@ export default function FormationEditorPage () {
             }}>Delete cache</Button>
             </header>
           <FormationLeftPanel/>
-          <div className='overflow-scroll'>
+          <div className='h-full min-h-0 overflow-scroll'>
             <FormationEditor width={selectedFormation?.width ?? 20} height={selectedFormation?.length ?? 20}/>
           </div>
           {/* todo: warnings if some people aren't in all sections */}

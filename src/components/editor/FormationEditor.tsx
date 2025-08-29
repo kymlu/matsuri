@@ -3,11 +3,11 @@ import { Layer, Stage, Transformer } from "react-konva";
 import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
-import { GRID_SIZE } from "../../data/consts.ts";
+import { DEFAULT_WIDTH, GRID_SIZE } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
-import { ParticipantPosition } from "../../models/Position.ts";
+import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
@@ -22,7 +22,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const {participantPositions, propPositions} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const canvasHeight = (props.height + 2) * GRID_SIZE;
-  const canvasWidth = (Math.ceil(props.width/2) * 2 + 2) * GRID_SIZE;
+  const canvasWidth = DEFAULT_WIDTH * GRID_SIZE;
   const transformerRef = useRef(null);
 
   function updateParticipantPosition(id: string, x: number, y: number) {
@@ -40,10 +40,25 @@ export default function FormationEditor(props: FormationEditorProps) {
     if (selectedItem === null || !strEquals(selectedItem.id, participant.id)) {
       updateState({selectedItem: participant});
       participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
       participant.isSelected = true;
     } else {
       updateState({selectedItem: null});
       participant.isSelected = false;
+    }
+  }
+
+  // todo: redundant, fix
+  function selectProp(prop: PropPosition) {
+    console.log("selectprop")
+    if (selectedItem === null || !strEquals(selectedItem.id, prop.id)) {
+      updateState({selectedItem: prop});
+      participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      prop.isSelected = true;
+    } else {
+      updateState({selectedItem: null});
+      prop.isSelected = false;
     }
   }
 
@@ -76,8 +91,10 @@ export default function FormationEditor(props: FormationEditorProps) {
                 name={placement.prop.name} 
                 colour={objectPalette.purple.light} 
                 length={placement.prop.length} 
+                isSelected={placement.isSelected}
                 startX={placement.x} 
                 startY={placement.y} 
+                onClick={() => selectProp(placement)} 
               />
             )
           } 
