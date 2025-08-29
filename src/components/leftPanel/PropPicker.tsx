@@ -2,13 +2,13 @@ import React, { useContext, useState } from "react";
 import { propsList } from "../../data/ImaHitotabi.ts";
 import ExpandableSection from "../ExpandableSection.tsx";
 import ItemButton from "../ItemButton.tsx";
-import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { Prop } from "../../models/Prop.ts";
 import { PropPosition } from "../../models/Position.ts";
 import { objectColorSettings } from "../../themes/colours.ts";
 
 export default function PropPicker () {
-  const {propPositions, updateFormationState} = useContext(FormationStateContext);
+  const {propPositions, updatePositionState} = useContext(PositionContext);
 
   const [selectedProps, setSelectedProps] = useState<Array<string>>([]);
 
@@ -29,7 +29,7 @@ export default function PropPicker () {
         isSelected: false
       };
 
-        updateFormationState({propPositions: [...propPositions, newPosition]});
+        updatePositionState({propPositions: [...propPositions, newPosition]});
     }
   }
   

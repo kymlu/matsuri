@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import Button from "../Button.tsx";
 import ItemButton from "../ItemButton.tsx";
-import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export default function SwapMenu() {
-  const {participantPositions} = useContext(FormationStateContext);
+  const {participantPositions} = useContext(PositionContext);
 
   return (
     <ExpandableSection title="隊列交換">

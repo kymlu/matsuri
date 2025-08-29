@@ -4,18 +4,27 @@ import './index.css';
 import App from './App.tsx';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration.ts';
 import { UserContextProvider } from './contexts/UserContextProvider.tsx';
-import { FormationEditorContextProvider } from './contexts/FormationEditorContextProvider.tsx';
+import { CategoryContextProvider } from './contexts/CategoryContextProvider.tsx';
+import { PositionContextProvider } from './contexts/PositionContextProvider.tsx';
+import { SectionContextProvider } from './contexts/SectionContextProvider.tsx';
+import { DBProvider } from './data/DBProvider.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <UserContextProvider>
-      <FormationEditorContextProvider>
-        <App />
-      </FormationEditorContextProvider>
-    </UserContextProvider>
+    <DBProvider>
+      <UserContextProvider>
+        <PositionContextProvider>
+          <CategoryContextProvider>
+            <SectionContextProvider>
+              <App />
+            </SectionContextProvider>
+          </CategoryContextProvider>
+        </PositionContextProvider>
+      </UserContextProvider>
+    </DBProvider>
   </React.StrictMode>
 );
 

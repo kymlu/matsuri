@@ -1,4 +1,4 @@
-import React, { memo, useContext } from "react";
+import React, { useContext } from "react";
 import { Circle, Group, Text } from "react-konva";
 import { BLOCK_SNAP_SIZE, FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
@@ -16,7 +16,7 @@ export interface ParticipantObjectProps {
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
   const {snapToGrid} = useContext(UserContext);
-  console.log('Rendering ParticipantObject:', props.name, 'at', props.startX, props.startY, "isSelected", props.isSelected);
+  console.log('Rendering ParticipantObject:', props.name, 'at', props.startX, props.startY, props);
   
   return (
     <Group draggable 
@@ -47,14 +47,14 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
         strokeWidth={props.isSelected ? 4 : 2} />
       <Text
         x={props.startX-GRID_SIZE/2}
-        y={props.startY-FONT_SIZE/2}
+        y={props.startY-GRID_SIZE/2}
         width={GRID_SIZE}
         height={GRID_SIZE}
         text={props.name}
         fontSize={FONT_SIZE}
         fontStyle="bold"
         fill={props.colour.textColour}
-        verticalAlign="center"
+        verticalAlign="middle"
         align="center" />
     </Group>
   )

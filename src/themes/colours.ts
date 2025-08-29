@@ -96,7 +96,7 @@ export type ColorNames = "redMain" | "redLight" | "redLightest" |
   "indigoMain" | "indigoLight" | "indigoLightest" |
   "violetMain" | "violetLight" | "violetLightest" |
   "purpleMain" | "purpleLight" | "purpleLightest" |
-  "black" | "white" | "grey";
+  "black" | "white" | "grey1" | "grey2" | "grey3"| "grey4";
 
 export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   redMain: {
@@ -192,7 +192,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   cyanMain: {
     bgColour: objectPalette.cyan.main,
     twColor: "bg-cyan",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   cyanLight: {
@@ -210,7 +210,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   blueMain: {
     bgColour: objectPalette.blue.main,
     twColor: "bg-blue",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   blueLight: {
@@ -228,7 +228,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   indigoMain: {
     bgColour: objectPalette.indigo.main,
     twColor: "bg-indigo",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   indigoLight: {
@@ -246,7 +246,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   violetMain: {
     bgColour: objectPalette.violet.main,
     twColor: "bg-violet",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   violetLight: {
@@ -264,7 +264,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   purpleMain: {
     bgColour: objectPalette.purple.main,
     twColor: "bg-purple",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   purpleLight: {
@@ -279,22 +279,40 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
-  black: {
-    bgColour: basePalette.black,
-    twColor: "bg-black",
-    textColour: basePalette.white,
-    borderColour: basePalette.grey[500],
-  },
   white: {
     bgColour: basePalette.white,
     twColor: "bg-white",
     textColour: basePalette.black,
     borderColour: basePalette.black,
   },
-  grey: {
-    bgColour: basePalette.grey[500],
-    twColor: "bg-grey-500",
+  grey1: {
+    bgColour: basePalette.grey[200],
+    twColor: "bg-grey-200",
     textColour: basePalette.black,
     borderColour: basePalette.black,
+  },
+  grey2: {
+    bgColour: basePalette.grey[300],
+    twColor: "bg-grey-300",
+    textColour: basePalette.black,
+    borderColour: basePalette.black,
+  },
+  grey3: {
+    bgColour: basePalette.grey[400],
+    twColor: "bg-grey-400",
+    textColour: basePalette.white,
+    borderColour: basePalette.black,
+  },
+  grey4: {
+    bgColour: basePalette.grey[500],
+    twColor: "bg-grey-500",
+    textColour: basePalette.white,
+    borderColour: basePalette.black,
+  },
+  black: {
+    bgColour: basePalette.black,
+    twColor: "bg-black",
+    textColour: basePalette.white,
+    borderColour: basePalette.grey[500],
   }
 };

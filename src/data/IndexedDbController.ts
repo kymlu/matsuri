@@ -1,5 +1,6 @@
-import { strEquals } from "../components/helpers/GlobalHelper.ts";
+import { isNullOrUndefined, strEquals } from "../components/helpers/GlobalHelper.ts";
 import { FormationSongSection } from "../models/FormationSection.ts";
+import { CUSTOM_EVENT } from "./consts.ts";
 import { categoryList, festivalList, participantsList, songList } from "./ImaHitotabi.ts";
 
 type TableName = "festival" | "song" |  "category" | "participant" | "participantPosition" | "propPosition" | "formationSection";
@@ -43,10 +44,7 @@ export class IndexedDBController {
   return new Promise<void>((resolve, reject) => {
     request.onsuccess = () => {
       this.db = request.result;
-      this.addData(); // twice??
-      this.isInitialized = true;
-      const dbInitializedEvent = new CustomEvent("dbInitialized");
-      window.dispatchEvent(dbInitializedEvent);
+      this.addData();
       resolve();
     };
     request.onerror = () => reject(request.error);
@@ -55,48 +53,78 @@ export class IndexedDBController {
 
   async addData() {
     console.log("Adding data");
-    await this.getAll("festival").then(list => {
-      if ((list as Array<any>).length === 0) {
-        this.upsertList("festival", festivalList)
-      }
-    });
-
-    await this.getAll("song").then(list => {
-      if ((list as Array<any>).length === 0) {
-        this.upsertList("song", songList)
-      }
-    });
-
-    await this.getAll("category").then(list => {
-      if ((list as Array<any>).length === 0) {
-        this.upsertList("category", categoryList)
-      }
-    });
-
-    await this.getAll("participant").then(list => {
-      if ((list as Array<any>).length === 0) {
-        this.upsertList("participant", participantsList)
-      }
-    });
-
-    await this.getAll("formationSection").then(list => {
-      if ((list as Array<any>).length === 0) {
-        this.upsertList("formationSection",
-            festivalList.flatMap(festival => 
-              festival.formations
-                .map(formation => 
+    const tasks = [
+      {
+        name: "festival",
+        promise: () => this.getAll("festival").then(list => {
+          if ((list as Array<any>).length === 0) {
+            return this.upsertList("festival", festivalList);
+          }
+        })
+      },
+      {
+        name: "song",
+        promise: () => this.getAll("song").then(list => {
+          if ((list as Array<any>).length === 0) {
+            return this.upsertList("song", songList);
+          }
+        })
+      },
+      {
+        name: "category",
+        promise: () => this.getAll("category").then(list => {
+          if ((list as Array<any>).length === 0) {
+            return this.upsertList("category", categoryList);
+          }
+        })
+      },
+      {
+        name: "participant",
+        promise: () => this.getAll("participant").then(list => {
+          if ((list as Array<any>).length === 0) {
+            return this.upsertList("participant", participantsList);
+          }
+        })
+      },
+      {
+        name: "formationSection",
+        promise: () => this.getAll("formationSection").then(list => {
+          if ((list as Array<any>).length === 0) {
+            const sections = festivalList
+              .flatMap(festival => 
+                festival.formations.map(formation => 
                   songList.find(song => strEquals(song.id, formation.songId))
-                  ?.sections?.map(section => (
-                    {
+                    ?.sections?.map(section => ({
                       id: crypto.randomUUID().toString(),
                       songSection: section,
                       songSectionId: section.id,
                       formation: formation,
                       formationId: formation.id
-                    } as FormationSongSection))))
-                .flatMap(x => x));
+                    }))
+                ).flatMap(x => x)
+              ).flatMap(x => x); // flatten all the way
+    
+            return this.upsertList("formationSection", sections);
+          }
+        })
       }
-    })
+    ];    
+
+    // Handle each as it resolves
+    const runningTasks = tasks.map(({name, promise}) => {
+      return promise()
+        .then(result => {
+          if (!isNullOrUndefined(result)) console.log(`Insert ${name} succeeded:`, result);
+        })
+        .catch(error => {
+          console.error(`Insert ${name} failed:`, error);
+        });
+    });
+
+    await Promise.allSettled(runningTasks).then(() => {
+      var dbInitialized = new CustomEvent(CUSTOM_EVENT.dbInitialized.toString());
+      window.dispatchEvent(dbInitialized);
+    });
   }
 
   _getTransaction(storeName: TableName, mode: IDBTransactionMode = "readwrite") {

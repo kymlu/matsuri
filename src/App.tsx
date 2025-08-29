@@ -2,12 +2,8 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import FormationEditorPage from './pages/FormationEditorPage.tsx';
-import { IndexedDBController } from './data/IndexedDbController.ts';
 import FestivalManager from './pages/FestivalManager.tsx';
-
-export const db: IndexedDBController = new IndexedDBController()
-
-db.init();
+import { RequireDB } from './data/RequireDb.tsx';
 
 function App() {
   return (
@@ -15,7 +11,7 @@ function App() {
       {/* Routes */}
       <Routes>
         <Route path="/" element={<FestivalManager />} />
-        <Route path="/formation" element={<FormationEditorPage />} />
+        <Route path="/formation" element={<RequireDB><FormationEditorPage /></RequireDB>} />
       </Routes>
     </BrowserRouter>
   );

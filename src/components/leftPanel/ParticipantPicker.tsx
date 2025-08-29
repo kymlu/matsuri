@@ -6,14 +6,14 @@ import ItemButton from "../ItemButton.tsx";
 import SearchParticipantComponent from "../SearchParticipantComponent.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
-import { db } from "../../App.tsx";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";
+import { dbController } from "../../data/DBProvider.tsx";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
   const {selectedFormation} = useContext(UserContext);
-  const {participantPositions, updateFormationState} = useContext(FormationStateContext);
+  const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
     setFilterText(value);
@@ -21,11 +21,10 @@ export default function ParticipantPicker () {
 
   const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
 
-  
   function selectParticipant(newParticipant: Participant) {
     if (selectedParticipants.includes(newParticipant.id) && !newParticipant.isPlaceholder) {
-      setSelectedParticipants(prev => (prev.filter(id => strEquals(id, newParticipant.id))))
-      updateFormationState({participantPositions: participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id))});
+      setSelectedParticipants(prev => (prev.filter(id => !strEquals(id, newParticipant.id))))
+      updatePositionState({participantPositions: participantPositions.filter(x => !strEquals(x.participant.id, newParticipant.id))});
     } else {
       if (newParticipant.isPlaceholder) {
         // For dancer and staff, allow multiple
@@ -44,8 +43,8 @@ export default function ParticipantPicker () {
         category: categoryList[0],
         isSelected: false
       };
-      updateFormationState({participantPositions: [...participantPositions, newPosition]});
-      db.upsertItem("participantPosition", newPosition);
+      updatePositionState({participantPositions: [...participantPositions, newPosition]});
+      dbController.upsertItem("participantPosition", newPosition);
     }
   }
   

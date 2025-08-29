@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef } from "react";
 import { Layer, Stage, Transformer } from "react-konva";
 import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
 import { GRID_SIZE } from "../../data/consts.ts";
-import { FormationStateContext } from "../../contexts/FormationEditorContext.tsx";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
-import Button from "../Button.tsx";
-import { db } from "../../App.tsx";
-import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
-import { FormationSongSection } from "../../models/FormationSection.ts";
+import { ParticipantPosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
+import { dbController } from "../../data/DBProvider.tsx";
+import { CategoryContext } from "../../contexts/CategoryContext.tsx";
 
 export interface FormationEditorProps {
   height: number,
@@ -20,45 +19,11 @@ export interface FormationEditorProps {
 
 export default function FormationEditor(props: FormationEditorProps) {
   const {selectedItem, showPrevious, showNext, updateState} = useContext(UserContext);
-  const {participantPositions, propPositions, updateFormationState} = useContext(FormationStateContext);
+  const {participantPositions, propPositions} = useContext(PositionContext);
+  const {categories} = useContext(CategoryContext);
   const canvasHeight = (props.height + 2) * GRID_SIZE;
   const canvasWidth = (Math.ceil(props.width/2) * 2 + 2) * GRID_SIZE;
   const transformerRef = useRef(null);
-  const [dbInitialized, setDbInitialized] = useState(false)
-
-  useEffect(() => {
-    if (db === null && !dbInitialized){
-      setDbInitialized(true);
-      window.addEventListener("dbInitialized", () => { init() }, {once: true});
-    } else if (!dbInitialized) {
-      setDbInitialized(true);
-      init();
-    }
-  }, [])
-
-  function init () {
-    console.log("init formation editor");
-    Promise.all(
-      [db.getAll("participantPosition"),
-        db.getAll("propPosition"),
-        db.getAll("formationSection")]).then(([participantPosition, propPosition, formationSongSections]) => {
-      try {
-        updateState({
-          sections: (formationSongSections as Array<FormationSongSection>)
-        });
-        updateFormationState({
-          participantPositions: participantPosition as Array<ParticipantPosition>,
-          propPositions: propPosition as Array<PropPosition>
-        });
-        participantPositions.forEach(p => {
-          p.x2 = p.x;
-          p.y2 = p.y;
-        });
-      } catch (e) {
-        console.error('Error parsing user from localStorage:', e);
-      }
-    });
-  }
 
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => x.id === id);
@@ -66,7 +31,7 @@ export default function FormationEditor(props: FormationEditorProps) {
       participant.x2 = (participant.x * GRID_SIZE + x)/GRID_SIZE;
       participant.y2 = (participant.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
       console.log('Updated position for', participant.participant.name, 'to', participant.x2, participant.y2);
-      db.upsertItem("participantPosition", {...participant, x: participant.x2, y: participant.y2});
+      dbController.upsertItem("participantPosition", {...participant, x: participant.x2, y: participant.y2});
     }
   }
 
@@ -82,18 +47,8 @@ export default function FormationEditor(props: FormationEditorProps) {
     }
   }
 
-  function saveFormation() {
-    participantPositions.forEach(p => {
-      p.x = p.x2;
-      p.y = p.y2;
-    });
-    updateFormationState({participantPositions: participantPositions});
-  }
-
-
   return (
     <div>
-      <Button onClick={() => saveFormation()}>Save</Button>
       <Stage width={canvasWidth} height={canvasHeight}>
         <FormationGrid
           canvasHeight={canvasHeight}
@@ -130,7 +85,7 @@ export default function FormationEditor(props: FormationEditorProps) {
               (<ParticipantObject 
                 key={placement.id}
                 name={placement.participant.name} 
-                colour={placement.category?.color || objectColorSettings["amberLight"]} 
+                colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
                 startX={placement.x * GRID_SIZE} 
                 startY={placement.y * GRID_SIZE}
                 isSelected={placement.isSelected}
