@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import Button from '../components/Button.tsx';
 import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
@@ -14,11 +14,19 @@ import { ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { strEquals } from '../components/helpers/GlobalHelper.ts';
 
 export default function FormationEditorPage () {
-  const {selectedFestival, selectedFormation, selectedSection, selectedItem} = useContext(UserContext)
-  const {updateState} = useContext(UserContext);
+  const userContext = useContext(UserContext);
+  const {selectedFestival, selectedFormation, selectedSection, selectedItem, sections, currentSections, updateState} = useContext(UserContext)
   const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (selectedFormation === null) {
+      navigate("../");
+    }
+    updateState({currentSections: sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order)});
+    updateState({selectedSection: sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order)[0]});
+  }, [userContext.selectedFormation]);
 
   useEffect(() => {
     Promise.all(

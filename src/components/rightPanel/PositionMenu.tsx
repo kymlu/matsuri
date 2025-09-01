@@ -4,14 +4,17 @@ import NumberTextField from "../NumberTextField.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { songList } from "../../data/ImaHitotabi.ts";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export type PositionMenuProps = {
   canRotate?: boolean
 }
 
 export default function PositionMenu(props: PositionMenuProps) {
-  const {selectedFormation, selectedSection} = useContext(UserContext);
-  var order = selectedSection?.songSection?.order;
+  const {selectedFormation, selectedSection, selectedItem} = useContext(UserContext);
+  const {participantPositions} = useContext(PositionContext)
+
+  var order = selectedSection?.songSection.order;
   var songSections = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections;
   var previousSectionName = "";
   var hasPrevious = !isNullOrUndefined(order) && order! > 1
@@ -33,19 +36,19 @@ export default function PositionMenu(props: PositionMenuProps) {
       <div className="grid grid-cols-[1fr,1fr,auto,auto,auto,1fr] justify-items-center items-center align-middle gap-2">
         <span></span>
         <span className="col-span-2 text-xs text-grey-500">{previousSectionName}</span>
-        <span className="font-bold">{selectedSection?.songSection?.name}</span>
+        <span className="font-bold">{selectedSection?.songSection.name}</span>
         <span className="col-span-2 text-xs text-grey-500">{nextSectionName}</span>
         <span className="font-bold">ヨこ</span>
         <span className="text-xs text-grey-500">{hasPrevious ? previousX : ""}</span>
         <span className="text-xs text-grey-500">{hasPrevious ? "▶︎" : ""}</span>
-        <NumberTextField default={1} min={-10} max={10}/>
+        <NumberTextField default={selectedItem?.x ?? 0} value={selectedItem?.x ?? 0} min={-10} max={10}/>
         <span className="text-xs text-grey-500">{hasNext ? "▶︎" : ""}</span>
         <span className="text-xs text-grey-500">{hasNext ? nextX : ""}</span>
 
         <span className="font-bold">タテ</span>
         <span className="text-xs text-grey-500">{hasPrevious ? previousY : ""}</span>
         <span className="text-xs text-grey-500">{hasPrevious ? "▶︎" : ""}</span>
-        <NumberTextField default={1} min={0} max={20}/>
+        <NumberTextField default={selectedItem?.y ?? 0} value={selectedItem?.y ?? 0} min={0} max={20}/>
         <span className="text-xs text-grey-500">{hasNext ? "▶︎" : ""}</span>
         <span className="text-xs text-grey-500">{hasNext ? nextY : ""}</span>
       </div>

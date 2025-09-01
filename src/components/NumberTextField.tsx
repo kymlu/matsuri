@@ -4,9 +4,10 @@ import React from "react";
 export interface NumberTextFieldProps {
   label?: string,
   default: number,
+  value: number,
   min?: number,
   max?: number,
-  onChange?: () => void,
+  onChange?: (newValue: number | null) => void,
 }
 
 export default function NumberTextField (props: NumberTextFieldProps) {
@@ -14,6 +15,8 @@ export default function NumberTextField (props: NumberTextFieldProps) {
   return (
     <NumberField.Root
       id={id}
+      value={props.value}
+      onValueChange={(newValue) => {props.onChange?.(newValue);}}
       defaultValue={props.default}
       className="flex flex-col items-start gap-1"
       min={props?.min ?? 0}

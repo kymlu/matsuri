@@ -12,6 +12,7 @@ export interface ParticipantObjectProps {
   updatePosition?: (x: number, y: number) => void,
   isSelected?: boolean,
   onClick: (forceSelect?: boolean) => void,
+  draggable?: boolean,
 }
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
@@ -29,25 +30,26 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       onClick={onClick}
       updatePosition={props.updatePosition}
       rotateEnabled={false}
-      resizeEnabled={false}>
+      resizeEnabled={false}
+      draggable={props.draggable}>
       <Circle 
-            x={props.startX}
-            y={props.startY}
-            radius={GRID_SIZE/2}
-            fill={props.colour.bgColour}
-            stroke={props.colour.borderColour}
-            strokeWidth={2} />
-          <Text
-            x={props.startX-GRID_SIZE/2}
-            y={props.startY-GRID_SIZE/2}
-            width={GRID_SIZE}
-            height={GRID_SIZE}
-            text={props.name}
-            fontSize={FONT_SIZE}
-            fontStyle="bold"
-            fill={props.colour.textColour}
-            verticalAlign="middle"
-            align="center" />
+        x={props.startX}
+        y={props.startY}
+        radius={GRID_SIZE/2}
+        fill={props.colour.bgColour}
+        stroke={props.colour.borderColour}
+        strokeWidth={2} />
+      <Text
+        x={props.startX-GRID_SIZE/2}
+        y={props.startY-GRID_SIZE/2}
+        width={GRID_SIZE}
+        height={GRID_SIZE}
+        text={props.name}
+        fontSize={FONT_SIZE}
+        fontStyle="bold"
+        fill={props.colour.textColour}
+        verticalAlign="middle"
+        align="center" />
     </BaseFormationObject>
   )
 }

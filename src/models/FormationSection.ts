@@ -4,9 +4,9 @@ import { SongSection } from "./SongSection"
 export interface FormationSongSection {
   id: string,
   songSectionId: string,
-  songSection: SongSection | null,
+  songSection: SongSection,
   formationId: string,
-  formation: Formation | null,
+  formation: Formation,
   version: number,
   head: number
 }

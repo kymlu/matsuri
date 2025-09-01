@@ -3,7 +3,7 @@ import { Group, Transformer } from "react-konva";
 import { BLOCK_SNAP_SIZE } from "../../../data/consts.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
-import { basePalette, objectPalette } from "../../../themes/colours.ts";
+import { basePalette } from "../../../themes/colours.ts";
 
 export interface FormationObjectProps {
   children: ReactNode
@@ -14,7 +14,8 @@ export interface FormationObjectProps {
   isSelected?: boolean,
   onClick: (boolean?) => void,
   rotateEnabled?: boolean
-  resizeEnabled?: boolean
+  resizeEnabled?: boolean,
+  draggable?: boolean
 }
 
 export default function BaseFormationObject(props: FormationObjectProps) {
@@ -37,7 +38,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
     <div>
       <Group
         ref={groupRef}
-        draggable 
+        draggable={props.draggable}
         rotation={props.rotation ?? 0}
         onClick={e => {onClick()}}
         onTap={e => {onClick()}}

@@ -12,7 +12,7 @@ export type ColorPickerMenuProps = {
 }
 
 export default function ColorPickerMenu() {
-  const {selectedItem, updateState} = useContext(UserContext);
+  const {selectedItem} = useContext(UserContext);
   const {propPositions, updatePositionState} = useContext(PositionContext)
 
   function selectColor(color: ColorStyle) {

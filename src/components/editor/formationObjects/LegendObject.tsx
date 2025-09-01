@@ -1,26 +1,27 @@
-import React from "react";
+import React, {  } from "react";
 import { Rect, Text } from "react-konva";
 import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
-import BaseFormationObject from "./BaseFormationObject.tsx";
 import { ColorStyle } from "../../../themes/colours.ts";
+import BaseFormationObject from "./BaseFormationObject.tsx";
 
-export interface PropObjectProps {
-  name: string,
-  length: number,
+// todo
+export interface LegendObjectProps {
+  text: string,
   colour: ColorStyle,
   startX: number,
   startY: number,
+  updatePosition?: (x: number, y: number) => void,
   isSelected?: boolean,
   onClick: (forceSelect?: boolean) => void,
-  updatePosition?: (x: number, y: number) => void,
-  draggable?: boolean,
 }
 
-export default function PropObject(props: PropObjectProps) {
+export default function LegendObject(props: LegendObjectProps) {
   function onClick(forceSelect?: boolean) {
     props.onClick?.(forceSelect);
   }
-
+  
+  console.log('Rendering LegendObject:', props.text, 'at', props.startX, props.startY, props);
+  
   return (
     <BaseFormationObject
       isSelected={props.isSelected}
@@ -28,25 +29,26 @@ export default function PropObject(props: PropObjectProps) {
       startY={props.startY}
       onClick={onClick}
       updatePosition={props.updatePosition}
-      rotateEnabled={true}
-      resizeEnabled={false}
-      draggable={props.draggable}>
-      <Rect x={props.startX}
+      rotateEnabled={false}
+      resizeEnabled={false}>
+      <Rect 
+        x={props.startX}
         y={props.startY}
-        width={props.length * GRID_SIZE}
-        height={GRID_SIZE}
+        radius={GRID_SIZE/2}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={2} />
-      <Text x={props.startX}
-        y={props.startY + FONT_SIZE}
-        width={props.length * GRID_SIZE}
-        //height={GRID_SIZE}
-        text={props.name}
+      <Text
+        x={props.startX-GRID_SIZE/2}
+        y={props.startY-GRID_SIZE/2}
+        width={GRID_SIZE}
+        height={GRID_SIZE}
+        text={props.text}
+        wrap="true"
         fontSize={FONT_SIZE}
         fontStyle="bold"
         fill={props.colour.textColour}
-        verticalAlign="center"
+        verticalAlign="middle"
         align="center" />
     </BaseFormationObject>
   )

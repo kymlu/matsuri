@@ -1,9 +1,8 @@
 import React from "react";
-import { SongSection } from "../models/SongSection.ts";
 import className from "classnames";
 
 export interface SongSectionButtonProps {
-  section: SongSection,
+  sectionName: string,
   isSelected?: boolean,
   isBottom?: boolean,
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -16,7 +15,7 @@ export default function SongSectionButton (props: SongSectionButtonProps) {
   });
   return (
     <button className={classes} onClick={props.onClick}>
-      {props.section.name}
+      {props.sectionName}
     </button>
   )
 }

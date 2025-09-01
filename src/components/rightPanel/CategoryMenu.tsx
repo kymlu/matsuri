@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { Radio, RadioGroup } from "@base-ui-components/react";
-import { ColorStyle, objectColorSettings } from "../../themes/colours.ts";
+import { ColorStyle } from "../../themes/colours.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import ColorSwatch from "./ColorSwatch.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";

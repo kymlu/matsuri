@@ -6,9 +6,11 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { Prop } from "../../models/Prop.ts";
 import { PropPosition } from "../../models/Position.ts";
 import { objectColorSettings } from "../../themes/colours.ts";
+import { UserContext } from "../../contexts/UserContext.tsx";
 
 export default function PropPicker () {
   const {propPositions, updatePositionState} = useContext(PositionContext);
+  const {selectedFormation, selectedSection} = useContext(UserContext);
 
   const [selectedProps, setSelectedProps] = useState<Array<string>>([]);
 
@@ -20,11 +22,11 @@ export default function PropPicker () {
       var newPosition: PropPosition = {
         id: crypto.randomUUID().toString(),
         prop: newProp,
-        formationSceneId: "", // todo
-        x: 0,
-        x2: 0,
-        y: 0,
-        y2: 0,
+        formationSceneId: selectedSection?.id ?? "",
+        x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
+        x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
+        y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
+        y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
         color: objectColorSettings.black,
         isSelected: false
       };

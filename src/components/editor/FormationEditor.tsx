@@ -1,6 +1,6 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Layer, Stage, Transformer } from "react-konva";
-import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
+import { objectColorSettings } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
 import { DEFAULT_WIDTH, GRID_SIZE } from "../../data/consts.ts";
@@ -11,6 +11,8 @@ import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
+import { songList } from "../../data/ImaHitotabi.ts";
+import { useState } from "react";
 
 export interface FormationEditorProps {
   height: number,
@@ -18,13 +20,29 @@ export interface FormationEditorProps {
 }
 
 export default function FormationEditor(props: FormationEditorProps) {
-  const {selectedItem, showPrevious, showNext, updateState} = useContext(UserContext);
+  const userContext = useContext(UserContext)
+  const {selectedItem, currentSections, showPrevious, showNext, updateState} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
+  const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
+  const [nextSectionId, setNextSectionId] = useState<string | undefined>("");
   const {categories} = useContext(CategoryContext);
   const canvasHeight = (props.height + 2) * GRID_SIZE;
   const canvasWidth = DEFAULT_WIDTH * GRID_SIZE;
   const transformerRef = useRef(null);
-
+  
+  useEffect(() => {
+    if (showPrevious) {
+      const previousSection = userContext?.selectedSection && songList[0].sections.find(x => x.order === (userContext.selectedSection!.songSection.order - 1))?.id;
+      const section = currentSections.find(x => strEquals(x.songSectionId, previousSection))?.id;
+      setPreviousSectionId(section);
+    }
+    if (showNext) {
+      const nextSection = userContext?.selectedSection && songList[0].sections.find(x => x.order === (userContext.selectedSection!.songSection.order + 1))?.id;
+      const section = currentSections.find(x => strEquals(x.songSectionId, nextSection))?.id;
+      setNextSectionId(section);
+    }
+  }, [userContext?.selectedSection]);
+  
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => x.id === id);
     if (participant) {
@@ -79,8 +97,40 @@ export default function FormationEditor(props: FormationEditorProps) {
           canvasWidth={canvasWidth}
           height={props.height}
           width={props.width}/>
-        { showPrevious && 
-          <Layer>
+        { showPrevious && previousSectionId &&
+          <Layer opacity={0.5}>
+            {
+              propPositions
+                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
+                .map(placement =>
+                  <PropObject 
+                    key={placement.id}
+                    name={placement.prop.name} 
+                    colour={placement.color ?? objectColorSettings.purpleLight} 
+                    length={placement.prop.length} 
+                    isSelected={placement.isSelected}
+                    startX={placement.x * GRID_SIZE} 
+                    startY={placement.y * GRID_SIZE} 
+                    updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
+                    onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
+                  />
+                )
+            } 
+            { participantPositions
+                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
+                .map(placement => 
+                  <ParticipantObject 
+                    key={placement.id}
+                    name={placement.participant.name} 
+                    colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
+                    startX={placement.x * GRID_SIZE} 
+                    startY={placement.y * GRID_SIZE}
+                    isSelected={placement.isSelected}
+                    updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
+                    onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
+                  />
+              )
+            }
           </Layer>
         }
         <Layer>
@@ -94,37 +144,75 @@ export default function FormationEditor(props: FormationEditorProps) {
             return newBox;
           }}/>
           {
-            propPositions.map(placement =>
-              <PropObject 
-                key={placement.id}
-                name={placement.prop.name} 
-                colour={placement.color ?? objectColorSettings.purpleLight} 
-                length={placement.prop.length} 
-                isSelected={placement.isSelected}
-                startX={placement.x * GRID_SIZE} 
-                startY={placement.y * GRID_SIZE} 
-                updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-                onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
-              />
-            )
+            propPositions
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .map(placement =>
+                <PropObject 
+                  key={placement.id}
+                  name={placement.prop.name} 
+                  colour={placement.color ?? objectColorSettings.purpleLight} 
+                  length={placement.prop.length} 
+                  isSelected={placement.isSelected}
+                  startX={placement.x * GRID_SIZE} 
+                  startY={placement.y * GRID_SIZE} 
+                  updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
+                  onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)}
+                  draggable 
+                />
+              )
           } 
-          { participantPositions.map(placement => 
-              (<ParticipantObject 
-                key={placement.id}
-                name={placement.participant.name} 
-                colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
-                startX={placement.x * GRID_SIZE} 
-                startY={placement.y * GRID_SIZE}
-                isSelected={placement.isSelected}
-                updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-                onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
-              />)
+          { participantPositions
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .map(placement => 
+                <ParticipantObject 
+                  key={placement.id}
+                  name={placement.participant.name} 
+                  colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
+                  startX={placement.x * GRID_SIZE} 
+                  startY={placement.y * GRID_SIZE}
+                  isSelected={placement.isSelected}
+                  updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
+                  onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
+                  draggable
+                />
             )
           }
         </Layer>
-        { showNext && 
-        <Layer>
-          </Layer>
+        { showNext && nextSectionId &&
+          <Layer opacity={0.5}>
+          {
+            propPositions
+              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
+              .map(placement =>
+                <PropObject 
+                  key={placement.id}
+                  name={placement.prop.name} 
+                  colour={placement.color ?? objectColorSettings.purpleLight} 
+                  length={placement.prop.length} 
+                  isSelected={placement.isSelected}
+                  startX={placement.x * GRID_SIZE} 
+                  startY={placement.y * GRID_SIZE} 
+                  updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
+                  onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
+                />
+              )
+          } 
+          { participantPositions
+              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
+              .map(placement => 
+                <ParticipantObject 
+                  key={placement.id}
+                  name={placement.participant.name} 
+                  colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
+                  startX={placement.x * GRID_SIZE} 
+                  startY={placement.y * GRID_SIZE}
+                  isSelected={placement.isSelected}
+                  updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
+                  onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
+                />
+            )
+          }
+        </Layer>
         }
       </Stage>
     </div>

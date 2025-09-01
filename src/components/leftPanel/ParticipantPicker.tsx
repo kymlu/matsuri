@@ -12,7 +12,7 @@ import { dbController } from "../../data/DBProvider.tsx";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
-  const {selectedFormation} = useContext(UserContext);
+  const {selectedFormation, selectedSection} = useContext(UserContext);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
@@ -31,11 +31,12 @@ export default function ParticipantPicker () {
         var count = participantPositions.filter(x => x.participant.isPlaceholder).length;
         newParticipant = {...newParticipant, id: `${newParticipant.id}-${count + 1}`, name: `${newParticipant.name} ${count + 1}`};
       }
+      console.log("selected section:", selectedSection);
       setSelectedParticipants(prev => ([...prev, newParticipant.id]));
       var newPosition: ParticipantPosition = {
         id: crypto.randomUUID().toString(),
         participant: newParticipant,
-        formationSceneId: "", // todo
+        formationSceneId: selectedSection?.id ?? "",
         x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
