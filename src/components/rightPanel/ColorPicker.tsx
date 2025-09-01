@@ -10,7 +10,10 @@ export default function ColorPicker(props: ColorPickerProps) {
   return (<>
     {
       Object.values(objectColorSettings).map(color => 
-        <ColorSwatch tailwindColorClassName={color.twColor} onClick={() => props.selectColor(color)}/>
+        <ColorSwatch 
+          key={color.bgColour} 
+          tailwindColorClassName={color.twColor} 
+          onClick={() => props.selectColor(color)}/>
       )
     }
   </>)

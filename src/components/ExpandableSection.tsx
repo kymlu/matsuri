@@ -14,7 +14,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
   }
   
   return (
-    <div className={expanded ? "flex-1 min-h-0 overflow-hidden max-h-fit" : "flex-none"}>
+    <div className={expanded ? "flex-col max-h-fit" : "flex-none"}>
       <button
         className="flex flex-row justify-between w-full font-bold h-7"
         onClick={() => toggle()}>
@@ -22,7 +22,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
         <span className="w-8 text-center">{expanded ? "—" : "+"}</span>
       </button>
       {expanded && 
-      <div className="flex-1 mt-2 overflow-auto">
+      <div className="flex-1 mt-2 overflow-auto max-h-40">
         {props.children}
       </div>}
     </div>

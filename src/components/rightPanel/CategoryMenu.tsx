@@ -39,7 +39,7 @@ export default function CategoryMenu() {
   }
 
   function selectColor(color: ColorStyle, category: ParticipantCategory) {
-    var newCategory = {...category, color: color} as ParticipantCategory
+    var newCategory = {...category, color: color} as ParticipantCategory;
     dbController.upsertItem("category", newCategory);
     updateCategoryContext({categories: [...categories.filter(c => !strEquals(c.id, category.id)), newCategory]})
     setEditingId(null);
@@ -48,7 +48,7 @@ export default function CategoryMenu() {
   return (
     <ExpandableSection title="カテゴリー">
       <RadioGroup value={selectedCategory.id} onValueChange={(value) => onChangeCategory(value)}>
-        <div className="grid grid-cols-2 gap-x-6">
+        <div className="flex flex-col gap-x-6">
           {
             categories.sort((a, b) => a.order - b.order).map(category => 
               <div key={category.id} className="flex flex-row items-center justify-between align-middle">

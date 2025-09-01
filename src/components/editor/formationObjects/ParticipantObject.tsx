@@ -1,9 +1,7 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { Circle, Group, Text, Transformer } from "react-konva";
-import { BLOCK_SNAP_SIZE, FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
-import { UserContext } from "../../../contexts/UserContext.tsx";
-import { basePalette, ColorStyle } from "../../../themes/colours.ts";
-import Konva from "konva";
+import React, {  } from "react";
+import { Circle, Text } from "react-konva";
+import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
+import { ColorStyle } from "../../../themes/colours.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 
 export interface ParticipantObjectProps {
@@ -13,12 +11,12 @@ export interface ParticipantObjectProps {
   startY: number,
   updatePosition?: (x: number, y: number) => void,
   isSelected?: boolean,
-  onClick: () => void,
+  onClick: (forceSelect?: boolean) => void,
 }
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
-  function onClick() {
-    props.onClick?.();
+  function onClick(forceSelect?: boolean) {
+    props.onClick?.(forceSelect);
   }
   
   console.log('Rendering ParticipantObject:', props.name, 'at', props.startX, props.startY, props);

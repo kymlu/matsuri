@@ -35,28 +35,37 @@ export default function FormationEditor(props: FormationEditorProps) {
     }
   }
 
+  function updatePropPosition(id: string, x: number, y: number) {
+    var prop = propPositions.find(x => x.id === id);
+    if (prop) {
+      prop.x2 = (prop.x * GRID_SIZE + x)/GRID_SIZE;
+      prop.y2 = (prop.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
+      console.log('Updated position for', prop.prop.name, 'to', prop.x2, prop.y2);
+      dbController.upsertItem("propPosition", {...prop, x: prop.x2, y: prop.y2});
+    }
+  }
+
   // todo: redundant, fix
-  function selectParticipant(participant: ParticipantPosition) {
+  function selectParticipant(participant: ParticipantPosition, forceSelect?: boolean) {
     if (selectedItem === null || !strEquals(selectedItem.id, participant.id)) {
       updateState({selectedItem: participant});
       participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
       propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
       participant.isSelected = true;
-    } else {
+    } else if (!forceSelect) {
       updateState({selectedItem: null});
       participant.isSelected = false;
     }
   }
 
   // todo: redundant, fix
-  function selectProp(prop: PropPosition) {
-    console.log("selectprop")
+  function selectProp(prop: PropPosition, forceSelect?: boolean) {
     if (selectedItem === null || !strEquals(selectedItem.id, prop.id)) {
       updateState({selectedItem: prop});
       participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
       propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
       prop.isSelected = true;
-    } else {
+    } else if (!forceSelect) {
       updateState({selectedItem: null});
       prop.isSelected = false;
     }
@@ -89,12 +98,13 @@ export default function FormationEditor(props: FormationEditorProps) {
               <PropObject 
                 key={placement.id}
                 name={placement.prop.name} 
-                colour={objectPalette.purple.light} 
+                colour={placement.color ?? objectColorSettings.purpleLight} 
                 length={placement.prop.length} 
                 isSelected={placement.isSelected}
-                startX={placement.x} 
-                startY={placement.y} 
-                onClick={() => selectProp(placement)} 
+                startX={placement.x * GRID_SIZE} 
+                startY={placement.y * GRID_SIZE} 
+                updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
+                onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
               />
             )
           } 
@@ -107,7 +117,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 startY={placement.y * GRID_SIZE}
                 isSelected={placement.isSelected}
                 updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-                onClick={() => selectParticipant(placement)} 
+                onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
               />)
             )
           }

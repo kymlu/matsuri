@@ -10,7 +10,7 @@ export type PositionMenuProps = {
 }
 
 export default function PositionMenu(props: PositionMenuProps) {
-  const {selectedFormation, sections, selectedSection} = useContext(UserContext);
+  const {selectedFormation, selectedSection} = useContext(UserContext);
   var order = selectedSection?.songSection?.order;
   var songSections = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections;
   var previousSectionName = "";
@@ -32,22 +32,22 @@ export default function PositionMenu(props: PositionMenuProps) {
     <ExpandableSection title="隊列" defaultIsExpanded>
       <div className="grid grid-cols-[1fr,1fr,auto,auto,auto,1fr] justify-items-center items-center align-middle gap-2">
         <span></span>
-        <span className="col-span-2 text-sm text-grey-500">{previousSectionName}</span>
+        <span className="col-span-2 text-xs text-grey-500">{previousSectionName}</span>
         <span className="font-bold">{selectedSection?.songSection?.name}</span>
-        <span className="col-span-2 text-sm text-grey-500">{nextSectionName}</span>
+        <span className="col-span-2 text-xs text-grey-500">{nextSectionName}</span>
         <span className="font-bold">ヨこ</span>
-        <span className="text-sm text-grey-500">{hasPrevious ? previousX : ""}</span>
-        <span className="text-grey-500">{hasPrevious ? "▶︎" : ""}</span>
+        <span className="text-xs text-grey-500">{hasPrevious ? previousX : ""}</span>
+        <span className="text-xs text-grey-500">{hasPrevious ? "▶︎" : ""}</span>
         <NumberTextField default={1} min={-10} max={10}/>
-        <span className="text-grey-500">{hasNext ? "▶︎" : ""}</span>
-        <span className="text-sm text-grey-500">{hasNext ? nextX : ""}</span>
+        <span className="text-xs text-grey-500">{hasNext ? "▶︎" : ""}</span>
+        <span className="text-xs text-grey-500">{hasNext ? nextX : ""}</span>
 
         <span className="font-bold">タテ</span>
-        <span className="text-sm text-grey-500">{hasPrevious ? previousY : ""}</span>
-        <span className="text-sm text-grey-500">{hasPrevious ? "▶︎" : ""}</span>
+        <span className="text-xs text-grey-500">{hasPrevious ? previousY : ""}</span>
+        <span className="text-xs text-grey-500">{hasPrevious ? "▶︎" : ""}</span>
         <NumberTextField default={1} min={0} max={20}/>
-        <span className="text-grey-500">{hasNext ? "▶︎" : ""}</span>
-        <span className="text-sm text-grey-500">{hasNext ? nextY : ""}</span>
+        <span className="text-xs text-grey-500">{hasNext ? "▶︎" : ""}</span>
+        <span className="text-xs text-grey-500">{hasNext ? nextY : ""}</span>
       </div>
       {props.canRotate && 
       <>

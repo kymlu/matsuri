@@ -21,9 +21,9 @@ export default function SwapMenu() {
             {/* todo: add undecided */}
         </div>
         <div className="flex flex-row flex-wrap gap-1">
-          <Button disabled>Swap current</Button>
-          <Button disabled>Swap after</Button>
-          <Button disabled>Swap all</Button>
+          <Button disabled>当シーン</Button>
+          <Button disabled>以降のシーン</Button>
+          <Button disabled>全てのシーン</Button>
         </div>
     </ExpandableSection>
   )

@@ -25,23 +25,23 @@ export default function FormationGrid(props: FormationGridProps) {
         {[...Array(gridHeight)].map((_, i) => (
           <Line key={i} 
             points={[0, (i + 1) * GRID_SIZE, props.canvasWidth + GRID_SIZE, (i + 1) * GRID_SIZE]}
-            dash={i % 2 == 0 ? [1, 1] : [4, 2]}
-            stroke={i % 2 == 0 ? basePalette.grey[300] : basePalette.grey[400]}
+            dash={i % 2 === 0 ? [1, 1] : [4, 2]}
+            stroke={i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
             strokeWidth={1} />
         ))}
         {[...Array(gridWidth)].map((_, i) => (
           <Line key={i} 
             points={[(i + 1) * GRID_SIZE, 0, (i + 1) * GRID_SIZE, props.canvasHeight + GRID_SIZE]}
-            dash={i % 2 == 0 ? [1, 1] : [4, 2]}
-            stroke={(i + 1) === DEFAULT_WIDTH/2 ? basePalette.primary.main : i % 2 == 0 ? basePalette.grey[300] : basePalette.grey[400]}
+            dash={i % 2 === 0 ? [1, 1] : [4, 2]}
+            stroke={(i + 1) === DEFAULT_WIDTH/2 ? basePalette.primary.main : i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
             strokeWidth={(i + 1) === (Math.ceil(props.canvasWidth/GRID_SIZE)/2) ? 2 : 1} />
         ))}
         <Line
-          points={[(emptySpaceX) * GRID_SIZE, GRID_SIZE * 2, (emptySpaceX + 1) * GRID_SIZE, props.canvasHeight + GRID_SIZE]}
+          points={[(emptySpaceX) * GRID_SIZE, GRID_SIZE * 2, (emptySpaceX) * GRID_SIZE, props.canvasHeight + GRID_SIZE]}
           strokeWidth={2}
           stroke={basePalette.primary.main}/>
         <Line
-          points={[(gridWidth - emptySpaceX) * GRID_SIZE, GRID_SIZE * 2, (gridWidth - emptySpaceX + 1) * GRID_SIZE, props.canvasHeight + GRID_SIZE]}
+          points={[(gridWidth - emptySpaceX) * GRID_SIZE, GRID_SIZE * 2, (gridWidth - emptySpaceX) * GRID_SIZE, props.canvasHeight + GRID_SIZE]}
           strokeWidth={2}
           stroke={basePalette.primary.main}/>
       </Layer>

@@ -24,3 +24,8 @@ export interface PropPosition extends Position {
   displayName?: string
   color?: ColorStyle
 }
+
+export interface NotePosition extends Position {
+  text: string
+  color?: ColorStyle
+}

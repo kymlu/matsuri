@@ -3,14 +3,16 @@ import { Group, Transformer } from "react-konva";
 import { BLOCK_SNAP_SIZE } from "../../../data/consts.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
+import { basePalette, objectPalette } from "../../../themes/colours.ts";
 
 export interface FormationObjectProps {
   children: ReactNode
   startX: number,
   startY: number,
+  rotation?: number,
   updatePosition?: (x: number, y: number) => void,
   isSelected?: boolean,
-  onClick: () => void,
+  onClick: (boolean?) => void,
   rotateEnabled?: boolean
   resizeEnabled?: boolean
 }
@@ -36,9 +38,11 @@ export default function BaseFormationObject(props: FormationObjectProps) {
       <Group
         ref={groupRef}
         draggable 
+        rotation={props.rotation ?? 0}
         onClick={e => {onClick()}}
         onTap={e => {onClick()}}
         onDragEnd={e => {
+          props.onClick(true);
           const node = e.target;
           
           if (snapToGrid){
@@ -61,7 +65,9 @@ export default function BaseFormationObject(props: FormationObjectProps) {
         ref={transformerRef}
         rotateEnabled={props.rotateEnabled}
         resizeEnabled={props.resizeEnabled}
-        borderStrokeWidth={2}/>
+        borderStrokeWidth={2}
+        borderStroke={basePalette.primary.main}
+        anchorStroke={basePalette.primary.main}/>
       
     </div>
   )

@@ -31,11 +31,11 @@ export default function NumberTextField (props: NumberTextFieldProps) {
         </NumberField.ScrubArea>
 
         <NumberField.Group className="flex border-2 border-gray-200 rounded-md focus-within:border-primary">
-          <NumberField.Decrement className="flex items-center justify-center w-5 h-8 text-gray-900 select-none bg-clip-padding hover:bg-gray-100 active:bg-gray-100">
+          <NumberField.Decrement className="flex items-center justify-center w-4 h-8 text-gray-900 select-none bg-clip-padding hover:bg-gray-100 active:bg-gray-100">
             <MinusIcon />
           </NumberField.Decrement>
-          <NumberField.Input className="h-8 text-base text-center text-gray-900 w-14 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
-          <NumberField.Increment className="flex items-center justify-center w-5 h-8 text-gray-900 select-none bg-clip-padding hover:bg-gray-100 active:bg-gray-100">
+          <NumberField.Input className="w-10 h-8 text-base text-center text-gray-900 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
+          <NumberField.Increment className="flex items-center justify-center w-4 h-8 text-gray-900 select-none bg-clip-padding hover:bg-gray-100 active:bg-gray-100">
             <PlusIcon />
           </NumberField.Increment>
         </NumberField.Group>
