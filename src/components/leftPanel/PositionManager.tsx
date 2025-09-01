@@ -12,7 +12,7 @@ import { dbController } from "../../data/DBProvider.tsx";
 
 export default function PositionManager () {
   const [filterText, setFilterText] = useState<string>("");
-  const {selectedFormation} = useContext(UserContext);
+  const {selectedFormation, selectedSection} = useContext(UserContext);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
@@ -35,7 +35,7 @@ export default function PositionManager () {
       var newPosition: ParticipantPosition = {
         id: crypto.randomUUID().toString(),
         participant: newParticipant,
-        formationSceneId: "", // todo
+        formationScene: selectedSection!,
         x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         y: selectedFormation?.length ? selectedFormation.length / 2 : 5,

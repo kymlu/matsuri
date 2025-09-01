@@ -23,29 +23,30 @@ export default function ParticipantPicker () {
   // const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
 
   function selectParticipant(newParticipant: Participant) {
-      if (newParticipant.isPlaceholder) {
-        // For dancer and staff, allow multiple
-        var count = participantPositions.filter(x => x.participant.isPlaceholder).length;
-        newParticipant = {...newParticipant, id: `${newParticipant.id}-${count + 1}`, name: `${newParticipant.name} ${count + 1}`};
-      }
-      if (participantPositions.some(x => strEquals(x.participant.id, newParticipant.id))) {
-        var count = participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id)).length;
-        newParticipant = {...newParticipant, name: `${newParticipant.name} ${count}`};
-      }
-      var newPosition: ParticipantPosition = {
-        id: crypto.randomUUID().toString(),
-        participant: newParticipant,
-        formationSceneId: selectedSection?.id ?? "",
-        x: DEFAULT_WIDTH/2,
-        x2: DEFAULT_WIDTH/2,
-        y: 2,
-        y2: 2,
-        category: categoryList[0],
-        isSelected: false
-      };
-      updatePositionState({participantPositions: [...participantPositions, newPosition]});
-      dbController.upsertItem("participantPosition", newPosition);
-    // }
+    if(selectedSection === null) return;
+
+    if (newParticipant.isPlaceholder) {
+      // For dancer and staff, allow multiple
+      var count = participantPositions.filter(x => x.participant.isPlaceholder).length;
+      newParticipant = {...newParticipant, id: `${newParticipant.id}-${count + 1}`, name: `${newParticipant.name} ${count + 1}`};
+    }
+    if (participantPositions.some(x => strEquals(x.participant.id, newParticipant.id) && strEquals(x.formationScene!.id, selectedSection?.id))) {
+      var count = participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id)).length;
+      newParticipant = {...newParticipant, name: `${newParticipant.name} ${count}`};
+    }
+    var newPosition: ParticipantPosition = {
+      id: crypto.randomUUID().toString(),
+      participant: newParticipant,
+      formationScene: selectedSection!,
+      x: DEFAULT_WIDTH/2,
+      x2: DEFAULT_WIDTH/2,
+      y: 2,
+      y2: 2,
+      category: participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id))?.[0]?.category ?? categoryList[0],
+      isSelected: false
+    };
+    updatePositionState({participantPositions: [...participantPositions, newPosition]});
+    dbController.upsertItem("participantPosition", newPosition);
   }
   
   return (

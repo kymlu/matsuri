@@ -15,24 +15,22 @@ export default function PropPicker () {
   const [selectedProps, setSelectedProps] = useState<Array<string>>([]);
 
   function selectProp(newProp: Prop) {
-    if (selectedProps.includes(newProp.id)) {
-      setSelectedProps(prev => (prev.filter(id => id !== newProp.id)))
-    } else {
-      setSelectedProps(prev => ([...prev, newProp.id]));
-      var newPosition: PropPosition = {
-        id: crypto.randomUUID().toString(),
-        prop: newProp,
-        formationSceneId: selectedSection?.id ?? "",
-        x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-        x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-        y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-        y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-        color: objectColorSettings.black,
-        isSelected: false
-      };
+    if(selectedSection === null) return;
+    
+    setSelectedProps(prev => ([...prev, newProp.id]));
+    var newPosition: PropPosition = {
+      id: crypto.randomUUID().toString(),
+      prop: newProp,
+      formationScene: selectedSection!,
+      x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
+      x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
+      y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
+      y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
+      color: objectColorSettings.black,
+      isSelected: false
+    };
 
-        updatePositionState({propPositions: [...propPositions, newPosition]});
-    }
+      updatePositionState({propPositions: [...propPositions, newPosition]});
   }
   
   return (

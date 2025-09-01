@@ -19,7 +19,6 @@ export default function CategoryMenu() {
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory>((selectedItem as ParticipantPosition).category!);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {categories, updateCategoryContext} = useContext(CategoryContext);
-  console.log("Selected item", (selectedItem as ParticipantPosition).participant.name, (selectedItem as ParticipantPosition).category);
 
   useEffect(() => {
     setSelectedCategory((selectedItem as ParticipantPosition).category!);
@@ -33,14 +32,12 @@ export default function CategoryMenu() {
     }
   }
 
-  function onChangeCategory(newCategoryId) {
+  function onChangeCategory(newCategoryId: string) {
     var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!
     var newSelectedItem = {
       ...selectedItem,
       category: newCategory,
       categoryId: newCategory.id,
-      x: selectedItem?.x2,
-      y: selectedItem?.y2
     } as ParticipantPosition;
     setSelectedCategory(newCategory);
     updateState({selectedItem: newSelectedItem});
@@ -57,7 +54,9 @@ export default function CategoryMenu() {
 
   return (
     <ExpandableSection title="カテゴリー">
-      <RadioGroup value={selectedCategory.id} onValueChange={(value) => onChangeCategory(value)}>
+      <RadioGroup
+        value={selectedCategory.id}
+        onValueChange={(value) => onChangeCategory(value as string)}>
         <div className="flex flex-col gap-x-6">
           {
             categories.sort((a, b) => a.order - b.order).map(category => 

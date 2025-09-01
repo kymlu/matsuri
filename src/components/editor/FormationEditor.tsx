@@ -100,7 +100,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         width={canvasWidth}
         height={canvasHeight}
         onClick={(event) => {
-          if (strEquals(typeof event.target, Stage.name)) {
+          if (strEquals(typeof event.currentTarget, Stage.name)) {
             updateState({selectedItem: null});
             participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
             propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
@@ -115,7 +115,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           <Layer opacity={0.5}>
             {
               propPositions
-                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
+                .filter(placement => strEquals(placement.formationScene.id, previousSectionId))
                 .map(placement =>
                   <PropObject 
                     key={placement.id}
@@ -131,7 +131,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 )
             } 
             { participantPositions
-                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
+                .filter(placement => strEquals(placement.formationScene.id, previousSectionId))
                 .map(placement => 
                   <ParticipantObject 
                     key={placement.id}
@@ -159,7 +159,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           }}/>
           {
             propPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationScene.id))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
@@ -176,7 +176,7 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { participantPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationScene.id))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}
@@ -196,7 +196,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           <Layer opacity={0.5}>
           {
             propPositions
-              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
+              .filter(placement => strEquals(placement.formationScene.id, nextSectionId))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
@@ -212,7 +212,7 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { participantPositions
-              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
+              .filter(placement => strEquals(placement.formationScene.id, nextSectionId))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}
