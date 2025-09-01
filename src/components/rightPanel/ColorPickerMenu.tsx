@@ -18,7 +18,7 @@ export default function ColorPickerMenu() {
   function selectColor(color: ColorStyle) {
     if (selectedItem && "color" in selectedItem){
       var newItem = {...selectedItem, color: color} as PropPosition;
-      updatePositionState({propPositions: propPositions.filter(x => !strEquals(x.id, selectedItem.id), newItem)});
+      updatePositionState({propPositions: [...propPositions.filter(x => !strEquals(x.id, selectedItem.id)), newItem]});
       dbController.upsertItem("propPosition", newItem);
     }
   }

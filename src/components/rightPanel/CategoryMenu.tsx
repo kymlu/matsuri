@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { Radio, RadioGroup } from "@base-ui-components/react";
 import { ColorStyle } from "../../themes/colours.ts";
@@ -14,11 +14,17 @@ import ColorPicker from "./ColorPicker.tsx";
 
 export default function CategoryMenu() {
   const {selectedItem, updateState} = useContext(UserContext);
+  const userContext = useContext(UserContext);
   const [editingId, setEditingId] = useState<string | undefined | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory>((selectedItem as ParticipantPosition).category!);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {categories, updateCategoryContext} = useContext(CategoryContext);
   console.log("Selected item", (selectedItem as ParticipantPosition).participant.name, (selectedItem as ParticipantPosition).category);
+
+  useEffect(() => {
+    setSelectedCategory((selectedItem as ParticipantPosition).category!);
+  }, [userContext.selectedItem]);
+
   function selectCategoryToEdit(id: string) {
     if (strEquals(editingId, id)){
       setEditingId(null);
@@ -29,13 +35,17 @@ export default function CategoryMenu() {
 
   function onChangeCategory(newCategoryId) {
     var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!
-    console.log("new", newCategory);
-    var newSelectedItem = {...selectedItem, category: newCategory, categoryId: newCategory.id, x: selectedItem?.x2, y: selectedItem?.y2} as ParticipantPosition
-    console.log("new", newSelectedItem);
+    var newSelectedItem = {
+      ...selectedItem,
+      category: newCategory,
+      categoryId: newCategory.id,
+      x: selectedItem?.x2,
+      y: selectedItem?.y2
+    } as ParticipantPosition;
     setSelectedCategory(newCategory);
     updateState({selectedItem: newSelectedItem});
-    updatePositionState({participantPositions: [...participantPositions.filter(x => !strEquals(x.id, selectedItem?.id!), newSelectedItem)]});
-    console.log("new", participantPositions);
+    updatePositionState({participantPositions: [...participantPositions.filter(x => !strEquals(x.id, selectedItem?.id!)), newSelectedItem]});
+    dbController.upsertItem("participantPosition", newSelectedItem);
   }
 
   function selectColor(color: ColorStyle, category: ParticipantCategory) {

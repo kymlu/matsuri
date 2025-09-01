@@ -242,7 +242,7 @@ export const propsList: Array<Prop> = [
 //奇、偶、座り、中、高、左隊、右隊、旗、山伏、前隊、後隊
 export const categoryList: Array<ParticipantCategory> = [
   { id: "0", name: "一般", color: objectColorSettings["purpleLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
-  { id: "1", name: "スタッフ", color: objectColorSettings["grey"], order: 1, showInLegend: true, showInParadeGuide: false },
+  { id: "1", name: "スタッフ", color: objectColorSettings["grey3"], order: 1, showInLegend: true, showInParadeGuide: false },
   { id: "2", name: "奇", color: objectColorSettings["redLightest"], order: 8, showInLegend: false, showInParadeGuide: false },
   { id: "3", name: "偶", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
   { id: "4", name: "座り", color: objectColorSettings["redLightest"], order: 10, showInLegend: true, showInParadeGuide: false },
