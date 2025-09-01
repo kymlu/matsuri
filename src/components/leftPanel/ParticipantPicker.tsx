@@ -9,6 +9,7 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
+import { DEFAULT_WIDTH } from "../../data/consts.ts";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
@@ -19,34 +20,32 @@ export default function ParticipantPicker () {
     setFilterText(value);
   }
 
-  const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
+  // const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
 
   function selectParticipant(newParticipant: Participant) {
-    if (selectedParticipants.includes(newParticipant.id) && !newParticipant.isPlaceholder) {
-      setSelectedParticipants(prev => (prev.filter(id => !strEquals(id, newParticipant.id))))
-      updatePositionState({participantPositions: participantPositions.filter(x => !strEquals(x.participant.id, newParticipant.id))});
-    } else {
       if (newParticipant.isPlaceholder) {
         // For dancer and staff, allow multiple
         var count = participantPositions.filter(x => x.participant.isPlaceholder).length;
         newParticipant = {...newParticipant, id: `${newParticipant.id}-${count + 1}`, name: `${newParticipant.name} ${count + 1}`};
       }
-      console.log("selected section:", selectedSection);
-      setSelectedParticipants(prev => ([...prev, newParticipant.id]));
+      if (participantPositions.some(x => strEquals(x.participant.id, newParticipant.id))) {
+        var count = participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id)).length;
+        newParticipant = {...newParticipant, name: `${newParticipant.name} ${count}`};
+      }
       var newPosition: ParticipantPosition = {
         id: crypto.randomUUID().toString(),
         participant: newParticipant,
         formationSceneId: selectedSection?.id ?? "",
-        x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-        x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-        y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-        y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
+        x: DEFAULT_WIDTH/2,
+        x2: DEFAULT_WIDTH/2,
+        y: 2,
+        y2: 2,
         category: categoryList[0],
         isSelected: false
       };
       updatePositionState({participantPositions: [...participantPositions, newPosition]});
       dbController.upsertItem("participantPosition", newPosition);
-    }
+    // }
   }
   
   return (
@@ -60,7 +59,7 @@ export default function ParticipantPicker () {
               <ItemButton
               key={participant.id}
               item={participant}
-              isDisabled={selectedParticipants.includes(participant.id)}
+              //isDisabled={selectedParticipants.includes(participant.id)}
               onClick={() => selectParticipant(participant)}/>)} 
         {/* todo: disable if used */}
         {/* todo: add undecided */}

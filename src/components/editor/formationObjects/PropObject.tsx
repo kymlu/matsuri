@@ -18,7 +18,9 @@ export interface PropObjectProps {
 
 export default function PropObject(props: PropObjectProps) {
   function onClick(forceSelect?: boolean) {
-    props.onClick?.(forceSelect);
+    if (props.draggable) {
+      props.onClick?.(forceSelect);
+    }
   }
 
   return (

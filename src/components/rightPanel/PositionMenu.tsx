@@ -5,14 +5,16 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { songList } from "../../data/ImaHitotabi.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import Button from "../Button.tsx";
+import { dbController } from "../../data/DBProvider.tsx";
 
 export type PositionMenuProps = {
   canRotate?: boolean
 }
 
 export default function PositionMenu(props: PositionMenuProps) {
-  const {selectedFormation, selectedSection, selectedItem} = useContext(UserContext);
-  const {participantPositions} = useContext(PositionContext)
+  const {selectedFormation, selectedSection, selectedItem, updateState} = useContext(UserContext);
+  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext)
 
   var order = selectedSection?.songSection.order;
   var songSections = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections;
@@ -56,6 +58,17 @@ export default function PositionMenu(props: PositionMenuProps) {
       <>
         {/* TODO: add rotation */}
       </>}
+      <Button onClick={() => {
+        if (selectedItem !== null) {
+          updatePositionState({
+            participantPositions: participantPositions.filter(x => !strEquals(x.id, selectedItem.id)),
+            propPositions: propPositions.filter(x => !strEquals(x.id, selectedItem.id))
+          });
+          dbController.removeItem("participantPosition", selectedItem.id);
+          dbController.removeItem("propPosition", selectedItem.id);
+          updateState({selectedItem: null});
+        }
+      }}>削除</Button>
     </ExpandableSection>
   )
 }

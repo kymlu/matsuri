@@ -20,8 +20,6 @@ export default function LegendObject(props: LegendObjectProps) {
     props.onClick?.(forceSelect);
   }
   
-  console.log('Rendering LegendObject:', props.text, 'at', props.startX, props.startY, props);
-  
   return (
     <BaseFormationObject
       isSelected={props.isSelected}

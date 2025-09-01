@@ -174,4 +174,13 @@ export class IndexedDBController {
       tx.onerror = (e) => reject(e);
     });
   }
+
+  async removeItem(storeName: TableName, item: any) {
+    console.log(`removeItem ${storeName} called`);
+    return new Promise<any>((resolve, reject) => {
+      const request = this._getStore(storeName).delete(item);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    })
+  }
 }

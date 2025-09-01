@@ -3,7 +3,7 @@ import { Layer, Stage, Transformer } from "react-konva";
 import { objectColorSettings } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
-import { DEFAULT_WIDTH, GRID_SIZE } from "../../data/consts.ts";
+import { DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
@@ -21,34 +21,32 @@ export interface FormationEditorProps {
 
 export default function FormationEditor(props: FormationEditorProps) {
   const userContext = useContext(UserContext)
-  const {selectedItem, currentSections, showPrevious, showNext, updateState} = useContext(UserContext);
+  const {selectedItem, currentSections, compareMode, updateState} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
   const [nextSectionId, setNextSectionId] = useState<string | undefined>("");
   const {categories} = useContext(CategoryContext);
-  const canvasHeight = (props.height + 2) * GRID_SIZE;
+  const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * GRID_SIZE;
   const canvasWidth = DEFAULT_WIDTH * GRID_SIZE;
   const transformerRef = useRef(null);
   
   useEffect(() => {
-    if (showPrevious) {
+    if (compareMode === "previous") {
       const previousSection = userContext?.selectedSection && songList[0].sections.find(x => x.order === (userContext.selectedSection!.songSection.order - 1))?.id;
       const section = currentSections.find(x => strEquals(x.songSectionId, previousSection))?.id;
       setPreviousSectionId(section);
-    }
-    if (showNext) {
+    } else if (compareMode === "next") {
       const nextSection = userContext?.selectedSection && songList[0].sections.find(x => x.order === (userContext.selectedSection!.songSection.order + 1))?.id;
       const section = currentSections.find(x => strEquals(x.songSectionId, nextSection))?.id;
       setNextSectionId(section);
     }
-  }, [userContext?.selectedSection]);
+  }, [userContext?.selectedSection, userContext?.compareMode]);
   
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => x.id === id);
     if (participant) {
       participant.x2 = (participant.x * GRID_SIZE + x)/GRID_SIZE;
       participant.y2 = (participant.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
-      console.log('Updated position for', participant.participant.name, 'to', participant.x2, participant.y2);
       dbController.upsertItem("participantPosition", {...participant, x: participant.x2, y: participant.y2});
     }
   }
@@ -58,9 +56,16 @@ export default function FormationEditor(props: FormationEditorProps) {
     if (prop) {
       prop.x2 = (prop.x * GRID_SIZE + x)/GRID_SIZE;
       prop.y2 = (prop.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
-      console.log('Updated position for', prop.prop.name, 'to', prop.x2, prop.y2);
       dbController.upsertItem("propPosition", {...prop, x: prop.x2, y: prop.y2});
     }
+  }
+
+  function getPixelX(gridX: number): number {
+    return gridX * GRID_SIZE; // todo
+  }
+
+  function getPixelY(gridY: number): number {
+    return gridY * GRID_SIZE; // todo
   }
 
   // todo: redundant, fix
@@ -91,13 +96,22 @@ export default function FormationEditor(props: FormationEditorProps) {
 
   return (
     <div>
-      <Stage width={canvasWidth} height={canvasHeight}>
+      <Stage
+        width={canvasWidth}
+        height={canvasHeight}
+        onClick={(event) => {
+          if (strEquals(typeof event.target, Stage.name)) {
+            updateState({selectedItem: null});
+            participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+            propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+          }
+        }}>
         <FormationGrid
           canvasHeight={canvasHeight}
           canvasWidth={canvasWidth}
           height={props.height}
           width={props.width}/>
-        { showPrevious && previousSectionId &&
+        { compareMode === "previous" && previousSectionId &&
           <Layer opacity={0.5}>
             {
               propPositions
@@ -109,8 +123,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                     colour={placement.color ?? objectColorSettings.purpleLight} 
                     length={placement.prop.length} 
                     isSelected={placement.isSelected}
-                    startX={placement.x * GRID_SIZE} 
-                    startY={placement.y * GRID_SIZE} 
+                    startX={getPixelX(placement.x)} 
+                    startY={getPixelY(placement.y)} 
                     updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                     onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
                   />
@@ -123,8 +137,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                     key={placement.id}
                     name={placement.participant.name} 
                     colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
-                    startX={placement.x * GRID_SIZE} 
-                    startY={placement.y * GRID_SIZE}
+                    startX={getPixelX(placement.x)} 
+                    startY={getPixelY(placement.y)}
                     isSelected={placement.isSelected}
                     updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                     onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
@@ -153,8 +167,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   colour={placement.color ?? objectColorSettings.purpleLight} 
                   length={placement.prop.length} 
                   isSelected={placement.isSelected}
-                  startX={placement.x * GRID_SIZE} 
-                  startY={placement.y * GRID_SIZE} 
+                  startX={getPixelX(placement.x)} 
+                  startY={getPixelY(placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)}
                   draggable 
@@ -168,8 +182,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   key={placement.id}
                   name={placement.participant.name} 
                   colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
-                  startX={placement.x * GRID_SIZE} 
-                  startY={placement.y * GRID_SIZE}
+                  startX={getPixelX(placement.x)} 
+                  startY={getPixelY(placement.y)}
                   isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
@@ -178,7 +192,7 @@ export default function FormationEditor(props: FormationEditorProps) {
             )
           }
         </Layer>
-        { showNext && nextSectionId &&
+        { compareMode === "next" && nextSectionId &&
           <Layer opacity={0.5}>
           {
             propPositions
@@ -190,8 +204,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   colour={placement.color ?? objectColorSettings.purpleLight} 
                   length={placement.prop.length} 
                   isSelected={placement.isSelected}
-                  startX={placement.x * GRID_SIZE} 
-                  startY={placement.y * GRID_SIZE} 
+                  startX={getPixelX(placement.x)} 
+                  startY={getPixelY(placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
                 />
@@ -204,8 +218,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   key={placement.id}
                   name={placement.participant.name} 
                   colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
-                  startX={placement.x * GRID_SIZE} 
-                  startY={placement.y * GRID_SIZE}
+                  startX={getPixelX(placement.x)} 
+                  startY={getPixelY(placement.y)}
                   isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 

@@ -17,10 +17,10 @@ export interface ParticipantObjectProps {
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
   function onClick(forceSelect?: boolean) {
-    props.onClick?.(forceSelect);
+    if(props.draggable) {
+      props.onClick?.(forceSelect);
+    }
   }
-  
-  console.log('Rendering ParticipantObject:', props.name, 'at', props.startX, props.startY, props);
   
   return (
     <BaseFormationObject

@@ -34,8 +34,12 @@ export default function FormationRightPanel () {
           <Divider/>
         </>
       }
-      <TextEditor/>
-      <Divider/>
+      { selectedItem !== null && "text" in selectedItem &&
+        <>
+          <TextEditor/>
+          <Divider/>
+        </>
+      }
       <GridSettingsMenu/>
       <Divider/>
       <AnimationMenu/>

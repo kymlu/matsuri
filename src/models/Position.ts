@@ -21,11 +21,11 @@ export interface ParticipantPosition extends Position {
 
 export interface PropPosition extends Position {
   prop: Prop,
-  displayName?: string
+  displayName?: string,
   color?: ColorStyle
 }
 
 export interface NotePosition extends Position {
-  text: string
+  text: string,
   color?: ColorStyle
 }

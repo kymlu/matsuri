@@ -46,7 +46,7 @@ export default function FormationGrid(props: FormationGridProps) {
           stroke={basePalette.primary.main}/>
       </Layer>
       <Layer key={"Meter"}>
-        {[...Array(props.height)].map((_, i) => (
+        {[...Array(props.height + 1)].map((_, i) => (
           <LengthMeterMarker 
             key={i}
             startX={props.canvasWidth - 2 * GRID_SIZE}

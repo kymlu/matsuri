@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import Button from '../components/Button.tsx';
 import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
@@ -15,25 +15,15 @@ import { strEquals } from '../components/helpers/GlobalHelper.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
-  const {selectedFestival, selectedFormation, selectedSection, selectedItem, sections, currentSections, updateState} = useContext(UserContext)
+  const {selectedFestival, selectedFormation, selectedSection, selectedItem, sections, updateState} = useContext(UserContext)
   const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext)
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (selectedFormation === null) {
-      navigate("../");
-    }
-    updateState({currentSections: sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order)});
-    updateState({selectedSection: sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order)[0]});
-  }, [userContext.selectedFormation]);
-
-  useEffect(() => {
     Promise.all(
       [dbController.getAll("category"),
-        dbController.getAll("participantPosition"),
-        dbController.getAll("propPosition"),
-        dbController.getAll("formationSection")]).then(([categoryList, participantPosition, propPosition, formationSongSections]) => {
+        dbController.getAll("formationSection")]).then(([categoryList, formationSongSections]) => {
       try {
         updateState({
           sections: (formationSongSections as Array<FormationSongSection>)
@@ -41,6 +31,28 @@ export default function FormationEditorPage () {
         updateCategoryContext({
           categories: categoryList as Array<ParticipantCategory>
         });
+      } catch (e) {
+        console.error('Error parsing user from localStorage:', e);
+      }
+    });
+  }, [])
+
+  useEffect(() => {
+    if (selectedFormation === null) {
+      navigate("../");
+    }
+
+    const currentSections = sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order);
+    updateState({currentSections: currentSections});
+    updateState({selectedSection: currentSections[0]});
+  }, [userContext.selectedFormation]);
+
+  useEffect(() => {
+    Promise.all(
+      [ dbController.getAll("participantPosition"),
+        dbController.getAll("propPosition")])
+      .then(([participantPosition, propPosition]) => {
+      try {
         var participantPositionList = participantPosition as Array<ParticipantPosition>;
         participantPositionList.forEach(x => x.isSelected = strEquals(x.id, selectedItem?.id));
         var propPositionList = propPosition as Array<PropPosition>;
@@ -57,8 +69,7 @@ export default function FormationEditorPage () {
         console.error('Error parsing user from localStorage:', e);
       }
     });
-  }, [])
-
+  }, [userContext.selectedSection])
 
   return (
       <div className='h-full overflow-hidden'>
