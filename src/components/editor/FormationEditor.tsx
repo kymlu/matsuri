@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { Layer, Stage, Transformer } from "react-konva";
-import { objectColorSettings } from "../../themes/colours.ts";
+import { Layer, Path, Stage, Transformer } from "react-konva";
+import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
 import { DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
@@ -13,6 +13,8 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
 import { songList } from "../../data/ImaHitotabi.ts";
 import { useState } from "react";
+import NoteObject from "./formationObjects/NoteObject.tsx";
+import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export interface FormationEditorProps {
   height: number,
@@ -20,8 +22,9 @@ export interface FormationEditorProps {
 }
 
 export default function FormationEditor(props: FormationEditorProps) {
-  const userContext = useContext(UserContext)
-  const {selectedItem, currentSections, compareMode, updateState} = useContext(UserContext);
+  const userContext = useContext(UserContext);
+  const {paths} = useContext(AnimationContext);
+  const {selectedItem, isAnimating, currentSections, compareMode, updateState} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
   const [nextSectionId, setNextSectionId] = useState<string | undefined>("");
@@ -43,7 +46,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   }, [userContext?.selectedSection, userContext?.compareMode]);
   
   function updateParticipantPosition(id: string, x: number, y: number) {
-    var participant = participantPositions.find(x => x.id === id);
+    var participant = participantPositions.find(x => strEquals(x.id, id));
     if (participant) {
       participant.x2 = (participant.x * GRID_SIZE + x)/GRID_SIZE;
       participant.y2 = (participant.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
@@ -52,11 +55,21 @@ export default function FormationEditor(props: FormationEditorProps) {
   }
 
   function updatePropPosition(id: string, x: number, y: number) {
-    var prop = propPositions.find(x => x.id === id);
+    var prop = propPositions.find(x => strEquals(x.id, id));
     if (prop) {
       prop.x2 = (prop.x * GRID_SIZE + x)/GRID_SIZE;
       prop.y2 = (prop.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
       dbController.upsertItem("propPosition", {...prop, x: prop.x2, y: prop.y2});
+    }
+  }
+
+  function updatePropRotation(id: string, angle: number, x: number, y: number) {
+    var prop = propPositions.find(x => strEquals(x.id, id));
+    if (prop) {
+      prop.angle = angle;
+      prop.x = x/GRID_SIZE; //(x * GRID_SIZE + x)/GRID_SIZE;
+      prop.y = y/GRID_SIZE; //(y * GRID_SIZE + y)/GRID_SIZE;
+      dbController.upsertItem("propPosition", prop);
     }
   }
 
@@ -111,7 +124,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           canvasWidth={canvasWidth}
           height={props.height}
           width={props.width}/>
-        { compareMode === "previous" && previousSectionId &&
+        { !isAnimating && compareMode === "previous" && previousSectionId &&
           <Layer opacity={0.5}>
             {
               propPositions
@@ -122,11 +135,9 @@ export default function FormationEditor(props: FormationEditorProps) {
                     name={placement.prop.name} 
                     colour={placement.color ?? objectColorSettings.purpleLight} 
                     length={placement.prop.length} 
-                    isSelected={placement.isSelected}
                     startX={getPixelX(placement.x)} 
-                    startY={getPixelY(placement.y)} 
-                    updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-                    onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
+                    startY={getPixelY(placement.y)}
+                    rotation={placement.angle} 
                   />
                 )
             } 
@@ -139,9 +150,6 @@ export default function FormationEditor(props: FormationEditorProps) {
                     colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
                     startX={getPixelX(placement.x)} 
                     startY={getPixelY(placement.y)}
-                    isSelected={placement.isSelected}
-                    updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-                    onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
                   />
               )
             }
@@ -172,7 +180,9 @@ export default function FormationEditor(props: FormationEditorProps) {
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)}
                   draggable 
-                />
+                  rotation={placement.angle} 
+                  onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
+                  />
               )
           } 
           { participantPositions
@@ -191,8 +201,32 @@ export default function FormationEditor(props: FormationEditorProps) {
                 />
             )
           }
+         {false && <NoteObject
+            label="Hello"
+            text={"Legend\nabc\n\nabc"}
+            colour={objectColorSettings.amberLight}
+            startX={getPixelX(6)}
+            startY={getPixelY(6)}
+            isSelected={false}
+            updatePosition={(x, y) => {/** todo */}}
+            onClick={(forceSelect?: boolean) => {/** todo */}}
+            draggable
+            height={3}
+            length={5}
+            borderRadius={10}
+            fontSize={12}
+          />}
         </Layer>
-        { compareMode === "next" && nextSectionId &&
+        <Layer>
+          {
+            Object.entries(paths)
+              .map(path => 
+                <Path
+                  data={path[1]}
+                  stroke={objectPalette.cyan.main}
+                  strokeWidth={2}/>)}
+        </Layer>
+        { !isAnimating &&  compareMode === "next" && nextSectionId &&
           <Layer opacity={0.5}>
           {
             propPositions
@@ -203,12 +237,10 @@ export default function FormationEditor(props: FormationEditorProps) {
                   name={placement.prop.name} 
                   colour={placement.color ?? objectColorSettings.purpleLight} 
                   length={placement.prop.length} 
-                  isSelected={placement.isSelected}
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)} 
-                  updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)} 
-                />
+                  rotation={placement.angle} 
+                  />
               )
           } 
           { participantPositions
@@ -220,9 +252,6 @@ export default function FormationEditor(props: FormationEditorProps) {
                   colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)}
-                  isSelected={placement.isSelected}
-                  updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
                 />
             )
           }

@@ -26,8 +26,9 @@ export default function PropPicker () {
       x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
       y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
       y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-      color: objectColorSettings.black,
-      isSelected: false
+      color: objectColorSettings.grey3,
+      isSelected: false,
+      angle: 0
     };
 
       updatePositionState({propPositions: [...propPositions, newPosition]});
@@ -42,7 +43,6 @@ export default function PropPicker () {
             <ItemButton
               key={prop.id}
               item={prop}
-              isDisabled={selectedProps.includes(prop.id)}
               onClick={() => selectProp(prop)}/>)} 
         </div>
       </ExpandableSection>

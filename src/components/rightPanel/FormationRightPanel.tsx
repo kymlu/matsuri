@@ -13,7 +13,7 @@ export default function FormationRightPanel () {
   const {selectedItem} = useContext(UserContext);
 
   return (
-    <div className="flex flex-col p-5 overflow-y-auto bg-white border-l-2 border-solid max-h-none border-primary w-80 max-w-80">
+    <div className="flex flex-col p-5 overflow-y-auto bg-white border-l-2 border-solid border-grey-700 max-h-none w-80 max-w-80">
       { selectedItem !== null && "participant" in selectedItem &&
         <>
           {/* { "name" in selectedItem && todo: make this work */

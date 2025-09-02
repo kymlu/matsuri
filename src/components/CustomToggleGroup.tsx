@@ -19,7 +19,7 @@ export default function CustomToggleGroup(props: CustomToggleGroupProps){
       <label>セクション比較</label>
       <ToggleGroup
         defaultValue={["none"]} 
-        onValueChange={(value) => props.onChange?.(value[0])}
+        onValueChange={(value) => props.onChange?.(value[0])} // TODO: fix this to be a single select
         className="flex flex-row border-2 border-solid rounded-md border-primary">
           {
             props.options.map(option => 

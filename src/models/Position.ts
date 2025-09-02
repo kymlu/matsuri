@@ -23,10 +23,14 @@ export interface ParticipantPosition extends Position {
 export interface PropPosition extends Position {
   prop: Prop,
   displayName?: string,
-  color?: ColorStyle
+  color?: ColorStyle,
+  angle: number
 }
 
 export interface NotePosition extends Position {
+  label: string,
   text: string,
-  color?: ColorStyle
+  color?: ColorStyle,
+  width: number,
+  height: number
 }

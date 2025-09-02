@@ -7,7 +7,7 @@ import ShapePicker from "./ShapePicker.tsx";
 
 export default function FormationLeftPanel () {
   return (
-    <div className="flex flex-col p-5 overflow-y-auto bg-white border-r-2 border-solid border-primary w-80 max-w-80">
+    <div className="flex flex-col p-5 overflow-y-auto bg-white border-r-2 border-solid border-grey-700 w-80 max-w-80">
       <SectionPicker/>
       <Divider/>
       <ParticipantPicker/>

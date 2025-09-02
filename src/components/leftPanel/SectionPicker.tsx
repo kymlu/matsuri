@@ -19,20 +19,18 @@ export default function SectionPicker () {
 
   return (
     <ExpandableSection title="セクション" defaultIsExpanded>
-      <div className="overflow-scroll">
-        <div className="flex flex-col">
-          {sections
-            .filter(section => strEquals(section.formationId, selectedFormation?.id))
-            .sort((a, b) => a.songSection.order - b.songSection.order)
-            .map((section, index, array) => 
-              <ListOptionButton 
-                key={section.id} 
-                text={section.songSection.name}
-                isSelected={selectedSection?.id === section.id}
-                isBottom={index === array.length - 1}
-                onClick={() => {selectSection(section)}}/>
-          )}
-        </div>
+      <div className="flex flex-col">
+        {sections
+          .filter(section => strEquals(section.formationId, selectedFormation?.id))
+          .sort((a, b) => a.songSection.order - b.songSection.order)
+          .map((section, index, array) => 
+            <ListOptionButton 
+              key={section.id} 
+              text={section.songSection.name}
+              isSelected={selectedSection?.id === section.id}
+              isBottom={index === array.length - 1}
+              onClick={() => {selectSection(section)}}/>
+        )}
       </div>
       <Button>隊列をクリアする</Button>
     </ExpandableSection>

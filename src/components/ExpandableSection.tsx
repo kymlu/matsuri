@@ -16,7 +16,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
   return (
     <div className={expanded ? "flex-col max-h-fit" : "flex-none"}>
       <button
-        className="flex flex-row justify-between w-full font-bold h-7"
+        className="flex flex-row justify-between w-full font-bold"
         onClick={() => toggle()}>
         <span className="text-left">{props.title}</span>
         <span className="w-8 text-center">{expanded ? "—" : "+"}</span>

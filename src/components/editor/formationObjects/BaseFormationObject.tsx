@@ -4,6 +4,8 @@ import { BLOCK_SNAP_SIZE } from "../../../data/consts.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
 import { basePalette } from "../../../themes/colours.ts";
+import { Shape, ShapeConfig } from "konva/lib/Shape";
+import { Stage } from "konva/lib/Stage";
 
 export interface FormationObjectProps {
   children: ReactNode
@@ -12,10 +14,11 @@ export interface FormationObjectProps {
   rotation?: number,
   updatePosition?: (x: number, y: number) => void,
   isSelected?: boolean,
-  onClick: (boolean?) => void,
+  onClick: (forceSelect?: boolean) => void,
   rotateEnabled?: boolean
   resizeEnabled?: boolean,
-  draggable?: boolean
+  draggable?: boolean,
+  onTransform?: (item: Shape<ShapeConfig> | Stage) => void,
 }
 
 export default function BaseFormationObject(props: FormationObjectProps) {
@@ -57,6 +60,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
                 props.updatePosition(node.attrs.x, node.attrs.y)
               }
             });
+            console.log(x, y);
           }
         }}>
         {props.children}
@@ -75,7 +79,12 @@ export default function BaseFormationObject(props: FormationObjectProps) {
           180, 195, 210, 225, 240, 255,
           270, 285, 300, 315, 330, 345, 360
         ]}
-        rotationSnapTolerance={10}/>
+        rotationSnapTolerance={10}
+        onTransformEnd={(event) => { 
+          console.log("rotation is broken");
+          console.log(event.target);
+          //props.onTransform?.(event.target);
+        }}/>
     </Group>
   )
 }

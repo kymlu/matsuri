@@ -8,6 +8,7 @@ import { CategoryContextProvider } from './contexts/CategoryContextProvider.tsx'
 import { PositionContextProvider } from './contexts/PositionContextProvider.tsx';
 import { SectionContextProvider } from './contexts/SectionContextProvider.tsx';
 import { DBProvider } from './data/DBProvider.tsx';
+import { AnimationContextProvider } from './contexts/AnimationContextProvider.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,7 +20,9 @@ root.render(
         <PositionContextProvider>
           <CategoryContextProvider>
             <SectionContextProvider>
-              <App />
+              <AnimationContextProvider>
+                <App />
+              </AnimationContextProvider>
             </SectionContextProvider>
           </CategoryContextProvider>
         </PositionContextProvider>

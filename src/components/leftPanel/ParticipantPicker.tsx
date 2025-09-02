@@ -13,7 +13,7 @@ import { DEFAULT_WIDTH } from "../../data/consts.ts";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
-  const {selectedFormation, selectedSection} = useContext(UserContext);
+  const {selectedSection} = useContext(UserContext);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
@@ -52,7 +52,7 @@ export default function ParticipantPicker () {
   return (
     <ExpandableSection title="参加者">
         <SearchParticipantComponent onValueChanged={(value) => setFilterTextWrapper(value)}/>
-        <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-scroll">
+        <div className="flex flex-row flex-wrap flex-1 gap-2">
           {participantsList
             .filter(x => x.name.includes(filterText))
             .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name))

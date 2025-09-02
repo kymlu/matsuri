@@ -74,11 +74,11 @@ export default function FormationEditorPage () {
   return (
       <div className='h-full overflow-hidden'>
         <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 grid-rows-[10svh,90svh]'>
-          <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-black border-solid'>
+          <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-solid border-grey'>
             <Button onClick={() => {navigate("../")}}>ホームに戻る</Button>
             {
             selectedFormation && selectedFestival && 
-            <h1 className='font-bold'>
+            <h1 className='font-bold text-center'>
               Editing {selectedSection?.songSection?.name} {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) @ {selectedFestival?.name}
             </h1>
             }
@@ -90,7 +90,7 @@ export default function FormationEditorPage () {
             </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>
-            <div className='h-full min-h-0 overflow-scroll'>
+            <div className='flex flex-1 h-full min-h-0 overflow-scroll'>
               <FormationEditor width={selectedFormation?.width ?? 20} height={selectedFormation?.length ?? 20}/>
             </div>
             {/* todo: warnings if some people aren't in all sections */}

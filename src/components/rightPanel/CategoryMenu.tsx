@@ -12,6 +12,8 @@ import { ParticipantPosition } from "../../models/Position.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import ColorPicker from "./ColorPicker.tsx";
 
+// bug: select participant, move, select colour, refresh. Will return to the original position but keep colour
+
 export default function CategoryMenu() {
   const {selectedItem, updateState} = useContext(UserContext);
   const userContext = useContext(UserContext);

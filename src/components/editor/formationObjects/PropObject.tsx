@@ -3,6 +3,8 @@ import { Rect, Text } from "react-konva";
 import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { ColorStyle } from "../../../themes/colours.ts";
+import { Shape, ShapeConfig } from "konva/lib/Shape";
+import { Stage } from "konva/lib/Stage";
 
 export interface PropObjectProps {
   name: string,
@@ -11,15 +13,24 @@ export interface PropObjectProps {
   startX: number,
   startY: number,
   isSelected?: boolean,
-  onClick: (forceSelect?: boolean) => void,
+  onClick?: (forceSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
+  onRotate?: (rotation: number, x: number, y: number) => void,
+  rotation: number
 }
 
 export default function PropObject(props: PropObjectProps) {
   function onClick(forceSelect?: boolean) {
     if (props.draggable) {
       props.onClick?.(forceSelect);
+    }
+  }
+
+  function onRotate(item: Shape<ShapeConfig> | Stage) {
+    if (props.onRotate) {
+      console.log("onRotate");
+      props.onRotate(item.attrs["rotation"], item.attrs["x"], item.attrs["y"]);
     }
   }
 
@@ -32,7 +43,9 @@ export default function PropObject(props: PropObjectProps) {
       updatePosition={props.updatePosition}
       rotateEnabled={true}
       resizeEnabled={false}
-      draggable={props.draggable}>
+      rotation={props.rotation}
+      draggable={props.draggable}
+      onTransform={onRotate}>
       <Rect x={props.startX}
         y={props.startY}
         width={props.length * GRID_SIZE}
@@ -43,12 +56,12 @@ export default function PropObject(props: PropObjectProps) {
       <Text x={props.startX}
         y={props.startY + FONT_SIZE}
         width={props.length * GRID_SIZE}
-        //height={GRID_SIZE}
+        // height={GRID_SIZE}
         text={props.name}
         fontSize={FONT_SIZE}
         fontStyle="bold"
         fill={props.colour.textColour}
-        verticalAlign="center"
+        verticalAlign="middle"
         align="center" />
     </BaseFormationObject>
   )

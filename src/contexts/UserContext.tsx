@@ -13,6 +13,7 @@ export interface AppState {
   currentSections: Array<FormationSongSection>,
   snapToGrid: boolean,
   compareMode: CompareMode,
+  isAnimating: boolean,
   updateState: (newState: Partial<AppState>) => void
 }
 
@@ -29,6 +30,7 @@ export const defaultState: AppState = {
   currentSections: [],
   snapToGrid: true,
   compareMode: "none",
+  isAnimating: false,
   updateState: (newState: Partial<AppState>) => {},
 }
 

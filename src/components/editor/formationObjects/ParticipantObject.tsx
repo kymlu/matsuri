@@ -11,7 +11,7 @@ export interface ParticipantObjectProps {
   startY: number,
   updatePosition?: (x: number, y: number) => void,
   isSelected?: boolean,
-  onClick: (forceSelect?: boolean) => void,
+  onClick?: (forceSelect?: boolean) => void,
   draggable?: boolean,
 }
 
