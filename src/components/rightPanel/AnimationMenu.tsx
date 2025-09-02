@@ -9,7 +9,7 @@ import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function AnimationMenu() {
   const {sections} = useContext(UserContext);
-  const {paths, updateAnimationContext} = useContext(AnimationContext);
+  const {updateAnimationContext} = useContext(AnimationContext);
 
   function animate() {
     Promise.all(

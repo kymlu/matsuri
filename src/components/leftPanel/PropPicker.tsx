@@ -12,12 +12,9 @@ export default function PropPicker () {
   const {propPositions, updatePositionState} = useContext(PositionContext);
   const {selectedFormation, selectedSection} = useContext(UserContext);
 
-  const [selectedProps, setSelectedProps] = useState<Array<string>>([]);
-
   function selectProp(newProp: Prop) {
     if(selectedSection === null) return;
     
-    setSelectedProps(prev => ([...prev, newProp.id]));
     var newPosition: PropPosition = {
       id: crypto.randomUUID().toString(),
       prop: newProp,
