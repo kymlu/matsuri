@@ -1,7 +1,6 @@
-import React, { ReactNode, useContext, useEffect, useRef } from "react";
+import React, { ReactNode, useEffect, useRef } from "react";
 import { Group, Transformer } from "react-konva";
 import { BLOCK_SNAP_SIZE } from "../../../data/consts.ts";
-import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
 import { basePalette } from "../../../themes/colours.ts";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
@@ -22,7 +21,6 @@ export interface FormationObjectProps {
 }
 
 export default function BaseFormationObject(props: FormationObjectProps) {
-  const {snapToGrid} = useContext(UserContext);
   const transformerRef = useRef<Konva.Transformer>(null);
   const groupRef = useRef<Konva.Group>(null);
   useEffect(() => {
@@ -49,19 +47,17 @@ export default function BaseFormationObject(props: FormationObjectProps) {
           props.onClick(true);
           const node = e.target;
           
-          if (snapToGrid){
-            var x = Math.round(node.x() / BLOCK_SNAP_SIZE) * BLOCK_SNAP_SIZE;
-            var y = Math.round(node.y() / BLOCK_SNAP_SIZE) * BLOCK_SNAP_SIZE;
-            node.to({
-              x: x,
-              y: y,
-              onFinish: () => {
-                props.updatePosition &&
-                props.updatePosition(node.attrs.x, node.attrs.y)
-              }
-            });
-            console.log(x, y);
-          }
+          var x = Math.round(node.x() / BLOCK_SNAP_SIZE) * BLOCK_SNAP_SIZE;
+          var y = Math.round(node.y() / BLOCK_SNAP_SIZE) * BLOCK_SNAP_SIZE;
+          node.to({
+            x: x,
+            y: y,
+            onFinish: () => {
+              props.updatePosition &&
+              props.updatePosition(node.attrs.x, node.attrs.y)
+            }
+          });
+          console.log(x, y);
         }}>
         {props.children}
       </Group>

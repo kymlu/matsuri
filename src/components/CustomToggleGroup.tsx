@@ -15,7 +15,7 @@ export interface CustomToggleGroupProps {
 
 export default function CustomToggleGroup(props: CustomToggleGroupProps){
   return (
-    <div className="flex flex-row items-center gap-2 my-2">
+    <div className="flex flex-row items-center justify-between gap-2 my-2">
       <label>セクション比較</label>
       <ToggleGroup
         defaultValue={["none"]} 

@@ -22,7 +22,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
         <span className="w-8 text-center">{expanded ? "—" : "+"}</span>
       </button>
       {expanded && 
-      <div className="flex-1 mt-2 overflow-auto max-h-40">
+      <div className="flex-1 px-2 mt-2 overflow-auto max-h-40">
         {props.children}
       </div>}
     </div>

@@ -11,7 +11,6 @@ export interface AppState {
   selectedItem: ParticipantPosition | PropPosition | NotePosition | null,
   sections: Array<FormationSongSection>,
   currentSections: Array<FormationSongSection>,
-  snapToGrid: boolean,
   compareMode: CompareMode,
   isAnimating: boolean,
   updateState: (newState: Partial<AppState>) => void
@@ -28,7 +27,6 @@ export const defaultState: AppState = {
   selectedSection: null,
   sections: [],
   currentSections: [],
-  snapToGrid: true,
   compareMode: "none",
   isAnimating: false,
   updateState: (newState: Partial<AppState>) => {},

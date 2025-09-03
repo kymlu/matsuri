@@ -1,15 +1,10 @@
 import React, { useContext } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
-import CustomSwitch from "../CustomSwitch.tsx";
 import { CompareMode, UserContext } from "../../contexts/UserContext.tsx";
 import CustomToggleGroup from "../CustomToggleGroup.tsx";
 
 export default function GridSettingsMenu() {
-  const {snapToGrid, updateState} = useContext(UserContext)
-
-  function onChangeSnapToGrid (value: boolean) {
-    updateState({snapToGrid: value})
-  }
+  const {updateState} = useContext(UserContext)
 
   function onCompareModeChanged(value: string) {
     updateState({compareMode: value as CompareMode});
@@ -17,7 +12,6 @@ export default function GridSettingsMenu() {
   
   return (
     <ExpandableSection title="表示設定" defaultIsExpanded>
-      <CustomSwitch label="グリッドにスナップ" defaultChecked={snapToGrid} onChange={(checked) => onChangeSnapToGrid(checked)}/>
       <CustomToggleGroup
         label="セクション比較"
         options={[

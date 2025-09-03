@@ -13,7 +13,7 @@ import { DEFAULT_WIDTH } from "../../data/consts.ts";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
-  const {selectedSection} = useContext(UserContext);
+  const {selectedSection, currentSections} = useContext(UserContext);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
@@ -34,19 +34,22 @@ export default function ParticipantPicker () {
       var count = participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id)).length;
       newParticipant = {...newParticipant, name: `${newParticipant.name} ${count}`};
     }
-    var newPosition: ParticipantPosition = {
-      id: crypto.randomUUID().toString(),
-      participant: newParticipant,
-      formationScene: selectedSection!,
-      x: DEFAULT_WIDTH/2,
-      x2: DEFAULT_WIDTH/2,
-      y: 2,
-      y2: 2,
-      category: participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id))?.[0]?.category ?? categoryList[0],
-      isSelected: false
-    };
-    updatePositionState({participantPositions: [...participantPositions, newPosition]});
-    dbController.upsertItem("participantPosition", newPosition);
+    var newPositions = currentSections.map(section => 
+      {
+        return {
+        id: crypto.randomUUID().toString(),
+        participant: newParticipant,
+        formationScene: section!,
+        x: 2,
+        x2: 2,
+        y: 2,
+        y2: 2,
+        category: participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id))?.[0]?.category ?? categoryList[0],
+        isSelected: false
+    } as ParticipantPosition});
+    console.log(newPositions);
+    updatePositionState({participantPositions: [...participantPositions, ...newPositions]});
+    dbController.upsertList("participantPosition", newPositions);
   }
   
   return (

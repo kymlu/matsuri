@@ -35,7 +35,7 @@ export default function PositionMenu(props: PositionMenuProps) {
 
   return (
     <ExpandableSection title="隊列" defaultIsExpanded>
-      <div className="grid grid-cols-[1fr,1fr,auto,auto,auto,1fr] justify-items-center items-center align-middle gap-2">
+      {/* <div className="grid grid-cols-[1fr,1fr,auto,auto,auto,1fr] justify-items-center items-center align-middle gap-2">
         <span></span>
         <span className="col-span-2 text-xs text-grey-500">{previousSectionName}</span>
         <span className="font-bold">{selectedSection?.songSection.name}</span>
@@ -53,7 +53,7 @@ export default function PositionMenu(props: PositionMenuProps) {
         <NumberTextField default={selectedItem?.y ?? 0} value={selectedItem?.y ?? 0} min={0} max={20}/>
         <span className="text-xs text-grey-500">{hasNext ? "▶︎" : ""}</span>
         <span className="text-xs text-grey-500">{hasNext ? nextY : ""}</span>
-      </div>
+      </div> */}
       {props.canRotate && 
       <>
         {/* TODO: add rotation */}

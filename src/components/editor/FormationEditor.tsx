@@ -32,6 +32,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * GRID_SIZE;
   const canvasWidth = DEFAULT_WIDTH * GRID_SIZE;
   const transformerRef = useRef(null);
+  console.log(userContext.selectedSection, participantPositions.map(x=> x.formationScene))
   
   useEffect(() => {
     if (compareMode === "previous") {
@@ -156,6 +157,16 @@ export default function FormationEditor(props: FormationEditorProps) {
           </Layer>
         }
         <Layer>
+          {
+            Object.entries(paths)
+              .map(path => 
+                <Path
+                  data={path[1]}
+                  stroke={objectPalette.cyan.main}
+                  strokeWidth={2}/>)
+          }
+        </Layer>
+        <Layer>
           <Transformer 
           ref={transformerRef}
           boundBoxFunc={(oldBox, newBox) => {
@@ -216,15 +227,6 @@ export default function FormationEditor(props: FormationEditorProps) {
             borderRadius={10}
             fontSize={12}
           />}
-        </Layer>
-        <Layer>
-          {
-            Object.entries(paths)
-              .map(path => 
-                <Path
-                  data={path[1]}
-                  stroke={objectPalette.cyan.main}
-                  strokeWidth={2}/>)}
         </Layer>
         { !isAnimating &&  compareMode === "next" && nextSectionId &&
           <Layer opacity={0.5}>
