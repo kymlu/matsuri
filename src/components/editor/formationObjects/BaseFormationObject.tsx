@@ -43,7 +43,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
         rotation={props.rotation ?? 0}
         onClick={e => {onClick()}}
         onTap={e => {onClick()}}
-        onDragEnd={e => {
+        onDragEnd={e => { // TODO: fix to always save position properly
           props.onClick(true);
           const node = e.target;
           

@@ -3,7 +3,7 @@ import { Layer, Path, Stage, Transformer } from "react-konva";
 import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
-import { DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
+import { CUSTOM_EVENT, DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
@@ -15,6 +15,7 @@ import { songList } from "../../data/ImaHitotabi.ts";
 import { useState } from "react";
 import NoteObject from "./formationObjects/NoteObject.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
+import Konva from "konva";
 
 export interface FormationEditorProps {
   height: number,
@@ -22,6 +23,7 @@ export interface FormationEditorProps {
 }
 
 export default function FormationEditor(props: FormationEditorProps) {
+  const canvasRef = useRef(null);
   const userContext = useContext(UserContext);
   const {paths} = useContext(AnimationContext);
   const {selectedItem, isAnimating, currentSections, compareMode, updateState} = useContext(UserContext);
@@ -32,7 +34,6 @@ export default function FormationEditor(props: FormationEditorProps) {
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * GRID_SIZE;
   const canvasWidth = DEFAULT_WIDTH * GRID_SIZE;
   const transformerRef = useRef(null);
-  console.log(userContext.selectedSection, participantPositions.map(x=> x.formationScene))
   
   useEffect(() => {
     if (compareMode === "previous") {
@@ -111,10 +112,11 @@ export default function FormationEditor(props: FormationEditorProps) {
   return (
     <div>
       <Stage
+        ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
         onClick={(event) => {
-          if (strEquals(typeof event.currentTarget, Stage.name)) {
+          if (strEquals(typeof event.currentTarget, Stage.name)) { //https://konvajs.org/docs/events/Stage_Events.html
             updateState({selectedItem: null});
             participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
             propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);

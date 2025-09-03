@@ -4,7 +4,7 @@ export interface Formation {
   songId: string,
   type: FormationType,
   length: number,
-  width: number
+  width: number,
 }
 
 export enum FormationType {

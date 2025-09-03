@@ -141,8 +141,14 @@ export class IndexedDBController {
     console.log(`getAll ${storeName} called`);
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").getAll();
-      request.onsuccess = () => resolve(request.result || null);
-      request.onerror = (e) => reject(e);
+      request.onsuccess = () => {
+        console.log(`resolved getAll: ${request.result}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on getAll: ${request.error}`);
+        reject(request.error);
+      };
     });
   }
 
@@ -150,8 +156,14 @@ export class IndexedDBController {
     console.log(`findById ${storeName} called`);
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").get(id);
-      request.onsuccess = () => resolve(request.result || null);
-      request.onerror = (e) => reject(e);
+      request.onsuccess = () => {
+        console.log(`resolved findById: ${request.result}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on findById: ${request.error}`);
+        reject(request.error);
+      };
     });
   }
 
@@ -159,8 +171,14 @@ export class IndexedDBController {
     console.log(`upsertItem ${storeName} called`);
     return new Promise<number>((resolve, reject) => {
       const request = this._getStore(storeName).put(item);
-      request.onsuccess = () => resolve(request.result as number);
-      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        console.log(`resolved upsertItem: ${request.result as number}`);
+        resolve(request.result as number);
+      };
+      request.onerror = () => {
+        console.error(`error on upsertItem: ${request.error}`);
+        reject(request.error);
+      };
     });
   }
 
@@ -170,8 +188,14 @@ export class IndexedDBController {
       const tx = this._getTransaction(storeName);
       const store = tx.objectStore(storeName);
       list.forEach(item => store.put(item));
-      tx.oncomplete = () => resolve(list.length);
-      tx.onerror = (e) => reject(e);
+      tx.oncomplete = () => {
+        console.log(`resolved upsertList: ${list.length}`);
+        resolve(list.length);
+      };
+      tx.onerror = () => {
+        console.error(`error on upsertList: ${tx.error}`);
+        reject(tx.error);
+      };
     });
   }
 
@@ -179,8 +203,31 @@ export class IndexedDBController {
     console.log(`removeItem ${storeName} called`);
     return new Promise<any>((resolve, reject) => {
       const request = this._getStore(storeName).delete(item);
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        console.log(`resolved removeItem: ${request.result}`);
+        resolve(request.result);
+      };
+      request.onerror = () => {
+        console.error(`error on removeItem: ${request.error}`);
+        reject(request.error);
+      };
+    })
+  }
+
+  async removeList(storeName: TableName, list: Array<any>) {
+    console.log(`removeList ${storeName} called`);
+    return new Promise<any>((resolve, reject) => {
+      const tx = this._getTransaction(storeName);
+      const store = tx.objectStore(storeName);
+      list.forEach(item => store.delete(item.id));
+      tx.oncomplete = () => {
+        console.log(`resolved removeList: ${list.length}`);
+        resolve(list.length);
+      };
+      tx.onerror = () => {
+        console.error(`error on removeList: ${tx.error}`);
+        reject(tx.error);
+      };
     })
   }
 }

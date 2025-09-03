@@ -11,7 +11,8 @@ import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { FormationSongSection } from '../models/FormationSection.ts';
 import { ParticipantPosition, PropPosition } from '../models/Position.ts';
-import { strEquals } from '../components/helpers/GlobalHelper.ts';
+import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
+import { DEFAULT_WIDTH } from '../data/consts.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
@@ -38,13 +39,31 @@ export default function FormationEditorPage () {
   }, [])
 
   useEffect(() => {
-    if (selectedFormation === null) {
+    if (isNullOrUndefined(selectedFormation)) {
       navigate("../");
+      return;
     }
 
     const currentSections = sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order);
-    updateState({currentSections: currentSections});
-    updateState({selectedSection: currentSections[0]});
+    const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
+    .flatMap((_, row) =>
+      Array.from({ length: selectedFormation!.length }).map((_, col) => [ row + 1, col + 2])
+    );
+  
+    const rightPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
+    .flatMap((_, row) =>
+      Array.from({ length: selectedFormation!.length }).map((_, col) => [ (DEFAULT_WIDTH + selectedFormation!.width) / 2 + row + 1, col + 2])
+    );
+  
+    const margins = [...leftPositions, ...rightPositions];
+
+    updateState({
+      currentSections: currentSections,
+      selectedSection: currentSections[0],
+      marginPositions: margins,
+      currentMarginPosition: 0 // todo: change formation to store participants or # participants and set this to the count
+    });
+    console.log("Margins", margins);
   }, [userContext.selectedFormation]);
 
   useEffect(() => {
