@@ -96,8 +96,8 @@ export default function FormationEditorPage () {
           <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-solid border-grey'>
             <Button onClick={() => {navigate("../")}}>ホームに戻る</Button>
             {
-            selectedFormation && selectedFestival && 
-            <h1 className='font-bold text-center'>
+            selectedFormation && selectedFestival &&
+            <h1 className='px-2 font-bold text-center'>
               Editing {selectedSection?.songSection?.name} {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) @ {selectedFestival?.name}
             </h1>
             }

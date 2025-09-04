@@ -15,10 +15,16 @@ export interface ListOptionButtonProps {
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
   const classes = className("flex flex-row px-10", {
-    "bg-primary text-white": props.isSelected,
+    "bg-primary text-white cursor-default": props.isSelected,
     "cursor-pointer": !props.isSelected,
     "border-b-2 border-primary": !props.isBottom,
   });
+
+  function onClick(e: React.MouseEvent<HTMLButtonElement>) {
+    if (!props.isSelected) {
+      props.onClick?.(e);
+    }
+  }
 
   function copyToCurrent() {
     props?.onCopyToCurrent?.();
@@ -37,12 +43,12 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
   }
 
   return (
-    <div className={classes} >
-      <button className="flex-1" onClick={props.onClick} disabled={props.isSelected}>
+    <button className={classes} onClick={onClick}>
+      <span className="flex-1">
         {props.text}
-      </button>
+      </span>
       <Menu.Root>
-        <Menu.Trigger>
+        <Menu.Trigger onClick={(e) => {e.stopPropagation()}}>
           ⚙️
           </Menu.Trigger>
         <Menu.Portal>
@@ -55,24 +61,24 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
               {
                 !props.isSelected &&
                 <>
-                  <Menu.Item className="text-center" onClick={() => copyToCurrent()}>選択項目にコピー</Menu.Item>
+                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}>選択項目にコピー</Menu.Item>
                 </>
               }
               {
                 props.isSelected && 
                 <>
-                  <Menu.Item className="text-center" onClick={() => copyToFuture()}>Propagate to all next</Menu.Item>
+                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); copyToFuture(); }}>Propagate to all next</Menu.Item>
                   <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
-                  <Menu.Item className="text-center" onClick={() => createDerivitive()}>派生作成</Menu.Item>
+                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); createDerivitive(); }}>派生作成</Menu.Item>
                   <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
-                  <Menu.Item className="text-center" onClick={() => resetPosition()}>リセット</Menu.Item>
+                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); resetPosition(); }}>リセット</Menu.Item>
                 </>
               }
             </Menu.Popup>
           </Menu.Positioner>
         </Menu.Portal>
       </Menu.Root>
-    </div>
+    </button>
   )
 }
 
