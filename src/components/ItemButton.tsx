@@ -2,6 +2,7 @@ import React from "react";
 import className from "classnames";
 import { Participant } from "../models/Participant.ts";
 import { Prop } from "../models/Prop.ts";
+import { isNullOrUndefined } from "./helpers/GlobalHelper.ts";
 
 export interface ItemButtonProps {
   item: Participant | Prop,
@@ -15,7 +16,7 @@ export default function ItemButton (props: ItemButtonProps) {
   });
   return (
     <button className={classes} onClick={props.onClick}>
-      {props.item.name}
+      {isNullOrUndefined(props.item.id) && "NEW: "} {props.item.name}
     </button>
   )
 }

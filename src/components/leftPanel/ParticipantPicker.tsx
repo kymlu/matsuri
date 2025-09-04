@@ -7,7 +7,7 @@ import SearchParticipantComponent from "../SearchParticipantComponent.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { DEFAULT_WIDTH } from "../../data/consts.ts";
 
@@ -56,20 +56,31 @@ export default function ParticipantPicker () {
     updatePositionState({participantPositions: [...participantPositions, ...newPositions]});
     dbController.upsertList("participantPosition", newPositions);
   }
+
+  var participantListDisplay = participantsList
+    .filter(x => x.name.toLowerCase().includes(filterText.toLowerCase()))
+    .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name));
   
   return (
     <ExpandableSection title="参加者">
       <SearchParticipantComponent onValueChanged={(value) => setFilterTextWrapper(value)}/>
       <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-scroll max-h-28">
-        {participantsList
-          .filter(x => x.name.includes(filterText))
-          .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name))
+        {participantListDisplay
           .map(participant => 
             <ItemButton
             key={participant.id}
             item={participant}
             //isDisabled={selectedParticipants.includes(participant.id)}
             onClick={() => selectParticipant(participant)}/>)} 
+        {
+          !isNullOrUndefinedOrBlank(filterText) &&
+          <>
+            <ItemButton
+              item={{name: filterText} as Participant}
+              //isDisabled={selectedParticipants.includes(participant.id)}
+              onClick={() => selectParticipant({name: filterText} as Participant)}/> 
+          </>
+        }
       {/* todo: disable if used */}
       {/* todo: add undecided */}
       </div>
