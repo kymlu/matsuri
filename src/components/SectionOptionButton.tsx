@@ -67,11 +67,15 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
               {
                 props.isSelected && 
                 <>
-                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); copyToFuture(); }}>以降にコピー</Menu.Item>
-                  <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
-                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); createDerivitive(); }}>派生作成（無効）</Menu.Item>
-                  <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
-                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); resetPosition(); }}>リセット</Menu.Item>
+                  <MenuItem label="名前を編集" onClick={() => {}} />
+                  <MenuSeparator />
+                  <MenuItem label="以降にコピー" onClick={copyToFuture} />
+                  <MenuSeparator />
+                  <MenuItem label="派生作成（無効）" onClick={createDerivitive} />
+                  <MenuSeparator />
+                  <MenuItem label="リセット" onClick={resetPosition} />
+                  <MenuSeparator />
+                  <MenuItem label="削除（無効）" onClick={copyToFuture} />
                 </>
               }
             </Menu.Popup>
@@ -82,6 +86,31 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
   )
 }
 
+function MenuSeparator() {
+  return (
+    <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
+  )
+}
+
+interface MenuItemProps {
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  className?: string;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({ label, onClick, className }) => {
+  return (
+    <Menu.Item
+      className={`p-1 text-center rounded-md cursor-pointer hover:bg-grey-200 ${className || ''}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e);
+      }}
+    >
+      {label}
+    </Menu.Item>
+  );
+};
 
 function ArrowSvg(props: React.ComponentProps<'svg'>) {
   return (

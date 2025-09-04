@@ -12,8 +12,9 @@ export default function ColorSwatch(props: ColorSwatchProps) {
     "border-grey-500 border border-solid": strEquals(props.tailwindColorClassName, "bg-white")
   });
   return (
-        <button
-          key={props.tailwindColorClassName}
-          className={c}
-          onClick={() => props.onClick()}/>)
+    <button
+      key={props.tailwindColorClassName}
+      className={c}
+      onClick={() => props.onClick()}/>
+  )
 }

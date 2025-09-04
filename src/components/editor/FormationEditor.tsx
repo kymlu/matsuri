@@ -166,7 +166,7 @@ export default function FormationEditor(props: FormationEditorProps) {
             startY={GRID_SIZE * 0.25}
             height={1}
             length={3}
-            colour={objectColorSettings.purpleLight}
+            colour={objectColorSettings.purpleLightest}
             borderRadius={10}
             />
         </Layer>

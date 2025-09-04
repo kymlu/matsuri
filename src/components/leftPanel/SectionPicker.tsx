@@ -9,7 +9,7 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 
 export default function SectionPicker () {
-  const {selectedFormation, sections, currentSections, selectedSection, updateState, marginPositions} = useContext(UserContext);
+  const {currentSections, selectedSection, updateState, marginPositions} = useContext(UserContext);
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
 
   function selectSection(section: FormationSongSection) {

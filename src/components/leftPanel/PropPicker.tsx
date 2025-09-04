@@ -20,11 +20,11 @@ export default function PropPicker () {
 
     var newProp = {...selectedProp, id: crypto.randomUUID()};
     
-    var newPositions: PropPosition[] = currentSections.map(prop => {
+    var newPositions: PropPosition[] = currentSections.map(section => {
       return {
         id: crypto.randomUUID().toString(),
         propId: newProp.id,
-        formationSceneId: selectedSection!.id,
+        formationSceneId: section.id,
         x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
         y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
