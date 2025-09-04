@@ -3,7 +3,7 @@ import { FormationSongSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
 import { categoryList, festivalList, teamMembers, songList } from "./ImaHitotabi.ts";
 
-type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "formationSection";
+type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "formationSection";
 
 export class IndexedDBController {
   db!: IDBDatabase;
@@ -39,6 +39,9 @@ export class IndexedDBController {
       }
       if (!db.objectStoreNames.contains("propPosition")) {
         db.createObjectStore("propPosition", { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains("notePosition")) {
+        db.createObjectStore("notePosition", { keyPath: "id", autoIncrement: true });
       }
       if (!db.objectStoreNames.contains("formationSection")) {
         db.createObjectStore("formationSection", { keyPath: "id", autoIncrement: true });

@@ -6,9 +6,9 @@ import GridSettingsMenu from "./GridSettingsMenu.tsx";
 import AnimationMenu from "./AnimationMenu.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import ColorPickerMenu from "./ColorPickerMenu.tsx";
-import TextEditor from "./TextEditor.tsx";
 import ActionMenu from "./ActionMenu.tsx";
 import NameEditor from "./NameEditor.tsx";
+import NoteEditor from "./NoteEditor.tsx";
 
 export default function FormationRightPanel () {
   const {selectedItem} = useContext(UserContext);
@@ -43,7 +43,7 @@ export default function FormationRightPanel () {
       }
       { selectedItem !== null && "text" in selectedItem &&
         <>
-          <TextEditor/>
+          <NoteEditor/>
           <Divider/>
         </>
       }

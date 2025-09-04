@@ -10,7 +10,7 @@ import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { FormationSongSection } from '../models/FormationSection.ts';
-import { ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
 import { CONTEXT_NAMES, DB_NAME, DEFAULT_WIDTH } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
@@ -81,17 +81,28 @@ export default function FormationEditorPage () {
   useEffect(() => {
     Promise.all(
       [ dbController.getAll("participantPosition"),
-        dbController.getAll("propPosition")])
-      .then(([participantPosition, propPosition]) => {
+        dbController.getAll("propPosition"),
+        dbController.getAll("notePosition"),
+      ])
+      .then(([participantPosition, propPosition, notePosition]) => {
       try {
         var participantPositionList = participantPosition as Array<ParticipantPosition>;
-        participantPositionList.forEach(x => x.isSelected = strEquals(x.id, selectedItem?.id));
+        participantPositionList.forEach(x => x.isSelected = false);
+        
         var propPositionList = propPosition as Array<PropPosition>;
-        propPositionList.forEach(x => x.isSelected = strEquals(x.id, selectedItem?.id));
+        propPositionList.forEach(x => x.isSelected = false);
+
+        var notePositionList = notePosition as Array<NotePosition>;
+        notePositionList.forEach(x => x.isSelected = false);
+        
         updatePositionState({
           participantPositions: participantPositionList,
           propPositions: propPositionList
         });
+        updateFormationContext({
+          noteList: notePositionList
+        });
+        
         participantPositions.forEach(p => { // todo: remove, probably
           p.x2 = p.x;
           p.y2 = p.y;

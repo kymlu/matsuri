@@ -7,7 +7,7 @@ import { CUSTOM_EVENT, DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../dat
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
-import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { NotePosition, ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
@@ -26,7 +26,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const canvasRef = useRef(null);
   const userContext = useContext(UserContext);
   const {paths} = useContext(AnimationContext);
-  const {participantList, propList} = useContext(FormationContext);
+  const {participantList, propList, noteList} = useContext(FormationContext);
   const {selectedItem, isAnimating, currentSections, compareMode, updateState} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
@@ -65,6 +65,14 @@ export default function FormationEditor(props: FormationEditorProps) {
       dbController.upsertItem("propPosition", {...prop, x: prop.x2, y: prop.y2});
     }
   }
+  function updateNotePosition(id: string, x: number, y: number) {
+    var prop = noteList.find(x => strEquals(x.id, id));
+    if (prop) {
+      prop.x2 = (prop.x * GRID_SIZE + x)/GRID_SIZE;
+      prop.y2 = (prop.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
+      dbController.upsertItem("notePosition", {...prop, x: prop.x2, y: prop.y2});
+    }
+  }
 
   function updatePropRotation(id: string, angle: number, x: number, y: number) {
     var prop = propPositions.find(x => strEquals(x.id, id));
@@ -84,31 +92,22 @@ export default function FormationEditor(props: FormationEditorProps) {
     return gridY * GRID_SIZE; // todo
   }
 
-  // todo: redundant, fix
-  function selectParticipant(participant: ParticipantPosition, forceSelect?: boolean) {
-    if (selectedItem === null || !strEquals(selectedItem.id, participant.id)) {
-      updateState({selectedItem: participant});
-      participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      participant.isSelected = true;
-    } else if (!forceSelect) {
-      updateState({selectedItem: null});
-      participant.isSelected = false;
-    }
-  }
+  function selectItem(
+    item: ParticipantPosition | PropPosition | NotePosition | null,
+    forceSelect?: boolean) {
+      if (item === null) return;
 
-  // todo: redundant, fix
-  function selectProp(prop: PropPosition, forceSelect?: boolean) {
-    if (selectedItem === null || !strEquals(selectedItem.id, prop.id)) {
-      updateState({selectedItem: prop});
-      participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      prop.isSelected = true;
-    } else if (!forceSelect) {
-      updateState({selectedItem: null});
-      prop.isSelected = false;
+      if (selectedItem === null || !strEquals(selectedItem.id, item.id)) {
+        updateState({selectedItem: item});
+        participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+        propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+        noteList.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+        item.isSelected = true;
+      } else if (!forceSelect) {
+        updateState({selectedItem: null});
+        item.isSelected = false;
+      }
     }
-  }
 
   return (
     <div>
@@ -203,7 +202,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectProp(placement, forceSelect)}
+                  onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)}
                   draggable 
                   rotation={placement.angle} 
                   onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
@@ -221,7 +220,28 @@ export default function FormationEditor(props: FormationEditorProps) {
                   startY={getPixelY(placement.y)}
                   isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectParticipant(placement, forceSelect)} 
+                  onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)} 
+                  draggable
+                />
+            )
+          }
+          { noteList
+              .filter(note => strEquals(userContext.selectedSection?.id, note.formationSceneId))
+              .map(note => 
+                <NoteObject 
+                  key={note.id}
+                  colour={note.color ?? objectColorSettings.blueLight} 
+                  startX={getPixelX(note.x)} 
+                  startY={getPixelY(note.y)}
+                  isSelected={note.isSelected}
+                  height={note.height}
+                  length={note.width}
+                  label={note.label}
+                  text={note.text}
+                  borderRadius={note.borderRadius}
+                  fontSize={note.fontSize}
+                  updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
+                  onClick={(forceSelect?: boolean) => selectItem(note, forceSelect)} 
                   draggable
                 />
             )

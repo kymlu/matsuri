@@ -27,13 +27,17 @@ export const NOTE_PRESETS = {
     height: 0.75,
     borderRadius: 10,
     fontSize: 20,
-    color: objectColorSettings.grey4
+    color: objectColorSettings.grey4,
+    hasLabel: false,
+    defaultContent: "1"
   },
   "legend": {
     length: 5,
     height: 3,
     borderRadius: 10,
     fontSize: 12,
-    color: objectColorSettings.amberLight
+    color: objectColorSettings.amberLight,
+    hasLabel: true,
+    defaultContent: "これはメモです。"
   }
 }

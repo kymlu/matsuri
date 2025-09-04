@@ -3,7 +3,7 @@ import SectionPicker from "./SectionPicker.tsx";
 import ParticipantPicker from "./ParticipantPicker.tsx";
 import PropPicker from "./PropPicker.tsx";
 import Divider from "../Divider.tsx";
-import ShapePicker from "./ShapePicker.tsx";
+import NotePicker from "./NotePicker.tsx";
 
 export default function FormationLeftPanel () {
   return (
@@ -14,7 +14,7 @@ export default function FormationLeftPanel () {
       <Divider/>
       <PropPicker/>
       <Divider/>
-      <ShapePicker/>
+      <NotePicker/>
     </div>
   )
 }

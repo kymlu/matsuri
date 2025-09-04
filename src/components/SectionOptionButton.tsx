@@ -67,7 +67,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
               {
                 props.isSelected && 
                 <>
-                  <MenuItem label="名前を編集" onClick={() => {}} />
+                  <MenuItem label="名前を編集（無効）" onClick={() => {}} />
                   <MenuSeparator />
                   <MenuItem label="以降にコピー" onClick={copyToFuture} />
                   <MenuSeparator />
@@ -75,7 +75,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
                   <MenuSeparator />
                   <MenuItem label="リセット" onClick={resetPosition} />
                   <MenuSeparator />
-                  <MenuItem label="削除（無効）" onClick={copyToFuture} />
+                  <MenuItem label="削除（無効）" onClick={() => {}} />
                 </>
               }
             </Menu.Popup>

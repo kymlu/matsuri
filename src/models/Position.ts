@@ -26,5 +26,7 @@ export interface NotePosition extends Position {
   text: string,
   color?: ColorStyle,
   width: number,
-  height: number
+  height: number,
+  borderRadius: number,
+  fontSize: number,
 }
