@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/matsuri/static/css/main.58215273.css",
-    "main.js": "/matsuri/static/js/main.08db5178.js",
+    "main.js": "/matsuri/static/js/main.cace2d00.js",
     "service-worker.js": "/matsuri/service-worker.js",
     "index.html": "/matsuri/index.html",
     "main.58215273.css.map": "/matsuri/static/css/main.58215273.css.map",
-    "main.08db5178.js.map": "/matsuri/static/js/main.08db5178.js.map"
+    "main.cace2d00.js.map": "/matsuri/static/js/main.cace2d00.js.map"
   },
   "entrypoints": [
     "static/css/main.58215273.css",
-    "static/js/main.08db5178.js"
+    "static/js/main.cace2d00.js"
   ]
 }
