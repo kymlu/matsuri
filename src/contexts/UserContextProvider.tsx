@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import { AppState, AppStateData, defaultState, UserContext } from './UserContext.tsx'
+import { CONTEXT_NAMES } from '../data/consts.ts'
 
 interface Props {
   children: React.ReactNode
@@ -30,7 +31,7 @@ export const UserContextProvider: React.FunctionComponent<Props> = (props: Props
    */
   const updateState = (newState: Partial<AppState>) => {
     setState(prev => ({ ...prev, ...newState }))
-    localStorage.setItem("userManager", JSON.stringify({ ...state, ...newState }))
+    localStorage.setItem(CONTEXT_NAMES.user, JSON.stringify({ ...state, ...newState }))
   }
 
   /**

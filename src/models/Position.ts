@@ -1,12 +1,8 @@
 import { ColorStyle } from "../themes/colours.ts"
-import { FormationSongSection } from "./FormationSection.ts"
-import { Participant } from "./Participant.ts"
-import { ParticipantCategory } from "./ParticipantCategory.ts"
-import { Prop } from "./Prop"
 
 export interface Position {
   id: string,
-  formationScene: FormationSongSection,
+  formationSceneId: string,
   x2: number,
   y2: number,
   x: number,
@@ -15,14 +11,12 @@ export interface Position {
 }
 
 export interface ParticipantPosition extends Position {
-  participant: Participant,
+  participantId: string,
   categoryId?: string,
-  category: ParticipantCategory | undefined,
 }
 
 export interface PropPosition extends Position {
-  prop: Prop,
-  displayName?: string,
+  propId: string,
   color?: ColorStyle,
   angle: number
 }

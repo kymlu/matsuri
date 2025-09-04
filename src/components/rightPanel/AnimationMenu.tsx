@@ -8,7 +8,7 @@ import { GRID_SIZE } from "../../data/consts.ts";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function AnimationMenu() {
-  const {sections} = useContext(UserContext);
+  const {currentSections} = useContext(UserContext);
   const {updateAnimationContext} = useContext(AnimationContext);
 
   function animate() {
@@ -18,32 +18,33 @@ export default function AnimationMenu() {
       ])
       .then(([res1]) => {
       try {
-        var sectionIds = sections.map(x => x.id);
+        var sectionIds = currentSections.sort((a, b) => a.order - b.order).map(x => x.id);
         var participantList = (res1 as Array<ParticipantPosition>)
-          .filter(x => sectionIds.includes(x.formationScene.id))
+          .filter(x => sectionIds.includes(x.formationSceneId))
           .reduce((acc, item) => {
-            const key = item.participant.id;
+            const key = item.participantId;
             if (!acc[key]) {
               acc[key] = [];
             }
             acc[key].push(item);
             return acc;
           }, {} as Record<string, ParticipantPosition[]>);
-          const animationPaths = Object.fromEntries(Object.entries((participantList))
-            .map(([key, positionList]) => {
-              const path = positionList
-                .sort((a, b) => a.formationScene.songSection.order - b.formationScene.songSection.order)
-                .reduce((acc, point, index) => {
-                  if (index === 0) {
-                    return `M${point.x * GRID_SIZE} ${point.y * GRID_SIZE}`;
-                  } else {
-                    return `${acc} L${point.x * GRID_SIZE} ${point.y * GRID_SIZE}`;
-                  }
-                }, "");
-              return [key, path];
-          }));
-          console.log(animationPaths);
-          updateAnimationContext({paths: animationPaths});
+        
+        const animationPaths = Object.fromEntries(Object.entries((participantList))
+          .map(([key, positionList]) => {
+            const path = positionList
+              .sort((a, b) => sectionIds.indexOf(a.formationSceneId) - sectionIds.indexOf(b.formationSceneId))
+              .reduce((acc, point, index) => {
+                if (index === 0) {
+                  return `M${point.x * GRID_SIZE} ${point.y * GRID_SIZE}`;
+                } else {
+                  return `${acc} L${point.x * GRID_SIZE} ${point.y * GRID_SIZE}`;
+                }
+              }, "");
+            return [key, path];
+        }));
+        console.log(animationPaths);
+        updateAnimationContext({paths: animationPaths});
       } catch (e) {
         console.error('Error parsing user from localStorage:', e);
       }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { propsList } from "../../data/ImaHitotabi.ts";
 import ExpandableSection from "../ExpandableSection.tsx";
 import ItemButton from "../ItemButton.tsx";
@@ -7,28 +7,39 @@ import { Prop } from "../../models/Prop.ts";
 import { PropPosition } from "../../models/Position.ts";
 import { objectColorSettings } from "../../themes/colours.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { dbController } from "../../data/DBProvider.tsx";
 
 export default function PropPicker () {
   const {propPositions, updatePositionState} = useContext(PositionContext);
-  const {selectedFormation, selectedSection} = useContext(UserContext);
+  const {selectedFormation, currentSections, selectedSection} = useContext(UserContext);
+  const {propList, updateFormationContext} = useContext(FormationContext);
 
-  function selectProp(newProp: Prop) {
+  function selectProp(selectedProp: Prop) {
     if(selectedSection === null) return;
-    
-    var newPosition: PropPosition = {
-      id: crypto.randomUUID().toString(),
-      prop: newProp,
-      formationScene: selectedSection!,
-      x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-      x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-      y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-      y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-      color: objectColorSettings.grey3,
-      isSelected: false,
-      angle: 0
-    };
 
-      updatePositionState({propPositions: [...propPositions, newPosition]});
+    var newProp = {...selectedProp, id: crypto.randomUUID()};
+    
+    var newPositions: PropPosition[] = currentSections.map(prop => {
+      return {
+        id: crypto.randomUUID().toString(),
+        propId: newProp.id,
+        formationSceneId: selectedSection!.id,
+        x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
+        x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
+        y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
+        y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
+        color: objectColorSettings.grey3,
+        isSelected: false,
+        angle: 0
+      } as PropPosition;
+    });
+
+    updateFormationContext({propList: [...propList, newProp]});
+    updatePositionState({propPositions: [...propPositions, ...newPositions]});
+
+    dbController.upsertItem("prop", newProp);
+    dbController.upsertList("propPosition", newPositions);
   }
   
   return (

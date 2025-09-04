@@ -12,10 +12,14 @@ import { PositionContext } from '../contexts/PositionContext.tsx';
 import { FormationSongSection } from '../models/FormationSection.ts';
 import { ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
-import { DEFAULT_WIDTH } from '../data/consts.ts';
+import { CONTEXT_NAMES, DB_NAME, DEFAULT_WIDTH } from '../data/consts.ts';
+import { FormationContext } from '../contexts/FormationContext.tsx';
+import { Prop } from '../models/Prop.ts';
+import { Participant } from '../models/Participant.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
+  const {updateFormationContext} = useContext(FormationContext)
   const {selectedFestival, selectedFormation, selectedSection, selectedItem, sections, updateState} = useContext(UserContext)
   const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext)
@@ -23,8 +27,12 @@ export default function FormationEditorPage () {
 
   useEffect(() => {
     Promise.all(
-      [dbController.getAll("category"),
-        dbController.getAll("formationSection")]).then(([categoryList, formationSongSections]) => {
+      [
+        dbController.getAll("category"),
+        dbController.getAll("formationSection"),
+        dbController.getAll("participant"),
+        dbController.getAll("prop")
+      ]).then(([categoryList, formationSongSections, participants, props]) => {
       try {
         updateState({
           sections: (formationSongSections as Array<FormationSongSection>)
@@ -32,6 +40,10 @@ export default function FormationEditorPage () {
         updateCategoryContext({
           categories: categoryList as Array<ParticipantCategory>
         });
+        updateFormationContext({
+          participantList: participants as Array<Participant>,
+          propList: props as Array<Prop>
+        })
       } catch (e) {
         console.error('Error parsing user from localStorage:', e);
       }
@@ -44,7 +56,9 @@ export default function FormationEditorPage () {
       return;
     }
 
-    const currentSections = sections.filter(x => strEquals(x.formationId, selectedFormation?.id)).sort((a,b) => a.songSection.order - b.songSection.order);
+    const currentSections = sections
+      .filter(x => strEquals(x.formationId, selectedFormation?.id))
+      .sort((a,b) => a.songSection.order - b.songSection.order);
     const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
     .flatMap((_, row) =>
       Array.from({ length: selectedFormation!.length }).map((_, col) => [ row + 1, col + 2])
@@ -61,9 +75,7 @@ export default function FormationEditorPage () {
       currentSections: currentSections,
       selectedSection: currentSections[0],
       marginPositions: margins,
-      currentMarginPosition: 0 // todo: change formation to store participants or # participants and set this to the count
     });
-    console.log("Margins", margins);
   }, [userContext.selectedFormation]);
 
   useEffect(() => {
@@ -102,9 +114,10 @@ export default function FormationEditorPage () {
             </h1>
             }
             <Button onClick={() => {
-                localStorage.removeItem("userManager");
-                localStorage.removeItem("formationManager");
-                indexedDB.deleteDatabase("MatsuriDB");
+              Object.values(CONTEXT_NAMES).forEach((context) => {
+                localStorage.removeItem(context);
+              });
+              indexedDB.deleteDatabase(DB_NAME);
             }}>Delete cache</Button>
             </header>
           <div className='flex flex-row gap-0'>

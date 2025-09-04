@@ -1,16 +1,16 @@
 import { isNullOrUndefined, strEquals } from "../components/helpers/GlobalHelper.ts";
 import { FormationSongSection } from "../models/FormationSection.ts";
-import { CUSTOM_EVENT } from "./consts.ts";
-import { categoryList, festivalList, participantsList, songList } from "./ImaHitotabi.ts";
+import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
+import { categoryList, festivalList, teamMembers, songList } from "./ImaHitotabi.ts";
 
-type TableName = "festival" | "song" |  "category" | "participant" | "participantPosition" | "propPosition" | "formationSection";
+type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "formationSection";
 
 export class IndexedDBController {
   db!: IDBDatabase;
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open("MatsuriDB", 2);
+    const request = indexedDB.open(DB_NAME, 2);
     request.onupgradeneeded = async (event) => {
       console.log("Upgrading database");
       const db = (event.target as IDBOpenDBRequest).result;
@@ -28,6 +28,10 @@ export class IndexedDBController {
 
       if (!db.objectStoreNames.contains("participant")) {
         db.createObjectStore("participant", { keyPath: "id", autoIncrement: true });
+      }
+
+      if (!db.objectStoreNames.contains("prop")) {
+        db.createObjectStore("prop", { keyPath: "id", autoIncrement: true });
       }
 
       if (!db.objectStoreNames.contains("participantPosition")) {
@@ -75,14 +79,6 @@ export class IndexedDBController {
         promise: () => this.getAll("category").then(list => {
           if ((list as Array<any>).length === 0) {
             return this.upsertList("category", categoryList);
-          }
-        })
-      },
-      {
-        name: "participant",
-        promise: () => this.getAll("participant").then(list => {
-          if ((list as Array<any>).length === 0) {
-            return this.upsertList("participant", participantsList);
           }
         })
       },

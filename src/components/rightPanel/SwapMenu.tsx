@@ -5,22 +5,23 @@ import ItemButton from "../ItemButton.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export default function SwapMenu() {
   const {selectedSection, selectedItem} = useContext(UserContext);
+  const {participantList} = useContext(FormationContext);
   const {participantPositions} = useContext(PositionContext);
 
   return (
     <ExpandableSection title="隊列交換">
       <div className="flex flex-row flex-wrap gap-2">
-          {participantPositions
-            .filter(x => strEquals(x.formationScene.id, selectedSection?.id) && (selectedItem == null || !("participant" in selectedItem) || !strEquals(x.participant.id, selectedItem?.participant.id)))
-            .flatMap(x => x.participant)
-            .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name))
+          {participantList
+            .filter(x => (selectedItem == null || !("participantId" in selectedItem) || !strEquals(x.id, selectedItem?.participantId)))
+            .sort((a, b) => a.displayName.localeCompare(b.displayName))
             .map(participant => 
               <ItemButton
-              key={participant.id}
-              item={participant}/>)} 
+                key={participant.id}
+                item={{name: participant.displayName, id: participant.id}}/>)} 
             {/* todo: disable if used */}
             {/* todo: add undecided */}
         </div>

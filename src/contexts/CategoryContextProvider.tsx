@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 import { CategoryContext, CategoryContextData, CategoryContextState, defaultCategoryContext } from './CategoryContext.tsx'
+import { CONTEXT_NAMES } from '../data/consts.ts'
 
 interface Props {
   children: React.ReactNode
@@ -19,7 +20,7 @@ export const CategoryContextProvider: React.FunctionComponent<Props> = (props: P
    */
   const updateCategoryContext = (newState: Partial<CategoryContextState>) => {
     setState(prev => ({ ...prev, ...newState }))
-    localStorage.setItem("formationManager", JSON.stringify({ ...state, ...newState }))
+    localStorage.setItem(CONTEXT_NAMES.category, JSON.stringify({ ...state, ...newState }))
   }
 
   /**

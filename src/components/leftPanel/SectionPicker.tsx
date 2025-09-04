@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationSongSection } from "../../models/FormationSection.ts";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../SectionOptionButton.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
@@ -20,18 +20,20 @@ export default function SectionPicker () {
 
   // TODO: apply to props
   function copyToCurrent(sourceSection: FormationSongSection) {
+    if (isNullOrUndefined(selectedSection)) return;
+    
     var copiedPositions = participantPositions
-      .filter(position => strEquals(position.formationScene.id, sourceSection.id))
+      .filter(position => strEquals(position.formationSceneId, sourceSection.id))
       .map(position => {
         return {
           ...position,
-          formationScene: selectedSection,
+          formationSceneId: selectedSection!.id,
           id: crypto.randomUUID()
         } as ParticipantPosition});
     
     dbController.removeList("participantPosition",
       participantPositions
-        .filter(position => strEquals(position.formationScene.id, selectedSection!.id)));
+        .filter(position => strEquals(position.formationSceneId, selectedSection!.id)));
 
     dbController.upsertList("participantPosition", copiedPositions);
     dbController.getAll("participantPosition").then((participantPosition) => {
@@ -54,14 +56,16 @@ export default function SectionPicker () {
 
   // TODO: apply to props
   function copyToFuture(sourceSection: FormationSongSection) {
+    if (isNullOrUndefined(selectedSection)) return;
+    
     const futureSections = currentSections.filter(section => section.songSection.order > selectedSection!.songSection.order);
 
     var copiedPositions = participantPositions
-      .filter(position => strEquals(position.formationScene.id, sourceSection.id))
+      .filter(position => strEquals(position.formationSceneId, sourceSection.id))
       .flatMap(position => futureSections.map(section => {
         return {
           ...position,
-          formationScene: section,
+          formationSceneId: section.id,
           id: crypto.randomUUID()
         } as ParticipantPosition}));
 
@@ -69,7 +73,7 @@ export default function SectionPicker () {
     
     dbController.removeList("participantPosition",
       participantPositions
-        .filter(position => futureSectionIds.has(position.formationScene.id)));
+        .filter(position => futureSectionIds.has(position.formationSceneId)));
 
     dbController.upsertList("participantPosition", copiedPositions).then(() => {
       dbController.getAll("participantPosition").then((participantPosition) => {
@@ -98,7 +102,7 @@ export default function SectionPicker () {
   // TODO: apply to props
   function resetPosition(sourceSection: FormationSongSection) {
     participantPositions
-      .filter(position => strEquals(position.formationScene.id, sourceSection.id))
+      .filter(position => strEquals(position.formationSceneId, sourceSection.id))
       .forEach((position, index) => {
         position.x = marginPositions[index][0];
         position.x2 = marginPositions[index][0];
@@ -108,7 +112,7 @@ export default function SectionPicker () {
       });
     dbController.upsertList("participantPosition", 
       participantPositions
-        .filter(position => strEquals(position.formationScene.id, sourceSection.id)));
+        .filter(position => strEquals(position.formationSceneId, sourceSection.id)));
 
     dbController.getAll("participantPosition").then((participantPosition) => {
       try {
@@ -130,14 +134,13 @@ export default function SectionPicker () {
   return (
     <ExpandableSection title="セクション" defaultIsExpanded>
       <div className="flex flex-col">
-        {sections
-          .filter(section => strEquals(section.formationId, selectedFormation?.id))
+        {currentSections
           .sort((a, b) => a.songSection.order - b.songSection.order)
           .map((section, index, array) => 
             <SectionOptionButton 
               key={section.id} 
               text={section.songSection.name}
-              isSelected={selectedSection?.id === section.id}
+              isSelected={strEquals(selectedSection?.id, section.id)}
               isBottom={index === array.length - 1}
               onClick={() => selectSection(section) }
               onCopyToCurrent={() => copyToCurrent(section) }

@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 import { AnimationContext, AnimationContextData, AnimationContextState, defaultAnimationContext } from './AnimationContext.tsx'
+import { CONTEXT_NAMES } from '../data/consts.ts'
 
 interface Props {
   children: React.ReactNode
@@ -19,7 +20,7 @@ export const AnimationContextProvider: React.FunctionComponent<Props> = (props: 
    */
   const updateAnimationContext = (newState: Partial<AnimationContextState>) => {
     setState(prev => ({ ...prev, ...newState }))
-    localStorage.setItem("animationManager", JSON.stringify({ ...state, ...newState }))
+    localStorage.setItem(CONTEXT_NAMES.animation, JSON.stringify({ ...state, ...newState }))
   }
 
   /**

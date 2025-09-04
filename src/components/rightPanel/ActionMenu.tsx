@@ -8,8 +8,8 @@ export default function ActionMenu() {
   
   return (
     <ExpandableSection title="アクション" defaultIsExpanded>
-      <Button>同カテゴリー選択</Button>
-      <Button>削除</Button>
+      <Button>同カテゴリー選択（無効）</Button>
+      <Button>削除（無効）</Button>
     </ExpandableSection>
   )
 }

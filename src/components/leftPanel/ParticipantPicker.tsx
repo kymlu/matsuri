@@ -1,19 +1,20 @@
 import React, { useContext, useState } from "react";
-import { categoryList, participantsList } from "../../data/ImaHitotabi.ts";
-import { Participant } from "../../models/Participant.ts";
+import { categoryList, teamMembers } from "../../data/ImaHitotabi.ts";
+import { Participant, ParticipantOption } from "../../models/Participant.ts";
 import ExpandableSection from "../ExpandableSection.tsx";
 import ItemButton from "../ItemButton.tsx";
 import SearchParticipantComponent from "../SearchParticipantComponent.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
-import { DEFAULT_WIDTH } from "../../data/consts.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
-  const {selectedSection, currentSections, currentMarginPosition, marginPositions, updateState} = useContext(UserContext);
+  const {participantList, updateFormationContext} = useContext(FormationContext);
+  const {selectedSection, currentSections, marginPositions, selectedFormation} = useContext(UserContext);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
@@ -23,41 +24,45 @@ export default function ParticipantPicker () {
 
   // const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
 
-  function selectParticipant(newParticipant: Participant) {
-    if(selectedSection === null) return;
+  function selectParticipant(selectedParticipant: ParticipantOption) {
+    if(isNullOrUndefined(selectedFormation) || isNullOrUndefined(selectedSection) === null) return;
 
-    // todo base multiples on name instead of id
-    // todo remove id from hard coded participant list
-    if (newParticipant.isPlaceholder) {
-      // For dancer and staff, allow multiple
-      var count = participantPositions.filter(x => x.participant.isPlaceholder && strEquals(x.formationScene.id, selectedSection.id)).length;
-      newParticipant = {...newParticipant, id: `${newParticipant.id}-${count + 1}`, name: `${newParticipant.name} ${count + 1}`};
-    } else if (participantPositions.some(x => strEquals(x.participant.id, newParticipant.id) && strEquals(x.formationScene!.id, selectedSection?.id))) {
-      var count = participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id) && strEquals(x.formationScene.id, selectedSection.id)).length;
-      newParticipant = {...newParticipant, name: `${newParticipant.name} ${count}`};
+    var newParticipant: Participant = {
+      id: crypto.randomUUID(),
+      displayName: selectedParticipant.name,
+      formationId: selectedFormation!.id,
+      memberId: selectedParticipant.id
+    }
+
+    if (selectedParticipant.isPlaceholder) {
+      newParticipant.displayName = `${selectedParticipant.name} ${participantList.length + 1}`;
+    } else if (participantList.some(x => strEquals(x.memberId, selectedParticipant.id))) {
+      var count = participantList.filter(x => strEquals(x.memberId, selectedParticipant.id)).length;
+      newParticipant.displayName = `${selectedParticipant.name} ${count}`;
     }
     
-    var position = marginPositions[currentMarginPosition % marginPositions.length];
-    updateState({currentMarginPosition: currentMarginPosition + 1});
-
+    var position = marginPositions[participantList.length % marginPositions.length];
     var newPositions = currentSections.map(section => 
       {
         return {
-        id: crypto.randomUUID().toString(),
-        participant: newParticipant,
-        formationScene: section!,
-        x: position[0],
-        x2: position[0],
-        y: position[1],
-        y2: position[1],
-        category: participantPositions.filter(x => strEquals(x.participant.id, newParticipant.id))?.[0]?.category ?? categoryList[0],
-        isSelected: false
-    } as ParticipantPosition});
+          id: crypto.randomUUID().toString(),
+          participantId: newParticipant.id,
+          formationSceneId: section!.id,
+          x: position[0],
+          x2: position[0],
+          y: position[1],
+          y2: position[1],
+          categoryId: categoryList[0].id,
+          isSelected: false
+        } as ParticipantPosition
+      });
+    updateFormationContext({participantList: [...participantList, newParticipant]});
     updatePositionState({participantPositions: [...participantPositions, ...newPositions]});
+    dbController.upsertItem("participant", newParticipant);
     dbController.upsertList("participantPosition", newPositions);
   }
 
-  var participantListDisplay = participantsList
+  var participantListDisplay = teamMembers
     .filter(x => x.name.toLowerCase().includes(filterText.toLowerCase()))
     .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name));
   
@@ -76,9 +81,9 @@ export default function ParticipantPicker () {
           !isNullOrUndefinedOrBlank(filterText) &&
           <>
             <ItemButton
-              item={{name: filterText} as Participant}
+              item={{name: filterText} as ParticipantOption}
               //isDisabled={selectedParticipants.includes(participant.id)}
-              onClick={() => selectParticipant({name: filterText} as Participant)}/> 
+              onClick={() => selectParticipant({name: filterText} as ParticipantOption)}/> 
           </>
         }
       {/* todo: disable if used */}

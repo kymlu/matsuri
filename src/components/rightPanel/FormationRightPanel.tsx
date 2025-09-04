@@ -8,6 +8,7 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import ColorPickerMenu from "./ColorPickerMenu.tsx";
 import TextEditor from "./TextEditor.tsx";
 import ActionMenu from "./ActionMenu.tsx";
+import NameEditor from "./NameEditor.tsx";
 
 export default function FormationRightPanel () {
   const {selectedItem} = useContext(UserContext);
@@ -20,17 +21,23 @@ export default function FormationRightPanel () {
           <Divider/>
         </>
       }
-      { selectedItem !== null && "participant" in selectedItem &&
+      { selectedItem !== null && "participantId" in selectedItem &&
         <>
           <CategoryMenu/>
           <Divider/>
-          <SwapMenu/>
-          <Divider/>
+          {/* <SwapMenu/>
+          <Divider/> */}
         </>
       }
       { selectedItem !== null && "color" in selectedItem &&
         <>
           <ColorPickerMenu/>
+          <Divider/>
+        </>
+      }
+      { selectedItem !== null && ("participantId" in selectedItem || "propId" in selectedItem) &&
+        <>
+          <NameEditor/>
           <Divider/>
         </>
       }

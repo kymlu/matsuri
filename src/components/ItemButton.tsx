@@ -1,11 +1,11 @@
 import React from "react";
 import className from "classnames";
-import { Participant } from "../models/Participant.ts";
+import { ParticipantOption } from "../models/Participant.ts";
 import { Prop } from "../models/Prop.ts";
 import { isNullOrUndefined } from "./helpers/GlobalHelper.ts";
 
 export interface ItemButtonProps {
-  item: Participant | Prop,
+  item: ParticipantOption | Prop,
   isDisabled?: boolean,
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }

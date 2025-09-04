@@ -18,12 +18,14 @@ export default function CategoryMenu() {
   const {selectedItem, updateState} = useContext(UserContext);
   const userContext = useContext(UserContext);
   const [editingId, setEditingId] = useState<string | undefined | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory>((selectedItem as ParticipantPosition).category!);
-  const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {categories, updateCategoryContext} = useContext(CategoryContext);
+  const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory>(categories.find(x => strEquals(x.id, (selectedItem as ParticipantPosition).categoryId)) ?? categories[0]);
+  const {participantPositions, updatePositionState} = useContext(PositionContext);
 
   useEffect(() => {
-    setSelectedCategory((selectedItem as ParticipantPosition).category!);
+    if (selectedItem) {
+      setSelectedCategory(categories.find(x => strEquals(x.id, (selectedItem as ParticipantPosition).categoryId))!);
+    }
   }, [userContext.selectedItem]);
 
   function selectCategoryToEdit(id: string) {
@@ -38,7 +40,6 @@ export default function CategoryMenu() {
     var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!
     var newSelectedItem = {
       ...selectedItem,
-      category: newCategory,
       categoryId: newCategory.id,
     } as ParticipantPosition;
     setSelectedCategory(newCategory);
@@ -57,7 +58,7 @@ export default function CategoryMenu() {
   return (
     <ExpandableSection title="カテゴリー">
       <RadioGroup
-        value={selectedCategory.id}
+        value={selectedCategory?.id ?? ""}
         onValueChange={(value) => onChangeCategory(value as string)}>
         <div className="flex flex-col gap-x-6">
           {

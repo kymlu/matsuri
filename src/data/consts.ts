@@ -10,6 +10,17 @@ export enum CUSTOM_EVENT {
   "dbInitialized",
 }
 
+export const CONTEXT_NAMES = {
+  user: "userContext",
+  formation: "formationContext",
+  section: "sectionContext",
+  position: "positionContext",
+  category: "categoryContext",
+  animation: "animationContext"
+}
+
+export const DB_NAME = "MatsuriDB";
+
 export const NOTE_PRESETS = {
   "timing": {
     length: 1.25,

@@ -9,26 +9,29 @@ import { PositionContextProvider } from './contexts/PositionContextProvider.tsx'
 import { SectionContextProvider } from './contexts/SectionContextProvider.tsx';
 import { DBProvider } from './data/DBProvider.tsx';
 import { AnimationContextProvider } from './contexts/AnimationContextProvider.tsx';
+import { FormationContextProvider } from './contexts/FormationContextProvider.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <DBProvider>
       <UserContextProvider>
         <PositionContextProvider>
           <CategoryContextProvider>
             <SectionContextProvider>
               <AnimationContextProvider>
-                <App />
+                <FormationContextProvider>
+                  <App />
+                </FormationContextProvider>
               </AnimationContextProvider>
             </SectionContextProvider>
           </CategoryContextProvider>
         </PositionContextProvider>
       </UserContextProvider>
     </DBProvider>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

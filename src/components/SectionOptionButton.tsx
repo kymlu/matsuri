@@ -6,7 +6,7 @@ export interface ListOptionButtonProps {
   text: string,
   isSelected?: boolean,
   isBottom?: boolean,
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void,
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
   onCopyToCurrent?: () => void,
   onCopyToFuture?: () => void,
   onCreateDerivitive?: () => void,
@@ -14,13 +14,13 @@ export interface ListOptionButtonProps {
 }
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
-  const classes = className("flex flex-row px-10", {
+  const classes = className("flex flex-row gap-2 px-5", {
     "bg-primary text-white cursor-default": props.isSelected,
     "cursor-pointer": !props.isSelected,
     "border-b-2 border-primary": !props.isBottom,
   });
 
-  function onClick(e: React.MouseEvent<HTMLButtonElement>) {
+  function onClick(e: React.MouseEvent<HTMLDivElement>) {
     if (!props.isSelected) {
       props.onClick?.(e);
     }
@@ -43,12 +43,12 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
   }
 
   return (
-    <button className={classes} onClick={onClick}>
-      <span className="flex-1">
+    <div className={classes} onClick={(e) => onClick(e)}>
+      <span className="flex-1 text-center">
         {props.text}
       </span>
       <Menu.Root>
-        <Menu.Trigger onClick={(e) => {e.stopPropagation()}}>
+        <Menu.Trigger className="px-3 hover:opacity-80" onClick={(e) => {e.stopPropagation()}}>
           ⚙️
           </Menu.Trigger>
         <Menu.Portal>
@@ -61,24 +61,24 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
               {
                 !props.isSelected &&
                 <>
-                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}>選択項目にコピー</Menu.Item>
+                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}>選択項目にコピー</Menu.Item>
                 </>
               }
               {
                 props.isSelected && 
                 <>
-                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); copyToFuture(); }}>Propagate to all next</Menu.Item>
+                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); copyToFuture(); }}>以降にコピー</Menu.Item>
                   <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
-                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); createDerivitive(); }}>派生作成</Menu.Item>
+                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); createDerivitive(); }}>派生作成（無効）</Menu.Item>
                   <Menu.Separator className="mx-1 my-1.5 h-px bg-grey-200"/>
-                  <Menu.Item className="text-center" onClick={(e) => { e.stopPropagation(); resetPosition(); }}>リセット</Menu.Item>
+                  <Menu.Item className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200" onClick={(e) => { e.stopPropagation(); resetPosition(); }}>リセット</Menu.Item>
                 </>
               }
             </Menu.Popup>
           </Menu.Positioner>
         </Menu.Portal>
       </Menu.Root>
-    </button>
+    </div>
   )
 }
 

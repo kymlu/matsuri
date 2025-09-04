@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { Layer, Path, Stage, Transformer } from "react-konva";
+import { Layer, Path, Rect, Stage, Transformer } from "react-konva";
 import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
@@ -15,7 +15,7 @@ import { songList } from "../../data/ImaHitotabi.ts";
 import { useState } from "react";
 import NoteObject from "./formationObjects/NoteObject.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
-import Konva from "konva";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export interface FormationEditorProps {
   height: number,
@@ -26,6 +26,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const canvasRef = useRef(null);
   const userContext = useContext(UserContext);
   const {paths} = useContext(AnimationContext);
+  const {participantList, propList} = useContext(FormationContext);
   const {selectedItem, isAnimating, currentSections, compareMode, updateState} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
@@ -131,13 +132,13 @@ export default function FormationEditor(props: FormationEditorProps) {
           <Layer opacity={0.5}>
             {
               propPositions
-                .filter(placement => strEquals(placement.formationScene.id, previousSectionId))
+                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
                 .map(placement =>
                   <PropObject 
                     key={placement.id}
-                    name={placement.prop.name} 
+                    name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                     colour={placement.color ?? objectColorSettings.purpleLight} 
-                    length={placement.prop.length} 
+                    length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                     startX={getPixelX(placement.x)} 
                     startY={getPixelY(placement.y)}
                     rotation={placement.angle} 
@@ -145,12 +146,12 @@ export default function FormationEditor(props: FormationEditorProps) {
                 )
             } 
             { participantPositions
-                .filter(placement => strEquals(placement.formationScene.id, previousSectionId))
+                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
                 .map(placement => 
                   <ParticipantObject 
                     key={placement.id}
-                    name={placement.participant.name} 
-                    colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
+                    name={participantList.find(x => strEquals(placement.participantId, x.id))?.displayName!} 
+                    colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
                     startX={getPixelX(placement.x)} 
                     startY={getPixelY(placement.y)}
                   />
@@ -158,6 +159,17 @@ export default function FormationEditor(props: FormationEditorProps) {
             }
           </Layer>
         }
+        <Layer>
+          <NoteObject
+            text={userContext.selectedSection?.songSection.name ?? ""}
+            startX={GRID_SIZE * 0.25}
+            startY={GRID_SIZE * 0.25}
+            height={1}
+            length={3}
+            colour={objectColorSettings.purpleLight}
+            borderRadius={10}
+            />
+        </Layer>
         <Layer>
           {
             Object.entries(paths)
@@ -180,13 +192,13 @@ export default function FormationEditor(props: FormationEditorProps) {
           }}/>
           {
             propPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationScene.id))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
-                  name={placement.prop.name} 
+                  name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                   colour={placement.color ?? objectColorSettings.purpleLight} 
-                  length={placement.prop.length} 
+                  length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                   isSelected={placement.isSelected}
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)} 
@@ -199,12 +211,12 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { participantPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationScene.id))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}
-                  name={placement.participant.name} 
-                  colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
+                  name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
+                  colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)}
                   isSelected={placement.isSelected}
@@ -234,13 +246,13 @@ export default function FormationEditor(props: FormationEditorProps) {
           <Layer opacity={0.5}>
           {
             propPositions
-              .filter(placement => strEquals(placement.formationScene.id, nextSectionId))
+              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
-                  name={placement.prop.name} 
+                  name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                   colour={placement.color ?? objectColorSettings.purpleLight} 
-                  length={placement.prop.length} 
+                  length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)} 
                   rotation={placement.angle} 
@@ -248,12 +260,12 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { participantPositions
-              .filter(placement => strEquals(placement.formationScene.id, nextSectionId))
+              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}
-                  name={placement.participant.name} 
-                  colour={categories.find(x => strEquals(x.id, placement.category?.id))?.color || objectColorSettings["amberLight"]} 
+                  name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
+                  colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)}
                 />
