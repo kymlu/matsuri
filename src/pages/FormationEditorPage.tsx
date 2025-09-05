@@ -196,13 +196,14 @@ export default function FormationEditorPage () {
     window.removeEventListener("keydown", deleteItem);
   }, [userContext.selectedItem]);
 
-  useEffect(() => {
-    window.addEventListener("keydown", deleteItem);
+  // current not working due to text
+  // useEffect(() => {
+  //   window.addEventListener("keydown", deleteItem);
 
-    return () => {
-      window.removeEventListener("keydown", deleteItem);
-    };
-  }, [deleteItem]);
+  //   return () => {
+  //     window.removeEventListener("keydown", deleteItem);
+  //   };
+  // }, [deleteItem]);
 
   return (
       <div className='h-full overflow-hidden'>
@@ -215,12 +216,22 @@ export default function FormationEditorPage () {
               Editing {selectedSection?.songSection?.name} {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) @ {selectedFestival?.name}
             </h1>
             }
-            <Button onClick={() => {
-              Object.values(CONTEXT_NAMES).forEach((context) => {
-                localStorage.removeItem(context);
-              });
-              indexedDB.deleteDatabase(DB_NAME);
-            }}>Delete cache</Button>
+            <div className='flex flex-row gap-3'>
+              <Button onClick={() => {
+                Object.values(CONTEXT_NAMES).forEach((context) => {
+                  localStorage.removeItem(context);
+                });
+              }}>Clear Cache</Button>
+              <Button onClick={() => {
+                Object.values(CONTEXT_NAMES).forEach((context) => {
+                  localStorage.removeItem(context);
+                });
+                indexedDB.deleteDatabase(DB_NAME);
+              }}>Clear DB and Cache</Button>
+              <Button onClick={() => {
+                console.log("to implement");
+              }}>Export（無効）</Button>
+            </div>
             </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>
