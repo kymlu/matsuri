@@ -1,8 +1,9 @@
-import React, {  } from "react";
+import React, { useContext } from "react";
 import { Rect, Text } from "react-konva";
-import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
+import { FONT_SIZE } from "../../../data/consts.ts";
 import { ColorStyle } from "../../../themes/colours.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
 
 // todo
 export interface LegendObjectProps {
@@ -16,6 +17,8 @@ export interface LegendObjectProps {
 }
 
 export default function LegendObject(props: LegendObjectProps) {
+  const {gridSize} = useContext(UserContext);
+  
   function onClick(forceSelect?: boolean) {
     props.onClick?.(forceSelect);
   }
@@ -32,15 +35,15 @@ export default function LegendObject(props: LegendObjectProps) {
       <Rect 
         x={props.startX}
         y={props.startY}
-        radius={GRID_SIZE/2}
+        radius={gridSize/2}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={2} />
       <Text
-        x={props.startX-GRID_SIZE/2}
-        y={props.startY-GRID_SIZE/2}
-        width={GRID_SIZE}
-        height={GRID_SIZE}
+        x={props.startX-gridSize/2}
+        y={props.startY-gridSize/2}
+        width={gridSize}
+        height={gridSize}
         text={props.text}
         wrap="true"
         fontSize={FONT_SIZE}

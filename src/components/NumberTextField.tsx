@@ -21,7 +21,7 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       className="flex flex-col items-start gap-1"
       min={props?.min ?? 0}
       max={props?.max ?? 1000}>
-      <div className="flex flex-row items-center gap-1">
+      <div className="flex flex-row items-center justify-between w-full gap-2 my-2">
         <NumberField.ScrubArea className="cursor-ew-resize">
           { props.label && <label
             htmlFor={id}

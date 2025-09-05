@@ -1,10 +1,10 @@
-import React, { ReactNode, useEffect, useRef } from "react";
+import React, { ReactNode, useContext, useEffect, useRef } from "react";
 import { Group, Transformer } from "react-konva";
-import { BLOCK_SNAP_SIZE } from "../../../data/consts.ts";
 import Konva from "konva";
 import { basePalette } from "../../../themes/colours.ts";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
+import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface FormationObjectProps {
   children: ReactNode
@@ -23,6 +23,7 @@ export interface FormationObjectProps {
 export default function BaseFormationObject(props: FormationObjectProps) {
   const transformerRef = useRef<Konva.Transformer>(null);
   const groupRef = useRef<Konva.Group>(null);
+  const snapSize = useContext(UserContext).gridSize/2;
 
   useEffect(() => {
     if(props.isSelected && groupRef.current){
@@ -48,8 +49,8 @@ export default function BaseFormationObject(props: FormationObjectProps) {
           props.onClick(true);
           const node = e.target;
           
-          var x = Math.round(node.x() / BLOCK_SNAP_SIZE) * BLOCK_SNAP_SIZE;
-          var y = Math.round(node.y() / BLOCK_SNAP_SIZE) * BLOCK_SNAP_SIZE;
+          var x = Math.round(node.x() / snapSize) * snapSize;
+          var y = Math.round(node.y() / snapSize) * snapSize;
           node.to({
             x: x,
             y: y,

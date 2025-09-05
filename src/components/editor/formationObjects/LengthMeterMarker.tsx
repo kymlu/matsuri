@@ -1,7 +1,6 @@
 import React from "react";
-import { Group, Rect, Text } from "react-konva";
-import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
-import { basePalette } from "../../../themes/colours.ts";
+import { Text } from "react-konva";
+import { FONT_SIZE } from "../../../data/consts.ts";
 
 export interface MeterMarkerProps {
   value: number,

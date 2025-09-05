@@ -3,7 +3,7 @@ import { Layer, Path, Stage, Transformer } from "react-konva";
 import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
-import { DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
+import { DEFAULT_WIDTH, GRID_MARGIN_Y } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
@@ -27,13 +27,13 @@ export default function FormationEditor(props: FormationEditorProps) {
   const userContext = useContext(UserContext);
   const {paths} = useContext(AnimationContext);
   const {participantList, propList, noteList} = useContext(FormationContext);
-  const {selectedItem, isAnimating, currentSections, compareMode, updateState} = useContext(UserContext);
+  const {selectedItem, isAnimating, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
   const [nextSectionId, setNextSectionId] = useState<string | undefined>("");
   const {categories} = useContext(CategoryContext);
-  const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * GRID_SIZE;
-  const canvasWidth = DEFAULT_WIDTH * GRID_SIZE;
+  const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
+  const canvasWidth = DEFAULT_WIDTH * gridSize;
   const transformerRef = useRef(null);
   
   useEffect(() => {
@@ -51,8 +51,8 @@ export default function FormationEditor(props: FormationEditorProps) {
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => strEquals(x.id, id));
     if (participant) {
-      participant.x2 = (participant.x * GRID_SIZE + x)/GRID_SIZE;
-      participant.y2 = (participant.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
+      participant.x2 = (participant.x * gridSize + x)/gridSize;
+      participant.y2 = (participant.y * gridSize + y)/gridSize; // todo: fix off by 2m
       dbController.upsertItem("participantPosition", {...participant, x: participant.x2, y: participant.y2});
     }
   }
@@ -60,16 +60,16 @@ export default function FormationEditor(props: FormationEditorProps) {
   function updatePropPosition(id: string, x: number, y: number) {
     var prop = propPositions.find(x => strEquals(x.id, id));
     if (prop) {
-      prop.x2 = (prop.x * GRID_SIZE + x)/GRID_SIZE;
-      prop.y2 = (prop.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
+      prop.x2 = (prop.x * gridSize + x)/gridSize;
+      prop.y2 = (prop.y * gridSize + y)/gridSize; // todo: fix off by 2m
       dbController.upsertItem("propPosition", {...prop, x: prop.x2, y: prop.y2});
     }
   }
   function updateNotePosition(id: string, x: number, y: number) {
     var prop = noteList.find(x => strEquals(x.id, id));
     if (prop) {
-      prop.x2 = (prop.x * GRID_SIZE + x)/GRID_SIZE;
-      prop.y2 = (prop.y * GRID_SIZE + y)/GRID_SIZE; // todo: fix off by 2m
+      prop.x2 = (prop.x * gridSize + x)/gridSize;
+      prop.y2 = (prop.y * gridSize + y)/gridSize; // todo: fix off by 2m
       dbController.upsertItem("notePosition", {...prop, x: prop.x2, y: prop.y2});
     }
   }
@@ -78,18 +78,18 @@ export default function FormationEditor(props: FormationEditorProps) {
     var prop = propPositions.find(x => strEquals(x.id, id));
     if (prop) {
       prop.angle = angle;
-      prop.x = x/GRID_SIZE; //(x * GRID_SIZE + x)/GRID_SIZE;
-      prop.y = y/GRID_SIZE; //(y * GRID_SIZE + y)/GRID_SIZE;
+      prop.x = x/gridSize; //(x * gridSize + x)/gridSize;
+      prop.y = y/gridSize; //(y * gridSize + y)/gridSize;
       dbController.upsertItem("propPosition", prop);
     }
   }
 
   function getPixelX(gridX: number): number {
-    return gridX * GRID_SIZE; // todo
+    return gridX * gridSize; // todo
   }
 
   function getPixelY(gridY: number): number {
-    return gridY * GRID_SIZE; // todo
+    return gridY * gridSize; // todo
   }
 
   function selectItem(
@@ -161,8 +161,8 @@ export default function FormationEditor(props: FormationEditorProps) {
         <Layer>
           <NoteObject
             text={userContext.selectedSection?.songSection.name ?? ""}
-            startX={GRID_SIZE * 0.75}
-            startY={GRID_SIZE * 0.25}
+            startX={gridSize * 0.75}
+            startY={gridSize * 0.25}
             height={1.1}
             length={3}
             colour={objectColorSettings.purpleLightest}

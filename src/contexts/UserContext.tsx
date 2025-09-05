@@ -3,6 +3,7 @@ import React from 'react';
 import { Formation } from '../models/Formation.ts';
 import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { FormationSongSection } from '../models/FormationSection.ts';
+import { GRID_SIZE } from '../data/consts.ts';
 
 export interface AppState {
   selectedFestival: Festival | null,
@@ -12,6 +13,7 @@ export interface AppState {
     props: number[][],
     notes: number[][]
   },
+  gridSize: number,
   selectedSection: FormationSongSection | null,
   selectedItem: ParticipantPosition | PropPosition | NotePosition | null,
   sections: Array<FormationSongSection>,
@@ -29,6 +31,7 @@ export const defaultState: AppState = {
   selectedFestival: null,
   selectedFormation: null,
   marginPositions: {participants: [], props: [], notes: []},
+  gridSize: GRID_SIZE,
   selectedItem: null,
   selectedSection: null,
   sections: [],

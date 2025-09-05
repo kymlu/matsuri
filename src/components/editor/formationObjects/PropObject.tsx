@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Rect, Text } from "react-konva";
-import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
+import { FONT_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { ColorStyle } from "../../../themes/colours.ts";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
+import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface PropObjectProps {
   name: string,
@@ -21,6 +22,8 @@ export interface PropObjectProps {
 }
 
 export default function PropObject(props: PropObjectProps) {
+  const {gridSize} = useContext(UserContext);
+
   function onClick(forceSelect?: boolean) {
     if (props.draggable) {
       props.onClick?.(forceSelect);
@@ -48,15 +51,15 @@ export default function PropObject(props: PropObjectProps) {
       onTransform={onRotate}>
       <Rect x={props.startX}
         y={props.startY}
-        width={props.length * GRID_SIZE}
-        height={GRID_SIZE}
+        width={props.length * gridSize}
+        height={gridSize}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={2} />
       <Text x={props.startX}
         y={props.startY + FONT_SIZE}
-        width={props.length * GRID_SIZE}
-        // height={GRID_SIZE}
+        width={props.length * gridSize}
+        // height={gridSize}
         text={props.name}
         fontSize={FONT_SIZE}
         fontStyle="bold"

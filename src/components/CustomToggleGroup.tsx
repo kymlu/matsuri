@@ -8,7 +8,6 @@ export interface ToggleProps {
 
 export interface CustomToggleGroupProps {
   label: string
-  defaultChecked?: boolean,
   options: Array<ToggleProps>,
   onChange?: (newValue: string) => void
 }
@@ -16,7 +15,7 @@ export interface CustomToggleGroupProps {
 export default function CustomToggleGroup(props: CustomToggleGroupProps){
   return (
     <div className="flex flex-row items-center justify-between gap-2 my-2">
-      <label>セクション比較</label>
+      <label>{props.label}</label>
       <ToggleGroup
         defaultValue={["none"]} 
         onValueChange={(value) => props.onChange?.(value[0])} // TODO: fix this to be a single select

@@ -4,10 +4,11 @@ import Button from "../Button.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { GRID_SIZE } from "../../data/consts.ts";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function AnimationMenu() {
+  const {gridSize} = useContext(UserContext);
+
   const {currentSections} = useContext(UserContext);
   const {updateAnimationContext} = useContext(AnimationContext);
 
@@ -36,9 +37,9 @@ export default function AnimationMenu() {
               .sort((a, b) => sectionIds.indexOf(a.formationSceneId) - sectionIds.indexOf(b.formationSceneId))
               .reduce((acc, point, index) => {
                 if (index === 0) {
-                  return `M${point.x * GRID_SIZE} ${point.y * GRID_SIZE}`;
+                  return `M${point.x * gridSize} ${point.y * gridSize}`;
                 } else {
-                  return `${acc} L${point.x * GRID_SIZE} ${point.y * GRID_SIZE}`;
+                  return `${acc} L${point.x * gridSize} ${point.y * gridSize}`;
                 }
               }, "");
             return [key, path];

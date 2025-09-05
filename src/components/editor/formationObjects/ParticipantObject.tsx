@@ -1,8 +1,9 @@
-import React, {  } from "react";
+import React, { useContext } from "react";
 import { Circle, Text } from "react-konva";
-import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
+import { FONT_SIZE } from "../../../data/consts.ts";
 import { ColorStyle } from "../../../themes/colours.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface ParticipantObjectProps {
   name: string,
@@ -16,6 +17,8 @@ export interface ParticipantObjectProps {
 }
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
+  const {gridSize} = useContext(UserContext);
+  
   function onClick(forceSelect?: boolean) {
     if(props.draggable) {
       props.onClick?.(forceSelect);
@@ -35,15 +38,15 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       <Circle 
         x={props.startX}
         y={props.startY}
-        radius={GRID_SIZE/2}
+        radius={gridSize/2}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={2} />
       <Text
-        x={props.startX-GRID_SIZE/2}
-        y={props.startY-GRID_SIZE/2}
-        width={GRID_SIZE}
-        height={GRID_SIZE}
+        x={props.startX-gridSize/2}
+        y={props.startY-gridSize/2}
+        width={gridSize}
+        height={gridSize}
         text={props.name}
         fontSize={FONT_SIZE}
         fontStyle="bold"

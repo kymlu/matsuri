@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Rect, Text } from "react-konva";
-import { FONT_SIZE, GRID_SIZE } from "../../../data/consts.ts";
+import { FONT_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { ColorStyle } from "../../../themes/colours.ts";
+import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface NoteObjectProps {
   label?: string,
@@ -21,6 +22,8 @@ export interface NoteObjectProps {
 }
 
 export default function NoteObject(props: NoteObjectProps) {
+  const {gridSize} = useContext(UserContext);
+  
   function onClick(forceSelect?: boolean) {
     if (props.draggable) {
       props.onClick?.(forceSelect);
@@ -40,8 +43,8 @@ export default function NoteObject(props: NoteObjectProps) {
       <Rect
         x={props.startX}
         y={props.startY}
-        width={props.length * GRID_SIZE}
-        height={props.height * GRID_SIZE}
+        width={props.length * gridSize}
+        height={props.height * gridSize}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={2}
@@ -49,8 +52,8 @@ export default function NoteObject(props: NoteObjectProps) {
       <Text
         x={props.startX}
         y={props.startY}
-        height={props.height * GRID_SIZE}
-        width={props.length * GRID_SIZE}
+        height={props.height * gridSize}
+        width={props.length * gridSize}
         text={props.text}
         fontSize={props.fontSize ?? FONT_SIZE}
         fontStyle="bold"
@@ -60,19 +63,19 @@ export default function NoteObject(props: NoteObjectProps) {
       {props.label && 
         <>
           <Rect
-            x={props.startX + GRID_SIZE / 4}
-            y={props.startY - GRID_SIZE / 4}
-            width={(props.length * 0.75) * GRID_SIZE}
-            height={0.5 * GRID_SIZE}
+            x={props.startX + gridSize / 4}
+            y={props.startY - gridSize / 4}
+            width={(props.length * 0.75) * gridSize}
+            height={0.5 * gridSize}
             fill={props.colour.bgColour}
             stroke={props.colour.borderColour}
             strokeWidth={2}
             cornerRadius={props.borderRadius} />
           <Text
-            x={props.startX + GRID_SIZE / 2}
-            y={props.startY - GRID_SIZE / 4}
-            width={(props.length / 2) * GRID_SIZE}
-            height={0.5 * GRID_SIZE}
+            x={props.startX + gridSize / 2}
+            y={props.startY - gridSize / 4}
+            width={(props.length / 2) * gridSize}
+            height={0.5 * gridSize}
             text={props.label}
             fontSize={props.fontSize ?? FONT_SIZE}
             fontStyle="bold"
