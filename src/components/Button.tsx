@@ -17,7 +17,7 @@ type ButtonProps = {
 
 export default function Button(props: ButtonProps) {
   //1st arg:: for all variations.
-  const classes = className("px-3 py-1.5 border rounded-xl", {
+  const classes = className("px-3 py-1.5 border rounded-xl hover:bg-grey-100", {
     "border-blue-500 bg-blue-500 text-white": props.primary,
     "border-gray-900 bg-gray-900 text-white": props.secondary,
     "border-green-500 bg-green-500 text-white": props.success,

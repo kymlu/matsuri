@@ -21,7 +21,7 @@ export default function PropPicker () {
     var newProp = {
       ...selectedProp,
       id: crypto.randomUUID(),
-      color: objectColorSettings.grey3,
+      color: selectedProp.color ?? objectColorSettings.grey3,
     };
 
     var position = marginPositions.props[propList.length % marginPositions.props.length]
@@ -49,13 +49,14 @@ export default function PropPicker () {
   
   return (
     <ExpandableSection title="大道具">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-row flex-wrap gap-2">
         {propsList
           .sort((a, b) => a.name.localeCompare(b.name))
           .map(prop => 
             <ItemButton
               key={prop.id}
               item={prop}
+              display={`${prop.name}(${prop.length}m)`}
               onClick={() => selectProp(prop)}/>)} 
         </div>
       </ExpandableSection>

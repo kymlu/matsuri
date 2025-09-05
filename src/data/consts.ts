@@ -19,26 +19,3 @@ export const CONTEXT_NAMES = {
 }
 
 export const DB_NAME = "MatsuriDB";
-
-export const NOTE_PRESETS = {
-  "timing": {
-    label: "タイミング",
-    length: 1.25,
-    height: 0.75,
-    borderRadius: 10,
-    fontSize: 20,
-    color: objectColorSettings.grey4,
-    hasLabel: false,
-    defaultContent: "1"
-  },
-  "legend": {
-    label: "凡例",
-    length: 5,
-    height: 3,
-    borderRadius: 10,
-    fontSize: 12,
-    color: objectColorSettings.amberLight,
-    hasLabel: true,
-    defaultContent: "これはメモです。"
-  }
-}

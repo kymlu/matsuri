@@ -11,6 +11,14 @@ export interface MeterMarkerProps {
 
 export default function LengthMeterMarker(props: MeterMarkerProps) {
   return (
-      <Text x={props.startX} y={props.startY + FONT_SIZE/4} fontSize={20} height={20} text={`${props.value}m`} fontStyle="bold" verticalAlign="center" align="center"/>
+      <Text 
+        x={props.startX}
+        y={props.startY + FONT_SIZE/4}
+        fontSize={20}
+        height={20}
+        text={`${props.value}m`}
+        fontStyle="bold"
+        verticalAlign="center"
+        align="center"/>
   )
 }

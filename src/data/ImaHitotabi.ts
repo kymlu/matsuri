@@ -234,9 +234,12 @@ export const teamMembers: Array<ParticipantOption> = [
 ]
 
 export const propsList: Array<Prop> = [
-  {
-    name: "大旗", id: "1", length: 5
-  }
+  { name: "大旗", id: "1", length: 4, color: objectColorSettings.grey4 },
+  { name: "キャリー", id: "2", length: 2, color: objectColorSettings.black },
+  { name: "野点", id: "3", length: 1, color: objectColorSettings.black },
+  { name: "山幕", id: "4", length: 4.5, color: objectColorSettings.grey4 },
+  { name: "デカ大旗", id: "5", length: 8, color: objectColorSettings.indigoMain },
+  { name: "ご来光幕", id: "6", length: 3.5, color: objectColorSettings.indigoMain },
 ]
 
 //奇、偶、座り、中、高、左隊、右隊、旗、山伏、前隊、後隊
@@ -255,3 +258,26 @@ export const categoryList: Array<ParticipantCategory> = [
   { id: "11", name: "前隊", color: objectColorSettings["redLight"], order: 4, showInLegend: false, showInParadeGuide: true },
   { id: "12", name: "後隊", color: objectColorSettings["blueLight"], order: 5, showInLegend: false, showInParadeGuide: true },
 ]
+
+export const notePresets = {
+  "timing": {
+    label: "タイミング",
+    length: 1.25,
+    height: 0.75,
+    borderRadius: 10,
+    fontSize: 20,
+    color: objectColorSettings.grey4,
+    hasLabel: false,
+    defaultContent: "1"
+  },
+  "legend": {
+    label: "凡例",
+    length: 5,
+    height: 3,
+    borderRadius: 10,
+    fontSize: 12,
+    color: objectColorSettings.amberLight,
+    hasLabel: true,
+    defaultContent: "これはメモです。"
+  }
+}

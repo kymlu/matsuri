@@ -61,7 +61,7 @@ export default function PropObject(props: PropObjectProps) {
         width={props.length * gridSize}
         // height={gridSize}
         text={props.name}
-        fontSize={FONT_SIZE}
+        fontSize={gridSize/3}
         fontStyle="bold"
         fill={props.colour.textColour}
         verticalAlign="middle"

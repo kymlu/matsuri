@@ -22,6 +22,7 @@ export default function SwapMenu() {
             .map(participant => 
               <ItemButton
                 key={participant.id}
+                display={participant.displayName}
                 item={{name: participant.displayName, id: participant.id}}/>)} 
             {/* todo: disable if used */}
             {/* todo: add undecided */}

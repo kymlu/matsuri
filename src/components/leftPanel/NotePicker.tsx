@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
-import { NOTE_PRESETS } from "../../data/consts.ts";
 import Button from "../Button.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { notePresets } from "../../data/ImaHitotabi.ts";
 
 export default function NotePicker () {
   const {selectedSection, updateState, marginPositions} = useContext(UserContext);
@@ -42,7 +42,7 @@ export default function NotePicker () {
   return (
     <ExpandableSection title="メモ">
         <div className="flex flex-col gap-2">
-        { Object.entries(NOTE_PRESETS).map(([key, preset]) => (
+        { Object.entries(notePresets).map(([key, preset]) => (
           <Button
             key={key}
             onClick={() => selectPreset(preset)}>

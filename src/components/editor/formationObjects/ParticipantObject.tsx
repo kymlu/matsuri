@@ -48,7 +48,7 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
         width={gridSize}
         height={gridSize}
         text={props.name}
-        fontSize={FONT_SIZE}
+        fontSize={gridSize/3}
         fontStyle="bold"
         fill={props.colour.textColour}
         verticalAlign="middle"

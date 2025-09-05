@@ -75,6 +75,7 @@ export default function ParticipantPicker () {
             <ItemButton
             key={participant.id}
             item={participant}
+            display={participant.name}
             //isDisabled={selectedParticipants.includes(participant.id)}
             onClick={() => selectParticipant(participant)}/>)} 
         {
@@ -82,6 +83,7 @@ export default function ParticipantPicker () {
           <>
             <ItemButton
               item={{name: filterText} as ParticipantOption}
+              display={`NEW: "${filterText}"`}
               //isDisabled={selectedParticipants.includes(participant.id)}
               onClick={() => selectParticipant({name: filterText} as ParticipantOption)}/> 
           </>
