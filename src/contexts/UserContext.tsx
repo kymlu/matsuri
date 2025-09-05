@@ -7,7 +7,11 @@ import { FormationSongSection } from '../models/FormationSection.ts';
 export interface AppState {
   selectedFestival: Festival | null,
   selectedFormation: Formation | null,
-  marginPositions: number[][],
+  marginPositions: { 
+    participants: number[][],
+    props: number[][],
+    notes: number[][]
+  },
   selectedSection: FormationSongSection | null,
   selectedItem: ParticipantPosition | PropPosition | NotePosition | null,
   sections: Array<FormationSongSection>,
@@ -24,7 +28,7 @@ export type AppStateData = Omit<AppState, 'updateState'>;
 export const defaultState: AppState = {
   selectedFestival: null,
   selectedFormation: null,
-  marginPositions: [],
+  marginPositions: {participants: [], props: [], notes: []},
   selectedItem: null,
   selectedSection: null,
   sections: [],

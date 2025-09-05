@@ -23,6 +23,7 @@ export interface FormationObjectProps {
 export default function BaseFormationObject(props: FormationObjectProps) {
   const transformerRef = useRef<Konva.Transformer>(null);
   const groupRef = useRef<Konva.Group>(null);
+
   useEffect(() => {
     if(props.isSelected && groupRef.current){
       transformerRef?.current!.nodes([groupRef.current]);

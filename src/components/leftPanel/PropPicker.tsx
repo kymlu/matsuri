@@ -12,24 +12,29 @@ import { dbController } from "../../data/DBProvider.tsx";
 
 export default function PropPicker () {
   const {propPositions, updatePositionState} = useContext(PositionContext);
-  const {selectedFormation, currentSections, selectedSection} = useContext(UserContext);
+  const {currentSections, selectedSection, marginPositions} = useContext(UserContext);
   const {propList, updateFormationContext} = useContext(FormationContext);
 
   function selectProp(selectedProp: Prop) {
     if(selectedSection === null) return;
 
-    var newProp = {...selectedProp, id: crypto.randomUUID()};
+    var newProp = {
+      ...selectedProp,
+      id: crypto.randomUUID(),
+      color: objectColorSettings.grey3,
+    };
+
+    var position = marginPositions.props[propList.length % marginPositions.props.length]
     
     var newPositions: PropPosition[] = currentSections.map(section => {
       return {
         id: crypto.randomUUID().toString(),
         propId: newProp.id,
         formationSceneId: section.id,
-        x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-        x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
-        y: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-        y2: selectedFormation?.length ? selectedFormation.length / 2 : 5,
-        color: objectColorSettings.grey3,
+        x: position[0],
+        x2: position[0],
+        y: position[1],
+        y2: position[1],
         isSelected: false,
         angle: 0
       } as PropPosition;

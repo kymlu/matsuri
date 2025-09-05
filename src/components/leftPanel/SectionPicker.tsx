@@ -53,12 +53,16 @@ export default function SectionPicker () {
 
     dbController.removeList(
       "participantPosition",
-      participantPositions.filter(position => targetSectionIds.includes(position.formationSceneId))
+      participantPositions
+        .filter(position => targetSectionIds.includes(position.formationSceneId))
+        .map(x => x.id)
     );
 
     dbController.removeList(
       "propPosition",
-      propPositions.filter(position => targetSectionIds.includes(position.formationSceneId))
+      propPositions
+        .filter(position => targetSectionIds.includes(position.formationSceneId))
+        .map(x => x.id)
     );
   
     // Upsert new positions
@@ -104,20 +108,57 @@ export default function SectionPicker () {
     console.log("Not yet implemented: derivatives")
   }
   
-  // TODO: apply to props
   function resetPosition(sourceSection: FormationSongSection) {
     participantPositions
       .filter(position => strEquals(position.formationSceneId, sourceSection.id))
       .forEach((position, index) => {
-        position.x = marginPositions[index][0];
-        position.x2 = marginPositions[index][0];
-        position.y = marginPositions[index][1];
-        position.y2 = marginPositions[index][1];
-        dbController.upsertItem("participantPosition", position);
+        position.x = marginPositions.participants[index][0];
+        position.x2 = marginPositions.participants[index][0];
+        position.y = marginPositions.participants[index][1];
+        position.y2 = marginPositions.participants[index][1];
       });
-    dbController.upsertList("participantPosition", 
-      participantPositions
-        .filter(position => strEquals(position.formationSceneId, sourceSection.id)));
+
+    propPositions
+      .filter(position => strEquals(position.formationSceneId, sourceSection.id))
+      .forEach((position, index) => {
+        position.x = marginPositions.props[index][0];
+        position.x2 = marginPositions.props[index][0];
+        position.y = marginPositions.props[index][1];
+        position.y2 = marginPositions.props[index][1];
+      });
+
+    Promise.all([
+      dbController.upsertList("participantPosition", 
+        participantPositions
+        .filter(position => strEquals(position.formationSceneId, sourceSection.id))),
+      dbController.upsertList("propPosition",
+        propPositions
+        .filter(position => strEquals(position.formationSceneId, sourceSection.id)))
+    ]).then(() => {
+      Promise.all([
+        dbController.getAll("participantPosition"),
+        dbController.getAll("propPosition"),
+      ]).then(([participantPosition, propPosition]) => {
+        try {
+          var participantPositionList = participantPosition as Array<ParticipantPosition>;
+          var propPositionList = propPosition as Array<PropPosition>;
+          updatePositionState({
+            participantPositions: participantPositionList,
+            propPositions: propPositionList
+          });
+          participantPositions.forEach(p => { // todo: remove, probably
+            p.x2 = p.x;
+            p.y2 = p.y;
+          });
+          propPositions.forEach(p => { // todo: remove, probably
+            p.x2 = p.x;
+            p.y2 = p.y;
+          });
+        } catch (e) {
+          console.error('Error parsing user from localStorage:', e);
+        }
+      })
+    });
 
     dbController.getAll("participantPosition").then((participantPosition) => {
       try {
@@ -132,8 +173,6 @@ export default function SectionPicker () {
       } catch (e) {
         console.error('Error parsing user from localStorage:', e);
       }});
-
-    // todo: currently needs to refresh page, figure out how to force canvas to reset
   }
 
   return (

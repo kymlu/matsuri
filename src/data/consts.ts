@@ -23,6 +23,7 @@ export const DB_NAME = "MatsuriDB";
 
 export const NOTE_PRESETS = {
   "timing": {
+    label: "タイミング",
     length: 1.25,
     height: 0.75,
     borderRadius: 10,
@@ -32,6 +33,7 @@ export const NOTE_PRESETS = {
     defaultContent: "1"
   },
   "legend": {
+    label: "凡例",
     length: 5,
     height: 3,
     borderRadius: 10,

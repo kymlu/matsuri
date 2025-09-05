@@ -10,7 +10,7 @@ import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { FormationSongSection } from '../models/FormationSection.ts';
-import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { isNote, isParticipant, isProp, NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
 import { CONTEXT_NAMES, DB_NAME, DEFAULT_WIDTH } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
@@ -19,9 +19,9 @@ import { Participant } from '../models/Participant.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
-  const {updateFormationContext} = useContext(FormationContext)
+  const {noteList, participantList, propList, updateFormationContext} = useContext(FormationContext)
   const {selectedFestival, selectedFormation, selectedSection, selectedItem, sections, updateState} = useContext(UserContext)
-  const {participantPositions, updatePositionState} = useContext(PositionContext);
+  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext)
   const navigate = useNavigate()
 
@@ -48,7 +48,7 @@ export default function FormationEditorPage () {
         console.error('Error parsing user from localStorage:', e);
       }
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (isNullOrUndefined(selectedFormation)) {
@@ -59,22 +59,28 @@ export default function FormationEditorPage () {
     const currentSections = sections
       .filter(x => strEquals(x.formationId, selectedFormation?.id))
       .sort((a,b) => a.songSection.order - b.songSection.order);
+      
     const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
     .flatMap((_, row) =>
       Array.from({ length: selectedFormation!.length }).map((_, col) => [ row + 1, col + 2])
     );
   
-    const rightPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
-    .flatMap((_, row) =>
-      Array.from({ length: selectedFormation!.length }).map((_, col) => [ (DEFAULT_WIDTH + selectedFormation!.width) / 2 + row + 1, col + 2])
-    );
-  
-    const margins = [...leftPositions, ...rightPositions];
+    const rightPositions = Array.from({ length: (selectedFormation?.length ?? 10) })
+      .map((_, col) => [ (DEFAULT_WIDTH + selectedFormation!.width) / 2, col + 2]);
 
+    console.log(rightPositions);
+
+    const topPositions = Array.from({ length: DEFAULT_WIDTH - 4 })
+      .map((_, col) => [col + 2, 2]);
+  
     updateState({
       currentSections: currentSections,
       selectedSection: currentSections[0],
-      marginPositions: margins,
+      marginPositions: {
+        participants: leftPositions,
+        props: rightPositions,
+        notes: topPositions
+      },
     });
   }, [userContext.selectedFormation]);
 
@@ -112,6 +118,86 @@ export default function FormationEditorPage () {
       }
     });
   }, [userContext.selectedSection])
+
+  useEffect(() => {
+    window.removeEventListener("keydown", deleteItem);
+    window.addEventListener("keydown", deleteItem);
+  }, [userContext.selectedItem]);
+
+  function deleteItem(e: KeyboardEvent) {
+    if (isNullOrUndefined(selectedItem)) return;
+      
+    if (e.key === "Delete" || e.key === "Backspace") {
+      if (isParticipant(selectedItem!)) {
+        Promise.all([
+          dbController.removeItem("participant", selectedItem?.participantId),
+          dbController.removeList(
+            "participantPosition", 
+            participantPositions
+              .filter(x => strEquals(x.participantId, selectedItem.participantId))
+              .map(x => x.id)
+          )
+        ]).then(() => {
+          Promise.all([
+            dbController.getAll("participantPosition"),
+            dbController.getAll("participant"),
+          ]).then(([participantPosition, participant]) => {
+            try {
+              var participantPositionList = participantPosition as Array<ParticipantPosition>;
+              var participantList = participant as Array<Participant>;
+              updatePositionState({
+                participantPositions: participantPositionList,
+              });
+              updateFormationContext({
+                participantList: participantList
+              })
+              participantPositionList.forEach(p => { // todo: remove, probably
+                p.x2 = p.x;
+                p.y2 = p.y;
+              });
+            } catch (e) {
+              console.error('Error parsing user from localStorage:', e);
+            }
+          })
+        });
+      } else if (isProp(selectedItem!)) {
+        Promise.all([
+          dbController.removeItem("prop", selectedItem.propId),
+          dbController.removeList(
+            "propPosition",
+            propPositions
+              .filter(x => strEquals(x.propId, selectedItem.propId))
+              .map(x => x.id)
+          )
+        ]).then(() => {
+          Promise.all([
+            dbController.getAll("propPosition"),
+            dbController.getAll("prop"),
+          ]).then(([propPosition, prop]) => {
+            try {
+              var propPositionList = propPosition as Array<PropPosition>;
+              var propList = prop as Array<Prop>;
+              updatePositionState({
+                propPositions: propPositionList,
+              });
+              updateFormationContext({
+                propList: propList
+              })
+              propPositions.forEach(p => { // todo: remove, probably
+                p.x2 = p.x;
+                p.y2 = p.y;
+              });
+            } catch (e) {
+              console.error('Error parsing user from localStorage:', e);
+            }
+          })
+        });
+      } else if (isNote(selectedItem!)) {
+        updateFormationContext({noteList: noteList.filter(x => !strEquals(x.id, selectedItem.id))});
+        dbController.removeItem("notePosition", selectedItem.id);
+      }
+    }
+  }
 
   return (
       <div className='h-full overflow-hidden'>

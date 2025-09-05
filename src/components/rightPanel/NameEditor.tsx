@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
+import { strEquals } from "../helpers/GlobalHelper.ts";
 import { Participant } from "../../models/Participant.ts";
 import { Prop } from "../../models/Prop.ts";
-import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { isParticipant, isProp, ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 
 export default function NameEditor() {
@@ -21,27 +21,19 @@ export default function NameEditor() {
   function onChangeSelectedItem() {
     var name: string = "";
     
-    if (isParticipant()) {
+    if (isParticipant(selectedItem!)) {
       name = participantList.find(x => strEquals(x.id, (selectedItem as ParticipantPosition).participantId))!.displayName;
-    } else if (isProp()) {
+    } else if (isProp(selectedItem!)) {
       name = propList.find(x => strEquals(x.id, (selectedItem as PropPosition)?.propId))!.name;
     }
 
     setInputValue(name)
   }
-
-  function isParticipant() {
-    return "participantId" in selectedItem!;
-  }
-
-  function isProp() {
-    return "propId" in selectedItem!;
-  }
   
   const handleChange = (value) => {
     var newValue = value.target.value;
     setInputValue(newValue);
-    if (isParticipant()) {
+    if (isParticipant(selectedItem!)) {
       var updatedParticipant = {
         ...participantList.find(x => strEquals(x.id, (selectedItem as ParticipantPosition)?.participantId)),
         displayName: newValue
@@ -51,7 +43,7 @@ export default function NameEditor() {
         updatedParticipant
       ]})
       dbController.upsertItem("participant", updatedParticipant);
-    } else {
+    } else if (isProp(selectedItem!)) {
       var updatedProp = {
         ...propList.find(x => strEquals(x.id, (selectedItem as PropPosition)?.propId)),
         name: newValue

@@ -17,7 +17,7 @@ export interface PropObjectProps {
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
   onRotate?: (rotation: number, x: number, y: number) => void,
-  rotation: number
+  rotation: number,
 }
 
 export default function PropObject(props: PropObjectProps) {

@@ -1,4 +1,4 @@
-import { isNullOrUndefined, strEquals } from "../components/helpers/GlobalHelper.ts";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../components/helpers/GlobalHelper.ts";
 import { FormationSongSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
 import { categoryList, festivalList, teamMembers, songList } from "./ImaHitotabi.ts";
@@ -198,10 +198,11 @@ export class IndexedDBController {
     });
   }
 
-  async removeItem(storeName: TableName, item: any) {
+  async removeItem(storeName: TableName, itemId: string) {
+    if (isNullOrUndefinedOrBlank(itemId)) return Promise.resolve(0);
     console.log(`removeItem ${storeName} called`);
     return new Promise<any>((resolve, reject) => {
-      const request = this._getStore(storeName).delete(item);
+      const request = this._getStore(storeName).delete(itemId);
       request.onsuccess = () => {
         console.log(`resolved removeItem: ${request.result}`);
         resolve(request.result);
@@ -213,15 +214,17 @@ export class IndexedDBController {
     })
   }
 
-  async removeList(storeName: TableName, list: Array<any>) {
+  async removeList(storeName: TableName, idList: Array<string>) {
+    idList = idList.filter(id => !isNullOrUndefinedOrBlank(id));
+    if (idList.length === 0) return Promise.resolve(0);
     console.log(`removeList ${storeName} called`);
     return new Promise<any>((resolve, reject) => {
       const tx = this._getTransaction(storeName);
       const store = tx.objectStore(storeName);
-      list.forEach(item => store.delete(item.id));
+      idList.forEach(item => store.delete(item));
       tx.oncomplete = () => {
-        console.log(`resolved removeList: ${list.length}`);
-        resolve(list.length);
+        console.log(`resolved removeList: ${idList.length}`);
+        resolve(idList.length);
       };
       tx.onerror = () => {
         console.error(`error on removeList: ${tx.error}`);

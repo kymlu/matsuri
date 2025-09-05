@@ -9,6 +9,7 @@ import ColorPickerMenu from "./ColorPickerMenu.tsx";
 import ActionMenu from "./ActionMenu.tsx";
 import NameEditor from "./NameEditor.tsx";
 import NoteEditor from "./NoteEditor.tsx";
+import { isNote, isParticipant, isProp } from "../../models/Position.ts";
 
 export default function FormationRightPanel () {
   const {selectedItem} = useContext(UserContext);
@@ -21,7 +22,7 @@ export default function FormationRightPanel () {
           <Divider/>
         </>
       }
-      { selectedItem !== null && "participantId" in selectedItem &&
+      { selectedItem !== null && isParticipant(selectedItem) &&
         <>
           <CategoryMenu/>
           <Divider/>
@@ -29,19 +30,19 @@ export default function FormationRightPanel () {
           <Divider/> */}
         </>
       }
-      { selectedItem !== null && "color" in selectedItem &&
+      { selectedItem !== null && (isProp(selectedItem) || isNote(selectedItem)) &&
         <>
           <ColorPickerMenu/>
           <Divider/>
         </>
       }
-      { selectedItem !== null && ("participantId" in selectedItem || "propId" in selectedItem) &&
+      { selectedItem !== null && (isParticipant(selectedItem) || isProp(selectedItem)) &&
         <>
           <NameEditor/>
           <Divider/>
         </>
       }
-      { selectedItem !== null && "text" in selectedItem &&
+      { selectedItem !== null && isNote(selectedItem) &&
         <>
           <NoteEditor/>
           <Divider/>

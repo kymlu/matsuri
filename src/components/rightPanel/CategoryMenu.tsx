@@ -11,6 +11,7 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import ColorPicker from "./ColorPicker.tsx";
+import CustomMenu from "../CustomMenu.tsx";
 
 // bug: select participant, move, select colour, refresh. Will return to the original position but keep colour
 
@@ -72,13 +73,16 @@ export default function CategoryMenu() {
                   </Radio.Root>
                   {category.name}
                 </div>
-                <ColorSwatch onClick={() => selectCategoryToEdit(category.id)} tailwindColorClassName={category?.color?.twColor}/>
-                {
-                  strEquals(editingId, category.id) && 
-                  <div className="absolute grid flex-wrap grid-cols-6 gap-1 p-3 bg-white border-2 border-solid mt-52 border-primary">
-                    <ColorPicker selectColor={(color) => {selectColor(color, category)}}/>
-                  </div>
-                }
+                <CustomMenu
+                  trigger={
+                    <ColorSwatch
+                      onClick={() => selectCategoryToEdit(category.id)}
+                      tailwindColorClassName={category?.color?.twColor}/>
+                  }>
+                    <ColorPicker
+                      selectColor={(color) => {selectColor(color, category)}}
+                      selectedColor={category?.color}/>
+                </CustomMenu>
               </div>
             )
           }

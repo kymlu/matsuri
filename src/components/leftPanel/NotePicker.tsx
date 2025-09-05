@@ -8,19 +8,21 @@ import { NotePosition } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export default function NotePicker () {
-  const {selectedSection} = useContext(UserContext);
+  const {selectedSection, updateState, marginPositions} = useContext(UserContext);
   const {noteList, updateFormationContext} = useContext(FormationContext);
   
   function selectPreset(selectedPreset: any) {
     if(selectedSection === null) return;
 
+    var position = marginPositions.notes[noteList.length % marginPositions.notes.length]
+
     var newNote = {
       id: crypto.randomUUID(),
       formationSceneId: selectedSection.id,
-      x: 5,
-      x2: 5,
-      y: 5,
-      y2: 5,
+      x: position[0],
+      x2: position[0],
+      y: position[1],
+      y2: position[1],
       label: selectedPreset.hasLabel ? "New Note" : "",
       text: selectedPreset.defaultContent,
       color: selectedPreset.color,
@@ -32,6 +34,7 @@ export default function NotePicker () {
     } as NotePosition;
 
     updateFormationContext({noteList: [...noteList, newNote]});
+    updateState({selectedItem: null});
 
     dbController.upsertItem("notePosition", newNote);
   }
@@ -43,7 +46,7 @@ export default function NotePicker () {
           <Button
             key={key}
             onClick={() => selectPreset(preset)}>
-            {key}
+            {preset.label}
           </Button>
         ))}
         </div>

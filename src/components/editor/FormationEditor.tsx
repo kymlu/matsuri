@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { Layer, Path, Rect, Stage, Transformer } from "react-konva";
+import { Layer, Path, Stage, Transformer } from "react-konva";
 import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
-import { CUSTOM_EVENT, DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
+import { DEFAULT_WIDTH, GRID_MARGIN_Y, GRID_SIZE } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
@@ -136,7 +136,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   <PropObject 
                     key={placement.id}
                     name={propList.find(x => strEquals(placement.propId, x.id))!.name}
-                    colour={placement.color ?? objectColorSettings.purpleLight} 
+                    colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                     length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                     startX={getPixelX(placement.x)} 
                     startY={getPixelY(placement.y)}
@@ -161,12 +161,13 @@ export default function FormationEditor(props: FormationEditorProps) {
         <Layer>
           <NoteObject
             text={userContext.selectedSection?.songSection.name ?? ""}
-            startX={GRID_SIZE * 0.25}
+            startX={GRID_SIZE * 0.75}
             startY={GRID_SIZE * 0.25}
-            height={1}
+            height={1.1}
             length={3}
             colour={objectColorSettings.purpleLightest}
             borderRadius={10}
+            fontSize={16}
             />
         </Layer>
         <Layer>
@@ -196,7 +197,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 <PropObject 
                   key={placement.id}
                   name={propList.find(x => strEquals(placement.propId, x.id))!.name}
-                  colour={placement.color ?? objectColorSettings.purpleLight} 
+                  colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                   length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                   isSelected={placement.isSelected}
                   startX={getPixelX(placement.x)} 
@@ -271,7 +272,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 <PropObject 
                   key={placement.id}
                   name={propList.find(x => strEquals(placement.propId, x.id))!.name}
-                  colour={placement.color ?? objectColorSettings.purpleLight} 
+                  colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                   length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                   startX={getPixelX(placement.x)} 
                   startY={getPixelY(placement.y)} 

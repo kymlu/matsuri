@@ -6,6 +6,7 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { isParticipant, ParticipantPosition } from "../../models/Position.ts";
 
 export default function SwapMenu() {
   const {selectedSection, selectedItem} = useContext(UserContext);
@@ -16,7 +17,7 @@ export default function SwapMenu() {
     <ExpandableSection title="隊列交換">
       <div className="flex flex-row flex-wrap gap-2">
           {participantList
-            .filter(x => (selectedItem == null || !("participantId" in selectedItem) || !strEquals(x.id, selectedItem?.participantId)))
+            .filter(x => (selectedItem == null || isParticipant(selectedItem) || !strEquals(x.id, (selectedItem as unknown as ParticipantPosition).participantId)))
             .sort((a, b) => a.displayName.localeCompare(b.displayName))
             .map(participant => 
               <ItemButton

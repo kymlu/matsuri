@@ -41,7 +41,7 @@ export default function ParticipantPicker () {
       newParticipant.displayName = `${selectedParticipant.name} ${count}`;
     }
     
-    var position = marginPositions[participantList.length % marginPositions.length];
+    var position = marginPositions.participants[participantList.length % marginPositions.participants.length];
     var newPositions = currentSections.map(section => 
       {
         return {

@@ -17,7 +17,6 @@ export interface ParticipantPosition extends Position {
 
 export interface PropPosition extends Position {
   propId: string,
-  color?: ColorStyle,
   angle: number
 }
 
@@ -29,4 +28,16 @@ export interface NotePosition extends Position {
   height: number,
   borderRadius: number,
   fontSize: number,
+}
+
+export function isParticipant(pos: Position) {
+  return "participantId" in pos;
+}
+
+export function isProp(pos: Position) {
+  return "propId" in pos;
+}
+
+export function isNote(pos: Position) {
+  return "text" in pos;
 }

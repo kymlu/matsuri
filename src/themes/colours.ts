@@ -234,7 +234,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   indigoLight: {
     bgColour: objectPalette.indigo.light,
     twColor: "bg-indigo-light",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   indigoLightest: {
@@ -252,7 +252,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   violetLight: {
     bgColour: objectPalette.violet.light,
     twColor: "bg-violet-light",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   violetLightest: {
@@ -270,7 +270,7 @@ export const objectColorSettings: Record<ColorNames, ColorStyle> = {
   purpleLight: {
     bgColour: objectPalette.purple.light,
     twColor: "bg-purple-light",
-    textColour: basePalette.black,
+    textColour: basePalette.white,
     borderColour: basePalette.black,
   },
   purpleLightest: {
