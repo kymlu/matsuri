@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import Button from '../components/Button.tsx';
 import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
@@ -19,7 +19,7 @@ import { Participant } from '../models/Participant.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
-  const {noteList, participantList, propList, updateFormationContext} = useContext(FormationContext)
+  const {noteList, updateFormationContext} = useContext(FormationContext)
   const {selectedFestival, selectedFormation, selectedSection, selectedItem, sections, updateState} = useContext(UserContext)
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext)
@@ -119,12 +119,7 @@ export default function FormationEditorPage () {
     });
   }, [userContext.selectedSection])
 
-  useEffect(() => {
-    window.removeEventListener("keydown", deleteItem);
-    window.addEventListener("keydown", deleteItem);
-  }, [userContext.selectedItem]);
-
-  function deleteItem(e: KeyboardEvent) {
+  var deleteItem = useCallback((e: KeyboardEvent) =>{
     if (isNullOrUndefined(selectedItem)) return;
       
     if (e.key === "Delete" || e.key === "Backspace") {
@@ -197,7 +192,17 @@ export default function FormationEditorPage () {
         dbController.removeItem("notePosition", selectedItem.id);
       }
     }
-  }
+    updateState({selectedItem: null});
+    window.removeEventListener("keydown", deleteItem);
+  }, [userContext.selectedItem]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", deleteItem);
+
+    return () => {
+      window.removeEventListener("keydown", deleteItem);
+    };
+  }, [deleteItem]);
 
   return (
       <div className='h-full overflow-hidden'>
