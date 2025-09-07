@@ -265,7 +265,7 @@ export const notePresets = {
     length: 1.25,
     height: 0.75,
     borderRadius: 10,
-    fontSize: 20,
+    fontGridRatio: 0.5,
     color: objectColorSettings.grey4,
     hasLabel: false,
     defaultContent: "1"
@@ -275,7 +275,7 @@ export const notePresets = {
     length: 5,
     height: 3,
     borderRadius: 10,
-    fontSize: 12,
+    fontGridRatio: 0.25,
     color: objectColorSettings.amberLight,
     hasLabel: true,
     defaultContent: "これはメモです。"

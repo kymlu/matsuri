@@ -30,7 +30,7 @@ export default function NotePicker () {
       height: selectedPreset.height, // To do: make it resizable
       isSelected: false,
       borderRadius: selectedPreset.borderRadius,
-      fontSize: selectedPreset.fontSize,
+      fontGridRatio: selectedPreset.fontGridRatio,
     } as NotePosition;
 
     updateFormationContext({noteList: [...noteList, newNote]});
