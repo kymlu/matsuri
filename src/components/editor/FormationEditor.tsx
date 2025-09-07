@@ -190,7 +190,8 @@ export default function FormationEditor(props: FormationEditorProps) {
             }
             return newBox;
           }}/>
-          { noteList
+          { !isAnimating &&
+            noteList
               .filter(note => strEquals(userContext.selectedSection?.id, note.formationSceneId))
               .map(note => 
                 <NoteObject 
@@ -225,7 +226,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   startY={getPixelY(placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)}
-                  draggable 
+                  draggable={!isAnimating}
                   rotation={placement.angle} 
                   onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
                   />
@@ -243,7 +244,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)} 
-                  draggable
+                  draggable={!isAnimating}
                 />
             )
           }

@@ -10,7 +10,7 @@ export interface ListOptionButtonProps {
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
   onCopyToCurrent?: () => void,
   onCopyToFuture?: () => void,
-  onCreateDerivitive?: () => void,
+  onDuplicate?: () => void,
   onResetPosition?: () => void,
 }
 
@@ -35,8 +35,8 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
     props?.onCopyToFuture?.();
   }
   
-  function createDerivitive() {
-    props?.onCreateDerivitive?.();
+  function onDuplicate() {
+    props?.onDuplicate?.();
   }
   
   function resetPosition() {
@@ -62,7 +62,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             <MenuSeparator />
             <MenuItem label="以降にコピー" onClick={copyToFuture} />
             <MenuSeparator />
-            <MenuItem label="派生作成（無効）" onClick={createDerivitive} />
+            <MenuItem label="重複" onClick={onDuplicate} />
             <MenuSeparator />
             <MenuItem label="リセット" onClick={resetPosition} />
             <MenuSeparator />

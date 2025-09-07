@@ -9,17 +9,23 @@ import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 export default function AnimationMenu() {
   const {gridSize} = useContext(UserContext);
 
-  const {currentSections} = useContext(UserContext);
+  const {currentSections, selectedSection} = useContext(UserContext);
   const {updateAnimationContext} = useContext(AnimationContext);
 
-  function animate() {
+  function animate(mode: "fromPrevious" | "all" = "all") {
+    if (selectedSection === null) return;
+
     Promise.all(
       [
         dbController.getAll("participantPosition"),
       ])
       .then(([res1]) => {
       try {
-        var sectionIds = currentSections.sort((a, b) => a.order - b.order).map(x => x.id);
+        if (mode === "fromPrevious") {
+          var sectionIds = [selectedSection!.id, currentSections.find(x => x.order === (selectedSection!.order - 1))!.id];
+        } else {
+          var sectionIds = currentSections.sort((a, b) => a.order - b.order).map(x => x.id);
+        }
         var participantList = (res1 as Array<ParticipantPosition>)
           .filter(x => sectionIds.includes(x.formationSceneId))
           .reduce((acc, item) => {
@@ -54,8 +60,8 @@ export default function AnimationMenu() {
   
   return (
     <ExpandableSection title="アニメーション">
-      {/* <Button onClick={() => {}}>Show transition from previous</Button> */}
-      <Button onClick={() => {animate()}}>移動可視化</Button>
+      { selectedSection?.order !== 1 && <Button onClick={() => {animate("fromPrevious")}}>前からの移動可視化</Button> }
+      <Button onClick={() => {animate()}}>全ての移動可視化</Button>
     </ExpandableSection>
   )
 }
