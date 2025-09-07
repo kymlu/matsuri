@@ -16,6 +16,7 @@ import { CONTEXT_NAMES, DB_NAME, DEFAULT_WIDTH } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import { Prop } from '../models/Prop.ts';
 import { Participant } from '../models/Participant.ts';
+import CustomMenu, { MenuItem, MenuSeparator } from '../components/CustomMenu.tsx';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
@@ -58,7 +59,7 @@ export default function FormationEditorPage () {
 
     const currentSections = sections
       .filter(x => strEquals(x.formationId, selectedFormation?.id))
-      .sort((a,b) => a.songSection.order - b.songSection.order);
+      .sort((a,b) => a.order - b.order);
       
     const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
     .flatMap((_, row) =>
@@ -123,29 +124,39 @@ export default function FormationEditorPage () {
       <div className='h-full overflow-hidden'>
         <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 grid-rows-[10svh,90svh]'>
           <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-solid border-grey'>
-            <Button onClick={() => {navigate("../")}}>ホームに戻る</Button>
+            <CustomMenu trigger={
+              <img src="logo192.png" className='size-8'/>
+            }>
+              <>
+                <MenuItem label="ホームに戻る" onClick={() => {
+                  navigate("../")}} />
+              </>
+            </CustomMenu>
             {
             selectedFormation && selectedFestival &&
             <h1 className='px-2 font-bold text-center'>
-              Editing {selectedSection?.songSection?.name} {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) @ {selectedFestival?.name}
+              Editing {selectedSection?.displayName} {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) @ {selectedFestival?.name}
             </h1>
             }
-            <div className='flex flex-row gap-3'>
-              <Button onClick={() => {
-                Object.values(CONTEXT_NAMES).forEach((context) => {
-                  localStorage.removeItem(context);
-                });
-              }}>Clear Cache</Button>
-              <Button onClick={() => {
-                Object.values(CONTEXT_NAMES).forEach((context) => {
-                  localStorage.removeItem(context);
-                });
-                indexedDB.deleteDatabase(DB_NAME);
-              }}>Clear DB and Cache</Button>
-              <Button onClick={() => {
-                console.log("to implement");
-              }}>Export（無効）</Button>
-            </div>
+            <CustomMenu trigger={
+              <img src="icons/settings.svg" className='size-8'/>
+              }>
+              <>
+                <MenuItem label="Clear Cache" onClick={() => {
+                  Object.values(CONTEXT_NAMES).forEach((context) => {
+                    localStorage.removeItem(context);
+                  })}} />
+                <MenuSeparator />
+                <MenuItem label="Clear DB and Cache" onClick={() => {
+                  Object.values(CONTEXT_NAMES).forEach((context) => {
+                    localStorage.removeItem(context);
+                  });
+                  indexedDB.deleteDatabase(DB_NAME);
+                }} />
+                <MenuSeparator />
+                <MenuItem label="Export（無効）" onClick={()=>{}} />
+              </>
+            </CustomMenu>
             </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>

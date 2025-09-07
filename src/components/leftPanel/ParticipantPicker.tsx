@@ -3,13 +3,13 @@ import { categoryList, teamMembers } from "../../data/ImaHitotabi.ts";
 import { Participant, ParticipantOption } from "../../models/Participant.ts";
 import ExpandableSection from "../ExpandableSection.tsx";
 import ItemButton from "../ItemButton.tsx";
-import SearchParticipantComponent from "../SearchParticipantComponent.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
+import ClearableTextInput from "../ClearableTextInput.tsx";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
@@ -21,7 +21,6 @@ export default function ParticipantPicker () {
     setFilterText(value);
   }
   
-
   // const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
 
   function selectParticipant(selectedParticipant: ParticipantOption) {
@@ -63,12 +62,12 @@ export default function ParticipantPicker () {
   }
 
   var participantListDisplay = teamMembers
-    .filter(x => x.name.toLowerCase().includes(filterText.toLowerCase()))
+    .filter(x => x.name.toLowerCase().includes(filterText?.toLowerCase()))
     .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name));
   
   return (
     <ExpandableSection title="参加者">
-      <SearchParticipantComponent onValueChanged={(value) => setFilterTextWrapper(value)}/>
+      <ClearableTextInput text={filterText} placeholder="探す" onContentChange={(event) => setFilterTextWrapper(event.target?.value ?? "")}/>
       <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-scroll max-h-28">
         {participantListDisplay
           .map(participant => 

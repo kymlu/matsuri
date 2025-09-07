@@ -271,7 +271,7 @@ export const notePresets = {
     defaultContent: "1"
   },
   "legend": {
-    label: "凡例",
+    label: "メモ",
     length: 5,
     height: 3,
     borderRadius: 10,

@@ -5,7 +5,8 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { Participant } from "../../models/Participant.ts";
 import { NotePosition, ParticipantPosition } from "../../models/Position.ts";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
+import ClearableTextInput from "../ClearableTextInput.tsx";
 
 export default function NoteEditor() {
   const {selectedItem} = useContext(UserContext);
@@ -40,16 +41,40 @@ export default function NoteEditor() {
     ]})
     dbController.upsertItem("notePosition", updatedNote);
   };
+
+  function onClearLabel() {
+    setLabel("");
+    var updatedNote = {...noteList.find(x => strEquals(x.id, (selectedItem as NotePosition)?.id))!};
+    updatedNote.isSelected = false;
+    updatedNote.label = "";
+    updateFormationContext({noteList: [
+      ...noteList.filter(x => !strEquals(x.id, (selectedItem as NotePosition)?.id)),
+      updatedNote
+    ]})
+    dbController.upsertItem("notePosition", updatedNote);
+  }
   
   return (
     <ExpandableSection title="テキスト修正">
       <label>
         タイトル（任意）
       </label>
-      <input
-        value={label}
-        onInput={(event) => handleContentChange(event, "label")}
-        className="w-full h-8 px-2 mb-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
+      <ClearableTextInput
+        text={label}
+        placeholder="タイトルを入力"
+        onContentChange={(event) => handleContentChange(event, "label")}/>
+      {/* <div className="grid items-center w-full h-8 grid-cols-1 mb-2">
+        <input
+          placeholder="タイトルを入力"
+          value={label}
+          onInput={(event) => handleContentChange(event, "label")}
+          className="w-full col-start-1 row-start-1 px-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
+
+       { !isNullOrUndefinedOrBlank(label) && 
+        <button className="col-start-1 row-start-1 pr-2 text-end text-primary" onClick={() => {onClearLabel()}}>
+            ✖︎
+        </button>}
+      </div> */}
         
       <label>
         内容

@@ -1,15 +1,22 @@
 import { Menu } from "@base-ui-components/react";
+import classNames from "classnames";
 import React from "react";
 
 export type CustomMenuProps = {
   trigger: React.ReactNode;
+  full?: boolean;
   children: React.ReactNode;
 }
 
 export default function CustomMenu (props: CustomMenuProps) {
+  const triggerClassNames = classNames("px-3 hover:opacity-80", {
+    "w-full": props.full,
+  });
+
+
   return (
     <Menu.Root>
-      <Menu.Trigger className="px-3 hover:opacity-80" onClick={(e) => {e.stopPropagation()}}>
+      <Menu.Trigger className={triggerClassNames} onClick={(e) => {e.stopPropagation()}}>
         {props.trigger}
         </Menu.Trigger>
       <Menu.Portal>

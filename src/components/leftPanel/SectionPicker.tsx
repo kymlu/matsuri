@@ -7,6 +7,10 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../SectionOptionButton.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import Button from "../Button.tsx";
+import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
+import { songList } from "../../data/ImaHitotabi.ts";
+import { Form } from "react-router-dom";
 
 export default function SectionPicker () {
   const {currentSections, selectedSection, updateState, marginPositions} = useContext(UserContext);
@@ -22,8 +26,9 @@ export default function SectionPicker () {
     sourceSection: FormationSongSection,
     targetSections: FormationSongSection | FormationSongSection[]
   ) {
-    if (isNullOrUndefined(selectedSection)) return;
-  
+    console.log(sourceSection, targetSections);
+    if (isNullOrUndefined(selectedSection) || isNullOrUndefined(targetSections)) return;
+
     // Ensure targetSections is always an array
     const targetSectionsArray = Array.isArray(targetSections) ? targetSections : [targetSections];
   
@@ -70,7 +75,8 @@ export default function SectionPicker () {
     dbController.upsertList("propPosition", copiedPropPositions);
   
     // Update state
-    dbController.getAll("participantPosition").then(participantPosition => {
+    return new Promise<number>((resolve, reject) => {
+      dbController.getAll("participantPosition").then(participantPosition => {
       try {
         const participantPositionList = participantPosition as Array<ParticipantPosition>;
         updatePositionState({
@@ -82,11 +88,13 @@ export default function SectionPicker () {
           updatePositionState({
             propPositions: propPositionList,
           });
+          resolve(1);
         });
       } catch (error) {
         console.error("Error updating positions:", error);
+        reject(error);
       }
-    });
+    });});
   }
   
   function copyToCurrent(sourceSection: FormationSongSection) {
@@ -98,10 +106,29 @@ export default function SectionPicker () {
     if (isNullOrUndefined(selectedSection)) return;
   
     const futureSections = currentSections.filter(
-      section => section.songSection.order > selectedSection!.songSection.order
+      section => section.order > selectedSection!.order
     );
   
     copyPositions(sourceSection, futureSections);
+  }
+
+  function copyToNewSection(lastSection: FormationSongSection, nextSectionId: string) {
+    var countOfThisSection = currentSections.filter(x => strEquals(x.songSectionId, nextSectionId)).length;
+    
+    var newSection = {
+      id: crypto.randomUUID(),
+      displayName: songList[0].sections.find(x => strEquals(x.id, nextSectionId))!.name + (countOfThisSection ? ` (${countOfThisSection + 1})` : ""),
+      formationId: lastSection.formationId,
+      songSectionId: nextSectionId,
+      order: lastSection.order + 1,
+    } as FormationSongSection;
+    
+    dbController.upsertItem("formationSection", newSection).then(() => {
+      updateState({currentSections: [...currentSections, newSection]});
+      copyPositions(lastSection, newSection as FormationSongSection)?.then(() => {
+        selectSection(newSection);
+      });
+    });
   }
 
   function createDerivitive(sourceSection: FormationSongSection) {
@@ -175,15 +202,23 @@ export default function SectionPicker () {
       }});
   }
 
+  var lastSection = currentSections
+    .slice()
+    ?.sort((a, b) => b.order - a.order)[0];
+  var lastSectionDetails = songList[0].sections.find(x => strEquals(x.id, lastSection?.songSectionId));
+  var nextSection = lastSectionDetails ? 
+    songList[0].sections.find(x => x.order == (lastSectionDetails!.order + 1)):
+    undefined;
+
   return (
     <ExpandableSection title="セクション" defaultIsExpanded>
-      <div className="flex flex-col">
+      <div className="flex flex-col overflow-scroll max-h-28">
         {currentSections
-          .sort((a, b) => a.songSection.order - b.songSection.order)
+          .sort((a, b) => a.order - b.order)
           .map((section, index, array) => 
             <SectionOptionButton 
               key={section.id} 
-              text={section.songSection.name}
+              text={section.displayName ?? "No Name"}
               isSelected={strEquals(selectedSection?.id, section.id)}
               isBottom={index === array.length - 1}
               onClick={() => selectSection(section) }
@@ -193,6 +228,17 @@ export default function SectionPicker () {
               onResetPosition={() => resetPosition(section) }/>
         )}
       </div>
+      {lastSection && 
+        <CustomMenu full trigger={<div className="text-center hover:bg-grey-100">＋</div>}>
+          <MenuItem label={`「${lastSectionDetails?.name}」サブセクソン (無効)`} onClick={() => {copyToNewSection(lastSection!, lastSection.songSectionId)}} />
+          { nextSection &&
+            <>
+              <MenuSeparator />
+              <MenuItem label={`「${nextSection?.name}」追加(無効)`} onClick={() => {copyToNewSection(lastSection!, nextSection!.id)}} />
+            </>
+          }
+        </CustomMenu>
+      }
     </ExpandableSection>
   )
 }

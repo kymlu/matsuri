@@ -30,10 +30,10 @@ export default function FestivalManager () {
       <div className='m-auto mt-10'>
         <h1 className='text-2xl font-bold'>祭り</h1>
         <Divider/>
-        <div className='grid grid-cols-[auto,1fr] gap-3'>
+        <div>
           {
             festivalList.map(festival =>
-              <>
+              <div className='grid grid-cols-[auto,1fr] gap-3' key={festival.id}>
                 <h2 className='text-xl'>{festival.name}</h2>
                 <div className='flex flex-row gap-3'>
                   {festival.formations
@@ -45,7 +45,7 @@ export default function FestivalManager () {
                       </Button>
                   )}
                 </div>
-              </>
+              </div>
             )
           }
         </div>

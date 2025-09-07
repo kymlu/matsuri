@@ -13,28 +13,29 @@ export type ColorPickerMenuProps = {
 }
 
 export default function ColorPickerMenu() {
-  const {selectedItem} = useContext(UserContext);
+  const {selectedItem, updateState} = useContext(UserContext);
   const {noteList, propList, updateFormationContext} = useContext(FormationContext);
+
+  function selectColor(color: ColorStyle) {
+    if (isNullOrUndefined(selectedItem) || !("color" in selectedItem!)) return;
+
+    if ("propId" in selectedItem!){
+      var updatedProp = {...(propList.find(x => strEquals(x.id, selectedItem!.propId as string))), color: color} as Prop;
+      updateFormationContext({propList: [...propList.filter(x => !strEquals(x.id, updatedProp.id)), updatedProp]});
+      updateState({selectedItem: {...selectedItem, color: color}});
+      dbController.upsertItem("prop", updatedProp);
+    } else {
+      var updatedNote = {...(selectedItem as NotePosition), color: color};
+      updateFormationContext({noteList: [...noteList.filter(x => !strEquals(x.id, updatedNote.id)), updatedNote]});
+      updateState({selectedItem: {...selectedItem, color: color}});
+      dbController.upsertItem("notePosition", updatedNote);
+    }
+  }
 
   var selectedColor = selectedItem && 
     ("propId" in selectedItem ? 
       propList.find(x => strEquals(x.id, selectedItem.propId))?.color :
       (selectedItem as NotePosition).color);
-
-  function selectColor(color: ColorStyle) {
-    if (isNullOrUndefined(selectedItem)) return;
-
-
-    if ("propId" in selectedItem!){
-      var updatedProp = {...(propList.find(x => strEquals(x.id, selectedItem.propId))), color: color} as Prop;
-      updateFormationContext({propList: [...propList.filter(x => !strEquals(x.id, updatedProp.id)), updatedProp]});
-      dbController.upsertItem("prop", updatedProp);
-    } else {
-      var updatedNote = {...(selectedItem as NotePosition), color: color};
-      updateFormationContext({noteList: [...noteList.filter(x => !strEquals(x.id, updatedNote.id)), updatedNote]});
-      dbController.upsertItem("notePosition", updatedNote);
-    }
-  }
 
   return (
     <ExpandableSection title="色">

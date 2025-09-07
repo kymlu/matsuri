@@ -38,13 +38,13 @@ export default function FormationEditor(props: FormationEditorProps) {
   
   useEffect(() => {
     if (compareMode === "previous") {
-      const previousSection = userContext?.selectedSection && songList[0].sections.find(x => x.order === (userContext.selectedSection!.songSection.order - 1))?.id;
-      const section = currentSections.find(x => strEquals(x.songSectionId, previousSection))?.id;
-      setPreviousSectionId(section);
+      const previousSectionId = userContext?.selectedSection && currentSections.find(x => x.order === (userContext!.selectedSection!.order - 1))?.id;
+      const section = previousSectionId && currentSections.find(x => strEquals(x.id, previousSectionId))?.id;
+      section && setPreviousSectionId(section);
     } else if (compareMode === "next") {
-      const nextSection = userContext?.selectedSection && songList[0].sections.find(x => x.order === (userContext.selectedSection!.songSection.order + 1))?.id;
-      const section = currentSections.find(x => strEquals(x.songSectionId, nextSection))?.id;
-      setNextSectionId(section);
+      const nextSectionId = userContext?.selectedSection && currentSections.find(x => x.order === (userContext!.selectedSection!.order + 1))?.id;
+      const section = nextSectionId && currentSections.find(x => strEquals(x.id, nextSectionId))?.id;
+      section && setNextSectionId(section);
     }
   }, [userContext?.selectedSection, userContext?.compareMode]);
   
@@ -160,7 +160,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         }
         <Layer>
           <NoteObject
-            text={userContext.selectedSection?.songSection.name ?? ""}
+            text={userContext.selectedSection?.displayName ?? ""}
             startX={gridSize * 0.75}
             startY={gridSize * 0.25}
             height={1.1}
@@ -190,6 +190,27 @@ export default function FormationEditor(props: FormationEditorProps) {
             }
             return newBox;
           }}/>
+          { noteList
+              .filter(note => strEquals(userContext.selectedSection?.id, note.formationSceneId))
+              .map(note => 
+                <NoteObject 
+                  key={note.id}
+                  colour={note.color ?? objectColorSettings.blueLight} 
+                  startX={getPixelX(note.x)} 
+                  startY={getPixelY(note.y)}
+                  isSelected={note.isSelected}
+                  height={note.height}
+                  length={note.width}
+                  label={note.label}
+                  text={note.text}
+                  borderRadius={note.borderRadius}
+                  fontSize={note.fontSize}
+                  updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
+                  onClick={(forceSelect?: boolean) => selectItem(note, forceSelect)} 
+                  draggable
+                />
+            )
+          }
           {
             propPositions
               .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
@@ -222,27 +243,6 @@ export default function FormationEditor(props: FormationEditorProps) {
                   isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)} 
-                  draggable
-                />
-            )
-          }
-          { noteList
-              .filter(note => strEquals(userContext.selectedSection?.id, note.formationSceneId))
-              .map(note => 
-                <NoteObject 
-                  key={note.id}
-                  colour={note.color ?? objectColorSettings.blueLight} 
-                  startX={getPixelX(note.x)} 
-                  startY={getPixelY(note.y)}
-                  isSelected={note.isSelected}
-                  height={note.height}
-                  length={note.width}
-                  label={note.label}
-                  text={note.text}
-                  borderRadius={note.borderRadius}
-                  fontSize={note.fontSize}
-                  updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectItem(note, forceSelect)} 
                   draggable
                 />
             )

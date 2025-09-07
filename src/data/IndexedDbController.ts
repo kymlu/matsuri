@@ -92,14 +92,16 @@ export class IndexedDBController {
             const sections = festivalList
               .flatMap(festival => 
                 festival.formations.map(formation => 
-                  songList.find(song => strEquals(song.id, formation.songId))
-                    ?.sections?.map(section => ({
+                  [songList.find(song => strEquals(song.id, formation.songId))
+                    ?.sections
+                    ?.sort((a, b) => a.order - b.order)[0]]
+                    ?.map(section => ({
                       id: crypto.randomUUID().toString(),
-                      songSection: section,
-                      songSectionId: section.id,
-                      formation: formation,
-                      formationId: formation.id
-                    }))
+                      displayName: section?.name,
+                      songSectionId: section!.id,
+                      formationId: formation.id,
+                      order: 1,
+                    } as FormationSongSection))
                 ).flatMap(x => x)
               ).flatMap(x => x); // flatten all the way
 

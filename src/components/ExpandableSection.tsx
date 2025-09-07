@@ -3,14 +3,14 @@ import React from "react";
 export interface ExpandableSectionProps {
   children: React.ReactNode,
   title: string,
-  defaultIsExpanded?: boolean
+  defaultIsExpanded?: boolean,
 }
 
 export default function ExpandableSection(props: ExpandableSectionProps) {
   const [expanded, setExpanded] = React.useState(props.defaultIsExpanded);
 
   function toggle() {
-    setExpanded(prev => !prev)
+    setExpanded(prev => !prev);
   }
   
   return (

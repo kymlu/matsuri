@@ -3,11 +3,10 @@ import { SongSection } from "./SongSection"
 
 export interface FormationSongSection {
   id: string,
+  displayName: string,
   songSectionId: string,
-  songSection: SongSection,
   order: number,
   formationId: string,
-  formation: Formation,
   version: number,
   head: number
 }

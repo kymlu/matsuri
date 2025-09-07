@@ -15,7 +15,7 @@ export interface ListOptionButtonProps {
 }
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
-  const classes = className("flex flex-row gap-2 px-5", {
+  const classes = className("flex flex-row gap-2 px-5 items-center", {
     "bg-primary text-white cursor-default": props.isSelected,
     "cursor-pointer": !props.isSelected,
     "border-b-2 border-primary": !props.isBottom,
@@ -48,28 +48,28 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
       <span className="flex-1 text-center">
         {props.text}
       </span>
-      <CustomMenu trigger={<span>⚙️</span>}>
-          {
-            !props.isSelected &&
-            <>
-              <MenuItem label="選択項目にコピー" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}/>
-            </>
-          }
-          {
-            props.isSelected && 
-            <>
-              <MenuItem label="名前を編集（無効）" onClick={() => {}} />
-              <MenuSeparator />
-              <MenuItem label="以降にコピー" onClick={copyToFuture} />
-              <MenuSeparator />
-              <MenuItem label="派生作成（無効）" onClick={createDerivitive} />
-              <MenuSeparator />
-              <MenuItem label="リセット" onClick={resetPosition} />
-              <MenuSeparator />
-              <MenuItem label="削除（無効）" onClick={() => {}} />
-            </>
-          }
-        </CustomMenu>
+      <CustomMenu trigger={<img src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"} className='size-4'/>}>
+        {
+          !props.isSelected &&
+          <>
+            <MenuItem label="選択項目にコピー" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}/>
+          </>
+        }
+        {
+          props.isSelected && 
+          <>
+            <MenuItem label="名前を編集（無効）" onClick={() => {}} />
+            <MenuSeparator />
+            <MenuItem label="以降にコピー" onClick={copyToFuture} />
+            <MenuSeparator />
+            <MenuItem label="派生作成（無効）" onClick={createDerivitive} />
+            <MenuSeparator />
+            <MenuItem label="リセット" onClick={resetPosition} />
+            <MenuSeparator />
+            <MenuItem label="削除（無効）" onClick={() => {}} />
+          </>
+        }
+      </CustomMenu>
     </div>
   )
 }
