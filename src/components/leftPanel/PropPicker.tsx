@@ -22,7 +22,8 @@ export default function PropPicker () {
       ...selectedProp,
       id: crypto.randomUUID(),
       color: selectedProp.color ?? objectColorSettings.grey3,
-    };
+      formationId: selectedSection.formationId
+    } as Prop;
 
     var position = marginPositions.props[propList.length % marginPositions.props.length]
     

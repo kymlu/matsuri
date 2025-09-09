@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import Divider from "../Divider.tsx";
-import SwapMenu from "./SwapMenu.tsx";
 import CategoryMenu from "./CategoryMenu.tsx";
 import GridSettingsMenu from "./GridSettingsMenu.tsx";
 import AnimationMenu from "./AnimationMenu.tsx";
@@ -10,9 +9,11 @@ import ActionMenu from "./ActionMenu.tsx";
 import NameEditor from "./NameEditor.tsx";
 import NoteEditor from "./NoteEditor.tsx";
 import { isNote, isParticipant, isProp } from "../../models/Position.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export default function FormationRightPanel () {
   const {selectedItem} = useContext(UserContext);
+  const {participantList} = useContext(FormationContext);
 
   return (
     <div className="flex flex-col p-5 overflow-y-auto bg-white border-l-2 border-solid border-grey max-h-none w-80 max-w-80">
@@ -50,7 +51,7 @@ export default function FormationRightPanel () {
       }
       <GridSettingsMenu/>
       <Divider/>
-      <AnimationMenu/>
+      { participantList.length > 0 && <AnimationMenu/> }
     </div>
   )
 }

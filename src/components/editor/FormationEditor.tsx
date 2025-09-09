@@ -16,6 +16,7 @@ import NoteObject from "./formationObjects/NoteObject.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import Konva from "konva";
+import { FormationType } from "../../models/Formation.ts";
 
 export interface FormationEditorProps {
   height: number,
@@ -27,7 +28,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const userContext = useContext(UserContext);
   const {paths} = useContext(AnimationContext);
   const {participantList, propList, noteList} = useContext(FormationContext);
-  const {selectedItem, isAnimating, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
+  const {selectedFormation, selectedItem, isAnimating, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
   const [nextSectionId, setNextSectionId] = useState<string | undefined>("");
@@ -137,7 +138,6 @@ export default function FormationEditor(props: FormationEditorProps) {
 
           if (pos >= steps) {
             anim.stop(); // stop will reset the location
-            updateState({ isAnimating: false });
           }
         });
 
@@ -165,7 +165,8 @@ export default function FormationEditor(props: FormationEditorProps) {
           canvasHeight={canvasHeight}
           canvasWidth={canvasWidth}
           height={props.height}
-          width={props.width}/>
+          width={props.width}
+          isParade={selectedFormation?.type === FormationType.parade}/>
         { !isAnimating && compareMode === "previous" && previousSectionId &&
           <Layer opacity={0.5}>
             {

@@ -11,7 +11,7 @@ export interface FormationGridProps {
   canvasWidth: number,
   height: number,
   width: number,
-  isParade?: boolean // todo: implement
+  isParade?: boolean
 }
 
 export default function FormationGrid(props: FormationGridProps) {
@@ -53,7 +53,7 @@ export default function FormationGrid(props: FormationGridProps) {
             key={i}
             startX={props.canvasWidth - 2 * gridSize}
             startY={i * gridSize + 7 * gridSize/4}
-            value={i}/>
+            value={props.isParade ? Math.abs(props.height - i) : i}/>
         ))}
         {[...Array(gridWidth + 2)].map((_, i) => (
           (i % 2 === 0 && i !== 0 && i !== (gridWidth)) &&

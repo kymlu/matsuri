@@ -5,5 +5,6 @@ export interface Prop {
   name: string,
   count?: number,
   length: number
-  color?: ColorStyle
+  color?: ColorStyle,
+  formationId: string,
 }
