@@ -18,7 +18,7 @@ export interface FormationObjectProps {
   resizeEnabled?: boolean,
   draggable?: boolean,
   onTransform?: (item: Shape<ShapeConfig> | Stage) => void,
-  ref?: React.Ref<any>,
+  ref?: React.Ref<Konva.Group>,
 }
 
 export default function BaseFormationObject(props: FormationObjectProps) {

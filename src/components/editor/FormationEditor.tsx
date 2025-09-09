@@ -37,7 +37,13 @@ export default function FormationEditor(props: FormationEditorProps) {
   const canvasWidth = DEFAULT_WIDTH * gridSize;
   const transformerRef = useRef(null);
   const animationLayerRef = useRef<Konva.Layer>(null);
-  const animationRef = useRef<{ [key: string]: Konva.Node | null }>({});
+  const animationRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+
+  participantList
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .forEach((_, index) => 
+      animationRef.current[index] = React.createRef<Konva.Group>()
+    );
   
   useEffect(() => {
     if (compareMode === "previous") {
@@ -110,39 +116,50 @@ export default function FormationEditor(props: FormationEditorProps) {
   }
 
     useEffect(() => {
-      const animations: Array<Konva.Animation> = [];
+      if(!isAnimating) return;
+
       const steps = 50;
 
-      Object.entries(paths).forEach(([key, pathData]) => {
-        const path = new Konva.Path({
-          x: 0,
-          y: 0,
-          stroke: 'cyan',
-          data: pathData,
+      const animationPromises: Promise<void>[] = [];
+
+      Object.entries(paths)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .forEach(([key, pathData], index) => {
+          const path = new Konva.Path({
+            x: 0,
+            y: 0,
+            data: pathData,
+          });
+
+          const pathLen = path.getLength();
+          const step = pathLen / steps;
+          let pos = 0;
+
+          // Wrap each animation in a Promise
+          const animPromise = new Promise<void>((resolve) => {
+            const anim = new Konva.Animation((frame) => {
+              pos++;
+
+              const pt = path.getPointAtLength(pos * step);
+              if (pt && animationRef?.current[index]) {
+                animationRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
+              }
+
+              if (pos >= steps) {
+                anim.stop();
+                resolve();
+              }
+            });
+
+            anim.start();
+          });
+
+          animationPromises.push(animPromise);
         });
 
-        const pathLen = path.getLength();
-        const step = pathLen / steps;
-        let pos = 0;
-
-        const anim = new Konva.Animation(function (frame) {
-          pos = pos + 1;
-          const pt = path!.getPointAtLength(pos * step);
-
-          if (animationRef[key]?.current) { // todo: doesn't work, ref doesn't attach to object (current is always null)
-            animationRef[key].current.position({ x: pt!.x, y: pt!.y });
-          }
-
-          if (pos >= steps) {
-            anim.stop(); // stop will reset the location
-          }
-        });
-
-        animations.push(anim);
+      Promise.all(animationPromises).then(() => {
+        updateState({isAnimating: false});
       });
-
-      // Start all animations
-      animations.forEach((anim) => anim.start());
     }, [userContext.isAnimating]);
 
   return (
@@ -239,7 +256,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 />
             )
           }
-          {
+          { !isAnimating &&
             propPositions
               .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
               .map(placement =>
@@ -259,7 +276,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   />
               )
           } 
-          { participantPositions
+          { !isAnimating && participantPositions
               .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
               .map(placement => 
                 <ParticipantObject 
@@ -278,18 +295,10 @@ export default function FormationEditor(props: FormationEditorProps) {
         </Layer>
         {isAnimating &&
           <Layer useRef={animationLayerRef}>
-            {
-              Object.entries(paths)
-                .map(path => 
-                  <Path
-                    key={path[0]}
-                    data={path[1]}
-                    stroke={objectPalette.cyan.main}
-                    strokeWidth={2}/>)
-            }
             {participantPositions
               .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
-              .map(placement => 
+              .sort((a, b) => a.participantId.localeCompare(b.participantId))
+              .map((placement, index) => 
                 <ParticipantObject 
                   key={placement.id}
                   name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
@@ -297,7 +306,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   startX={0} 
                   startY={0}
                   isSelected={false}
-                  ref={(ref) => animationRef.current[placement.participantId] = ref}
+                  ref={animationRef.current[index]}
                 />
             )}
           </Layer>

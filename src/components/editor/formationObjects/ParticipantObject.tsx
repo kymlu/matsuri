@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Circle, Text } from "react-konva";
-import { FONT_SIZE } from "../../../data/consts.ts";
 import { ColorStyle } from "../../../themes/colours.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
+import Konva from "konva";
 
 export interface ParticipantObjectProps {
   name: string,
@@ -14,12 +14,11 @@ export interface ParticipantObjectProps {
   isSelected?: boolean,
   onClick?: (forceSelect?: boolean) => void,
   draggable?: boolean,
-  ref?: React.Ref<any>,
+  ref?: React.Ref<Konva.Group>,
 }
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
   const {gridSize} = useContext(UserContext);
-  console.log(props.ref)
   
   function onClick(forceSelect?: boolean) {
     if(props.draggable) {
