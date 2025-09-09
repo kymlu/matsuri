@@ -9,21 +9,35 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
 import { songList } from "../../data/ImaHitotabi.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function SectionPicker() {
 	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions } =
 		useContext(UserContext);
 	const { participantPositions, propPositions, updatePositionState } =
 		useContext(PositionContext);
+	const { noteList } =
+		useContext(FormationContext);
+	const { updateAnimationContext } =
+		useContext(AnimationContext);
 
 	function selectSection(section: FormationSongSection) {
+		updateState({ isLoading: true });
+		updateAnimationContext({isAnimating: false});
 		participantPositions
 			.filter((x) => x.isSelected)
 			.forEach((x) => (x.isSelected = false));
 		propPositions
 			.filter((x) => x.isSelected)
 			.forEach((x) => (x.isSelected = false));
-		updateState({ selectedSection: section, selectedItem: null });
+		noteList.filter((x) => x.isSelected)
+			.forEach((x) => (x.isSelected = false));
+		updateState({
+			previousSectionId: selectedSection ? selectedSection.id : null,
+			selectedSection: section,
+			selectedItem: null,
+		});
 	}
 
 	function copyPositions(

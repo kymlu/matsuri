@@ -72,6 +72,8 @@ export default function FormationEditorPage () {
           .map((_, col) => [col + 2, 2]);
       
         updateState({
+          isLoading: false,
+          previousSectionId: null,
           currentSections: currentSections,
           selectedSection: currentSections[0],
           marginPositions: {

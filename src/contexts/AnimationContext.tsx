@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface AnimationContextState {
   paths: Record<string, string>,
+  isAnimating: boolean,
   updateAnimationContext: (newState: Partial<AnimationContextState>) => void
 }
 
@@ -9,6 +10,7 @@ export type AnimationContextData = Omit<AnimationContextState, 'updateAnimationC
 
 export const defaultAnimationContext: AnimationContextState = {
   paths: {},
+  isAnimating: false,
   updateAnimationContext: (newState: Partial<AnimationContextState>) => {},
 }
 

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import className from "classnames";
 import CustomMenu from "./CustomMenu.tsx";
 import { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import TextInput from "./TextInput.tsx";
+import { FormationContext } from "../contexts/FormationContext.tsx";
 
 export interface ListOptionButtonProps {
   text: string,
@@ -18,6 +19,7 @@ export interface ListOptionButtonProps {
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
   const [isEditing, setIsEditing] = React.useState(false);
+  const {participantList, propList, noteList} = useContext(FormationContext);
 
   const classes = className("grid grid-cols-[1fr,auto] gap-2 px-5 items-center", {
     "bg-primary text-white cursor-default": props.isSelected,
@@ -78,8 +80,12 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             <MenuSeparator />
             <MenuItem label="重複" onClick={onDuplicate} />
             <MenuSeparator />
-            <MenuItem label="リセット" onClick={resetPosition} />
-            <MenuSeparator />
+            { (participantList.length + propList.length + noteList.length )> 0 &&
+              <>
+                <MenuItem label="リセット" onClick={resetPosition} />
+                <MenuSeparator />
+              </>
+            }
             <MenuItem label="削除（無効）" onClick={() => {}} />
           </>
         }

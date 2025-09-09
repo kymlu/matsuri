@@ -14,11 +14,12 @@ export interface AppState {
     notes: number[][]
   },
   gridSize: number,
+  previousSectionId: string | null,
   selectedSection: FormationSongSection | null,
   selectedItem: ParticipantPosition | PropPosition | NotePosition | null,
   currentSections: Array<FormationSongSection>,
   compareMode: CompareMode,
-  isAnimating: boolean,
+  isLoading: boolean,
   updateState: (newState: Partial<AppState>) => void
 }
 
@@ -32,10 +33,11 @@ export const defaultState: AppState = {
   marginPositions: {participants: [], props: [], notes: []},
   gridSize: GRID_SIZE,
   selectedItem: null,
+  previousSectionId: null,
   selectedSection: null,
   currentSections: [],
   compareMode: "none",
-  isAnimating: false,
+  isLoading: false,
   updateState: (newState: Partial<AppState>) => {},
 }
 
