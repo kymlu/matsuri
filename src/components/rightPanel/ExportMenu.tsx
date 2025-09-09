@@ -4,18 +4,21 @@ import Button from "../Button.tsx";
 import TextInput from "../TextInput.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
+import { ExportContext } from "../../contexts/ExportContext.tsx";
 
 export type ExportMenuProps = {
-  exportFunc?: (fileName: string) => void
+  exportFunc?: () => void
 }
 
 export default function ExportMenu(props: ExportMenuProps) {
   const { selectedFestival, selectedFormation } = useContext(UserContext);
   var defaultName = selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : '');
   const [exportName, setExportName] = React.useState(defaultName);
+  const {updateExportContext} = useContext(ExportContext);
 
   function exportPdf() {
-    props.exportFunc?.(isNullOrUndefinedOrBlank(exportName) ? defaultName! : exportName);
+    updateExportContext({exportName: isNullOrUndefinedOrBlank(exportName) ? defaultName! : exportName});
+    props.exportFunc?.();
   }
 
   return (

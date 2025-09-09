@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef } from "react";
-import { Layer, Path, Stage, Transformer } from "react-konva";
-import { basePalette, objectColorSettings, objectPalette } from "../../themes/colours.ts";
+import { Layer, Stage, Transformer } from "react-konva";
+import { objectColorSettings } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
 import { DEFAULT_WIDTH, GRID_MARGIN_Y } from "../../data/consts.ts";
@@ -19,6 +19,7 @@ import Konva from "konva";
 import { FormationType } from "../../models/Formation.ts";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import jsPDF from "jspdf";
+import { ExportContext } from "../../contexts/ExportContext.tsx";
 
 export interface FormationEditorProps {
   height: number,
@@ -30,6 +31,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const stageRef = useRef(null);
   const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
+  const {updateExportContext, exportName} = useContext(ExportContext);
   const {participantList, propList, noteList} = useContext(FormationContext);
   const {selectedFormation, selectedItem, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
@@ -72,8 +74,9 @@ export default function FormationEditor(props: FormationEditorProps) {
   }, [userContext?.selectedSection, userContext?.compareMode]);
 
   useImperativeHandle(props.ref, () => ({
-    async exportToPdf(exportName: string) {
+    async exportToPdf() {
       if (isNullOrUndefined(stageRef.current)) return;
+      updateExportContext({isExporting: true, exportProgress: 0});
       var stage = (stageRef.current! as Konva.Stage);
       const pdf = new jsPDF({
         orientation: "landscape",
@@ -110,12 +113,15 @@ export default function FormationEditor(props: FormationEditorProps) {
           stage.height()/2,
         );
 
+        updateExportContext({exportProgress: Math.round(((i + 1) / currentSections.length) * 100)});
+
         if (i < currentSections.length - 1) {
           pdf.addPage();
         }
       }
     
-      pdf.save(exportName ?? "formation.pdf");
+      pdf.save(exportName ?? "formation.pdf"); // this is a little broken, will not update the name properly
+      updateExportContext({isExporting: false, exportProgress: 100});
     }
   }));
 

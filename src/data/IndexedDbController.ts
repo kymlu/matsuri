@@ -143,7 +143,7 @@ export class IndexedDBController {
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").getAll();
       request.onsuccess = () => {
-        console.log(`resolved getAll: ${request.result}`);
+        console.log(`resolved getAll: ${request.result.length}`);
         resolve(request.result || null);
       };
       request.onerror = () => {

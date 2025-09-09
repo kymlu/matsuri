@@ -16,13 +16,16 @@ import { FormationContext } from '../contexts/FormationContext.tsx';
 import { Prop } from '../models/Prop.ts';
 import { Participant } from '../models/Participant.ts';
 import CustomMenu, { MenuItem, MenuSeparator } from '../components/CustomMenu.tsx';
+import { Dialog } from '@base-ui-components/react';
+import { ExportContext } from '../contexts/ExportContext.tsx';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
-  const {updateFormationContext} = useContext(FormationContext)
+  const {updateFormationContext} = useContext(FormationContext);
   const {selectedFestival, selectedFormation, selectedSection, updateState} = useContext(UserContext)
   const {participantPositions, updatePositionState} = useContext(PositionContext);
-  const {updateCategoryContext} = useContext(CategoryContext)
+  const {updateCategoryContext} = useContext(CategoryContext);
+  const {isExporting, exportName, exportProgress} = useContext(ExportContext);
   const navigate = useNavigate()
   const formationEditorRef = React.createRef<any>();
 
@@ -170,9 +173,20 @@ export default function FormationEditorPage () {
             </div>
             {/* todo: warnings if some people aren't in all sections */}
             {/* todo: warning if some people are in other categories */}
-            <FormationRightPanel exportFunc={(newName) => {formationEditorRef.current.exportToPdf(newName)}}/>
+            <FormationRightPanel exportFunc={() => formationEditorRef.current?.exportToPdf()}/>
           </div>
         </div>
+        <Dialog.Root open={isExporting} modal>
+          <Dialog.Portal>
+            <Dialog.Backdrop className="fixed inset-0 bg-black opacity-20 transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 dark:opacity-70" />
+            <Dialog.Popup className="fixed top-1/2 left-1/2 -mt-8 w-96 max-w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-50 p-6 text-gray-900 outline outline-1 outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300">
+              <Dialog.Title className="-mt-1.5 mb-1 text-lg font-medium">PDF出力中</Dialog.Title>
+              <Dialog.Description className="mb-6 text-base text-gray-600">
+                「<b>{exportName}.pdf</b>」を生成しています。<br></br>完了までしばらくお待ちください。<br></br>進行状況：{exportProgress}%
+              </Dialog.Description>
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
       </div>
     )
 }
