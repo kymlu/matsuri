@@ -50,8 +50,12 @@ export default function FormationRightPanel () {
         </>
       }
       <GridSettingsMenu/>
-      <Divider/>
-      { participantList.length > 0 && <AnimationMenu/> }
+      { false && participantList.length > 0 && 
+        <>
+          <Divider/>
+          <AnimationMenu/>
+        </>
+      }
     </div>
   )
 }

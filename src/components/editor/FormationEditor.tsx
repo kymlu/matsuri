@@ -194,7 +194,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           height={props.height}
           width={props.width}
           isParade={selectedFormation?.type === FormationType.parade}/>
-        { !isLoading && !isAnimating && compareMode === "previous" && previousSectionId &&
+        { compareMode === "previous" && previousSectionId &&
           <Layer opacity={0.5}>
             {
               propPositions
@@ -324,7 +324,7 @@ export default function FormationEditor(props: FormationEditorProps) {
             )}
           </Layer>
         }
-        { !isLoading && !isAnimating &&  compareMode === "next" && nextSectionId &&
+        { !isAnimating &&  compareMode === "next" && nextSectionId &&
           <Layer opacity={0.5}>
           {
             propPositions
