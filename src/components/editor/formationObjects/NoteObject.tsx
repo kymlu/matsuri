@@ -57,7 +57,7 @@ export default function NoteObject(props: NoteObjectProps) {
         width={props.length * gridSize}
         text={props.text}
         fontSize={props.fontSize ?? FONT_SIZE}
-        fontStyle="bold"
+        fontStyle={props.alwaysBold ? "bold" : "normal"}
         fill={props.colour.textColour}
         verticalAlign="middle"
         align="center" />
@@ -79,7 +79,7 @@ export default function NoteObject(props: NoteObjectProps) {
             height={0.5 * gridSize}
             text={props.label}
             fontSize={props.fontSize ?? FONT_SIZE}
-            fontStyle={props.alwaysBold ? "bold" : "normal"}
+            fontStyle="bold"
             verticalAlign="middle"
             fill={props.colour.textColour}/>
         </>
