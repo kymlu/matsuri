@@ -15,6 +15,9 @@ export interface ListOptionButtonProps {
   onCopyToFuture?: () => void,
   onDuplicate?: () => void,
   onResetPosition?: () => void,
+  onDelete?: () => void,
+  showReset: boolean,
+  showDelete: boolean,
   ref: React.Ref<HTMLDivElement>
 }
 
@@ -50,6 +53,10 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
     props?.onResetPosition?.();
   }
 
+  function deleteSection() {
+    props?.onDelete?.();
+  }
+
   return (
     <div className={classes}
       onClick={(e) => onClick(e)}
@@ -64,6 +71,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             text={props.text}
             placeholder="名前を入力"/>}
       </span>
+      {/* todo: add copy above> add rearranging?  */}
       {!isEditing && <CustomMenu trigger={
         <div className="flex justify-center">
           <img src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"} className='size-4'/>
@@ -82,14 +90,18 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             <MenuItem label="以降にコピー" onClick={copyToFuture} />
             <MenuSeparator />
             <MenuItem label="重複" onClick={onDuplicate} />
-            <MenuSeparator />
-            { (participantList.length + propList.length + noteList.length )> 0 &&
+            { props.showReset &&
               <>
-                <MenuItem label="リセット" onClick={resetPosition} />
                 <MenuSeparator />
+                <MenuItem label="リセット" onClick={resetPosition} />
               </>
             }
-            <MenuItem label="削除（無効）" onClick={() => {}} />
+            { props.showDelete &&
+              <>
+                <MenuSeparator />
+                <MenuItem label="削除" onClick={deleteSection} />
+              </>
+            }
           </>
         }
       </CustomMenu>}

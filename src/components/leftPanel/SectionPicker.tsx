@@ -6,7 +6,7 @@ import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../SectionOptionButton.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
-import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { NotePosition, ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
 import { songList } from "../../data/ImaHitotabi.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
@@ -17,7 +17,7 @@ export default function SectionPicker() {
 		useContext(UserContext);
 	const { participantPositions, propPositions, updatePositionState } =
 		useContext(PositionContext);
-	const { noteList } =
+	const { participantList, propList, noteList, updateFormationContext } =
 		useContext(FormationContext);
 	const { updateAnimationContext } =
 		useContext(AnimationContext);
@@ -31,7 +31,7 @@ export default function SectionPicker() {
     );
 		
 	function selectSection(section: FormationSongSection) {
-		updateState({ isLoading: true });
+		updateState({ isLoading: false });
 		updateAnimationContext({isAnimating: false});
 		participantPositions
 			.filter((x) => x.isSelected)
@@ -46,7 +46,10 @@ export default function SectionPicker() {
 			selectedSection: section,
 			selectedItem: null,
 		});
-		sectionButtonRef.current[section.order - 1].current?.scrollIntoView({behavior: "smooth"});
+		sectionButtonRef?.current[section.order - 1]?.current?.scrollIntoView({
+			behavior: "smooth",
+			block: "center"
+		});
 	}
 
 	function copyPositions(
@@ -301,6 +304,38 @@ export default function SectionPicker() {
 		});
 	}
 
+	function onDelete(section: FormationSongSection) {
+		Promise.all([
+			dbController.removeList("participantPosition", participantPositions.map(x => x.id)),
+			dbController.removeList("propPosition", propPositions.map(x => x.id)),
+			dbController.removeList("notePosition", noteList.map(x => x.id)),
+			dbController.removeItem("formationSection", section.id),
+		]).then(()=>{
+			dbController.getByFormationId("formationSection", selectedFormation!.id).then((newSectionList) => {
+				// todo: adjust order of existing items
+				// todo: change to closest section, not first
+				const firstItem = (newSectionList as Array<FormationSongSection>)[0];
+				Promise.all([
+					dbController.getByFormationSectionId("participantPosition", firstItem.id),
+					dbController.getByFormationSectionId("propPosition", firstItem.id),
+					dbController.getByFormationSectionId("notePosition", firstItem.id),
+				]).then(([participants, props, notes]) => {
+					updateState({
+						currentSections: (newSectionList as Array<FormationSongSection>),
+						selectedSection: firstItem,
+					});
+					updatePositionState({
+						participantPositions: (participants as Array<ParticipantPosition>),
+						propPositions: (props as Array<PropPosition>),
+					});
+					updateFormationContext({
+						noteList: (notes as Array<NotePosition>),
+					})
+				})
+			});
+		});
+	}
+
   function onNameChange(section: FormationSongSection, newName: string) {
     var updatedSection = {...section, displayName: newName};
     dbController.upsertItem("formationSection", updatedSection).then(() => {
@@ -341,7 +376,10 @@ export default function SectionPicker() {
 							onCopyToFuture={() => copyToFuture(section)}
 							onDuplicate={() => duplicate(section)}
 							onResetPosition={() => resetPosition(section)}
+							onDelete={() => onDelete(section)}
 							ref={sectionButtonRef.current[index]}
+							showDelete={currentSections.length > 1}
+							showReset={(participantList.length + propList.length + noteList.length ) > 0}
 						/>
 					))}
 			</div>

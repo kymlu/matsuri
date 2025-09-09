@@ -33,7 +33,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {updateExportContext, exportName} = useContext(ExportContext);
   const {participantList, propList, noteList} = useContext(FormationContext);
-  const {selectedFormation, selectedItem, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
+  const {selectedFormation, selectedItem, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
   const [previousSectionId, setPreviousSectionId] = useState<string | null | undefined>("");
   const [nextSectionId, setNextSectionId] = useState<string | null | undefined>("");
@@ -51,13 +51,16 @@ export default function FormationEditor(props: FormationEditorProps) {
     );
 
   useEffect(() => {
-    if(isNullOrUndefined(userContext.previousSectionId) || isNullOrUndefined(userContext.selectedSection)) return;
+    if(
+      !enableAnimation ||
+      isNullOrUndefined(userContext.previousSectionId) ||
+      isNullOrUndefined(userContext.selectedSection)) return;
 
     updateState({isLoading: true});
     getAnimationPaths([userContext.previousSectionId!, userContext.selectedSection!.id], gridSize)
       .then((animationPaths) => {
-      updateState({isLoading: false});
-      updateAnimationContext({paths: animationPaths, isAnimating: true});
+        updateState({isLoading: false});
+        updateAnimationContext({paths: animationPaths, isAnimating: true});
       });
   }, [userContext.previousSectionId]);
   
