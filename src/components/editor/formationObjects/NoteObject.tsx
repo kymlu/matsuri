@@ -19,6 +19,7 @@ export interface NoteObjectProps {
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
   fontSize?: number,
+  alwaysBold?: boolean,
 }
 
 export default function NoteObject(props: NoteObjectProps) {
@@ -78,7 +79,7 @@ export default function NoteObject(props: NoteObjectProps) {
             height={0.5 * gridSize}
             text={props.label}
             fontSize={props.fontSize ?? FONT_SIZE}
-            fontStyle="bold"
+            fontStyle={props.alwaysBold ? "bold" : "normal"}
             verticalAlign="middle"
             fill={props.colour.textColour}/>
         </>

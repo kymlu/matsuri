@@ -28,6 +28,7 @@ export interface NotePosition extends Position {
   height: number,
   borderRadius: number,
   fontGridRatio: number,
+  alwaysBold?: boolean,
 }
 
 export function isParticipant(pos: Position) {

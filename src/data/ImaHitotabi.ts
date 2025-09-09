@@ -268,7 +268,8 @@ export const notePresets = {
     fontGridRatio: 0.5,
     color: objectColorSettings.grey4,
     hasLabel: false,
-    defaultContent: "1"
+    defaultContent: "1",
+    alwaysBold: true
   },
   "legend": {
     label: "メモ",
@@ -278,6 +279,7 @@ export const notePresets = {
     fontGridRatio: 0.25,
     color: objectColorSettings.amberLight,
     hasLabel: true,
-    defaultContent: "これはメモです。"
+    defaultContent: "これはメモです。",
+    alwaysBold: false
   }
 }

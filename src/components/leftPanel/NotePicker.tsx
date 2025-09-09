@@ -31,6 +31,7 @@ export default function NotePicker () {
       isSelected: false,
       borderRadius: selectedPreset.borderRadius,
       fontGridRatio: selectedPreset.fontGridRatio,
+      alwaysBold: selectedPreset.alwaysBold || false,
     } as NotePosition;
 
     updateFormationContext({noteList: [...noteList, newNote]});

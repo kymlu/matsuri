@@ -236,6 +236,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   fontSize={gridSize * note.fontGridRatio}
                   updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectItem(note, forceSelect)} 
+                  alwaysBold={note.alwaysBold}
                   draggable
                 />
             )
