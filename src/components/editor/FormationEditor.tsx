@@ -31,10 +31,11 @@ export default function FormationEditor(props: FormationEditorProps) {
   const stageRef = useRef(null);
   const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
-  const {updateExportContext, exportName} = useContext(ExportContext);
-  const {participantList, propList, noteList} = useContext(FormationContext);
-  const {selectedFormation, selectedItem, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
-  const {participantPositions, propPositions} = useContext(PositionContext);
+  const {updateExportContext} = useContext(ExportContext);
+  const {participantList, propList, noteList, updateFormationContext} = useContext(FormationContext);
+  const formationContext = useContext(FormationContext);
+  const {selectedFormation, selectedSection, selectedItem, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
+  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
   const [ghostParticipants, setGhostParticipants] = useState<ParticipantPosition[]>([]);
   const [ghostProps, setGhostProps] = useState<PropPosition[]>([]);
   const {categories} = useContext(CategoryContext);
@@ -88,10 +89,57 @@ export default function FormationEditor(props: FormationEditorProps) {
       setGhostParticipants([]);
       setGhostProps([]);
     }
-  }, [userContext?.selectedSection, userContext?.compareMode]);
+  }, [userContext?.selectedSection, userContext?.compareMode, formationContext?.participantList]);
+
+  // todo: remove empty grid gap when switching sections
+  useEffect(() => {
+    if(isNullOrUndefined(selectedSection)) return;
+    
+    if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
+      updateState({isLoading: true});
+      getAnimationPaths([userContext.previousSectionId!, userContext.selectedSection!.id], gridSize)
+        .then((animationPaths) => {
+          updateState({isLoading: false});
+          updateAnimationContext({paths: animationPaths, isAnimating: true});
+        });
+    }
+
+    Promise.all(
+      [ dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
+        dbController.getByFormationSectionId("propPosition", selectedSection!.id),
+        dbController.getByFormationSectionId("notePosition", selectedSection!.id),
+      ])
+      .then(([participantPosition, propPosition, notePosition]) => {
+      try {
+        var participantPositionList = participantPosition as Array<ParticipantPosition>;
+        participantPositionList.forEach(x => x.isSelected = false);
+        
+        var propPositionList = propPosition as Array<PropPosition>;
+        propPositionList.forEach(x => x.isSelected = false);
+
+        var notePositionList = notePosition as Array<NotePosition>;
+        notePositionList.forEach(x => x.isSelected = false);
+        
+        updatePositionState({
+          participantPositions: participantPositionList,
+          propPositions: propPositionList
+        });
+        updateFormationContext({
+          noteList: notePositionList
+        });
+        
+        participantPositions.forEach(p => { // todo: remove, probably
+          p.x2 = p.x;
+          p.y2 = p.y;
+        });
+      } catch (e) {
+        console.error('Error parsing user from localStorage:', e);
+      }
+    });
+  }, [userContext.selectedSection]);
 
   useImperativeHandle(props.ref, () => ({
-    async exportToPdf() {
+    async exportToPdf(exportName: string) {
       if (isNullOrUndefined(stageRef.current)) return;
       updateExportContext({isExporting: true, exportProgress: 0});
       var stage = (stageRef.current! as Konva.Stage);
@@ -100,6 +148,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         unit: "px",
         format: [stage.width()/2, stage.height()/2]});
 
+      console.log("generating ", exportName);
       for (let i = 0; i < currentSections.length; i++) {
         const section = currentSections[i];
     
@@ -144,7 +193,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         }
       }
     
-      pdf.save(exportName ?? "formation.pdf"); // todo this is a little broken, will not update the name properly
+      pdf.save(exportName ?? "formation.pdf");
       updateExportContext({isExporting: false, exportProgress: 100});
     }
   }));
@@ -324,7 +373,7 @@ export default function FormationEditor(props: FormationEditorProps) {
             }
             return newBox;
           }}/>
-          { !isLoading && !isAnimating &&
+          { !isAnimating &&
             noteList
               .filter(note => strEquals(userContext.selectedSection?.id, note.formationSectionId))
               .map(note => 
@@ -347,7 +396,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 />
             )
           }
-          { !isLoading && !isAnimating &&
+          { !isAnimating &&
             propPositions
               .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .map(placement =>
@@ -367,7 +416,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   />
               )
           } 
-          { !isLoading && !isAnimating && participantPositions
+          { !isAnimating && participantPositions
               .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .map(placement => 
                 <ParticipantObject 

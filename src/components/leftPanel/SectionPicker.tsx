@@ -13,13 +13,13 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function SectionPicker() {
-	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions } =
+	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
 		useContext(UserContext);
 	const { participantPositions, propPositions, updatePositionState } =
 		useContext(PositionContext);
 	const { participantList, propList, noteList, updateFormationContext } =
 		useContext(FormationContext);
-	const { updateAnimationContext } =
+	const { isAnimating } =
 		useContext(AnimationContext);
 
 	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
@@ -31,8 +31,8 @@ export default function SectionPicker() {
     );
 		
 	function selectSection(section: FormationSongSection) {
-		updateState({ isLoading: false });
-		updateAnimationContext({isAnimating: false});
+		if (isLoading || isAnimating) return;
+
 		participantPositions
 			.filter((x) => x.isSelected)
 			.forEach((x) => (x.isSelected = false));
@@ -366,6 +366,7 @@ export default function SectionPicker() {
 					.sort((a, b) => a.order - b.order)
 					.map((section, index, array) => (
 						<SectionOptionButton
+							disabled={isLoading || isAnimating}
 							key={section.id}
 							text={section.displayName ?? "No Name"}
 							isSelected={strEquals(selectedSection?.id, section.id)}

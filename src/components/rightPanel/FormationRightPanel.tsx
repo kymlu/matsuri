@@ -13,7 +13,7 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import ExportMenu from "./ExportMenu.tsx";
 
 export type FormationRightPanelProps = {
-  exportFunc?: () => void
+  exportFunc?: (exportName: string) => void
 }
 
 export default function FormationRightPanel (props: FormationRightPanelProps) {

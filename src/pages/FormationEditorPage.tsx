@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
 import FormationRightPanel from '../components/rightPanel/FormationRightPanel.tsx';
@@ -7,10 +7,8 @@ import FormationEditor from '../components/editor/FormationEditor.tsx';
 import { dbController } from '../data/DBProvider.tsx';
 import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
-import { PositionContext } from '../contexts/PositionContext.tsx';
 import { FormationSongSection } from '../models/FormationSection.ts';
-import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
-import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
+import { isNullOrUndefined } from '../components/helpers/GlobalHelper.ts';
 import { CONTEXT_NAMES, DB_NAME, DEFAULT_WIDTH } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import { Prop } from '../models/Prop.ts';
@@ -23,11 +21,11 @@ export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
   const {updateFormationContext} = useContext(FormationContext);
   const {selectedFestival, selectedFormation, selectedSection, updateState} = useContext(UserContext)
-  const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext);
-  const {isExporting, exportName, exportProgress} = useContext(ExportContext);
+  const {isExporting, exportProgress} = useContext(ExportContext);
   const navigate = useNavigate()
   const formationEditorRef = React.createRef<any>();
+  const [exportName, setExportName] = useState<string>("");
 
   useEffect(() => {
     Promise.all(
@@ -91,43 +89,6 @@ export default function FormationEditorPage () {
     });
   }, [userContext.selectedFormation]);
 
-  useEffect(() => {
-    if(isNullOrUndefined(selectedSection)) return;
-    
-    Promise.all(
-      [ dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
-        dbController.getByFormationSectionId("propPosition", selectedSection!.id),
-        dbController.getByFormationSectionId("notePosition", selectedSection!.id),
-      ])
-      .then(([participantPosition, propPosition, notePosition]) => {
-      try {
-        var participantPositionList = participantPosition as Array<ParticipantPosition>;
-        participantPositionList.forEach(x => x.isSelected = false);
-        
-        var propPositionList = propPosition as Array<PropPosition>;
-        propPositionList.forEach(x => x.isSelected = false);
-
-        var notePositionList = notePosition as Array<NotePosition>;
-        notePositionList.forEach(x => x.isSelected = false);
-        
-        updatePositionState({
-          participantPositions: participantPositionList,
-          propPositions: propPositionList
-        });
-        updateFormationContext({
-          noteList: notePositionList
-        });
-        
-        participantPositions.forEach(p => { // todo: remove, probably
-          p.x2 = p.x;
-          p.y2 = p.y;
-        });
-      } catch (e) {
-        console.error('Error parsing user from localStorage:', e);
-      }
-    });
-  }, [userContext.selectedSection]);
-
   return (
       <div className='h-full overflow-hidden'>
         <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 grid-rows-[10svh,90svh]'>
@@ -181,7 +142,10 @@ export default function FormationEditorPage () {
             </div>
             {/* todo: warnings if some people aren't in all sections */}
             {/* todo: warning if some people are in other categories */}
-            <FormationRightPanel exportFunc={() => formationEditorRef.current?.exportToPdf()}/>
+            <FormationRightPanel exportFunc={(exportName: string) => {
+              formationEditorRef.current?.exportToPdf(exportName);
+              setExportName(exportName);
+            }}/>
           </div>
         </div>
         <Dialog.Root open={isExporting} modal>
@@ -190,7 +154,7 @@ export default function FormationEditorPage () {
             <Dialog.Popup className="fixed top-1/2 left-1/2 -mt-8 w-96 max-w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-50 p-6 text-gray-900 outline outline-1 outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300">
               <Dialog.Title className="-mt-1.5 mb-1 text-lg font-medium">PDF出力中</Dialog.Title>
               <Dialog.Description className="mb-6 text-base text-gray-600">
-                「<b>{exportName}.pdf</b>」を生成しています。<br></br>完了までしばらくお待ちください。<br></br>進行状況：{exportProgress}%
+                <b>{exportName}.pdf</b>」を生成しています。<br></br>完了までしばらくお待ちください。<br></br>進行状況：{exportProgress}%
               </Dialog.Description>
             </Dialog.Popup>
           </Dialog.Portal>

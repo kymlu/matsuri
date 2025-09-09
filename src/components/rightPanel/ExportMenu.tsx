@@ -7,7 +7,7 @@ import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
 import { ExportContext } from "../../contexts/ExportContext.tsx";
 
 export type ExportMenuProps = {
-  exportFunc?: () => void
+  exportFunc?: (exportName: string) => void
 }
 
 export default function ExportMenu(props: ExportMenuProps) {
@@ -17,8 +17,7 @@ export default function ExportMenu(props: ExportMenuProps) {
   const {updateExportContext} = useContext(ExportContext);
 
   function exportPdf() {
-    updateExportContext({exportName: isNullOrUndefinedOrBlank(exportName) ? defaultName! : exportName});
-    props.exportFunc?.();
+    props.exportFunc?.(exportName);
   }
 
   return (

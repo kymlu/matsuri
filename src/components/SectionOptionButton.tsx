@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import className from "classnames";
 import CustomMenu from "./CustomMenu.tsx";
 import { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import TextInput from "./TextInput.tsx";
-import { FormationContext } from "../contexts/FormationContext.tsx";
 
 export interface ListOptionButtonProps {
   text: string,
+  disabled?: boolean,
   isSelected?: boolean,
   isBottom?: boolean,
   onEditName?: (newName: string) => void,
@@ -23,16 +23,15 @@ export interface ListOptionButtonProps {
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
   const [isEditing, setIsEditing] = React.useState(false);
-  const {participantList, propList, noteList} = useContext(FormationContext);
 
   const classes = className("grid grid-cols-[1fr,auto] gap-2 px-5 items-center", {
     "bg-primary text-white cursor-default": props.isSelected,
-    "cursor-pointer": !props.isSelected,
+    "cursor-pointer": !props.isSelected && !props.disabled,
     "border-b-2 border-primary": !props.isBottom,
   });
 
   function onClick(e: React.MouseEvent<HTMLDivElement>) {
-    if (!props.isSelected) {
+    if (!props.isSelected && !props.disabled) {
       props.onClick?.(e);
     }
   }
