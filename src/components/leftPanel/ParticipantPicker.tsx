@@ -46,7 +46,7 @@ export default function ParticipantPicker () {
         return {
           id: crypto.randomUUID().toString(),
           participantId: newParticipant.id,
-          formationSceneId: section!.id,
+          formationSectionId: section!.id,
           x: position[0],
           x2: position[0],
           y: position[1],

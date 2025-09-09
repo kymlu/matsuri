@@ -39,16 +39,16 @@ export class IndexedDBController {
       if (!db.objectStoreNames.contains("participantPosition")) {
         const participantPositionStore = db.createObjectStore("participantPosition", { keyPath: "id", autoIncrement: true });
         participantPositionStore.createIndex("participantId", "participantId", { unique: false });
-        participantPositionStore.createIndex("formationSceneId", "formationSceneId", { unique: false });
+        participantPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       }
       if (!db.objectStoreNames.contains("propPosition")) {
         const propPositionStore = db.createObjectStore("propPosition", { keyPath: "id", autoIncrement: true });
         propPositionStore.createIndex("propId", "propId", { unique: false });
-        propPositionStore.createIndex("formationSceneId", "formationSceneId", { unique: false });
+        propPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       }
       if (!db.objectStoreNames.contains("notePosition")) {
         const notePositionStore = db.createObjectStore("notePosition", { keyPath: "id", autoIncrement: true });
-        notePositionStore.createIndex("formationSceneId", "formationSceneId", { unique: false });
+        notePositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       }
       if (!db.objectStoreNames.contains("formationSection")) {
         const formationSectionStore = db.createObjectStore("formationSection", { keyPath: "id", autoIncrement: true });
@@ -177,17 +177,17 @@ export class IndexedDBController {
     });
   }
 
-  async getByFormationSceneId(storeName: "participantPosition" | "propPosition" | "notePosition", formationSceneId: string) {
-    console.log(`getByFormationSceneId ${storeName} called`);
+  async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition", formationSectionId: string) {
+    console.log(`getByFormationSectionId ${storeName} called`);
     return new Promise((resolve, reject) => {
-      const index = this._getStore(storeName, "readonly").index("formationSceneId");
-      const request = index.getAll(formationSceneId);
+      const index = this._getStore(storeName, "readonly").index("formationSectionId");
+      const request = index.getAll(formationSectionId);
       request.onsuccess = () => {
-        console.log(`resolved getByFormationSceneId ${storeName}: ${request.result.length}`);
+        console.log(`resolved getByFormationSectionId ${storeName}: ${request.result.length}`);
         resolve(request.result || null);
       };
       request.onerror = () => {
-        console.error(`error on getByFormationSceneId ${storeName}: ${request.error}`);
+        console.error(`error on getByFormationSectionId ${storeName}: ${request.error}`);
         reject(request.error);
       };
     });

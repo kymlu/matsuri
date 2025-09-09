@@ -21,7 +21,7 @@ export default function AnimationMenu() {
 
     updateState({isLoading: true});
 
-    getAnimationPaths(selectedFormation!.id, sectionIds, gridSize)
+    getAnimationPaths(sectionIds, gridSize)
       .then((animationPaths) => {
         updateAnimationContext({paths: animationPaths, isAnimating: true});
       });

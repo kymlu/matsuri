@@ -31,7 +31,7 @@ export default function PropPicker () {
       return {
         id: crypto.randomUUID().toString(),
         propId: newProp.id,
-        formationSceneId: section.id,
+        formationSectionId: section.id,
         x: position[0],
         x2: position[0],
         y: position[1],

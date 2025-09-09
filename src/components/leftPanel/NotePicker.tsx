@@ -20,7 +20,7 @@ export default function NotePicker () {
 
     var newNote = {
       id: crypto.randomUUID(),
-      formationSceneId: selectedSection.id,
+      formationSectionId: selectedSection.id,
       x: position[0],
       x2: position[0],
       y: position[1],

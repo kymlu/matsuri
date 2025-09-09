@@ -35,7 +35,7 @@ export default function PositionManager () {
     //   var newPosition: ParticipantPosition = {
     //     id: crypto.randomUUID().toString(),
     //     participant: newParticipant,
-    //     formationScene: selectedSection!,
+    //     formationSection: selectedSection!,
     //     x: selectedFormation?.width ? selectedFormation.width / 2 : 5,
     //     x2: selectedFormation?.width ? selectedFormation.width / 2 : 5,
     //     y: selectedFormation?.length ? selectedFormation.length / 2 : 5,

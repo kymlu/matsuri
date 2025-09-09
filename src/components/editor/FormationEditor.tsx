@@ -54,7 +54,7 @@ export default function FormationEditor(props: FormationEditorProps) {
     if(isNullOrUndefined(userContext.previousSectionId) || isNullOrUndefined(userContext.selectedSection)) return;
 
     updateState({isLoading: true});
-    getAnimationPaths(userContext.selectedFormation!.id, [userContext.previousSectionId!, userContext.selectedSection!.id], gridSize)
+    getAnimationPaths([userContext.previousSectionId!, userContext.selectedSection!.id], gridSize)
       .then((animationPaths) => {
       updateState({isLoading: false});
       updateAnimationContext({paths: animationPaths, isAnimating: true});
@@ -254,7 +254,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           <Layer opacity={0.5}>
             {
               propPositions
-                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
+                .filter(placement => strEquals(placement.formationSectionId, previousSectionId))
                 .map(placement =>
                   <PropObject 
                     key={placement.id}
@@ -268,7 +268,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                 )
             } 
             { participantPositions
-                .filter(placement => strEquals(placement.formationSceneId, previousSectionId))
+                .filter(placement => strEquals(placement.formationSectionId, previousSectionId))
                 .map(placement => 
                   <ParticipantObject 
                     key={placement.id}
@@ -304,7 +304,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           }}/>
           { !isLoading && !isAnimating &&
             noteList
-              .filter(note => strEquals(userContext.selectedSection?.id, note.formationSceneId))
+              .filter(note => strEquals(userContext.selectedSection?.id, note.formationSectionId))
               .map(note => 
                 <NoteObject 
                   key={note.id}
@@ -327,7 +327,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           }
           { !isLoading && !isAnimating &&
             propPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
@@ -346,7 +346,7 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { !isLoading && !isAnimating && participantPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}
@@ -365,7 +365,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         { !isLoading && isAnimating &&
           <Layer useRef={animationLayerRef}>
             {participantPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .sort((a, b) => a.participantId.localeCompare(b.participantId))
               .map((placement, index) => 
                 <ParticipantObject 
@@ -384,7 +384,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           <Layer opacity={0.5}>
           {
             propPositions
-              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
+              .filter(placement => strEquals(placement.formationSectionId, nextSectionId))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
@@ -398,7 +398,7 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { participantPositions
-              .filter(placement => strEquals(placement.formationSceneId, nextSectionId))
+              .filter(placement => strEquals(placement.formationSectionId, nextSectionId))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}

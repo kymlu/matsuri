@@ -27,7 +27,7 @@ export default function ActionMenu() {
         )
       ]).then(() => {
         Promise.all([
-          dbController.getByFormationSceneId("participantPosition", selectedItem!.formationSceneId),
+          dbController.getByFormationSectionId("participantPosition", selectedItem!.formationSectionId),
           dbController.getByFormationId("participant", selectedFormation!.id),
         ]).then(([participantPosition, participant]) => {
           try {
@@ -59,7 +59,7 @@ export default function ActionMenu() {
         )
       ]).then(() => {
         Promise.all([
-          dbController.getByFormationSceneId("propPosition", selectedItem!.formationSceneId),
+          dbController.getByFormationSectionId("propPosition", selectedItem!.formationSectionId),
           dbController.getByFormationId("prop", selectedFormation!.id),
         ]).then(([propPosition, prop]) => {
           try {

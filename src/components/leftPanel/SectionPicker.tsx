@@ -55,14 +55,14 @@ export default function SectionPicker() {
 		// Copy participant positions
 		const copiedParticipantPositions = participantPositions
 			.filter((position) =>
-				strEquals(position.formationSceneId, sourceSection.id)
+				strEquals(position.formationSectionId, sourceSection.id)
 			)
 			.flatMap((position) =>
 				targetSectionsArray.map(
 					(section) =>
 						({
 							...position,
-							formationSceneId: section.id,
+							formationSectionId: section.id,
 							id: crypto.randomUUID(),
 						} as ParticipantPosition)
 				)
@@ -71,14 +71,14 @@ export default function SectionPicker() {
 		// Copy prop positions
 		const copiedPropPositions = propPositions
 			.filter((position) =>
-				strEquals(position.formationSceneId, sourceSection.id)
+				strEquals(position.formationSectionId, sourceSection.id)
 			)
 			.flatMap((position) =>
 				targetSectionsArray.map(
 					(section) =>
 						({
 							...position,
-							formationSceneId: section.id,
+							formationSectionId: section.id,
 							id: crypto.randomUUID(),
 						} as PropPosition)
 				)
@@ -90,7 +90,7 @@ export default function SectionPicker() {
 			"participantPosition",
 			participantPositions
 				.filter((position) =>
-					targetSectionIds.includes(position.formationSceneId)
+					targetSectionIds.includes(position.formationSectionId)
 				)
 				.map((x) => x.id)
 		);
@@ -99,7 +99,7 @@ export default function SectionPicker() {
 			"propPosition",
 			propPositions
 				.filter((position) =>
-					targetSectionIds.includes(position.formationSceneId)
+					targetSectionIds.includes(position.formationSectionId)
 				)
 				.map((x) => x.id)
 		);
@@ -110,7 +110,7 @@ export default function SectionPicker() {
 
 		// Update state
 		return new Promise<number>((resolve, reject) => {
-			dbController.getByFormationSceneId("participantPosition", selectedSection!.id).then((participantPosition) => {
+			dbController.getByFormationSectionId("participantPosition", selectedSection!.id).then((participantPosition) => {
 				try {
 					const participantPositionList =
 						participantPosition as Array<ParticipantPosition>;
@@ -118,7 +118,7 @@ export default function SectionPicker() {
 						participantPositions: participantPositionList,
 					});
 
-					dbController.getByFormationSceneId("propPosition", selectedSection!.id).then((propPosition) => {
+					dbController.getByFormationSectionId("propPosition", selectedSection!.id).then((propPosition) => {
 						const propPositionList = propPosition as Array<PropPosition>;
 						updatePositionState({
 							propPositions: propPositionList,
@@ -212,7 +212,7 @@ export default function SectionPicker() {
 	function resetPosition(sourceSection: FormationSongSection) {
 		participantPositions
 			.filter((position) =>
-				strEquals(position.formationSceneId, sourceSection.id)
+				strEquals(position.formationSectionId, sourceSection.id)
 			)
 			.forEach((position, index) => {
 				position.x = marginPositions.participants[index][0];
@@ -223,7 +223,7 @@ export default function SectionPicker() {
 
 		propPositions
 			.filter((position) =>
-				strEquals(position.formationSceneId, sourceSection.id)
+				strEquals(position.formationSectionId, sourceSection.id)
 			)
 			.forEach((position, index) => {
 				position.x = marginPositions.props[index][0];
@@ -236,19 +236,19 @@ export default function SectionPicker() {
 			dbController.upsertList(
 				"participantPosition",
 				participantPositions.filter((position) =>
-					strEquals(position.formationSceneId, sourceSection.id)
+					strEquals(position.formationSectionId, sourceSection.id)
 				)
 			),
 			dbController.upsertList(
 				"propPosition",
 				propPositions.filter((position) =>
-					strEquals(position.formationSceneId, sourceSection.id)
+					strEquals(position.formationSectionId, sourceSection.id)
 				)
 			),
 		]).then(() => {
 			Promise.all([
-				dbController.getByFormationSceneId("participantPosition", selectedSection!.id),
-				dbController.getByFormationSceneId("propPosition", selectedSection!.id),
+				dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
+				dbController.getByFormationSectionId("propPosition", selectedSection!.id),
 			]).then(([participantPosition, propPosition]) => {
 				try {
 					var participantPositionList =
@@ -274,7 +274,7 @@ export default function SectionPicker() {
 			});
 		});
 
-		dbController.getByFormationSceneId("participantPosition", selectedSection!.id).then((participantPosition) => {
+		dbController.getByFormationSectionId("participantPosition", selectedSection!.id).then((participantPosition) => {
 			try {
 				var participantPositionList =
 					participantPosition as Array<ParticipantPosition>;

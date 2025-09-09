@@ -1,12 +1,12 @@
 import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 
-export async function getAnimationPaths(formationId: string, sectionIds: string[], gridSize: number): Promise<Record<string, string>> {
+export async function getAnimationPaths(sectionIds: string[], gridSize: number): Promise<Record<string, string>> {
   const res1 = await dbController.getAll("participantPosition");
 
   // todo: add props
   var participantList = (res1 as Array<ParticipantPosition>)
-    .filter(x => sectionIds.includes(x.formationSceneId))
+    .filter(x => sectionIds.includes(x.formationSectionId))
     .reduce((acc, item) => {
       const key = item.participantId;
       if (!acc[key]) {
@@ -17,17 +17,17 @@ export async function getAnimationPaths(formationId: string, sectionIds: string[
     }, {} as Record<string, ParticipantPosition[]>);
 
   const animationPaths = Object.fromEntries(Object.entries((participantList))
-    .map(([key_1, positionList]) => {
+    .map(([key, positionList]) => {
       const path = positionList
-        .sort((a, b) => sectionIds.indexOf(a.formationSceneId) - sectionIds.indexOf(b.formationSceneId))
-        .reduce((acc_1, point, index) => {
+        .sort((a, b) => sectionIds.indexOf(a.formationSectionId) - sectionIds.indexOf(b.formationSectionId))
+        .reduce((acc, point, index) => {
           if (index === 0) {
             return `M${point.x * gridSize} ${point.y * gridSize}`;
           } else {
-            return `${acc_1} L${point.x * gridSize} ${point.y * gridSize}`;
+            return `${acc} L${point.x * gridSize} ${point.y * gridSize}`;
           }
         }, "");
-      return [key_1, path];
+      return [key, path];
     }));
 
   return animationPaths;

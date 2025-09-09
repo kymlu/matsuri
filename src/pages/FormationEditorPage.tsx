@@ -95,9 +95,9 @@ export default function FormationEditorPage () {
     if(isNullOrUndefined(selectedSection)) return;
     
     Promise.all(
-      [ dbController.getByFormationSceneId("participantPosition", selectedSection!.id),
-        dbController.getByFormationSceneId("propPosition", selectedSection!.id),
-        dbController.getByFormationSceneId("notePosition", selectedSection!.id),
+      [ dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
+        dbController.getByFormationSectionId("propPosition", selectedSection!.id),
+        dbController.getByFormationSectionId("notePosition", selectedSection!.id),
       ])
       .then(([participantPosition, propPosition, notePosition]) => {
       try {

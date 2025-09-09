@@ -2,7 +2,7 @@ import { ColorStyle } from "../themes/colours.ts"
 
 export interface Position {
   id: string,
-  formationSceneId: string,
+  formationSectionId: string,
   x2: number,
   y2: number,
   x: number,
