@@ -16,7 +16,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <DBProvider>
       <UserContextProvider>
         <PositionContextProvider>
@@ -34,7 +34,7 @@ root.render(
         </PositionContextProvider>
       </UserContextProvider>
     </DBProvider>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

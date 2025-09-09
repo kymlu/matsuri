@@ -79,7 +79,7 @@ export default function FormationEditor(props: FormationEditorProps) {
       updateExportContext({isExporting: true, exportProgress: 0});
       var stage = (stageRef.current! as Konva.Stage);
       const pdf = new jsPDF({
-        orientation: "landscape",
+        orientation: stage.width() > stage.height() ? "landscape" : "portrait",
         unit: "px",
         format: [stage.width()/2, stage.height()/2]});
 
