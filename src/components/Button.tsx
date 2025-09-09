@@ -13,6 +13,7 @@ type ButtonProps = {
   outline?: boolean,
   disabled?: boolean,
   full?: boolean,
+  label?: string,
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -33,7 +34,11 @@ export default function Button(props: ButtonProps) {
     "text-red-500": props.outline && props.danger,
   });
 
-  return <button disabled={props.disabled ?? false} className={classes} onClick={props.onClick}>{props.children}</button>;
+  return <button 
+    button-name={props.label}
+    disabled={props.disabled ?? false}
+    className={classes}
+    onClick={props.onClick}>{props.children}</button>;
 }
 
 Button.propTypes = {

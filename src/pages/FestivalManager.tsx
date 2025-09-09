@@ -36,6 +36,7 @@ export default function FestivalManager () {
                   {festival.formations
                     .map(formation => 
                       <Button 
+                        label={`Select ${formation.name}`}
                         key={formation.id}
                         onClick={(event) => {onClick(festival, formation)}}>
                           {formation.name}

@@ -88,8 +88,8 @@ export default function ActionMenu() {
   
   return (
     <ExpandableSection title="アクション" defaultIsExpanded>
-      {selectedItem && isParticipant(selectedItem) && <Button>同カテゴリー選択（無効）</Button>}
-      <Button onClick={() => {deleteObject()}}>削除</Button>
+      {selectedItem && isParticipant(selectedItem) && <Button label="Select same category">同カテゴリー選択（無効）</Button>}
+      <Button label="Delete item" onClick={() => {deleteObject()}}>削除</Button>
     </ExpandableSection>
   )
 }

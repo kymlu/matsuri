@@ -16,6 +16,7 @@ export default function ColorSwatch(props: ColorSwatchProps) {
     });
   return (
     <button
+      button-name={`Select ${props.tailwindColorClassName}`}
       key={props.tailwindColorClassName}
       className={c}
       onClick={() => props.onClick()}/>

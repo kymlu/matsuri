@@ -44,7 +44,10 @@ export default function TextInput(props: TextInputProps) {
 
     { props.clearable && !isNullOrUndefinedOrBlank(props.text) && 
       <button className="col-start-1 row-start-1 pr-2 ml-auto text-end" onClick={() => {onClear()}}>
-          <img className="size-4" src="icons/clear.svg" alt="clear text"/>
+          <img
+            className="size-4"
+            src="icons/clear.svg"
+            alt="Clear text"/>
       </button>}
     </div>
   )

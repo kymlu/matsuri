@@ -386,7 +386,13 @@ export default function SectionPicker() {
 			{lastSection && (
 				<CustomMenu
 					full
-					trigger={<div className="w-full hover:bg-grey-200"><img className="m-auto size-6" src="icons/add_black.svg"/></div>}>
+					trigger={
+						<div className="w-full hover:bg-grey-200">
+							<img
+								alt="Add icon"
+								className="m-auto size-6"
+								src="icons/add_black.svg"/>
+						</div>}>
           {nextSection && (
             <>
               <MenuItem

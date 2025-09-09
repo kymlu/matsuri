@@ -3,6 +3,7 @@ import className from "classnames";
 import { ParticipantOption } from "../models/Participant.ts";
 import { Prop } from "../models/Prop.ts";
 import { Note } from "../models/Note.ts";
+import { isParticipant } from "../models/Position.ts";
 
 export interface ItemButtonProps {
   item: ParticipantOption | Prop | Note,
@@ -16,7 +17,9 @@ export default function ItemButton (props: ItemButtonProps) {
     "bg-grey-200": props.isDisabled
   });
   return (
-    <button className={classes} onClick={props.onClick}>
+    <button
+      className={classes}
+      onClick={props.onClick}>
       {props.display}
     </button>
   )

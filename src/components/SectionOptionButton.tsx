@@ -74,7 +74,10 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
       {/* todo: add copy above> add rearranging?  */}
       {!isEditing && <CustomMenu trigger={
         <div className="flex justify-center">
-          <img src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"} className='size-4'/>
+          <img
+            alt="Settings icon"
+            src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"}
+            className='size-4'/>
         </div>}>
         {
           !props.isSelected &&
@@ -105,9 +108,15 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
           </>
         }
       </CustomMenu>}
-      { isEditing && <button onClick={() => {setIsEditing(false)}}>
+      { isEditing && 
+      <button 
+        button-name="Add sections"
+        onClick={() => {setIsEditing(false)}}>
         <div className="flex justify-center col-start-2 row-start-1 px-3">
-          <img src={"icons/check_white.svg"} className='size-4'/>
+          <img
+            alt="Confirm name"
+            src={"icons/check_white.svg"}
+            className='size-4'/>
         </div>
       </button>}
     </div>
