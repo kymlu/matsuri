@@ -34,9 +34,12 @@ export default function AnimationMenu() {
       }
       {
         isAnimating &&
-        <Button onClick={() => {
-          updateAnimationContext({paths: {}, isAnimating: false});
-        }}>アニメーション停止</Button>
+        <Button
+          onClick={() => {
+            updateAnimationContext({paths: {}, isAnimating: false});
+          }}>
+            アニメーション停止
+        </Button>
       }
     </ExpandableSection>
   )

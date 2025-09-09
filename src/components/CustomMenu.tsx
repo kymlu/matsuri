@@ -9,7 +9,7 @@ export type CustomMenuProps = {
 }
 
 export default function CustomMenu (props: CustomMenuProps) {
-  const triggerClassNames = classNames("px-3 hover:opacity-80", {
+  const triggerClassNames = classNames("hover:opacity-80", {
     "w-full": props.full,
   });
 

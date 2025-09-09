@@ -126,14 +126,14 @@ export default function FormationEditorPage () {
         console.error('Error parsing user from localStorage:', e);
       }
     });
-  }, [userContext.selectedSection])
+  }, [userContext.selectedSection]);
 
   return (
       <div className='h-full overflow-hidden'>
         <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 grid-rows-[10svh,90svh]'>
-          <header className='flex items-center justify-between w-full col-span-3 gap-10 px-4 py-2 border-b-2 border-solid border-grey'>
+          <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey'>
             <CustomMenu trigger={
-              <img alt="Matsuri logo" src="logo192.png" className='size-8'/>
+              <img alt="Matsuri logo" src="logo192.png" className='size-8 max-w-8 max-h-8'/>
             }>
               <>
                 <MenuItem label="ホームに戻る" onClick={() => {
@@ -154,7 +154,7 @@ export default function FormationEditorPage () {
             </h1>
             }
             <CustomMenu trigger={
-              <img alt="Extra settings" src="icons/settings.svg" className='size-8'/>
+              <img alt="Extra settings" src="icons/settings.svg" className='size-8 max-w-8 max-h-8'/>
               }>
               <>
                 <MenuItem label="Clear Cache" onClick={() => {

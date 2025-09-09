@@ -35,8 +35,8 @@ export default function FormationEditor(props: FormationEditorProps) {
   const {participantList, propList, noteList} = useContext(FormationContext);
   const {selectedFormation, selectedItem, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
-  const [previousSectionId, setPreviousSectionId] = useState<string | null | undefined>("");
-  const [nextSectionId, setNextSectionId] = useState<string | null | undefined>("");
+  const [ghostParticipants, setGhostParticipants] = useState<ParticipantPosition[]>([]);
+  const [ghostProps, setGhostProps] = useState<PropPosition[]>([]);
   const {categories} = useContext(CategoryContext);
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
   const canvasWidth = DEFAULT_WIDTH * gridSize;
@@ -65,14 +65,28 @@ export default function FormationEditor(props: FormationEditorProps) {
   }, [userContext.previousSectionId]);
   
   useEffect(() => {
+    var ghostId = "";
     if (compareMode === "previous") {
-      const previousSectionId = userContext?.selectedSection && currentSections.find(x => x.order === (userContext!.selectedSection!.order - 1))?.id;
-      const sectionId = previousSectionId && currentSections.find(x => strEquals(x.id, previousSectionId))?.id;
-      setPreviousSectionId(sectionId);
+      const previousSectionId = userContext?.selectedSection &&
+        currentSections.find(x => x.order === (userContext!.selectedSection!.order - 1))?.id;
+      if (previousSectionId) ghostId = previousSectionId;
     } else if (compareMode === "next") {
-      const nextSectionId = userContext?.selectedSection && currentSections.find(x => x.order === (userContext!.selectedSection!.order + 1))?.id;
-      const sectionId = nextSectionId && currentSections.find(x => strEquals(x.id, nextSectionId))?.id;
-      setNextSectionId(sectionId);
+      const nextSectionId = userContext?.selectedSection &&
+      currentSections.find(x => x.order === (userContext!.selectedSection!.order + 1))?.id;
+      if (nextSectionId) ghostId = nextSectionId;
+    }
+
+    if (compareMode !== "none" && ghostId) {
+      Promise.all([
+        dbController.getByFormationSectionId("participantPosition", ghostId),
+        dbController.getByFormationSectionId("propPosition", ghostId),
+      ]).then(([participants, props]) => {
+        setGhostParticipants(participants as Array<ParticipantPosition>);
+        setGhostProps(props as Array<PropPosition>);
+      });
+    } else {
+      setGhostParticipants([]);
+      setGhostProps([]);
     }
   }, [userContext?.selectedSection, userContext?.compareMode]);
 
@@ -197,7 +211,7 @@ export default function FormationEditor(props: FormationEditorProps) {
     if(!isAnimating) return;
     updateState({isLoading: false});
 
-    const steps = 50;
+    const steps = 30;
 
     const animationPromises: Promise<void>[] = [];
 
@@ -260,11 +274,10 @@ export default function FormationEditor(props: FormationEditorProps) {
           height={props.height}
           width={props.width}
           isParade={selectedFormation?.type === FormationType.parade}/>
-        { compareMode === "previous" && previousSectionId &&
+        { compareMode !== "none" &&
           <Layer opacity={0.5}>
             {
-              propPositions
-                .filter(placement => strEquals(placement.formationSectionId, previousSectionId))
+              ghostProps
                 .map(placement =>
                   <PropObject 
                     key={placement.id}
@@ -277,8 +290,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   />
                 )
             } 
-            { participantPositions
-                .filter(placement => strEquals(placement.formationSectionId, previousSectionId))
+            { ghostParticipants
                 .map(placement => 
                   <ParticipantObject 
                     key={placement.id}
@@ -389,37 +401,6 @@ export default function FormationEditor(props: FormationEditorProps) {
                 />
             )}
           </Layer>
-        }
-        { !isAnimating &&  compareMode === "next" && nextSectionId &&
-          <Layer opacity={0.5}>
-          {
-            propPositions
-              .filter(placement => strEquals(placement.formationSectionId, nextSectionId))
-              .map(placement =>
-                <PropObject 
-                  key={placement.id}
-                  name={propList.find(x => strEquals(placement.propId, x.id))!.name}
-                  colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
-                  length={propList.find(x => strEquals(placement.propId, x.id))!.length}
-                  startX={getPixel(placement.x)} 
-                  startY={getPixel(placement.y)} 
-                  rotation={placement.angle} 
-                  />
-              )
-          } 
-          { participantPositions
-              .filter(placement => strEquals(placement.formationSectionId, nextSectionId))
-              .map(placement => 
-                <ParticipantObject 
-                  key={placement.id}
-                  name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
-                  colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-                  startX={getPixel(placement.x)} 
-                  startY={getPixel(placement.y)}
-                />
-            )
-          }
-        </Layer>
         }
       </Stage>
     </div>

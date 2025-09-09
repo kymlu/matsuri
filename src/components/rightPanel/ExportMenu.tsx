@@ -31,7 +31,9 @@ export default function ExportMenu(props: ExportMenuProps) {
           onContentChange={(newName) => setExportName(newName)}/>
         <span>.pdf</span>
       </div>
-      <Button label="Export PDF" onClick={() => {exportPdf()}}>PDFにエキスポート</Button>
+      <div className="place-self-end">
+        <Button primary label="Export PDF" onClick={() => {exportPdf()}}>エキスポート</Button>
+      </div>
     </ExpandableSection>
   )
 }
