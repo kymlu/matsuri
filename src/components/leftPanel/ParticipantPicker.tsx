@@ -72,7 +72,7 @@ export default function ParticipantPicker () {
         text={filterText}
         placeholder="探す"
         onContentChange={(newValue) => setFilterTextWrapper(newValue ?? "")}/>
-      <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-x-hidden overflow-y-scroll max-h-28">
+      <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-x-hidden overflow-y-scroll max-h-32">
         {participantListDisplay
           .map(participant => 
             <ItemButton
@@ -91,8 +91,6 @@ export default function ParticipantPicker () {
               onClick={() => selectParticipant({name: filterText} as ParticipantOption)}/> 
           </>
         }
-      {/* todo: disable if used */}
-      {/* todo: add undecided */}
       </div>
     </ExpandableSection>
   )

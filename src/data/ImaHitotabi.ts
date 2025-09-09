@@ -1,5 +1,6 @@
 import { Festival } from "../models/Festival.ts";
 import { FormationType } from "../models/Formation.ts";
+import { Note } from "../models/Note.ts";
 import { ParticipantOption } from "../models/Participant.ts";
 import { ParticipantCategory } from "../models/ParticipantCategory.ts";
 import { Prop } from "../models/Prop.ts";
@@ -259,8 +260,8 @@ export const categoryList: Array<ParticipantCategory> = [
   { id: "12", name: "後隊", color: objectColorSettings["blueLight"], order: 5, showInLegend: false, showInParadeGuide: true },
 ]
 
-export const notePresets = {
-  "timing": {
+export const notePresets: Array<Note> = [
+  {
     label: "タイミング",
     length: 1.25,
     height: 0.75,
@@ -271,7 +272,7 @@ export const notePresets = {
     defaultContent: "1",
     alwaysBold: true
   },
-  "legend": {
+  {
     label: "メモ",
     length: 5,
     height: 3,
@@ -282,4 +283,4 @@ export const notePresets = {
     defaultContent: "これはメモです。",
     alwaysBold: false
   }
-}
+]

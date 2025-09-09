@@ -6,12 +6,14 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { notePresets } from "../../data/ImaHitotabi.ts";
+import ItemButton from "../ItemButton.tsx";
+import { Note } from "../../models/Note.ts";
 
 export default function NotePicker () {
   const {selectedSection, updateState, marginPositions} = useContext(UserContext);
   const {noteList, updateFormationContext} = useContext(FormationContext);
   
-  function selectPreset(selectedPreset: any) {
+  function selectPreset(selectedPreset: Note) {
     if(selectedSection === null) return;
 
     var position = marginPositions.notes[noteList.length % marginPositions.notes.length]
@@ -42,13 +44,13 @@ export default function NotePicker () {
 
   return (
     <ExpandableSection title="メモ">
-        <div className="flex flex-col gap-2">
-        { Object.entries(notePresets).map(([key, preset]) => (
-          <Button
-            key={key}
-            onClick={() => selectPreset(preset)}>
-            {preset.label}
-          </Button>
+        <div className="flex flex-row flex-wrap gap-2">
+        { notePresets.map((preset, index) => (
+          <ItemButton
+            key={index}
+            onClick={() => selectPreset(preset)}
+            item={preset}
+            display={preset.label}/>
         ))}
         </div>
       </ExpandableSection>
