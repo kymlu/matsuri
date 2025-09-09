@@ -103,8 +103,15 @@ export default function FormationEditor(props: FormationEditorProps) {
     
         console.log("Exporting section", section.displayName);
     
-        const dataUrl = stage.toDataURL({ pixelRatio: 2 }); // 1 is more low res...
+        // todo: manually draw all objects to reduce file size
+        const dataUrl = stage.toDataURL({ pixelRatio: 2 });
+        // note on pixel ratio: using 2 here has a good quality, but the file size can be quite large
+        // using 1 gives a smaller file size, but the quality is quite poor
     
+        // todo: support japanese
+        // pdf.setLanguage("ja");
+        // https://qiita.com/hidepon4649/items/df7dbea48c4dd3049ef9
+
         pdf.addImage(
           dataUrl,
           0,
@@ -120,7 +127,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         }
       }
     
-      pdf.save(exportName ?? "formation.pdf"); // this is a little broken, will not update the name properly
+      pdf.save(exportName ?? "formation.pdf"); // todo this is a little broken, will not update the name properly
       updateExportContext({isExporting: false, exportProgress: 100});
     }
   }));

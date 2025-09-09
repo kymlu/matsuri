@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationSongSection } from "../../models/FormationSection.ts";
@@ -22,6 +22,14 @@ export default function SectionPicker() {
 	const { updateAnimationContext } =
 		useContext(AnimationContext);
 
+	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
+
+  currentSections
+    .sort((a, b) => a.order - b.order)
+    .forEach((_, index) => 
+      sectionButtonRef.current[index] = React.createRef<HTMLDivElement>()
+    );
+		
 	function selectSection(section: FormationSongSection) {
 		updateState({ isLoading: true });
 		updateAnimationContext({isAnimating: false});
@@ -38,6 +46,7 @@ export default function SectionPicker() {
 			selectedSection: section,
 			selectedItem: null,
 		});
+		sectionButtonRef.current[section.order - 1].current?.scrollIntoView({behavior: "smooth"});
 	}
 
 	function copyPositions(
@@ -332,6 +341,7 @@ export default function SectionPicker() {
 							onCopyToFuture={() => copyToFuture(section)}
 							onDuplicate={() => duplicate(section)}
 							onResetPosition={() => resetPosition(section)}
+							ref={sectionButtonRef.current[index]}
 						/>
 					))}
 			</div>

@@ -15,6 +15,7 @@ export interface ListOptionButtonProps {
   onCopyToFuture?: () => void,
   onDuplicate?: () => void,
   onResetPosition?: () => void,
+  ref: React.Ref<HTMLDivElement>
 }
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
@@ -50,7 +51,9 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
   }
 
   return (
-    <div className={classes} onClick={(e) => onClick(e)}>
+    <div className={classes}
+      onClick={(e) => onClick(e)}
+      ref={props.ref}>
       <span className="flex-1 text-center">
         {!isEditing && props.text}
         {isEditing && 
