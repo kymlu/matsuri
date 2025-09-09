@@ -1,7 +1,7 @@
 import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../components/helpers/GlobalHelper.ts";
 import { FormationSongSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
-import { categoryList, festivalList, teamMembers, songList } from "./ImaHitotabi.ts";
+import { categoryList, festivalList, songList } from "./ImaHitotabi.ts";
 
 type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "formationSection";
 
@@ -27,24 +27,32 @@ export class IndexedDBController {
       }
 
       if (!db.objectStoreNames.contains("participant")) {
-        db.createObjectStore("participant", { keyPath: "id", autoIncrement: true });
+        const participantStore = db.createObjectStore("participant", { keyPath: "id", autoIncrement: true });
+        participantStore.createIndex("formationId", "formationId", { unique: false });
       }
 
       if (!db.objectStoreNames.contains("prop")) {
-        db.createObjectStore("prop", { keyPath: "id", autoIncrement: true });
+        const propStore = db.createObjectStore("prop", { keyPath: "id", autoIncrement: true });
+        propStore.createIndex("formationId", "formationId", { unique: false });
       }
 
       if (!db.objectStoreNames.contains("participantPosition")) {
-        db.createObjectStore("participantPosition", { keyPath: "id", autoIncrement: true });
+        const participantPositionStore = db.createObjectStore("participantPosition", { keyPath: "id", autoIncrement: true });
+        participantPositionStore.createIndex("participantId", "participantId", { unique: false });
+        participantPositionStore.createIndex("formationSceneId", "formationSceneId", { unique: false });
       }
       if (!db.objectStoreNames.contains("propPosition")) {
-        db.createObjectStore("propPosition", { keyPath: "id", autoIncrement: true });
+        const propPositionStore = db.createObjectStore("propPosition", { keyPath: "id", autoIncrement: true });
+        propPositionStore.createIndex("propId", "propId", { unique: false });
+        propPositionStore.createIndex("formationSceneId", "formationSceneId", { unique: false });
       }
       if (!db.objectStoreNames.contains("notePosition")) {
-        db.createObjectStore("notePosition", { keyPath: "id", autoIncrement: true });
+        const notePositionStore = db.createObjectStore("notePosition", { keyPath: "id", autoIncrement: true });
+        notePositionStore.createIndex("formationSceneId", "formationSceneId", { unique: false });
       }
       if (!db.objectStoreNames.contains("formationSection")) {
-        db.createObjectStore("formationSection", { keyPath: "id", autoIncrement: true });
+        const formationSectionStore = db.createObjectStore("formationSection", { keyPath: "id", autoIncrement: true });
+        formationSectionStore.createIndex("formationId", "formationId", { unique: false });
       }
     };
 
@@ -143,11 +151,43 @@ export class IndexedDBController {
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").getAll();
       request.onsuccess = () => {
-        console.log(`resolved getAll: ${request.result.length}`);
+        console.log(`resolved getAll ${storeName}: ${request.result.length}`);
         resolve(request.result || null);
       };
       request.onerror = () => {
-        console.error(`error on getAll: ${request.error}`);
+        console.error(`error on getAll ${storeName}: ${request.error}`);
+        reject(request.error);
+      };
+    });
+  }
+
+  async getByFormationId(storeName: "participant" | "prop" | "formationSection", formationId: string) {
+    console.log(`getByFormationId ${storeName} called`);
+    return new Promise((resolve, reject) => {
+      const index = this._getStore(storeName, "readonly").index("formationId");
+      const request = index.getAll(formationId);
+      request.onsuccess = () => {
+        console.log(`resolved getByFormationId ${storeName}: ${request.result.length}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on getByFormationId ${storeName}: ${request.error}`);
+        reject(request.error);
+      };
+    });
+  }
+
+  async getByFormationSceneId(storeName: "participantPosition" | "propPosition" | "notePosition", formationSceneId: string) {
+    console.log(`getByFormationSceneId ${storeName} called`);
+    return new Promise((resolve, reject) => {
+      const index = this._getStore(storeName, "readonly").index("formationSceneId");
+      const request = index.getAll(formationSceneId);
+      request.onsuccess = () => {
+        console.log(`resolved getByFormationSceneId ${storeName}: ${request.result.length}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on getByFormationSceneId ${storeName}: ${request.error}`);
         reject(request.error);
       };
     });
@@ -158,11 +198,11 @@ export class IndexedDBController {
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").get(id);
       request.onsuccess = () => {
-        console.log(`resolved findById: ${request.result}`);
+        console.log(`resolved findById ${storeName}: ${request.result}`);
         resolve(request.result || null);
       };
       request.onerror = () => {
-        console.error(`error on findById: ${request.error}`);
+        console.error(`error on findById ${storeName}: ${request.error}`);
         reject(request.error);
       };
     });
@@ -173,11 +213,11 @@ export class IndexedDBController {
     return new Promise<number>((resolve, reject) => {
       const request = this._getStore(storeName).put(item);
       request.onsuccess = () => {
-        console.log(`resolved upsertItem: ${request.result as number}`);
+        console.log(`resolved upsertItem ${storeName}: ${request.result as number}`);
         resolve(request.result as number);
       };
       request.onerror = () => {
-        console.error(`error on upsertItem: ${request.error}`);
+        console.error(`error on upsertItem ${storeName}: ${request.error}`);
         reject(request.error);
       };
     });
@@ -190,11 +230,11 @@ export class IndexedDBController {
       const store = tx.objectStore(storeName);
       list.forEach(item => store.put(item));
       tx.oncomplete = () => {
-        console.log(`resolved upsertList: ${list.length}`);
+        console.log(`resolved upsertList ${storeName}: ${list.length}`);
         resolve(list.length);
       };
       tx.onerror = () => {
-        console.error(`error on upsertList: ${tx.error}`);
+        console.error(`error on upsertList ${storeName}: ${tx.error}`);
         reject(tx.error);
       };
     });
@@ -206,11 +246,11 @@ export class IndexedDBController {
     return new Promise<any>((resolve, reject) => {
       const request = this._getStore(storeName).delete(itemId);
       request.onsuccess = () => {
-        console.log(`resolved removeItem: ${request.result}`);
+        console.log(`resolved removeItem ${storeName}: ${request.result}`);
         resolve(request.result);
       };
       request.onerror = () => {
-        console.error(`error on removeItem: ${request.error}`);
+        console.error(`error on removeItem ${storeName}: ${request.error}`);
         reject(request.error);
       };
     })
@@ -225,11 +265,11 @@ export class IndexedDBController {
       const store = tx.objectStore(storeName);
       idList.forEach(item => store.delete(item));
       tx.oncomplete = () => {
-        console.log(`resolved removeList: ${idList.length}`);
+        console.log(`resolved removeList ${storeName}: ${idList.length}`);
         resolve(idList.length);
       };
       tx.onerror = () => {
-        console.error(`error on removeList: ${tx.error}`);
+        console.error(`error on removeList ${storeName}: ${tx.error}`);
         reject(tx.error);
       };
     })

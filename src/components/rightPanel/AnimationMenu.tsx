@@ -8,7 +8,7 @@ import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 export default function AnimationMenu() {
   const {gridSize} = useContext(UserContext);
 
-  const {currentSections, selectedSection, updateState} = useContext(UserContext);
+  const {currentSections, selectedSection, updateState, selectedFormation} = useContext(UserContext);
   const {isAnimating, updateAnimationContext} = useContext(AnimationContext);
 
   function animate(mode: "fromPrevious" | "all" = "all") {
@@ -21,7 +21,7 @@ export default function AnimationMenu() {
 
     updateState({isLoading: true});
 
-    getAnimationPaths(sectionIds, gridSize)
+    getAnimationPaths(selectedFormation!.id, sectionIds, gridSize)
       .then((animationPaths) => {
         updateAnimationContext({paths: animationPaths, isAnimating: true});
       });

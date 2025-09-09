@@ -12,7 +12,7 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export default function ActionMenu() {
   const {noteList, updateFormationContext} = useContext(FormationContext)
-  const {selectedItem} = useContext(UserContext)
+  const {selectedItem, selectedFormation} = useContext(UserContext)
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
 
   function deleteObject() {
@@ -27,8 +27,8 @@ export default function ActionMenu() {
         )
       ]).then(() => {
         Promise.all([
-          dbController.getAll("participantPosition"),
-          dbController.getAll("participant"),
+          dbController.getByFormationSceneId("participantPosition", selectedItem!.formationSceneId),
+          dbController.getByFormationId("participant", selectedFormation!.id),
         ]).then(([participantPosition, participant]) => {
           try {
             var participantPositionList = participantPosition as Array<ParticipantPosition>;
@@ -59,8 +59,8 @@ export default function ActionMenu() {
         )
       ]).then(() => {
         Promise.all([
-          dbController.getAll("propPosition"),
-          dbController.getAll("prop"),
+          dbController.getByFormationSceneId("propPosition", selectedItem!.formationSceneId),
+          dbController.getByFormationId("prop", selectedFormation!.id),
         ]).then(([propPosition, prop]) => {
           try {
             var propPositionList = propPosition as Array<PropPosition>;

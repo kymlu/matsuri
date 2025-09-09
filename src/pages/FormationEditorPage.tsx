@@ -52,17 +52,16 @@ export default function FormationEditorPage () {
 
     Promise.all(
       [
-        dbController.getAll("formationSection"),
-        dbController.getAll("participant"),
-        dbController.getAll("prop")
+        dbController.getByFormationId("formationSection", selectedFormation?.id!),
+        dbController.getByFormationId("participant", selectedFormation?.id!),
+        dbController.getByFormationId("prop", selectedFormation?.id!),
       ]).then(([formationSongSections, participants, props]) => {
       try {
         const currentSections = (formationSongSections as Array<FormationSongSection>)
-          .filter(x => strEquals(x.formationId, selectedFormation?.id))
           .sort((a,b) => a.order - b.order);
         updateFormationContext({
-          participantList: (participants as Array<Participant>).filter(x => strEquals(x.formationId, selectedFormation?.id)),
-          propList: (props as Array<Prop>).filter(x => strEquals(x.formationId, selectedFormation?.id))
+          participantList: participants as Array<Participant>,
+          propList: props as Array<Prop>
         });
         const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
           .flatMap((_, row) =>
@@ -93,10 +92,12 @@ export default function FormationEditorPage () {
   }, [userContext.selectedFormation]);
 
   useEffect(() => {
+    if(isNullOrUndefined(selectedSection)) return;
+    
     Promise.all(
-      [ dbController.getAll("participantPosition"),
-        dbController.getAll("propPosition"),
-        dbController.getAll("notePosition"),
+      [ dbController.getByFormationSceneId("participantPosition", selectedSection!.id),
+        dbController.getByFormationSceneId("propPosition", selectedSection!.id),
+        dbController.getByFormationSceneId("notePosition", selectedSection!.id),
       ])
       .then(([participantPosition, propPosition, notePosition]) => {
       try {
@@ -136,7 +137,14 @@ export default function FormationEditorPage () {
             }>
               <>
                 <MenuItem label="ホームに戻る" onClick={() => {
-                  navigate("../")}} />
+                  updateState({
+                    selectedFormation: null,
+                    selectedSection: null,
+                    selectedFestival: null,
+                    selectedItem: null
+                  });
+                  navigate("../");
+                }} />
               </>
             </CustomMenu>
             {

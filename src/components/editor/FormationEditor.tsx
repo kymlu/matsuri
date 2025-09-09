@@ -54,7 +54,7 @@ export default function FormationEditor(props: FormationEditorProps) {
     if(isNullOrUndefined(userContext.previousSectionId) || isNullOrUndefined(userContext.selectedSection)) return;
 
     updateState({isLoading: true});
-    getAnimationPaths([userContext.previousSectionId!, userContext.selectedSection!.id], gridSize)
+    getAnimationPaths(userContext.selectedFormation!.id, [userContext.previousSectionId!, userContext.selectedSection!.id], gridSize)
       .then((animationPaths) => {
       updateState({isLoading: false});
       updateAnimationContext({paths: animationPaths, isAnimating: true});

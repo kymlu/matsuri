@@ -110,7 +110,7 @@ export default function SectionPicker() {
 
 		// Update state
 		return new Promise<number>((resolve, reject) => {
-			dbController.getAll("participantPosition").then((participantPosition) => {
+			dbController.getByFormationSceneId("participantPosition", selectedSection!.id).then((participantPosition) => {
 				try {
 					const participantPositionList =
 						participantPosition as Array<ParticipantPosition>;
@@ -118,7 +118,7 @@ export default function SectionPicker() {
 						participantPositions: participantPositionList,
 					});
 
-					dbController.getAll("propPosition").then((propPosition) => {
+					dbController.getByFormationSceneId("propPosition", selectedSection!.id).then((propPosition) => {
 						const propPositionList = propPosition as Array<PropPosition>;
 						updatePositionState({
 							propPositions: propPositionList,
@@ -195,11 +195,10 @@ export default function SectionPicker() {
 		dbController
 			.upsertList("formationSection", [...updatedSections, newSection])
 			.then(() => {
-        dbController.getAll("formationSection").then((formationSections) => {
+        dbController.getByFormationId("formationSection", selectedFormation!.id).then((formationSections) => {
 				updateState({
 					currentSections: [
 						...(formationSections as Array<FormationSongSection>)
-              .filter((x) => strEquals(x.formationId, selectedFormation!.id)) as FormationSongSection[],
 					],
 				});
 				copyPositions(lastSection, newSection as FormationSongSection)?.then(
@@ -248,8 +247,8 @@ export default function SectionPicker() {
 			),
 		]).then(() => {
 			Promise.all([
-				dbController.getAll("participantPosition"),
-				dbController.getAll("propPosition"),
+				dbController.getByFormationSceneId("participantPosition", selectedSection!.id),
+				dbController.getByFormationSceneId("propPosition", selectedSection!.id),
 			]).then(([participantPosition, propPosition]) => {
 				try {
 					var participantPositionList =
@@ -275,7 +274,7 @@ export default function SectionPicker() {
 			});
 		});
 
-		dbController.getAll("participantPosition").then((participantPosition) => {
+		dbController.getByFormationSceneId("participantPosition", selectedSection!.id).then((participantPosition) => {
 			try {
 				var participantPositionList =
 					participantPosition as Array<ParticipantPosition>;

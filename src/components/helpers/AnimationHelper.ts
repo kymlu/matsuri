@@ -1,9 +1,10 @@
 import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 
-export async function getAnimationPaths(sectionIds: string[], gridSize: number): Promise<Record<string, string>> {
+export async function getAnimationPaths(formationId: string, sectionIds: string[], gridSize: number): Promise<Record<string, string>> {
   const res1 = await dbController.getAll("participantPosition");
 
+  // todo: add props
   var participantList = (res1 as Array<ParticipantPosition>)
     .filter(x => sectionIds.includes(x.formationSceneId))
     .reduce((acc, item) => {
@@ -28,6 +29,6 @@ export async function getAnimationPaths(sectionIds: string[], gridSize: number):
         }, "");
       return [key_1, path];
     }));
-    
+
   return animationPaths;
 }
