@@ -10,6 +10,7 @@ import NameEditor from "./NameEditor.tsx";
 import NoteEditor from "./NoteEditor.tsx";
 import { isNote, isParticipant, isProp } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
+import ExportMenu from "./ExportMenu.tsx";
 
 export default function FormationRightPanel () {
   const {selectedItem} = useContext(UserContext);
@@ -56,6 +57,8 @@ export default function FormationRightPanel () {
           <AnimationMenu/>
         </>
       }
+      <Divider/>
+      <ExportMenu/>
     </div>
   )
 }
