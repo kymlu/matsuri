@@ -39,18 +39,6 @@ export default function NoteEditor() {
     ]})
     dbController.upsertItem("notePosition", updatedNote);
   };
-
-  function onClearLabel() {
-    setLabel("");
-    var updatedNote = {...noteList.find(x => strEquals(x.id, (selectedItem as NotePosition)?.id))!};
-    updatedNote.isSelected = false;
-    updatedNote.label = "";
-    updateFormationContext({noteList: [
-      ...noteList.filter(x => !strEquals(x.id, (selectedItem as NotePosition)?.id)),
-      updatedNote
-    ]})
-    dbController.upsertItem("notePosition", updatedNote);
-  }
   
   return (
     <ExpandableSection title="テキスト修正">

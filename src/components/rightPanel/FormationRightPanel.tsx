@@ -12,7 +12,11 @@ import { isNote, isParticipant, isProp } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import ExportMenu from "./ExportMenu.tsx";
 
-export default function FormationRightPanel () {
+export type FormationRightPanelProps = {
+  exportFunc?: (fileName: string) => void
+}
+
+export default function FormationRightPanel (props: FormationRightPanelProps) {
   const {selectedItem} = useContext(UserContext);
   const {participantList} = useContext(FormationContext);
 
@@ -58,7 +62,7 @@ export default function FormationRightPanel () {
         </>
       }
       <Divider/>
-      <ExportMenu/>
+      <ExportMenu exportFunc={props.exportFunc}/>
     </div>
   )
 }

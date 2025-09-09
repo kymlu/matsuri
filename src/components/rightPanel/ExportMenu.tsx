@@ -3,10 +3,20 @@ import ExpandableSection from "../ExpandableSection.tsx";
 import Button from "../Button.tsx";
 import TextInput from "../TextInput.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
+import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
 
-export default function ExportMenu() {
+export type ExportMenuProps = {
+  exportFunc?: (fileName: string) => void
+}
+
+export default function ExportMenu(props: ExportMenuProps) {
   const { selectedFestival, selectedFormation } = useContext(UserContext);
-  const [exportName, setExportName] = React.useState(selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
+  var defaultName = selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : '');
+  const [exportName, setExportName] = React.useState(defaultName);
+
+  function exportPdf() {
+    props.exportFunc?.(isNullOrUndefinedOrBlank(exportName) ? defaultName! : exportName);
+  }
 
   return (
     <ExpandableSection title="エキスポート">
@@ -16,9 +26,9 @@ export default function ExportMenu() {
           placeholder="ファイル名を入力"
           text={exportName}
           onContentChange={(newName) => setExportName(newName)}/>
-        <span>.png</span>
+        <span>.pdf</span>
       </div>
-      <Button onClick={() => {}}>PDFにエキスポート(無効)</Button>
+      <Button onClick={() => {exportPdf()}}>PDFにエキスポート</Button>
     </ExpandableSection>
   )
 }

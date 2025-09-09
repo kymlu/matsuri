@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useImperativeHandle, useRef } from "react";
 import { Layer, Path, Stage, Transformer } from "react-konva";
-import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
+import { basePalette, objectColorSettings, objectPalette } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
 import { DEFAULT_WIDTH, GRID_MARGIN_Y } from "../../data/consts.ts";
@@ -18,14 +18,16 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import Konva from "konva";
 import { FormationType } from "../../models/Formation.ts";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
+import jsPDF from "jspdf";
 
 export interface FormationEditorProps {
   height: number,
   width: number,
+  ref: React.Ref<any>,
 }
 
 export default function FormationEditor(props: FormationEditorProps) {
-  const canvasRef = useRef(null);
+  const stageRef = useRef(null);
   const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {participantList, propList, noteList} = useContext(FormationContext);
@@ -68,7 +70,55 @@ export default function FormationEditor(props: FormationEditorProps) {
       setNextSectionId(sectionId);
     }
   }, [userContext?.selectedSection, userContext?.compareMode]);
-  
+
+  useImperativeHandle(props.ref, () => ({
+    async exportToPdf(exportName: string) {
+      if (isNullOrUndefined(stageRef.current)) return;
+      var stage = (stageRef.current! as Konva.Stage);
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "px",
+        format: [stage.width()/2, stage.height()/2]});
+
+      for (let i = 0; i < currentSections.length; i++) {
+        const section = currentSections[i];
+    
+        updateState({
+          selectedSection: section,
+          previousSectionId: null,
+          selectedItem: null,
+          compareMode: "none",
+        });
+    
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              resolve();
+            });
+          });
+        });
+    
+        console.log("Exporting section", section.displayName);
+    
+        const dataUrl = stage.toDataURL({ pixelRatio: 2 }); // 1 is more low res...
+    
+        pdf.addImage(
+          dataUrl,
+          0,
+          0,
+          stage.width()/2,
+          stage.height()/2,
+        );
+
+        if (i < currentSections.length - 1) {
+          pdf.addPage();
+        }
+      }
+    
+      pdf.save(exportName ?? "formation.pdf");
+    }
+  }));
+
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => strEquals(x.id, id));
     if (participant) {
@@ -178,7 +228,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   return (
     <div>
       <Stage
-        ref={canvasRef}
+        ref={stageRef}
         width={canvasWidth}
         height={canvasHeight}
         onClick={(event) => {

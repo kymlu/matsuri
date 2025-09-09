@@ -24,6 +24,7 @@ export default function FormationEditorPage () {
   const {participantPositions, updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext)
   const navigate = useNavigate()
+  const formationEditorRef = React.createRef<any>();
 
   useEffect(() => {
     Promise.all(
@@ -138,7 +139,7 @@ export default function FormationEditorPage () {
             {
             selectedFormation && selectedFestival &&
             <h1 className='px-2 font-bold text-center'>
-              Editing {selectedSection?.displayName} {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) @ {selectedFestival?.name}
+              {selectedSection?.displayName} ・ {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) ・ {selectedFestival?.name}
             </h1>
             }
             <CustomMenu trigger={
@@ -156,19 +157,20 @@ export default function FormationEditorPage () {
                   });
                   indexedDB.deleteDatabase(DB_NAME);
                 }} />
-                <MenuSeparator />
-                <MenuItem label="Export（無効）" onClick={()=>{}} />
               </>
             </CustomMenu>
             </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>
             <div className='flex flex-1 h-full min-h-0 overflow-scroll'>
-              <FormationEditor width={selectedFormation?.width ?? 20} height={selectedFormation?.length ?? 20}/>
+              <FormationEditor
+                ref={formationEditorRef}
+                width={selectedFormation?.width ?? 20}
+                height={selectedFormation?.length ?? 20}/>
             </div>
             {/* todo: warnings if some people aren't in all sections */}
             {/* todo: warning if some people are in other categories */}
-            <FormationRightPanel/>
+            <FormationRightPanel exportFunc={(newName) => {formationEditorRef.current.exportToPdf(newName)}}/>
           </div>
         </div>
       </div>
