@@ -30,8 +30,8 @@ export default function FormationEditor(props: FormationEditorProps) {
   const {participantList, propList, noteList} = useContext(FormationContext);
   const {selectedFormation, selectedItem, isAnimating, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions} = useContext(PositionContext);
-  const [previousSectionId, setPreviousSectionId] = useState<string | undefined>("");
-  const [nextSectionId, setNextSectionId] = useState<string | undefined>("");
+  const [previousSectionId, setPreviousSectionId] = useState<string | null | undefined>("");
+  const [nextSectionId, setNextSectionId] = useState<string | null | undefined>("");
   const {categories} = useContext(CategoryContext);
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
   const canvasWidth = DEFAULT_WIDTH * gridSize;
@@ -42,12 +42,12 @@ export default function FormationEditor(props: FormationEditorProps) {
   useEffect(() => {
     if (compareMode === "previous") {
       const previousSectionId = userContext?.selectedSection && currentSections.find(x => x.order === (userContext!.selectedSection!.order - 1))?.id;
-      const section = previousSectionId && currentSections.find(x => strEquals(x.id, previousSectionId))?.id;
-      section && setPreviousSectionId(section);
+      const sectionId = previousSectionId && currentSections.find(x => strEquals(x.id, previousSectionId))?.id;
+      setPreviousSectionId(sectionId);
     } else if (compareMode === "next") {
       const nextSectionId = userContext?.selectedSection && currentSections.find(x => x.order === (userContext!.selectedSection!.order + 1))?.id;
-      const section = nextSectionId && currentSections.find(x => strEquals(x.id, nextSectionId))?.id;
-      section && setNextSectionId(section);
+      const sectionId = nextSectionId && currentSections.find(x => strEquals(x.id, nextSectionId))?.id;
+      setNextSectionId(sectionId);
     }
   }, [userContext?.selectedSection, userContext?.compareMode]);
   
@@ -87,30 +87,27 @@ export default function FormationEditor(props: FormationEditorProps) {
     }
   }
 
-  function getPixelX(gridX: number): number {
-    return gridX * gridSize; // todo
-  }
-
-  function getPixelY(gridY: number): number {
-    return gridY * gridSize; // todo
+  function getPixel(gridX: number, margin?: number): number {
+    return gridX * gridSize - (margin ?? 0);
   }
 
   function selectItem(
     item: ParticipantPosition | PropPosition | NotePosition | null,
-    forceSelect?: boolean) {
-      if (item === null) return;
+    forceSelect?: boolean
+  ) {
+    if (item === null) return;
 
-      if (selectedItem === null || !strEquals(selectedItem.id, item.id)) {
-        updateState({selectedItem: item});
-        participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-        propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-        noteList.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-        item.isSelected = true;
-      } else if (!forceSelect) {
-        updateState({selectedItem: null});
-        item.isSelected = false;
-      }
+    if (selectedItem === null || !strEquals(selectedItem.id, item.id)) {
+      updateState({selectedItem: item});
+      participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      noteList.filter(x => x.isSelected).forEach(x => x.isSelected = false);
+      item.isSelected = true;
+    } else if (!forceSelect) {
+      updateState({selectedItem: null});
+      item.isSelected = false;
     }
+  }
 
     useEffect(() => {
       const animations: Array<Konva.Animation> = [];
@@ -178,8 +175,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                     name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                     colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                     length={propList.find(x => strEquals(placement.propId, x.id))!.length}
-                    startX={getPixelX(placement.x)} 
-                    startY={getPixelY(placement.y)}
+                    startX={getPixel(placement.x)} 
+                    startY={getPixel(placement.y)}
                     rotation={placement.angle} 
                   />
                 )
@@ -191,8 +188,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                     key={placement.id}
                     name={participantList.find(x => strEquals(placement.participantId, x.id))?.displayName!} 
                     colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-                    startX={getPixelX(placement.x)} 
-                    startY={getPixelY(placement.y)}
+                    startX={getPixel(placement.x)} 
+                    startY={getPixel(placement.y)}
                   />
               )
             }
@@ -208,6 +205,7 @@ export default function FormationEditor(props: FormationEditorProps) {
             colour={objectColorSettings.purpleLightest}
             borderRadius={10}
             fontSize={gridSize * 0.4}
+            alwaysBold
             />
           <Transformer 
           ref={transformerRef}
@@ -225,8 +223,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                 <NoteObject 
                   key={note.id}
                   colour={note.color ?? objectColorSettings.blueLight} 
-                  startX={getPixelX(note.x)} 
-                  startY={getPixelY(note.y)}
+                  startX={getPixel(note.x)} 
+                  startY={getPixel(note.y)}
                   isSelected={note.isSelected}
                   height={note.height}
                   length={note.width}
@@ -251,8 +249,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                   length={propList.find(x => strEquals(placement.propId, x.id))!.length}
                   isSelected={placement.isSelected}
-                  startX={getPixelX(placement.x)} 
-                  startY={getPixelY(placement.y)} 
+                  startX={getPixel(placement.x)} 
+                  startY={getPixel(placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)}
                   draggable={!isAnimating}
@@ -268,8 +266,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   key={placement.id}
                   name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
                   colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-                  startX={getPixelX(placement.x)} 
-                  startY={getPixelY(placement.y)}
+                  startX={getPixel(placement.x)} 
+                  startY={getPixel(placement.y)}
                   isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)} 
@@ -277,21 +275,6 @@ export default function FormationEditor(props: FormationEditorProps) {
                 />
             )
           }
-         {false && <NoteObject
-            label="Hello"
-            text={"Legend\nabc\n\nabc"}
-            colour={objectColorSettings.amberLight}
-            startX={getPixelX(6)}
-            startY={getPixelY(6)}
-            isSelected={false}
-            updatePosition={(x, y) => {/** todo */}}
-            onClick={(forceSelect?: boolean) => {/** todo */}}
-            draggable
-            height={3}
-            length={5}
-            borderRadius={10}
-            fontSize={12}
-          />}
         </Layer>
         {isAnimating &&
           <Layer useRef={animationLayerRef}>
@@ -330,8 +313,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                   colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                   length={propList.find(x => strEquals(placement.propId, x.id))!.length}
-                  startX={getPixelX(placement.x)} 
-                  startY={getPixelY(placement.y)} 
+                  startX={getPixel(placement.x)} 
+                  startY={getPixel(placement.y)} 
                   rotation={placement.angle} 
                   />
               )
@@ -343,8 +326,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   key={placement.id}
                   name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
                   colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-                  startX={getPixelX(placement.x)} 
-                  startY={getPixelY(placement.y)}
+                  startX={getPixel(placement.x)} 
+                  startY={getPixel(placement.y)}
                 />
             )
           }
