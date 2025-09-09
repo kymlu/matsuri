@@ -11,11 +11,11 @@ import { NotePosition, ParticipantPosition, PropPosition } from "../../models/Po
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
-import { songList } from "../../data/ImaHitotabi.ts";
 import { useState } from "react";
 import NoteObject from "./formationObjects/NoteObject.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
+import Konva from "konva";
 
 export interface FormationEditorProps {
   height: number,
@@ -35,6 +35,8 @@ export default function FormationEditor(props: FormationEditorProps) {
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
   const canvasWidth = DEFAULT_WIDTH * gridSize;
   const transformerRef = useRef(null);
+  const animationLayerRef = useRef<Konva.Layer>(null);
+  const animationRef = useRef<{ [key: string]: Konva.Node | null }>({});
   
   useEffect(() => {
     if (compareMode === "previous") {
@@ -109,6 +111,43 @@ export default function FormationEditor(props: FormationEditorProps) {
       }
     }
 
+    useEffect(() => {
+      const animations: Array<Konva.Animation> = [];
+      const steps = 50;
+
+      Object.entries(paths).forEach(([key, pathData]) => {
+        const path = new Konva.Path({
+          x: 0,
+          y: 0,
+          stroke: 'cyan',
+          data: pathData,
+        });
+
+        const pathLen = path.getLength();
+        const step = pathLen / steps;
+        let pos = 0;
+
+        const anim = new Konva.Animation(function (frame) {
+          pos = pos + 1;
+          const pt = path!.getPointAtLength(pos * step);
+
+          if (animationRef[key]?.current) { // todo: doesn't work, ref doesn't attach to object (current is always null)
+            animationRef[key].current.position({ x: pt!.x, y: pt!.y });
+          }
+
+          if (pos >= steps) {
+            anim.stop(); // stop will reset the location
+            updateState({ isAnimating: false });
+          }
+        });
+
+        animations.push(anim);
+      });
+
+      // Start all animations
+      animations.forEach((anim) => anim.start());
+    }, [userContext.isAnimating]);
+
   return (
     <div>
       <Stage
@@ -167,20 +206,8 @@ export default function FormationEditor(props: FormationEditorProps) {
             length={3}
             colour={objectColorSettings.purpleLightest}
             borderRadius={10}
-            fontSize={16}
+            fontSize={gridSize * 0.4}
             />
-        </Layer>
-        <Layer>
-          {
-            Object.entries(paths)
-              .map(path => 
-                <Path
-                  data={path[1]}
-                  stroke={objectPalette.cyan.main}
-                  strokeWidth={2}/>)
-          }
-        </Layer>
-        <Layer>
           <Transformer 
           ref={transformerRef}
           boundBoxFunc={(oldBox, newBox) => {
@@ -264,6 +291,32 @@ export default function FormationEditor(props: FormationEditorProps) {
             fontSize={12}
           />}
         </Layer>
+        {isAnimating &&
+          <Layer useRef={animationLayerRef}>
+            {
+              Object.entries(paths)
+                .map(path => 
+                  <Path
+                    key={path[0]}
+                    data={path[1]}
+                    stroke={objectPalette.cyan.main}
+                    strokeWidth={2}/>)
+            }
+            {participantPositions
+              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSceneId))
+              .map(placement => 
+                <ParticipantObject 
+                  key={placement.id}
+                  name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
+                  colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
+                  startX={0} 
+                  startY={0}
+                  isSelected={false}
+                  ref={(ref) => animationRef.current[placement.participantId] = ref}
+                />
+            )}
+          </Layer>
+        }
         { !isAnimating &&  compareMode === "next" && nextSectionId &&
           <Layer opacity={0.5}>
           {

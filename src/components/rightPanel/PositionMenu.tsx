@@ -16,22 +16,22 @@ export default function PositionMenu(props: PositionMenuProps) {
   const {selectedFormation, selectedSection, selectedItem, updateState} = useContext(UserContext);
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext)
 
-  var order = selectedSection?.songSection.order;
+  // var order = selectedSection?.songSection.order;
   var songSections = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections;
   var previousSectionName = "";
-  var hasPrevious = !isNullOrUndefined(order) && order! > 1
+  // var hasPrevious = !isNullOrUndefined(order) && order! > 1
   var previousX = "5";
   var previousY = "7";
-  if (hasPrevious) {
-    previousSectionName = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections.find(x => x.order === (order! - 1))?.name!
-  }
+  // if (hasPrevious) {
+  //   previousSectionName = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections.find(x => x.order === (order! - 1))?.name!
+  // }
   var nextX = "5";
   var nextY = "7";
   var nextSectionName = "";
-  var hasNext = !isNullOrUndefined(order) && order! < songSections?.map(x => x.order).filter(x => !isNullOrUndefined(order)).sort(x => -x)[0]!;
-  if (hasNext) {
-    nextSectionName = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections.find(x => x.order === (order! + 1))?.name!
-  }
+  // var hasNext = !isNullOrUndefined(order) && order! < songSections?.map(x => x.order).filter(x => !isNullOrUndefined(order)).sort(x => -x)[0]!;
+  // if (hasNext) {
+  //   nextSectionName = songList.find(song => strEquals(song.id, selectedFormation?.songId))?.sections.find(x => x.order === (order! + 1))?.name!
+  // }
 
   return (
     <ExpandableSection title="隊列" defaultIsExpanded>

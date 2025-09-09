@@ -18,6 +18,7 @@ export interface FormationObjectProps {
   resizeEnabled?: boolean,
   draggable?: boolean,
   onTransform?: (item: Shape<ShapeConfig> | Stage) => void,
+  ref?: React.Ref<any>,
 }
 
 export default function BaseFormationObject(props: FormationObjectProps) {
@@ -38,7 +39,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
   }
   
   return (
-    <Group>
+    <Group ref={props.ref}>
       <Group
         ref={groupRef}
         draggable={props.draggable}

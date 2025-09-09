@@ -16,13 +16,13 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
   return (
     <div className={expanded ? "flex-col max-h-fit" : "flex-none"}>
       <button
-        className="flex flex-row justify-between w-full font-bold"
+        className="flex flex-row justify-between w-full font-bold align-middle"
         onClick={() => toggle()}>
         <span className="text-left">{props.title}</span>
-        <span className="w-8 text-center">{expanded ? "—" : "+"}</span>
+        <img className="text-center size-6" src={expanded ? "icons/expand_less_black.svg": "icons/expand_more_black.svg"}/>
       </button>
       {expanded && 
-      <div className="flex-1 px-2 mt-2 overflow-auto max-h-40">
+      <div className="flex-1 px-2 mt-2 overflow-auto">
         {props.children}
       </div>}
     </div>

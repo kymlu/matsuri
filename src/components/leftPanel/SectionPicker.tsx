@@ -279,6 +279,16 @@ export default function SectionPicker() {
 		});
 	}
 
+  function onNameChange(section: FormationSongSection, newName: string) {
+    var updatedSection = {...section, displayName: newName};
+    dbController.upsertItem("formationSection", updatedSection).then(() => {
+      updateState({
+        currentSections: currentSections.map(x => strEquals(x.id, section.id) ? updatedSection : x),
+        selectedSection: updatedSection,
+      });
+    });
+  }
+
 	var lastSection = currentSections
 		.slice()
 		?.sort((a, b) => b.order - a.order)[0];
@@ -294,7 +304,7 @@ export default function SectionPicker() {
 
 	return (
 		<ExpandableSection title="セクション" defaultIsExpanded>
-			<div className="flex flex-col overflow-scroll max-h-28">
+			<div className="flex flex-col overflow-x-hidden overflow-y-auto max-h-28">
 				{currentSections
 					.sort((a, b) => a.order - b.order)
 					.map((section, index, array) => (
@@ -303,6 +313,7 @@ export default function SectionPicker() {
 							text={section.displayName ?? "No Name"}
 							isSelected={strEquals(selectedSection?.id, section.id)}
 							isBottom={index === array.length - 1}
+              onEditName={(newName) => onNameChange(section, newName)}
 							onClick={() => selectSection(section)}
 							onCopyToCurrent={() => copyToCurrent(section)}
 							onCopyToFuture={() => copyToFuture(section)}
@@ -314,24 +325,24 @@ export default function SectionPicker() {
 			{lastSection && (
 				<CustomMenu
 					full
-					trigger={<div className="text-center hover:bg-grey-100">＋</div>}>
+					trigger={<div className="w-full hover:bg-grey-200"><img className="m-auto size-6" src="icons/add_black.svg"/></div>}>
+          {nextSection && (
+            <>
+              <MenuItem
+                label={`「${nextSection?.name}」追加`}
+                onClick={() => {
+                  copyToNewSection(lastSection!, nextSection!.id);
+                }}
+              />
+              <MenuSeparator />
+            </>
+          )}
 					<MenuItem
 						label={`「${lastSectionDetails?.name} (${lastSectionCount}）」追加`}
 						onClick={() => {
 							copyToNewSection(lastSection!, lastSection.songSectionId);
 						}}
 					/>
-					{nextSection && (
-						<>
-							<MenuSeparator />
-							<MenuItem
-								label={`「${nextSection?.name}」追加`}
-								onClick={() => {
-									copyToNewSection(lastSection!, nextSection!.id);
-								}}
-							/>
-						</>
-					)}
 				</CustomMenu>
 			)}
 		</ExpandableSection>

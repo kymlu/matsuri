@@ -7,7 +7,7 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function AnimationMenu() {
-  const {gridSize} = useContext(UserContext);
+  const {isAnimating, gridSize, updateState} = useContext(UserContext);
 
   const {currentSections, selectedSection} = useContext(UserContext);
   const {updateAnimationContext} = useContext(AnimationContext);
@@ -22,7 +22,7 @@ export default function AnimationMenu() {
       .then(([res1]) => {
       try {
         if (mode === "fromPrevious") {
-          var sectionIds = [selectedSection!.id, currentSections.find(x => x.order === (selectedSection!.order - 1))!.id];
+          var sectionIds = [currentSections.find(x => x.order === (selectedSection!.order - 1))!.id, selectedSection!.id];
         } else {
           var sectionIds = currentSections.sort((a, b) => a.order - b.order).map(x => x.id);
         }
@@ -49,9 +49,9 @@ export default function AnimationMenu() {
                 }
               }, "");
             return [key, path];
-        }));
-        console.log(animationPaths);
+          }));
         updateAnimationContext({paths: animationPaths});
+        updateState({isAnimating: true});
       } catch (e) {
         console.error('Error parsing user from localStorage:', e);
       }
@@ -60,8 +60,19 @@ export default function AnimationMenu() {
   
   return (
     <ExpandableSection title="アニメーション">
-      { selectedSection?.order !== 1 && <Button onClick={() => {animate("fromPrevious")}}>前からの移動可視化</Button> }
-      <Button onClick={() => {animate()}}>全ての移動可視化</Button>
+      { !isAnimating &&
+        <>
+          { selectedSection?.order !== 1 && <Button onClick={() => {animate("fromPrevious")}}>前からの移動可視化</Button> }
+          <Button onClick={() => {animate()}}>全ての移動可視化</Button>
+        </>
+      }
+      {
+        isAnimating &&
+        <Button onClick={() => {
+          updateAnimationContext({paths: {}});
+          updateState({isAnimating: false});
+        }}>アニメーション停止</Button>
+      }
     </ExpandableSection>
   )
 }

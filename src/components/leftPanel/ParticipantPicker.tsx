@@ -9,7 +9,7 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
-import ClearableTextInput from "../ClearableTextInput.tsx";
+import TextInput from "../TextInput.tsx";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
@@ -67,8 +67,12 @@ export default function ParticipantPicker () {
   
   return (
     <ExpandableSection title="参加者">
-      <ClearableTextInput text={filterText} placeholder="探す" onContentChange={(event) => setFilterTextWrapper(event.target?.value ?? "")}/>
-      <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-scroll max-h-28">
+      <TextInput
+        clearable
+        text={filterText}
+        placeholder="探す"
+        onContentChange={(newValue) => setFilterTextWrapper(newValue ?? "")}/>
+      <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-x-hidden overflow-y-scroll max-h-28">
         {participantListDisplay
           .map(participant => 
             <ItemButton

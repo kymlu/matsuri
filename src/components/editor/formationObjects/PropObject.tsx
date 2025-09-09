@@ -19,6 +19,7 @@ export interface PropObjectProps {
   draggable?: boolean,
   onRotate?: (rotation: number, x: number, y: number) => void,
   rotation: number,
+  ref?: React.Ref<any>,
 }
 
 export default function PropObject(props: PropObjectProps) {
@@ -48,14 +49,15 @@ export default function PropObject(props: PropObjectProps) {
       resizeEnabled={false}
       rotation={props.rotation}
       draggable={props.draggable}
-      onTransform={onRotate}>
+      onTransform={onRotate}
+      ref={props.ref}>
       <Rect x={props.startX}
         y={props.startY}
         width={props.length * gridSize}
         height={gridSize}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
-        strokeWidth={2} />
+        strokeWidth={gridSize/30} />
       <Text x={props.startX}
         y={props.startY + FONT_SIZE}
         width={props.length * gridSize}

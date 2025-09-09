@@ -28,7 +28,7 @@ export default function GridSettingsMenu() {
         defaultValue="none"
         onChange={(newValue: string) => {if(!isNullOrUndefinedOrBlank(newValue)){onCompareModeChanged(newValue)}}}/>
       <CustomToggleGroup
-        label="Grid size (無効）"
+        label="グリッドサイズ"
         options={[
           {label: "小", value: "28"},
           {label: "中", value: "40"},

@@ -2,11 +2,13 @@ import React from "react";
 import className from "classnames";
 import CustomMenu from "./CustomMenu.tsx";
 import { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
+import TextInput from "./TextInput.tsx";
 
 export interface ListOptionButtonProps {
   text: string,
   isSelected?: boolean,
   isBottom?: boolean,
+  onEditName?: (newName: string) => void,
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
   onCopyToCurrent?: () => void,
   onCopyToFuture?: () => void,
@@ -15,7 +17,9 @@ export interface ListOptionButtonProps {
 }
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
-  const classes = className("flex flex-row gap-2 px-5 items-center", {
+  const [isEditing, setIsEditing] = React.useState(false);
+
+  const classes = className("grid grid-cols-[1fr,auto] gap-2 px-5 items-center", {
     "bg-primary text-white cursor-default": props.isSelected,
     "cursor-pointer": !props.isSelected,
     "border-b-2 border-primary": !props.isBottom,
@@ -46,9 +50,19 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
   return (
     <div className={classes} onClick={(e) => onClick(e)}>
       <span className="flex-1 text-center">
-        {props.text}
+        {!isEditing && props.text}
+        {isEditing && 
+          <TextInput
+            compact
+            centered
+            onContentChange={(newValue) => {props.onEditName?.(newValue)}}
+            text={props.text}
+            placeholder="名前を入力"/>}
       </span>
-      <CustomMenu trigger={<img src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"} className='size-4'/>}>
+      {!isEditing && <CustomMenu trigger={
+        <div className="flex justify-center">
+          <img src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"} className='size-4'/>
+        </div>}>
         {
           !props.isSelected &&
           <>
@@ -58,7 +72,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
         {
           props.isSelected && 
           <>
-            <MenuItem label="名前を編集（無効）" onClick={() => {}} />
+            <MenuItem label="名前を編集" onClick={() => {setIsEditing(true)}} />
             <MenuSeparator />
             <MenuItem label="以降にコピー" onClick={copyToFuture} />
             <MenuSeparator />
@@ -69,7 +83,12 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             <MenuItem label="削除（無効）" onClick={() => {}} />
           </>
         }
-      </CustomMenu>
+      </CustomMenu>}
+      { isEditing && <button onClick={() => {setIsEditing(false)}}>
+        <div className="flex justify-center col-start-2 row-start-1 px-3">
+          <img src={"icons/check_white.svg"} className='size-4'/>
+        </div>
+      </button>}
     </div>
   )
 }

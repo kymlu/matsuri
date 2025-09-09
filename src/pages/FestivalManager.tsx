@@ -18,9 +18,6 @@ export default function FestivalManager () {
         selectedFestival: festival,
         selectedFormation: selectedFormation,
         selectedItem: null,
-        // selectedSection: songSectionList
-        //   .filter(section => section.songId === "1")
-        //   .sort(x => x.order)[0], // todo: generate list
     });
     navigate("/formation");
   }
@@ -30,10 +27,10 @@ export default function FestivalManager () {
       <div className='m-auto mt-10'>
         <h1 className='text-2xl font-bold'>祭り</h1>
         <Divider/>
-        <div>
+        <div className='grid landscape:grid-cols-[auto,1fr] gap-3'>
           {
             festivalList.map(festival =>
-              <div className='grid grid-cols-[auto,1fr] gap-3' key={festival.id}>
+              <React.Fragment key={festival.name}>
                 <h2 className='text-xl'>{festival.name}</h2>
                 <div className='flex flex-row gap-3'>
                   {festival.formations
@@ -45,7 +42,7 @@ export default function FestivalManager () {
                       </Button>
                   )}
                 </div>
-              </div>
+              </React.Fragment>
             )
           }
         </div>

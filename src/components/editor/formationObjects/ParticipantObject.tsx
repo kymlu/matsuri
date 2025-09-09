@@ -14,10 +14,12 @@ export interface ParticipantObjectProps {
   isSelected?: boolean,
   onClick?: (forceSelect?: boolean) => void,
   draggable?: boolean,
+  ref?: React.Ref<any>,
 }
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
   const {gridSize} = useContext(UserContext);
+  console.log(props.ref)
   
   function onClick(forceSelect?: boolean) {
     if(props.draggable) {
@@ -34,14 +36,15 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       updatePosition={props.updatePosition}
       rotateEnabled={false}
       resizeEnabled={false}
-      draggable={props.draggable}>
+      draggable={props.draggable}
+      ref={props.ref}>
       <Circle 
         x={props.startX}
         y={props.startY}
         radius={gridSize/2}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
-        strokeWidth={2} />
+        strokeWidth={gridSize/30} />
       <Text
         x={props.startX-gridSize/2}
         y={props.startY-gridSize/2}

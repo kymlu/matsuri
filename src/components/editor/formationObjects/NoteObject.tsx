@@ -47,7 +47,7 @@ export default function NoteObject(props: NoteObjectProps) {
         height={props.height * gridSize}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
-        strokeWidth={2}
+        strokeWidth={gridSize/30}
         cornerRadius={props.borderRadius} />
       <Text
         x={props.startX}
@@ -69,7 +69,7 @@ export default function NoteObject(props: NoteObjectProps) {
             height={0.5 * gridSize}
             fill={props.colour.bgColour}
             stroke={props.colour.borderColour}
-            strokeWidth={2}
+            strokeWidth={gridSize/30}
             cornerRadius={props.borderRadius} />
           <Text
             x={props.startX + gridSize / 2}
