@@ -2,11 +2,12 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 
 export async function getAnimationPaths(sectionIds: string[], gridSize: number): Promise<Record<string, string>> {
-  const res1 = await dbController.getAll("participantPosition");
+  const results = await Promise.all(
+    sectionIds.map((id) => dbController.getByFormationSectionId("participantPosition", id))
+  );
 
   // todo: add props
-  var participantList = (res1 as Array<ParticipantPosition>)
-    .filter(x => sectionIds.includes(x.formationSectionId))
+  var participantList = (results.flat() as Array<ParticipantPosition>)
     .reduce((acc, item) => {
       const key = item.participantId;
       if (!acc[key]) {
