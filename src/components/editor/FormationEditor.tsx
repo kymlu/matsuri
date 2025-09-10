@@ -398,7 +398,6 @@ export default function FormationEditor(props: FormationEditorProps) {
           }
           { !isAnimating &&
             propPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .map(placement =>
                 <PropObject 
                   key={placement.id}
@@ -417,7 +416,6 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { !isAnimating && participantPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .map(placement => 
                 <ParticipantObject 
                   key={placement.id}
@@ -436,7 +434,6 @@ export default function FormationEditor(props: FormationEditorProps) {
         { !isLoading && isAnimating &&
           <Layer useRef={animationLayerRef}>
             {participantPositions
-              .filter(placement => strEquals(userContext.selectedSection?.id, placement.formationSectionId))
               .sort((a, b) => a.participantId.localeCompare(b.participantId))
               .map((placement, index) => 
                 <ParticipantObject 
