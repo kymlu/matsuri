@@ -102,7 +102,7 @@ export default function FormationEditorPage () {
                     selectedFormation: null,
                     selectedSection: null,
                     selectedFestival: null,
-                    selectedItem: null
+                    selectedItems: [],
                   });
                   navigate("../");
                 }} />

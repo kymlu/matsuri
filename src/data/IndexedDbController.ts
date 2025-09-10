@@ -177,6 +177,22 @@ export class IndexedDBController {
     });
   }
 
+  async getPositionsByParticipantId(participantId: string) {
+    console.log(`getPositionsByParticipantId`);
+    return new Promise((resolve, reject) => {
+      const index = this._getStore("participantPosition", "readonly").index("participantId");
+      const request = index.getAll(participantId);
+      request.onsuccess = () => {
+        console.log(`resolved getPositionsByParticipantId: ${request.result.length}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on getPositionsByParticipantId: ${request.error}`);
+        reject(request.error);
+      };
+    });
+  }
+
   async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition", formationSectionId: string) {
     console.log(`getByFormationSectionId ${storeName} called`);
     return new Promise((resolve, reject) => {

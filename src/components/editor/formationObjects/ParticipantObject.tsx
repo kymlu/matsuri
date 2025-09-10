@@ -6,13 +6,13 @@ import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
 
 export interface ParticipantObjectProps {
+  id: string,
   name: string,
   colour: ColorStyle,
   startX: number,
   startY: number,
   updatePosition?: (x: number, y: number) => void,
-  isSelected?: boolean,
-  onClick?: (forceSelect?: boolean) => void,
+  onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
   draggable?: boolean,
   ref?: React.Ref<Konva.Group>,
 }
@@ -20,21 +20,11 @@ export interface ParticipantObjectProps {
 export default function ParticipantObject(props: ParticipantObjectProps) {
   const {gridSize} = useContext(UserContext);
   
-  function onClick(forceSelect?: boolean) {
-    if(props.draggable) {
-      props.onClick?.(forceSelect);
-    }
-  }
-  
   return (
     <BaseFormationObject
-      isSelected={props.isSelected}
-      startX={props.startX}
-      startY={props.startY}
-      onClick={onClick}
+      id={props.id}
+      onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
       updatePosition={props.updatePosition}
-      rotateEnabled={false}
-      resizeEnabled={false}
       draggable={props.draggable}
       ref={props.ref}>
       <Circle 

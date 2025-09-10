@@ -1,7 +1,7 @@
 import { Festival } from '../models/Festival.ts';
 import React from 'react';
 import { Formation } from '../models/Formation.ts';
-import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { Position } from '../models/Position.ts';
 import { FormationSongSection } from '../models/FormationSection.ts';
 import { GRID_SIZE } from '../data/consts.ts';
 
@@ -16,7 +16,7 @@ export interface AppState {
   gridSize: number,
   previousSectionId: string | null,
   selectedSection: FormationSongSection | null,
-  selectedItem: ParticipantPosition | PropPosition | NotePosition | null,
+  selectedItems: Array<Position>,
   currentSections: Array<FormationSongSection>,
   compareMode: CompareMode,
   isLoading: boolean,
@@ -33,7 +33,7 @@ export const defaultState: AppState = {
   selectedFormation: null,
   marginPositions: {participants: [], props: [], notes: []},
   gridSize: GRID_SIZE,
-  selectedItem: null,
+  selectedItems: [],
   previousSectionId: null,
   selectedSection: null,
   currentSections: [],

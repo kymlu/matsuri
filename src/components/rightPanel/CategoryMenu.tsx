@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { Radio, RadioGroup } from "@base-ui-components/react";
 import { ColorStyle } from "../../themes/colours.ts";
@@ -8,26 +8,56 @@ import { strEquals } from "../helpers/GlobalHelper.ts";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { ParticipantPosition } from "../../models/Position.ts";
+import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../models/Position.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import ColorPicker from "./ColorPicker.tsx";
 import CustomMenu from "../CustomMenu.tsx";
+import Button from "../Button.tsx";
 
-// bug: select participant, move, select colour, refresh. Will return to the original position but keep colour
+// todo: bug: select participant, move, select colour, refresh. Will return to the original position but keep colour
 
 export default function CategoryMenu() {
-  const {selectedItem, updateState} = useContext(UserContext);
+  const {selectedItems, updateState} = useContext(UserContext);
   const userContext = useContext(UserContext);
   const [editingId, setEditingId] = useState<string | undefined | null>(null);
   const {categories, updateCategoryContext} = useContext(CategoryContext);
-  const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory>(categories.find(x => strEquals(x.id, (selectedItem as ParticipantPosition).categoryId)) ?? categories[0]);
+  const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
   const {participantPositions, updatePositionState} = useContext(PositionContext);
 
+	const categoryOptionRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
+
   useEffect(() => {
-    if (selectedItem) {
-      setSelectedCategory(categories.find(x => strEquals(x.id, (selectedItem as ParticipantPosition).categoryId))!);
+    categories
+      .forEach((_, index) => 
+        categoryOptionRef.current[index] = React.createRef<HTMLDivElement>()
+      );
+  }, [categories])
+
+  useEffect(() => {
+    if (selectedItems.length > 0) {
+      var selectedCategories = selectedItems
+        .filter(x => x.type === PositionType.participant)
+        .map(x => x.participant.categoryId);
+        
+      if (new Set(selectedCategories).size === 1) {
+        var category = categories.find(x => strEquals(x.id, selectedCategories[0]))!;
+        setSelectedCategory(category);
+      } else {
+        setSelectedCategory(null);
+      }
+      scrollToCategory();
     }
-  }, [userContext.selectedItem]);
+  }, [userContext.selectedItems]);
+
+  // todo: doesn't scroll properly when selecting a different participant
+  function scrollToCategory() {
+    if (selectedCategory){
+      categoryOptionRef.current?.[selectedCategory.order - 1]?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }
 
   function selectCategoryToEdit(id: string) {
     if (strEquals(editingId, id)){
@@ -38,15 +68,24 @@ export default function CategoryMenu() {
   }
 
   function onChangeCategory(newCategoryId: string) {
-    var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!
-    var newSelectedItem = {
-      ...selectedItem,
-      categoryId: newCategory.id,
-    } as ParticipantPosition;
+    var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!;
+    var updatedPositions = splitPositionsByType(selectedItems).participants.map(x => ({...x, categoryId: newCategoryId}));
+    var positionIds = updatedPositions.map(x => x.id);
     setSelectedCategory(newCategory);
-    updateState({selectedItem: newSelectedItem});
-    updatePositionState({participantPositions: [...participantPositions.filter(x => !strEquals(x.id, selectedItem?.id!)), newSelectedItem]});
-    dbController.upsertItem("participantPosition", newSelectedItem);
+    updateState({selectedItems: updatedPositions.map(x => createPosition(x, PositionType.participant))});
+    updatePositionState({participantPositions: [...participantPositions.filter(x => !positionIds.includes(x.id)), ...updatedPositions]});
+    dbController.upsertList("participantPosition", updatedPositions);
+  }
+
+  async function onSetAllToCategory() {
+    var updatedPositions = (
+      await Promise.all(splitPositionsByType(selectedItems)
+      .participants
+      .map(x => dbController.getPositionsByParticipantId(x.participantId))))
+      .flat()
+      .map(x => ({...x as ParticipantPosition, categoryId: selectedCategory!.id} as ParticipantPosition));
+
+    dbController.upsertList("participantPosition", updatedPositions);
   }
 
   function selectColor(color: ColorStyle, category: ParticipantCategory) {
@@ -57,14 +96,21 @@ export default function CategoryMenu() {
   }
 
   return (
-    <ExpandableSection title="カテゴリー">
+    <ExpandableSection
+      title="カテゴリー"
+      onToggle={() => scrollToCategory()}>
       <RadioGroup
         value={selectedCategory?.id ?? ""}
         onValueChange={(value) => onChangeCategory(value as string)}>
-        <div className="flex flex-col gap-x-6">
+        <div className="flex flex-col overflow-x-hidden overflow-y-auto gap-x-6 max-h-32">
           {
-            categories.sort((a, b) => a.order - b.order).map(category => 
-              <div key={category.id} className="flex flex-row items-center justify-between align-middle">
+            categories
+              .sort((a, b) => a.order - b.order)
+              .map((category, index) => 
+              <div
+                key={category.id}
+                ref={categoryOptionRef.current[index]}
+                className="flex flex-row items-center justify-between align-middle">
                 <div className="flex flex-row items-center gap-2 align-middle">
                   <Radio.Root
                     value={category.id}
@@ -88,6 +134,10 @@ export default function CategoryMenu() {
           }
         </div>
       </RadioGroup>
+      {selectedCategory && 
+        <Button onClick={() => onSetAllToCategory()} full>
+          全てのセクションに適用
+        </Button>}
     </ExpandableSection>
   )
 }

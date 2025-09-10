@@ -8,13 +8,13 @@ import { Stage } from "konva/lib/Stage";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface PropObjectProps {
+  id: string,
   name: string,
   length: number,
   colour: ColorStyle,
   startX: number,
   startY: number,
-  isSelected?: boolean,
-  onClick?: (forceSelect?: boolean) => void,
+  onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
   onRotate?: (rotation: number, x: number, y: number) => void,
@@ -25,12 +25,6 @@ export interface PropObjectProps {
 export default function PropObject(props: PropObjectProps) {
   const {gridSize} = useContext(UserContext);
 
-  function onClick(forceSelect?: boolean) {
-    if (props.draggable) {
-      props.onClick?.(forceSelect);
-    }
-  }
-
   function onRotate(item: Shape<ShapeConfig> | Stage) {
     if (props.onRotate) {
       console.log("onRotate");
@@ -40,13 +34,9 @@ export default function PropObject(props: PropObjectProps) {
 
   return (
     <BaseFormationObject
-      isSelected={props.isSelected}
-      startX={props.startX}
-      startY={props.startY}
-      onClick={onClick}
+      id={props.id}
+      onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
       updatePosition={props.updatePosition}
-      rotateEnabled={true}
-      resizeEnabled={false}
       rotation={props.rotation}
       draggable={props.draggable}
       onTransform={onRotate}

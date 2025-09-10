@@ -3,21 +3,25 @@ import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
-import { NotePosition } from "../../models/Position.ts";
+import { getFromPositionType, NotePosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import TextInput from "../TextInput.tsx";
 
 export default function NoteEditor() {
-  const {selectedItem} = useContext(UserContext);
+  const {selectedItems} = useContext(UserContext);
 
+  const [note, setNote] = useState<NotePosition | null>(null);
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
   const {noteList, updateFormationContext} = useContext(FormationContext);
 
   useEffect(() => {
-    setLabel((selectedItem as NotePosition)?.label);
-    setText((selectedItem as NotePosition)?.text);
-  }, [selectedItem]);
+    if (selectedItems.length === 0) return;
+    var note = getFromPositionType(selectedItems[0]) as NotePosition;
+    setLabel(note!.label);
+    setText(note!.text);
+    setNote(note);
+  }, [selectedItems]);
   
   const handleContentChange = (newValue: string, type: "label" | "text") => {
     if (type === "label") {
@@ -26,7 +30,7 @@ export default function NoteEditor() {
       setText(newValue);
     }
     
-    var updatedNote = {...noteList.find(x => strEquals(x.id, (selectedItem as NotePosition)?.id))!};
+    var updatedNote = {...noteList.find(x => strEquals(x.id, note?.id))!};
     updatedNote.isSelected = false;
     if (type === "text") {
       updatedNote.text = newValue;
@@ -34,7 +38,7 @@ export default function NoteEditor() {
       updatedNote.label = newValue;
     }
     updateFormationContext({noteList: [
-      ...noteList.filter(x => !strEquals(x.id, (selectedItem as NotePosition)?.id)),
+      ...noteList.filter(x => !strEquals(x.id, note?.id)),
       updatedNote
     ]})
     dbController.upsertItem("notePosition", updatedNote);

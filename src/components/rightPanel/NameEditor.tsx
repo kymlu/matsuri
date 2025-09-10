@@ -5,51 +5,55 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { Participant } from "../../models/Participant.ts";
 import { Prop } from "../../models/Prop.ts";
-import { isParticipant, isProp, ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 
 export default function NameEditor() {
-  const {selectedItem} = useContext(UserContext);
+  const userContext = useContext(UserContext);
+  const {selectedItems} = useContext(UserContext);
   const {participantList, propList, updateFormationContext} = useContext(FormationContext);
 
   const [inputValue, setInputValue] = useState("");
+  const [selectedItem, setSelectedItem] = useState<ParticipantPosition | PropPosition | null>(null);
   
   useEffect(() => {
-    onChangeSelectedItem();
-  }, [selectedItem]);
-
-  function onChangeSelectedItem() {
+    if (selectedItems.length !== 1) return;
+    var item: Position = selectedItems[0];
     var name: string = "";
     
-    if (isParticipant(selectedItem!)) {
-      name = participantList.find(x => strEquals(x.id, (selectedItem as ParticipantPosition).participantId))!.displayName;
-    } else if (isProp(selectedItem!)) {
-      name = propList.find(x => strEquals(x.id, (selectedItem as PropPosition)?.propId))!.name;
+    if (item.type === PositionType.participant) {
+      setSelectedItem(item.participant);
+      var id = item.participant.participantId;
+      name = participantList.find(x => strEquals(x.id, id))!.displayName;
+    } else if (item.type === PositionType.prop) {
+      setSelectedItem(item.prop);
+      var propId = item.prop.propId;
+      name = propList.find(x => strEquals(x.id, propId))!.name;
     }
+    
+    setInputValue(name);
+  }, [userContext.selectedItems]);
 
-    setInputValue(name)
-  }
-  
   const handleChange = (value) => {
     var newValue = value.target.value;
     setInputValue(newValue);
-    if (isParticipant(selectedItem!)) {
+    if (isParticipantPosition(selectedItem)) {
       var updatedParticipant = {
-        ...participantList.find(x => strEquals(x.id, (selectedItem as ParticipantPosition)?.participantId)),
+        ...participantList.find(x => strEquals(x.id, selectedItem.participantId)),
         displayName: newValue
       } as Participant;
       updateFormationContext({participantList: [
-        ...participantList.filter(x => !strEquals(x.id, (selectedItem as ParticipantPosition)?.participantId)),
+        ...participantList.filter(x => !strEquals(x.id, selectedItem.participantId)),
         updatedParticipant
       ]})
       dbController.upsertItem("participant", updatedParticipant);
-    } else if (isProp(selectedItem!)) {
+    } else if (isPropPosition(selectedItem)) {
       var updatedProp = {
-        ...propList.find(x => strEquals(x.id, (selectedItem as PropPosition)?.propId)),
+        ...propList.find(x => strEquals(x.id, selectedItem.propId)),
         name: newValue
       } as Prop;
       updateFormationContext({propList: [
-        ...propList.filter(x => !strEquals(x.id, (selectedItem as PropPosition)?.propId)),
+        ...propList.filter(x => !strEquals(x.id, selectedItem.propId)),
         updatedProp
       ]})
       dbController.upsertItem("prop", updatedProp);

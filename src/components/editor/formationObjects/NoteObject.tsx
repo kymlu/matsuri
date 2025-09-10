@@ -6,6 +6,7 @@ import { ColorStyle } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface NoteObjectProps {
+  id: string,
   label?: string,
   text: string,
   height: number,
@@ -14,32 +15,23 @@ export interface NoteObjectProps {
   borderRadius?: number,
   startX: number,
   startY: number,
-  isSelected?: boolean,
-  onClick?: (forceSelect?: boolean) => void,
+  onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
   fontSize?: number,
   alwaysBold?: boolean,
+  ref?: React.Ref<any>,
 }
 
 export default function NoteObject(props: NoteObjectProps) {
   const {gridSize} = useContext(UserContext);
-  
-  function onClick(forceSelect?: boolean) {
-    if (props.draggable) {
-      props.onClick?.(forceSelect);
-    }
-  }
 
   return (
     <BaseFormationObject
-      isSelected={props.isSelected}
-      startX={props.startX}
-      startY={props.startY}
-      onClick={onClick}
+      id={props.id}
+      onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
       updatePosition={props.updatePosition}
-      rotateEnabled={false}
-      resizeEnabled={false} // todo: maybe set to true
+      ref={props.ref}
       draggable={props.draggable}>
       <Rect
         x={props.startX}

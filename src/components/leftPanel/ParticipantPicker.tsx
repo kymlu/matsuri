@@ -55,10 +55,10 @@ export default function ParticipantPicker () {
           isSelected: false
         } as ParticipantPosition
       });
-    updateFormationContext({participantList: [...participantList, newParticipant]});
-    updatePositionState({participantPositions: [...participantPositions, ...newPositions]});
     dbController.upsertItem("participant", newParticipant);
     dbController.upsertList("participantPosition", newPositions);
+    updateFormationContext({participantList: [...participantList, newParticipant]});
+    updatePositionState({participantPositions: [...participantPositions, newPositions.find(x => strEquals(x.formationSectionId, selectedSection!.id))!]});
   }
 
   var participantListDisplay = teamMembers

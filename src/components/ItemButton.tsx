@@ -3,7 +3,6 @@ import className from "classnames";
 import { ParticipantOption } from "../models/Participant.ts";
 import { Prop } from "../models/Prop.ts";
 import { Note } from "../models/Note.ts";
-import { isParticipant } from "../models/Position.ts";
 
 export interface ItemButtonProps {
   item: ParticipantOption | Prop | Note,

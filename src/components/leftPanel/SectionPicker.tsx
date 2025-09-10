@@ -25,7 +25,6 @@ export default function SectionPicker() {
 	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
 
   currentSections
-    .sort((a, b) => a.order - b.order)
     .forEach((_, index) => 
       sectionButtonRef.current[index] = React.createRef<HTMLDivElement>()
     );
@@ -33,18 +32,10 @@ export default function SectionPicker() {
 	function selectSection(section: FormationSongSection) {
 		if (isLoading || isAnimating) return;
 
-		participantPositions
-			.filter((x) => x.isSelected)
-			.forEach((x) => (x.isSelected = false));
-		propPositions
-			.filter((x) => x.isSelected)
-			.forEach((x) => (x.isSelected = false));
-		noteList.filter((x) => x.isSelected)
-			.forEach((x) => (x.isSelected = false));
 		updateState({
 			previousSectionId: selectedSection ? selectedSection.id : null,
 			selectedSection: section,
-			selectedItem: null,
+			selectedItems: [],
 		});
 		sectionButtonRef?.current[section.order - 1]?.current?.scrollIntoView({
 			behavior: "smooth",
@@ -65,82 +56,92 @@ export default function SectionPicker() {
 			: [targetSections];
 
 		// Copy participant positions
-		const copiedParticipantPositions = participantPositions
-			.filter((position) =>
-				strEquals(position.formationSectionId, sourceSection.id)
-			)
-			.flatMap((position) =>
-				targetSectionsArray.map(
-					(section) =>
-						({
-							...position,
-							formationSectionId: section.id,
-							id: crypto.randomUUID(),
-						} as ParticipantPosition)
-				)
-			);
+		return new Promise<number>((resolve, reject) => { 
+			Promise.all([
+				dbController.getAll("participantPosition"),
+				dbController.getAll("propPosition"),
+			]).then (([p1, p2]) => {
+				var allSectionIds = [sourceSection.id, targetSectionsArray.map(x => x.id)];
+				var participants = (p1 as Array<ParticipantPosition>).filter(x => allSectionIds.includes(x.formationSectionId));
+				var props = (p2 as Array<PropPosition>).filter(x => allSectionIds.includes(x.formationSectionId));
+				
+				const copiedParticipantPositions = participants
+					.filter((position) =>
+						strEquals(position.formationSectionId, sourceSection.id)
+					)
+					.flatMap((position) =>
+						targetSectionsArray.map(
+							(section) =>
+								({
+									...position,
+									formationSectionId: section.id,
+									id: crypto.randomUUID(),
+								} as ParticipantPosition)
+						)
+					);
+		
+				// Copy prop positions
+				const copiedPropPositions = props
+					.filter((position) =>
+						strEquals(position.formationSectionId, sourceSection.id)
+					)
+					.flatMap((position) =>
+						targetSectionsArray.map(
+							(section) =>
+								({
+									...position,
+									formationSectionId: section.id,
+									id: crypto.randomUUID(),
+								} as PropPosition)
+						)
+					);
+		
+				const targetSectionIds = targetSectionsArray.map((x) => x.id);
+		
+				dbController.removeList(
+					"participantPosition",
+					participants
+						.filter((position) =>
+							targetSectionIds.includes(position.formationSectionId)
+						)
+						.map((x) => x.id)
+				);
+		
+				dbController.removeList(
+					"propPosition",
+					props
+						.filter((position) =>
+							targetSectionIds.includes(position.formationSectionId)
+						)
+						.map((x) => x.id)
+				);
+		
+				// Upsert new positions
+				dbController.upsertList("participantPosition", copiedParticipantPositions);
+				dbController.upsertList("propPosition", copiedPropPositions);
+		
+				// Update state
+				Promise.all([
+					dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
+					dbController.getByFormationSectionId("propPosition", selectedSection!.id),
+				]).then(([participantPosition, propPosition]) => {
+					try {
+						const participantPositionList =
+							participantPosition as Array<ParticipantPosition>;
+						updatePositionState({
+							participantPositions: participantPositionList.filter(x => strEquals(x.formationSectionId, selectedSection?.id)),
+						});
 
-		// Copy prop positions
-		const copiedPropPositions = propPositions
-			.filter((position) =>
-				strEquals(position.formationSectionId, sourceSection.id)
-			)
-			.flatMap((position) =>
-				targetSectionsArray.map(
-					(section) =>
-						({
-							...position,
-							formationSectionId: section.id,
-							id: crypto.randomUUID(),
-						} as PropPosition)
-				)
-			);
-
-		const targetSectionIds = targetSectionsArray.map((x) => x.id);
-
-		dbController.removeList(
-			"participantPosition",
-			participantPositions
-				.filter((position) =>
-					targetSectionIds.includes(position.formationSectionId)
-				)
-				.map((x) => x.id)
-		);
-
-		dbController.removeList(
-			"propPosition",
-			propPositions
-				.filter((position) =>
-					targetSectionIds.includes(position.formationSectionId)
-				)
-				.map((x) => x.id)
-		);
-
-		// Upsert new positions
-		dbController.upsertList("participantPosition", copiedParticipantPositions);
-		dbController.upsertList("propPosition", copiedPropPositions);
-
-		// Update state
-		return new Promise<number>((resolve, reject) => {
-			dbController.getByFormationSectionId("participantPosition", selectedSection!.id).then((participantPosition) => {
-				try {
-					const participantPositionList =
-						participantPosition as Array<ParticipantPosition>;
-					updatePositionState({
-						participantPositions: participantPositionList,
-					});
-
-					dbController.getByFormationSectionId("propPosition", selectedSection!.id).then((propPosition) => {
 						const propPositionList = propPosition as Array<PropPosition>;
 						updatePositionState({
-							propPositions: propPositionList,
+							propPositions: propPositionList.filter(x => strEquals(x.formationSectionId, selectedSection?.id)),
 						});
 						resolve(1);
-					});
-				} catch (error) {
-					console.error("Error updating positions:", error);
-					reject(error);
-				}
+					} catch (error) {
+						console.error("Error updating positions:", error);
+						reject(error);
+					}
+				});
 			});
 		});
 	}

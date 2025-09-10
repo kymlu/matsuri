@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef } from "react";
 import { Layer, Stage, Transformer } from "react-konva";
-import { objectColorSettings } from "../../themes/colours.ts";
+import { basePalette, objectColorSettings } from "../../themes/colours.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
 import { DEFAULT_WIDTH, GRID_MARGIN_Y } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGrid from "./FormationGrid.tsx";
-import { NotePosition, ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { createPosition, getAllIds, getFromPositionType, NotePosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
 import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
@@ -34,21 +34,52 @@ export default function FormationEditor(props: FormationEditorProps) {
   const {updateExportContext} = useContext(ExportContext);
   const {participantList, propList, noteList, updateFormationContext} = useContext(FormationContext);
   const formationContext = useContext(FormationContext);
-  const {selectedFormation, selectedSection, selectedItem, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
+  const {selectedFormation, selectedSection, selectedItems, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
   const [ghostParticipants, setGhostParticipants] = useState<ParticipantPosition[]>([]);
   const [ghostProps, setGhostProps] = useState<PropPosition[]>([]);
   const {categories} = useContext(CategoryContext);
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
   const canvasWidth = DEFAULT_WIDTH * gridSize;
-  const transformerRef = useRef(null);
+  const layerRef = useRef<Konva.Layer>(null);
+  const transformerRef = useRef<Konva.Transformer>(null);
+  const transformerRef3 = useRef<Konva.Transformer>(null);
   const animationLayerRef = useRef<Konva.Layer>(null);
   const animationRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const noteRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const testRef = useRef<Konva.Arrow>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if(transformerRef?.current && layerRef?.current){
+      console.log(layerRef!.current!)
+      const nodes = selectedIds.map((id) => layerRef!.current!.findOne("#" + id)).filter(x => x !== undefined);
+      transformerRef?.current!.nodes(nodes);
+      console.log(nodes);
+    }
+  }, [selectedIds]);
 
   participantList
     .sort((a, b) => a.id.localeCompare(b.id))
     .forEach((_, index) => 
       animationRef.current[index] = React.createRef<Konva.Group>()
+    );
+  participantList
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .forEach((_, index) => 
+      participantRef.current[index] = React.createRef<Konva.Group>()
+    );
+  propList
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .forEach((_, index) => 
+      propRef.current[index] = React.createRef<Konva.Group>()
+    );
+  noteList
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .forEach((_, index) => 
+      noteRef.current[index] = React.createRef<Konva.Group>()
     );
 
   useEffect(() => {
@@ -112,13 +143,10 @@ export default function FormationEditor(props: FormationEditorProps) {
       .then(([participantPosition, propPosition, notePosition]) => {
       try {
         var participantPositionList = participantPosition as Array<ParticipantPosition>;
-        participantPositionList.forEach(x => x.isSelected = false);
         
         var propPositionList = propPosition as Array<PropPosition>;
-        propPositionList.forEach(x => x.isSelected = false);
 
         var notePositionList = notePosition as Array<NotePosition>;
-        notePositionList.forEach(x => x.isSelected = false);
         
         updatePositionState({
           participantPositions: participantPositionList,
@@ -155,7 +183,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         updateState({
           selectedSection: section,
           previousSectionId: null,
-          selectedItem: null,
+          selectedItems: [],
           compareMode: "none",
         });
     
@@ -240,19 +268,33 @@ export default function FormationEditor(props: FormationEditorProps) {
 
   function selectItem(
     item: ParticipantPosition | PropPosition | NotePosition | null,
-    forceSelect?: boolean
+    type: PositionType,
+    forceSelect?: boolean,
+    multiSelect?: boolean,
+    ref?: React.Ref<Konva.Group>
   ) {
     if (item === null) return;
 
-    if (selectedItem === null || !strEquals(selectedItem.id, item.id)) {
-      updateState({selectedItem: item});
-      participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      noteList.filter(x => x.isSelected).forEach(x => x.isSelected = false);
-      item.isSelected = true;
-    } else if (!forceSelect) {
-      updateState({selectedItem: null});
-      item.isSelected = false;
+    if (multiSelect) {
+      var newList: Position[] = [];
+      if (!selectedItems.map(x => getFromPositionType(x).id).includes(item.id)) {
+        newList = [...selectedItems, createPosition(item)];
+        updateState({selectedItems: newList});
+      } else {
+        newList = [...selectedItems.filter(x => x.type !== type || !strEquals(getFromPositionType(x).id, item.id))];
+        updateState({selectedItems: newList});
+      }
+      setSelectedIds(getAllIds(newList));
+    } else {
+      // not already selected
+      if (selectedItems.length === 0
+        || !selectedItems.map(x => getFromPositionType(x).id).includes(item.id)) {
+        updateState({selectedItems: [createPosition(item)]});
+        setSelectedIds([item.id]);
+      } else if (!forceSelect) {
+        updateState({selectedItems: []});
+        setSelectedIds([]);
+      }
     }
   }
 
@@ -311,8 +353,11 @@ export default function FormationEditor(props: FormationEditorProps) {
         width={canvasWidth}
         height={canvasHeight}
         onClick={(event) => {
-          if (strEquals(typeof event.currentTarget, Stage.name)) { //https://konvajs.org/docs/events/Stage_Events.html
-            updateState({selectedItem: null});
+          if (event.target === stageRef.current) {
+            updateState({selectedItems: []});
+            if(selectedIds.length > 0) {
+              setSelectedIds([]);
+            }
             participantPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
             propPositions.filter(x => x.isSelected).forEach(x => x.isSelected = false);
           }
@@ -329,6 +374,7 @@ export default function FormationEditor(props: FormationEditorProps) {
               ghostProps
                 .map(placement =>
                   <PropObject 
+                    id={"ghost" + placement.id}
                     key={placement.id}
                     name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                     colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
@@ -342,6 +388,7 @@ export default function FormationEditor(props: FormationEditorProps) {
             { ghostParticipants
                 .map(placement => 
                   <ParticipantObject 
+                    id={"ghost" + placement.id}
                     key={placement.id}
                     name={participantList.find(x => strEquals(placement.participantId, x.id))?.displayName!} 
                     colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
@@ -352,8 +399,16 @@ export default function FormationEditor(props: FormationEditorProps) {
             }
           </Layer>
         }
-        <Layer>
+        <Layer ref={layerRef} >
+          {/* <BaseFormationObject draggable startX={100} startY={100} isSelected onClick={() => { console.log("parentclicked")}}>
+            <BaseFormationObject startX={100} startY={100} onClick={() => { console.log("child1clicked")}}>
+              <PropObject name="test" length={1} startX={0} startY={0} rotation={0} colour={objectColorSettings.blueLight}/>
+            </BaseFormationObject><BaseFormationObject startX={100} startY={100} onClick={() => { console.log("child2clicked")}}>
+              <PropObject name="test" length={1} startX={100} startY={100} rotation={0} colour={objectColorSettings.amberLight}/>
+            </BaseFormationObject>
+          </BaseFormationObject> */}
           <NoteObject
+            id="sectionName"
             text={userContext.selectedSection?.displayName ?? ""}
             startX={gridSize * 0.75}
             startY={gridSize * 0.25}
@@ -364,25 +419,16 @@ export default function FormationEditor(props: FormationEditorProps) {
             fontSize={gridSize * 0.4}
             alwaysBold
             />
-          <Transformer 
-          ref={transformerRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            // Limit resize
-            if (newBox.width < 5 || newBox.height < 5) {
-              return oldBox;
-            }
-            return newBox;
-          }}/>
           { !isAnimating &&
             noteList
-              .filter(note => strEquals(userContext.selectedSection?.id, note.formationSectionId))
-              .map(note => 
+              .sort((a, b) => a.id.localeCompare(b.id))
+              .map((note, index) => 
                 <NoteObject 
+                  id={note.id}
                   key={note.id}
                   colour={note.color ?? objectColorSettings.blueLight} 
                   startX={getPixel(note.x)} 
                   startY={getPixel(note.y)}
-                  isSelected={note.isSelected}
                   height={note.height}
                   length={note.width}
                   label={note.label}
@@ -390,7 +436,7 @@ export default function FormationEditor(props: FormationEditorProps) {
                   borderRadius={note.borderRadius}
                   fontSize={gridSize * note.fontGridRatio}
                   updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectItem(note, forceSelect)} 
+                  onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(note, PositionType.note, forceSelect, multiSelect, noteRef.current[index])} 
                   alwaysBold={note.alwaysBold}
                   draggable
                 />
@@ -398,17 +444,18 @@ export default function FormationEditor(props: FormationEditorProps) {
           }
           { !isAnimating &&
             propPositions
-              .map(placement =>
+              .sort((a, b) => a.propId.localeCompare(b.propId))
+              .map((placement, index) =>
                 <PropObject 
+                  id={placement.id}
                   key={placement.id}
                   name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                   colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                   length={propList.find(x => strEquals(placement.propId, x.id))!.length}
-                  isSelected={placement.isSelected}
                   startX={getPixel(placement.x)} 
                   startY={getPixel(placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)}
+                  onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(placement, PositionType.prop, forceSelect, multiSelect, propRef.current[index])}
                   draggable={!isAnimating}
                   rotation={placement.angle} 
                   onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
@@ -416,20 +463,62 @@ export default function FormationEditor(props: FormationEditorProps) {
               )
           } 
           { !isAnimating && participantPositions
-              .map(placement => 
+              .sort((a, b) => a.participantId.localeCompare(b.participantId))
+              .map((placement, index) => 
                 <ParticipantObject 
+                  id = {placement.id}
                   key={placement.id}
                   name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
                   colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
                   startX={getPixel(placement.x)} 
                   startY={getPixel(placement.y)}
-                  isSelected={placement.isSelected}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-                  onClick={(forceSelect?: boolean) => selectItem(placement, forceSelect)} 
+                  onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect, participantRef.current[index])}} 
                   draggable={!isAnimating}
                 />
             )
           }
+          <Transformer
+            flipEnabled={false}
+            ref={transformerRef}
+            resizeEnabled={false}
+            rotateEnabled={false} // todo implement in single select prop etc.
+            borderStrokeWidth={2}
+            borderStroke={basePalette.primary.main}
+            anchorStrokeWidth={2}
+            anchorStroke={basePalette.primary.main}
+            rotationSnaps={[
+              0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165,
+              180, 195, 210, 225, 240, 255,
+              270, 285, 300, 315, 330, 345, 360
+            ]}
+            rotationSnapTolerance={10}
+            onTransformEnd={(event) => { 
+              console.log("rotation is broken");
+              console.log(event.target);
+              //props.onTransform?.(event.target);
+            }}
+            />
+        {/* <Group>
+          <Arrow
+            strokeScaleEnabled={false}
+            draggable
+            ref={testRef} x={0} y={0}
+            strokeWidth={10}
+            stroke={objectPalette.blue.light}
+            points={[100, 100, 100, 100, 200, 100]}
+            fill={basePalette.primary.main}></Arrow>
+          <Transformer
+            flipEnabled={false}
+            ref={transformerRef3}
+            boundBoxFunc={(oldBox, newBox) => {
+              // limit resize
+              if (newBox.height > 25 || newBox.height < 20) {
+                return oldBox;
+              }
+              return newBox;
+            }}/>
+          </Group> */}
         </Layer>
         { !isLoading && isAnimating &&
           <Layer useRef={animationLayerRef}>
@@ -437,12 +526,12 @@ export default function FormationEditor(props: FormationEditorProps) {
               .sort((a, b) => a.participantId.localeCompare(b.participantId))
               .map((placement, index) => 
                 <ParticipantObject 
+                  id={"animate" + placement.id}
                   key={placement.id}
                   name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
                   colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
                   startX={0} 
                   startY={0}
-                  isSelected={false}
                   ref={animationRef.current[index]}
                 />
             )}

@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
-import Button from "../Button.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition } from "../../models/Position.ts";
@@ -37,7 +36,7 @@ export default function NotePicker () {
     } as NotePosition;
 
     updateFormationContext({noteList: [...noteList, newNote]});
-    updateState({selectedItem: null});
+    updateState({selectedItems: []});
 
     dbController.upsertItem("notePosition", newNote);
   }

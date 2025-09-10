@@ -17,7 +17,7 @@ export default function FestivalManager () {
     updateState({
         selectedFestival: festival,
         selectedFormation: selectedFormation,
-        selectedItem: null,
+        selectedItems: [],
     });
     navigate("/formation");
   }

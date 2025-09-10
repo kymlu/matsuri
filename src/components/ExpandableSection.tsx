@@ -4,13 +4,22 @@ export interface ExpandableSectionProps {
   children: React.ReactNode,
   title: string,
   defaultIsExpanded?: boolean,
+  onToggle?: () => void
 }
 
 export default function ExpandableSection(props: ExpandableSectionProps) {
   const [expanded, setExpanded] = React.useState(props.defaultIsExpanded);
 
-  function toggle() {
+  async function toggle() {
     setExpanded(prev => !prev);
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
+    });
+    props?.onToggle?.();
   }
   
   return (
