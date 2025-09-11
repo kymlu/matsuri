@@ -23,7 +23,8 @@ export default function FormationGrid(props: FormationGridProps) {
 
   return (
     <>
-      <Layer>
+      <Layer
+        listening={false}>
         {[...Array(gridHeight)].map((_, i) => (
           <Line key={i} 
             points={[0, (i + 1) * gridSize, props.canvasWidth + gridSize, (i + 1) * gridSize]}
@@ -47,7 +48,9 @@ export default function FormationGrid(props: FormationGridProps) {
           strokeWidth={2}
           stroke={basePalette.primary.main}/>
       </Layer>
-      <Layer key={"Meter"}>
+      <Layer
+        key={"Meter"}
+        listening={false}>
         {[...Array(props.height + 1)].map((_, i) => ( // todo: if parade, move up to starting position so that it doesn't span the whole position
           <LengthMeterMarker 
             key={i}

@@ -20,6 +20,8 @@ import { FormationType } from "../../models/Formation.ts";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import jsPDF from "jspdf";
 import { ExportContext } from "../../contexts/ExportContext.tsx";
+import { getPixel } from "./FormationHelper.ts";
+import { FormationGhostLayer } from "./FormationGhostLayer.tsx";
 
 export interface FormationEditorProps {
   height: number,
@@ -262,10 +264,6 @@ export default function FormationEditor(props: FormationEditorProps) {
     }
   }
 
-  function getPixel(gridX: number, margin?: number): number {
-    return gridX * gridSize - (margin ?? 0);
-  }
-
   function selectItem(
     item: ParticipantPosition | PropPosition | NotePosition | null,
     type: PositionType,
@@ -353,7 +351,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         width={canvasWidth}
         height={canvasHeight}
         onClick={(event) => {
-          if (event.target === stageRef.current) {
+          if (event.target === event.target.getStage()) {
             updateState({selectedItems: []});
             if(selectedIds.length > 0) {
               setSelectedIds([]);
@@ -369,35 +367,7 @@ export default function FormationEditor(props: FormationEditorProps) {
           width={props.width}
           isParade={selectedFormation?.type === FormationType.parade}/>
         { compareMode !== "none" &&
-          <Layer opacity={0.5}>
-            {
-              ghostProps
-                .map(placement =>
-                  <PropObject 
-                    id={"ghost" + placement.id}
-                    key={placement.id}
-                    name={propList.find(x => strEquals(placement.propId, x.id))!.name}
-                    colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
-                    length={propList.find(x => strEquals(placement.propId, x.id))!.length}
-                    startX={getPixel(placement.x)} 
-                    startY={getPixel(placement.y)}
-                    rotation={placement.angle} 
-                  />
-                )
-            } 
-            { ghostParticipants
-                .map(placement => 
-                  <ParticipantObject 
-                    id={"ghost" + placement.id}
-                    key={placement.id}
-                    name={participantList.find(x => strEquals(placement.participantId, x.id))?.displayName!} 
-                    colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-                    startX={getPixel(placement.x)} 
-                    startY={getPixel(placement.y)}
-                  />
-              )
-            }
-          </Layer>
+          <FormationGhostLayer/>
         }
         <Layer ref={layerRef} >
           {/* <BaseFormationObject draggable startX={100} startY={100} isSelected onClick={() => { console.log("parentclicked")}}>
@@ -427,8 +397,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   id={note.id}
                   key={note.id}
                   colour={note.color ?? objectColorSettings.blueLight} 
-                  startX={getPixel(note.x)} 
-                  startY={getPixel(note.y)}
+                  startX={getPixel(gridSize, note.x)} 
+                  startY={getPixel(gridSize, note.y)}
                   height={note.height}
                   length={note.width}
                   label={note.label}
@@ -452,8 +422,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   name={propList.find(x => strEquals(placement.propId, x.id))!.name}
                   colour={propList.find(x => strEquals(placement.propId, x.id))!.color ?? objectColorSettings.purpleLight} 
                   length={propList.find(x => strEquals(placement.propId, x.id))!.length}
-                  startX={getPixel(placement.x)} 
-                  startY={getPixel(placement.y)} 
+                  startX={getPixel(gridSize, placement.x)} 
+                  startY={getPixel(gridSize, placement.y)} 
                   updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(placement, PositionType.prop, forceSelect, multiSelect, propRef.current[index])}
                   draggable={!isAnimating}
@@ -470,8 +440,8 @@ export default function FormationEditor(props: FormationEditorProps) {
                   key={placement.id}
                   name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
                   colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-                  startX={getPixel(placement.x)} 
-                  startY={getPixel(placement.y)}
+                  startX={getPixel(gridSize, placement.x)} 
+                  startY={getPixel(gridSize, placement.y)}
                   updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
                   onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect, participantRef.current[index])}} 
                   draggable={!isAnimating}
@@ -521,7 +491,9 @@ export default function FormationEditor(props: FormationEditorProps) {
           </Group> */}
         </Layer>
         { !isLoading && isAnimating &&
-          <Layer useRef={animationLayerRef}>
+          <Layer
+            listening={false}
+            useRef={animationLayerRef}>
             {participantPositions
               .sort((a, b) => a.participantId.localeCompare(b.participantId))
               .map((placement, index) => 
