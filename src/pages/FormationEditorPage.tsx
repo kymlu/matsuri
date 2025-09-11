@@ -14,26 +14,23 @@ import { FormationContext } from '../contexts/FormationContext.tsx';
 import { Prop } from '../models/Prop.ts';
 import { Participant } from '../models/Participant.ts';
 import CustomMenu, { MenuItem, MenuSeparator } from '../components/CustomMenu.tsx';
-import { Dialog } from '@base-ui-components/react';
+import { Dialog, Menu } from '@base-ui-components/react';
 import { ExportContext } from '../contexts/ExportContext.tsx';
-import { AnimationContext } from '../contexts/AnimationContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { ParticipantPosition, PropPosition, NotePosition } from '../models/Position.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
-  const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
-  const {updateExportContext} = useContext(ExportContext);
-  const {participantList, propList, noteList, updateFormationContext} = useContext(FormationContext);
-  const formationContext = useContext(FormationContext);
-  const {selectedFormation, selectedFestival, selectedSection, selectedItems, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
-  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
-  const {categories, updateCategoryContext} = useContext(CategoryContext);
+  const {updateFormationContext} = useContext(FormationContext);
+  const {selectedFormation, selectedFestival, updateState} = useContext(UserContext);
+  const {participantPositions, updatePositionState} = useContext(PositionContext);
+  const {updateCategoryContext} = useContext(CategoryContext);
   const {isExporting, exportProgress} = useContext(ExportContext);
 
   const navigate = useNavigate()
   const formationEditorRef = React.createRef<any>();
   const [exportName, setExportName] = useState<string>("");
+  const [showSiteInfo, setShowSiteInfo] = useState<boolean>(false);
 
   useEffect(() => {
     Promise.all(
@@ -131,6 +128,8 @@ export default function FormationEditorPage () {
                   });
                   navigate("../");
                 }} />
+                <MenuSeparator/>
+                <MenuItem label="サイト情報" onClick={() => {setShowSiteInfo(true)}}/>
               </>
             </CustomMenu>
             {
@@ -180,6 +179,17 @@ export default function FormationEditorPage () {
               <Dialog.Title className="-mt-1.5 mb-1 text-lg font-medium">PDF出力中</Dialog.Title>
               <Dialog.Description className="mb-6 text-base text-gray-600">
                 <b>{exportName}.pdf</b>」を生成しています。<br></br>完了までしばらくお待ちください。<br></br>進行状況：{exportProgress}%
+              </Dialog.Description>
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
+        <Dialog.Root open={showSiteInfo} modal dismissible onOpenChange={() => setShowSiteInfo(false)}>
+          <Dialog.Portal>
+            <Dialog.Backdrop className="fixed inset-0 bg-black opacity-20 transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 dark:opacity-70" />
+            <Dialog.Popup className="fixed top-1/2 left-1/2 -mt-8 w-96 max-w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-50 p-6 text-gray-900 outline outline-1 outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300">
+              <Dialog.Title className="-mt-1.5 mb-1 text-lg font-medium">サイト情報</Dialog.Title>
+              <Dialog.Description className="mb-6 text-base text-gray-600">
+                工事中
               </Dialog.Description>
             </Dialog.Popup>
           </Dialog.Portal>
