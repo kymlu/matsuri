@@ -8,15 +8,16 @@ import { getPixel } from "./FormationHelper.ts"
 import { FormationContext } from "../../contexts/FormationContext.tsx"
 import { UserContext } from "../../contexts/UserContext.tsx"
 import { CategoryContext } from "../../contexts/CategoryContext.tsx"
-import { dbController } from "../../data/DBProvider.tsx"
 import { ParticipantPosition, PropPosition } from "../../models/Position.ts"
 import { useState } from "react"
+import { PositionContext } from "../../contexts/PositionContext.tsx"
 
 export function FormationGhostLayer() {
   const userContext = useContext(UserContext);
   const {currentSections, compareMode, gridSize} = useContext(UserContext);
-  const formationContext = useContext(FormationContext);
   const {participantList, propList} = useContext(FormationContext);
+  const positionContext = useContext(PositionContext);
+  const {participantPositions, propPositions} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const [ghostParticipants, setGhostParticipants] = useState<ParticipantPosition[]>([]);
   const [ghostProps, setGhostProps] = useState<PropPosition[]>([]);
@@ -34,18 +35,13 @@ export function FormationGhostLayer() {
     }
 
     if (compareMode !== "none" && ghostId) {
-      Promise.all([
-        dbController.getByFormationSectionId("participantPosition", ghostId),
-        dbController.getByFormationSectionId("propPosition", ghostId),
-      ]).then(([participants, props]) => {
-        setGhostParticipants(participants as Array<ParticipantPosition>);
-        setGhostProps(props as Array<PropPosition>);
-      });
+      setGhostParticipants(participantPositions.filter(x => x.formationSectionId == ghostId));
+      setGhostProps(propPositions.filter(x => x.formationSectionId == ghostId));
     } else {
       setGhostParticipants([]);
       setGhostProps([]);
     }
-  }, [userContext?.selectedSection, userContext?.compareMode, formationContext?.participantList]);
+  }, [userContext?.selectedSection, userContext?.compareMode, positionContext?.participantPositions, positionContext?.propPositions]);
 
   return (<Layer
     opacity={0.5}

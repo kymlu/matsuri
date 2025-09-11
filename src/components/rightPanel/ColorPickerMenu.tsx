@@ -2,11 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import ColorPicker from "./ColorPicker.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { ColorStyle } from "../../themes/colours.ts";
+import { ColorStyle, objectColorSettings } from "../../themes/colours.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition, Position, PositionType, splitPositionsByType } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { Prop } from "../../models/Prop.ts";
+import { strEquals } from "../helpers/GlobalHelper.ts";
 
 export type ColorPickerMenuProps = {
 }
@@ -42,7 +43,11 @@ export default function ColorPickerMenu() {
         ...updatedProps
       ],});
 
-    updateState({selectedItems: updatedNotes.map(x => ({note: x, type: PositionType.note} as Position) )});
+    updateState({selectedItems: [
+      ...selectedItems.filter(x => x.type === PositionType.prop),
+      ...updatedNotes.map(x => ({note: x, type: PositionType.note} as Position)),
+    ]});
+
     Promise.all([
       dbController.upsertList("prop", updatedProps),
       dbController.upsertList("notePosition", updatedNotes),  
@@ -52,16 +57,18 @@ export default function ColorPickerMenu() {
   useEffect(()=> {
     var res = splitPositionsByType(userContext.selectedItems);
     var propIds = res.props.map(x => x.propId);
-    var allColors = new Set(propList.filter(x => propIds.includes(x.id))?.map(x => x.color));
+    var allColors = new Set(propList.filter(x => propIds.includes(x.id))?.map(x => x.color?.twColor));
     
-    (res.notes.map(x => x.color) as Array<ColorStyle>).forEach(color => {
+    (res.notes.map(x => x.color?.twColor) as Array<string>)
+      .forEach(color => {
         if (color) {
           allColors.add(color);
         }
       });
 
     if (allColors.size === 1) {
-      setSelectedColor(allColors.entries[0]);
+      var color = allColors.values().next().value;
+      setSelectedColor(Object.values(objectColorSettings).find(x => strEquals(x.twColor, color)));
     } else {
       setSelectedColor(null);
     }

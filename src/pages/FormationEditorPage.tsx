@@ -16,13 +16,21 @@ import { Participant } from '../models/Participant.ts';
 import CustomMenu, { MenuItem, MenuSeparator } from '../components/CustomMenu.tsx';
 import { Dialog } from '@base-ui-components/react';
 import { ExportContext } from '../contexts/ExportContext.tsx';
+import { AnimationContext } from '../contexts/AnimationContext.tsx';
+import { PositionContext } from '../contexts/PositionContext.tsx';
+import { ParticipantPosition, PropPosition, NotePosition } from '../models/Position.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
-  const {updateFormationContext} = useContext(FormationContext);
-  const {selectedFestival, selectedFormation, selectedSection, updateState} = useContext(UserContext)
-  const {updateCategoryContext} = useContext(CategoryContext);
+  const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
+  const {updateExportContext} = useContext(ExportContext);
+  const {participantList, propList, noteList, updateFormationContext} = useContext(FormationContext);
+  const formationContext = useContext(FormationContext);
+  const {selectedFormation, selectedFestival, selectedSection, selectedItems, enableAnimation, currentSections, compareMode, updateState, isLoading, gridSize} = useContext(UserContext);
+  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
+  const {categories, updateCategoryContext} = useContext(CategoryContext);
   const {isExporting, exportProgress} = useContext(ExportContext);
+
   const navigate = useNavigate()
   const formationEditorRef = React.createRef<any>();
   const [exportName, setExportName] = useState<string>("");
@@ -53,14 +61,31 @@ export default function FormationEditorPage () {
         dbController.getByFormationId("formationSection", selectedFormation?.id!),
         dbController.getByFormationId("participant", selectedFormation?.id!),
         dbController.getByFormationId("prop", selectedFormation?.id!),
-      ]).then(([formationSongSections, participants, props]) => {
+        dbController.getAll("participantPosition"),
+        dbController.getAll("propPosition"),
+        dbController.getAll("notePosition"),
+      ]).then(([formationSongSections, participants, props,
+        participantPosition, propPosition, notePosition]) => {
       try {
-        const currentSections = (formationSongSections as Array<FormationSongSection>)
-          .sort((a,b) => a.order - b.order);
         updateFormationContext({
           participantList: participants as Array<Participant>,
-          propList: props as Array<Prop>
+          propList: props as Array<Prop>,
+          noteList: notePosition as Array<NotePosition>,
         });
+
+        updatePositionState({
+          participantPositions: participantPosition as Array<ParticipantPosition>,
+          propPositions: propPosition as Array<PropPosition>
+        });
+
+        participantPositions.forEach(p => { // todo: remove, probably
+          p.x2 = p.x;
+          p.y2 = p.y;
+        });
+
+        const currentSections = (formationSongSections as Array<FormationSongSection>)
+          .sort((a,b) => a.order - b.order);
+
         const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
           .flatMap((_, row) =>
             Array.from({ length: selectedFormation!.length }).map((_, col) => [ row + 1, col + 2])

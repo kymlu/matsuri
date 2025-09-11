@@ -8,7 +8,7 @@ import SectionOptionButton from "../SectionOptionButton.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition, ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
-import { songList } from "../../data/ImaHitotabi.ts";
+import { propsList, songList } from "../../data/ImaHitotabi.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
@@ -57,13 +57,12 @@ export default function SectionPicker() {
 
 		// Copy participant positions
 		return new Promise<number>((resolve, reject) => { 
-			Promise.all([
-				dbController.getAll("participantPosition"),
-				dbController.getAll("propPosition"),
-			]).then (([p1, p2]) => {
-				var allSectionIds = [sourceSection.id, targetSectionsArray.map(x => x.id)];
-				var participants = (p1 as Array<ParticipantPosition>).filter(x => allSectionIds.includes(x.formationSectionId));
-				var props = (p2 as Array<PropPosition>).filter(x => allSectionIds.includes(x.formationSectionId));
+			try {
+				if ((participantList.length + propsList.length) == 0) resolve(1);
+				
+				var allSectionIds = [sourceSection.id, ...targetSectionsArray.map(x => x.id)];
+				var participants = participantPositions.filter(x => allSectionIds.includes(x.formationSectionId));
+				var props = propPositions.filter(x => allSectionIds.includes(x.formationSectionId));
 				
 				const copiedParticipantPositions = participants
 					.filter((position) =>
@@ -95,54 +94,40 @@ export default function SectionPicker() {
 								} as PropPosition)
 						)
 					);
-		
+
 				const targetSectionIds = targetSectionsArray.map((x) => x.id);
-		
-				dbController.removeList(
-					"participantPosition",
-					participants
-						.filter((position) =>
-							targetSectionIds.includes(position.formationSectionId)
-						)
-						.map((x) => x.id)
-				);
-		
-				dbController.removeList(
-					"propPosition",
-					props
-						.filter((position) =>
-							targetSectionIds.includes(position.formationSectionId)
-						)
-						.map((x) => x.id)
-				);
+
+				var participantsToRemove = participants
+					.filter((position) => targetSectionIds.includes(position.formationSectionId))
+					.map((x) => x.id);
+
+				var propsToRemove = props
+					.filter((position) => targetSectionIds.includes(position.formationSectionId))
+					.map((x) => x.id);
+				
+				// Remove old
+				dbController.removeList("participantPosition", participantsToRemove);
+				dbController.removeList("propPosition", propsToRemove);
 		
 				// Upsert new positions
 				dbController.upsertList("participantPosition", copiedParticipantPositions);
 				dbController.upsertList("propPosition", copiedPropPositions);
-		
-				// Update state
-				Promise.all([
-					dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
-					dbController.getByFormationSectionId("propPosition", selectedSection!.id),
-				]).then(([participantPosition, propPosition]) => {
-					try {
-						const participantPositionList =
-							participantPosition as Array<ParticipantPosition>;
-						updatePositionState({
-							participantPositions: participantPositionList.filter(x => strEquals(x.formationSectionId, selectedSection?.id)),
-						});
 
-						const propPositionList = propPosition as Array<PropPosition>;
-						updatePositionState({
-							propPositions: propPositionList.filter(x => strEquals(x.formationSectionId, selectedSection?.id)),
-						});
-						resolve(1);
-					} catch (error) {
-						console.error("Error updating positions:", error);
-						reject(error);
-					}
+				updatePositionState({
+					participantPositions: [
+						...participantPositions.filter(x => !participantsToRemove.includes(x.id)),
+						...copiedParticipantPositions
+					],
+					propPositions: [
+						...propPositions.filter(x => !propsToRemove.includes(x.id)),
+						...copiedPropPositions
+					],
 				});
-			});
+				resolve(1);
+			} catch (error) {
+				console.error("Error updating positions:", error);
+				reject(error);
+			}
 		});
 	}
 
@@ -223,116 +208,94 @@ export default function SectionPicker() {
 	}
 
 	function resetPosition(sourceSection: FormationSongSection) {
-		participantPositions
+		var resetParticipants = participantPositions
 			.filter((position) =>
 				strEquals(position.formationSectionId, sourceSection.id)
 			)
-			.forEach((position, index) => {
-				position.x = marginPositions.participants[index][0];
-				position.x2 = marginPositions.participants[index][0];
-				position.y = marginPositions.participants[index][1];
-				position.y2 = marginPositions.participants[index][1];
-			});
-
-		propPositions
+			.map((position, index) => (
+				{
+					...position,
+					x: marginPositions.participants[index][0],
+					x2: marginPositions.participants[index][0],
+					y: marginPositions.participants[index][1],
+					y2: marginPositions.participants[index][1],
+				} as ParticipantPosition));
+				
+		var resetProps = propPositions
 			.filter((position) =>
 				strEquals(position.formationSectionId, sourceSection.id)
 			)
-			.forEach((position, index) => {
-				position.x = marginPositions.props[index][0];
-				position.x2 = marginPositions.props[index][0];
-				position.y = marginPositions.props[index][1];
-				position.y2 = marginPositions.props[index][1];
-			});
+			.map((position, index) => (
+				{
+					...position,
+					x: marginPositions.participants[index][0],
+					x2: marginPositions.participants[index][0],
+					y: marginPositions.participants[index][1],
+					y2: marginPositions.participants[index][1],
+				} as PropPosition));
+		
+		try {
+			dbController.upsertList("participantPosition", resetParticipants);
+			dbController.upsertList("propPosition", resetProps);
 
-		Promise.all([
-			dbController.upsertList(
-				"participantPosition",
-				participantPositions.filter((position) =>
-					strEquals(position.formationSectionId, sourceSection.id)
-				)
-			),
-			dbController.upsertList(
-				"propPosition",
-				propPositions.filter((position) =>
-					strEquals(position.formationSectionId, sourceSection.id)
-				)
-			),
-		]).then(() => {
-			Promise.all([
-				dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
-				dbController.getByFormationSectionId("propPosition", selectedSection!.id),
-			]).then(([participantPosition, propPosition]) => {
-				try {
-					var participantPositionList =
-						participantPosition as Array<ParticipantPosition>;
-					var propPositionList = propPosition as Array<PropPosition>;
-					updatePositionState({
-						participantPositions: participantPositionList,
-						propPositions: propPositionList,
-					});
-					participantPositions.forEach((p) => {
-						// todo: remove, probably
-						p.x2 = p.x;
-						p.y2 = p.y;
-					});
-					propPositions.forEach((p) => {
-						// todo: remove, probably
-						p.x2 = p.x;
-						p.y2 = p.y;
-					});
-				} catch (e) {
-					console.error("Error parsing user from localStorage:", e);
-				}
-			});
-		});
+			var resetParticipantIds = resetParticipants.map(x => x.id);
+			var resetPropIds = resetProps.map(x => x.id);
 
-		dbController.getByFormationSectionId("participantPosition", selectedSection!.id).then((participantPosition) => {
-			try {
-				var participantPositionList =
-					participantPosition as Array<ParticipantPosition>;
-				updatePositionState({
-					participantPositions: participantPositionList,
-				});
-				participantPositions.forEach((p) => {
-					// todo: remove, probably
-					p.x2 = p.x;
-					p.y2 = p.y;
-				});
-			} catch (e) {
-				console.error("Error parsing user from localStorage:", e);
-			}
-		});
+			updatePositionState({
+				participantPositions: [
+					...participantPositions.filter(x => !resetParticipantIds.includes(x.id)),
+					...resetParticipants
+				],
+				propPositions: [
+					...propPositions.filter(x => !resetPropIds.includes(x.id)),
+					...resetProps
+				],
+			});
+			participantPositions.forEach((p) => {
+				// todo: remove, probably
+				p.x2 = p.x;
+				p.y2 = p.y;
+			});
+			propPositions.forEach((p) => {
+				// todo: remove, probably
+				p.x2 = p.x;
+				p.y2 = p.y;
+			});
+		} catch (e) {
+			console.error("Error parsing user from localStorage:", e);
+		}
 	}
 
 	function onDelete(section: FormationSongSection) {
+		const participantIdsToRemove = participantPositions
+			.filter(x => strEquals(x.formationSectionId, section.id))
+			.map(x => x.id);
+
+		const propIdsToRemove = propPositions
+				.filter(x => strEquals(x.formationSectionId, section.id))
+				.map(x => x.id);
+
+		const noteIdsToRemove = noteList
+				.filter(x => strEquals(x.formationSectionId, section.id))
+				.map(x => x.id);
+
 		Promise.all([
-			dbController.removeList("participantPosition", participantPositions.map(x => x.id)),
-			dbController.removeList("propPosition", propPositions.map(x => x.id)),
-			dbController.removeList("notePosition", noteList.map(x => x.id)),
+			dbController.removeList("participantPosition", participantIdsToRemove),
+			dbController.removeList("propPosition", propIdsToRemove),
+			dbController.removeList("notePosition", noteIdsToRemove),
 			dbController.removeItem("formationSection", section.id),
 		]).then(()=>{
-			dbController.getByFormationId("formationSection", selectedFormation!.id).then((newSectionList) => {
-				// todo: adjust order of existing items
-				// todo: change to closest section, not first
-				const firstItem = (newSectionList as Array<FormationSongSection>)[0];
-				Promise.all([
-					dbController.getByFormationSectionId("participantPosition", firstItem.id),
-					dbController.getByFormationSectionId("propPosition", firstItem.id),
-					dbController.getByFormationSectionId("notePosition", firstItem.id),
-				]).then(([participants, props, notes]) => {
-					updateState({
-						currentSections: (newSectionList as Array<FormationSongSection>),
-						selectedSection: firstItem,
-					});
-					updatePositionState({
-						participantPositions: (participants as Array<ParticipantPosition>),
-						propPositions: (props as Array<PropPosition>),
-					});
-					updateFormationContext({
-						noteList: (notes as Array<NotePosition>),
-					})
-				})
+			updatePositionState({
+				participantPositions: participantPositions.filter(x => !participantIdsToRemove.includes(x.id)),
+				propPositions: propPositions.filter(x => !propIdsToRemove.includes(x.id)),
+			});
+			updateFormationContext({
+				noteList: noteList.filter(x => !noteIdsToRemove.includes(x.id)),
+			});
+			var newSections = currentSections.filter(x => !strEquals(x.id, section.id));
+			updateState({
+				currentSections: newSections,
+				selectedSection: newSections[0],
 			});
 		});
 	}

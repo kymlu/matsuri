@@ -4,13 +4,13 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import Button from "../Button.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { Participant } from "../../models/Participant.ts";
-import { ParticipantPosition, PropPosition, PositionType, getFromPositionType } from "../../models/Position.ts";
+import { ParticipantPosition, PropPosition, PositionType, getFromPositionType, splitPositionsByType } from "../../models/Position.ts";
 import { Prop } from "../../models/Prop.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export default function ActionMenu() {
-  const {noteList, updateFormationContext} = useContext(FormationContext)
+  const {noteList, participantList, propList, updateFormationContext} = useContext(FormationContext)
   const userContext = useContext(UserContext)
   const {selectedItems, selectedSection, selectedFormation} = useContext(UserContext)
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
@@ -23,83 +23,47 @@ export default function ActionMenu() {
   function deleteObject() {
     if (selectedItems.length === 0) return;
 
-    var participants = selectedItems.filter(x => x.type === PositionType.participant).map(x => x.participant);
-    var props = selectedItems.filter(x => x.type === PositionType.prop).map(x => x.prop);
-    var notes = selectedItems.filter(x => x.type === PositionType.note).map(x => x.note);
+    const {participants, props, notes} = splitPositionsByType(selectedItems);
 
     if (participants.length > 0) {
       var selectedParticipantIds = participants
         .map(x => x.participantId);
-      dbController.getAll("participantPosition").then((p) => {
-        Promise.all([
-          dbController.removeList("participant", selectedParticipantIds),
-          dbController.removeList(
-            "participantPosition", 
-            (p as Array<ParticipantPosition>)
-              .filter(x => selectedParticipantIds.includes(x.participantId))
-              .map(x => x.id)
-          )
-        ]).then(() => {
-          Promise.all([
-            dbController.getByFormationSectionId("participantPosition", selectedSection!.id),
-            dbController.getByFormationId("participant", selectedFormation!.id),
-          ]).then(([participantPosition, participant]) => {
-            try {
-              var participantPositionList = participantPosition as Array<ParticipantPosition>;
-              var participantList = participant as Array<Participant>;
-              updatePositionState({
-                participantPositions: participantPositionList,
-              });
-              updateFormationContext({
-                participantList: participantList
-              })
-              participantPositions.forEach(p => { // todo: remove, probably
-                p.x2 = p.x;
-                p.y2 = p.y;
-              });
-            } catch (e) {
-              console.error('Error parsing user from localStorage:', e);
-            }
-          })
-        });
-      })
+      var participantsToRemove = participantPositions.filter(x => selectedParticipantIds.includes(x.participantId)).map(x => x.id);
+      Promise.all([
+        dbController.removeList("participant", selectedParticipantIds),
+        dbController.removeList("participantPosition", participantsToRemove)
+      ]).then(() => {
+        try {
+          updatePositionState({
+            participantPositions: participantPositions.filter(x => !participantsToRemove.includes(x.id)),
+          });
+          updateFormationContext({
+            participantList: participantList.filter(x => !selectedParticipantIds.includes(x.id))
+          });
+        } catch (e) {
+          console.error('Error parsing user from localStorage:', e);
+        }
+      });
     }
 
     if (props.length > 0) {
       var selectedPropIds = props
         .map(x => x.propId);
-      dbController.getAll("propPosition").then((p) => {
-        Promise.all([
-          dbController.removeList("prop", selectedPropIds),
-          dbController.removeList(
-            "propPosition",
-            (p as Array<PropPosition>)
-              .filter(x => selectedPropIds.includes(x.propId))
-              .map(x => x.id)
-          )
-        ]).then(() => {
-          Promise.all([
-            dbController.getByFormationSectionId("propPosition", selectedSection!.id),
-            dbController.getByFormationId("prop", selectedFormation!.id),
-          ]).then(([propPosition, prop]) => {
-            try {
-              var propPositionList = propPosition as Array<PropPosition>;
-              var propList = prop as Array<Prop>;
-              updatePositionState({
-                propPositions: propPositionList,
-              });
-              updateFormationContext({
-                propList: propList
-              })
-              propPositions.forEach(p => { // todo: remove, probably
-                p.x2 = p.x;
-                p.y2 = p.y;
-              });
-            } catch (e) {
-              console.error('Error parsing user from localStorage:', e);
-            }
-          })
-        });
+      var propsToRemove = propPositions.filter(x => selectedPropIds.includes(x.propId)).map(x => x.id);
+      Promise.all([
+        dbController.removeList("prop", selectedPropIds),
+        dbController.removeList("propPosition", propsToRemove)
+      ]).then(() => {
+        try {
+          updatePositionState({
+            propPositions: propPositions.filter(x => !propsToRemove.includes(x.id)),
+          });
+          updateFormationContext({
+            propList: propList.filter(x => !selectedPropIds.includes(x.id))
+          });
+        } catch (e) {
+          console.error('Error parsing user from localStorage:', e);
+        }
       });
     }
 

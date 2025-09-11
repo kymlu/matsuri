@@ -77,7 +77,6 @@ export function createPosition(
   item: ParticipantPosition | PropPosition | NotePosition,
   type?: PositionType
 ): Position {
-  console.log(item, type);
   // Infer type if missing
   if (type === undefined) {
     if (isParticipantPosition(item)) {

@@ -1,13 +1,9 @@
-import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 
-export async function getAnimationPaths(sectionIds: string[], gridSize: number): Promise<Record<string, string>> {
-  const results = await Promise.all(
-    sectionIds.map((id) => dbController.getByFormationSectionId("participantPosition", id))
-  );
-
+export async function getAnimationPaths(sectionIds: string[], gridSize: number, participants: Array<ParticipantPosition>): Promise<Record<string, string>> {
   // todo: add props
-  var participantList = (results.flat() as Array<ParticipantPosition>)
+  var participantList = participants
+    .filter(x => sectionIds.includes(x.formationSectionId))
     .reduce((acc, item) => {
       const key = item.participantId;
       if (!acc[key]) {

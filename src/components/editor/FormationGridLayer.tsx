@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import { Layer, Line } from "react-konva";
 import { DEFAULT_WIDTH } from "../../data/consts.ts";
-import { basePalette } from "../../themes/colours.ts";
+import { basePalette, objectColorSettings } from "../../themes/colours.ts";
 import LengthMeterMarker from "./formationObjects/LengthMeterMarker.tsx";
 import WidthMeterMarker from "./formationObjects/WidthMeterMarker.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
+import NoteObject from "./formationObjects/NoteObject.tsx";
 
 export interface FormationGridProps {
   canvasHeight: number,
@@ -14,8 +15,8 @@ export interface FormationGridProps {
   isParade?: boolean
 }
 
-export default function FormationGrid(props: FormationGridProps) {
-  const {gridSize} = useContext(UserContext);
+export default function FormationGridLayer(props: FormationGridProps) {
+  const {gridSize, selectedSection} = useContext(UserContext);
   var gridHeight = Math.ceil(props.canvasHeight/gridSize);
   var gridWidth = Math.ceil(props.canvasWidth/gridSize);
 
@@ -66,6 +67,18 @@ export default function FormationGrid(props: FormationGridProps) {
             startX={i * gridSize}
             value={Math.abs(Math.round(i - gridWidth/2))}/>
         ))}
+        <NoteObject
+          id="sectionName"
+          text={selectedSection?.displayName ?? ""}
+          startX={gridSize * 0.75}
+          startY={gridSize * 0.25}
+          height={1.1}
+          length={3}
+          colour={objectColorSettings.purpleLightest}
+          borderRadius={10}
+          fontSize={gridSize * 0.4}
+          alwaysBold
+          />
       </Layer>
     </>
   )

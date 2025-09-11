@@ -111,7 +111,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
       <button 
         button-name="Add sections"
         onClick={() => {setIsEditing(false)}}>
-        <div className="flex justify-center col-start-2 row-start-1 px-3">
+        <div className="flex justify-center col-start-2 row-start-1">
           <img
             alt="Confirm name"
             src={"icons/check_white.svg"}

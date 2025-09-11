@@ -37,6 +37,7 @@ export default function NameEditor() {
   const handleChange = (value) => {
     var newValue = value.target.value;
     setInputValue(newValue);
+    
     if (isParticipantPosition(selectedItem)) {
       var updatedParticipant = {
         ...participantList.find(x => strEquals(x.id, selectedItem.participantId)),
@@ -47,6 +48,7 @@ export default function NameEditor() {
         updatedParticipant
       ]})
       dbController.upsertItem("participant", updatedParticipant);
+      
     } else if (isPropPosition(selectedItem)) {
       var updatedProp = {
         ...propList.find(x => strEquals(x.id, selectedItem.propId)),

@@ -21,7 +21,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
   function onClick(e?: MouseEvent) {
     if (!props.draggable) return;
 
-    var multiSelect = e?.altKey || e?.ctrlKey || e?.metaKey;
+    var multiSelect = e?.altKey || e?.ctrlKey || e?.metaKey || e?.shiftKey;
     props.onClick?.(false, multiSelect);
   }
   

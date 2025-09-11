@@ -25,7 +25,6 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
   const [expanded, setExpanded] = React.useState(true);
 
   useEffect(() => {
-    console.log(userContext.selectedItems);
     setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
   }, [userContext.selectedItems])
 
