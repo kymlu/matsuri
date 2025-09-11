@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { Rect, Text } from "react-konva";
+import { Line, Rect, Text } from "react-konva";
 import { FONT_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
-import { ColorStyle } from "../../../themes/colours.ts";
+import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface NoteObjectProps {
@@ -42,31 +42,12 @@ export default function NoteObject(props: NoteObjectProps) {
         stroke={props.colour.borderColour}
         strokeWidth={gridSize/30}
         cornerRadius={props.borderRadius} />
-      <Text
-        x={props.startX}
-        y={props.startY}
-        height={props.height * gridSize}
-        width={props.length * gridSize}
-        text={props.text}
-        fontSize={props.fontSize ?? FONT_SIZE}
-        fontStyle={props.alwaysBold ? "bold" : "normal"}
-        fill={props.colour.textColour}
-        verticalAlign="middle"
-        align="center" />
-      {props.label && 
+      {
+        props.label && 
         <>
-          <Rect
-            x={props.startX + gridSize / 4}
-            y={props.startY - gridSize / 4}
-            width={(props.length * 0.75) * gridSize}
-            height={0.5 * gridSize}
-            fill={props.colour.bgColour}
-            stroke={props.colour.borderColour}
-            strokeWidth={gridSize/30}
-            cornerRadius={props.borderRadius} />
           <Text
-            x={props.startX + gridSize / 2}
-            y={props.startY - gridSize / 4}
+            x={props.startX + gridSize / 3 }
+            y={props.startY}
             width={(props.length / 2) * gridSize}
             height={0.5 * gridSize}
             text={props.label}
@@ -74,8 +55,24 @@ export default function NoteObject(props: NoteObjectProps) {
             fontStyle="bold"
             verticalAlign="middle"
             fill={props.colour.textColour}/>
+          <Line
+            points={[props.startX, props.startY + 0.5 * gridSize, props.startX + props.length * gridSize, props.startY + 0.5 * gridSize]}
+            stroke={basePalette.black}
+            strokeWidth={gridSize/30}/>
         </>
-        }
+      }
+      <Text
+        x={props.startX + gridSize * 0.15}
+        y={props.startY + (props.label ? 0.55 * gridSize : 0)}
+        height={props.height * gridSize - (props.label ? 0.55 * gridSize : 0)}
+        width={(props.length - 0.3) * gridSize}
+        text={props.text}
+        fontSize={props.fontSize ?? FONT_SIZE}
+        fontStyle={props.alwaysBold ? "bold" : "normal"}
+        fill={props.colour.textColour}
+        verticalAlign="middle"
+        align="center" />
+      
     </BaseFormationObject>
   )
 }
