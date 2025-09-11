@@ -345,7 +345,7 @@ export default function FormationEditor(props: FormationEditorProps) {
   }, [isAnimating]);
 
   return (
-    <div>
+    <div className="m-auto">
       <Stage
         ref={stageRef}
         width={canvasWidth}

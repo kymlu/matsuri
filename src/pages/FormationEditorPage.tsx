@@ -111,7 +111,7 @@ export default function FormationEditorPage () {
             {
             selectedFormation && selectedFestival &&
             <h1 className='px-2 font-bold text-center'>
-              {selectedSection?.displayName} ・ {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) ・ {selectedFestival?.name}
+              {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) ・ {selectedFestival?.name}
             </h1>
             }
             <CustomMenu trigger={
@@ -134,7 +134,7 @@ export default function FormationEditorPage () {
             </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>
-            <div className='flex flex-1 h-full min-h-0 overflow-scroll'>
+            <div className='flex flex-1 h-full min-h-0 overflow-auto'>
               <FormationEditor
                 ref={formationEditorRef}
                 width={selectedFormation?.width ?? 20}
