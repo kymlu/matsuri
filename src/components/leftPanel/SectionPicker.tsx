@@ -212,6 +212,7 @@ export default function SectionPicker() {
 			.filter((position) =>
 				strEquals(position.formationSectionId, sourceSection.id)
 			)
+			.sort((a, b) => a.participantId.localeCompare(b.participantId))
 			.map((position, index) => (
 				{
 					...position,
@@ -225,15 +226,16 @@ export default function SectionPicker() {
 			.filter((position) =>
 				strEquals(position.formationSectionId, sourceSection.id)
 			)
+			.sort((a, b) => a.propId.localeCompare(b.propId))
 			.map((position, index) => (
 				{
 					...position,
-					x: marginPositions.participants[index][0],
-					x2: marginPositions.participants[index][0],
-					y: marginPositions.participants[index][1],
-					y2: marginPositions.participants[index][1],
+					x: marginPositions.props[index][0],
+					x2: marginPositions.props[index][0],
+					y: marginPositions.props[index][1],
+					y2: marginPositions.props[index][1],
 				} as PropPosition));
-		
+
 		try {
 			dbController.upsertList("participantPosition", resetParticipants);
 			dbController.upsertList("propPosition", resetProps);
