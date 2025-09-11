@@ -273,7 +273,29 @@ export const notePresets: Array<Note> = [
     alwaysBold: true
   },
   {
-    label: "メモ",
+    label: "メモ (小)",
+    length: 5,
+    height: 1,
+    borderRadius: 10,
+    fontGridRatio: 0.25,
+    color: objectColorSettings.amberLight,
+    hasLabel: false,
+    defaultContent: "これはメモです。",
+    alwaysBold: false
+  },
+  {
+    label: "メモ (中)",
+    length: 5,
+    height: 2,
+    borderRadius: 10,
+    fontGridRatio: 0.25,
+    color: objectColorSettings.amberLight,
+    hasLabel: false,
+    defaultContent: "これはメモです。",
+    alwaysBold: false
+  },
+  {
+    label: "メモ (大)",
     length: 5,
     height: 3,
     borderRadius: 10,
