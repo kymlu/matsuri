@@ -119,11 +119,14 @@ export default function FormationEditor(props: FormationEditorProps) {
         ref={stageRef}
         width={canvasWidth}
         height={canvasHeight}
-      onClick={(event) => {
-        if (event.target === event.target.getStage()) {
-          editLayerRef.current?.clearSelections();
-        }
-      }}>
+        onMouseDown={(e) => { editLayerRef.current?.onMouseDown(e) }}
+        onMouseUp={() => { editLayerRef.current?.onMouseUp() }}
+        onMouseMove={(e) => { editLayerRef.current?.onMouseMove(e) }}
+        onClick={(event) => {
+          if (event.target === event.target.getStage()) {
+            editLayerRef.current?.clearSelections();
+          }
+        }}>
         <FormationGridLayer
           canvasHeight={canvasHeight}
           canvasWidth={canvasWidth}

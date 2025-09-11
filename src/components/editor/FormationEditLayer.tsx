@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Layer, Transformer } from "react-konva";
+import { Layer, Rect, Transformer } from "react-konva";
 import { createPosition, getAllIds, getFromPositionType, NotePosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
 import { objectColorSettings, basePalette } from "../../themes/colours.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
@@ -14,7 +14,7 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
-import { Ref } from "react";
+import { Group } from "konva/lib/Group";
 
 export type FormationEditLayerProps = {
   ref: React.Ref<any>
@@ -41,12 +41,123 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const [editedNotePIds, setEditedNotePIds] = useState<string[]>([]);
 
   useImperativeHandle(props.ref, () => ({
-    clearSelections() {
+    clearSelections: () => {
       updateState({selectedItems: []});
       setSelectedIds([]);
+    },
+
+    onMouseDown: (e) => {
+      const isElement = e.target.findAncestor(".elements-container");
+      const isTransformer = e.target.findAncestor("Transformer");
+      if (isElement || isTransformer) {
+        return;
+      }
+  
+      const pos = e.target.getStage().getPointerPosition();
+      selection.current.visible = true;
+      selection.current.x1 = pos.x;
+      selection.current.y1 = pos.y;
+      selection.current.x2 = pos.x;
+      selection.current.y2 = pos.y;
+      updateSelectionRect();
+    },
+    
+    onMouseMove: (e) => {
+      if (!selection.current.visible) {
+        return;
+      }
+      const pos = e.target.getStage().getPointerPosition();
+      selection.current.x2 = pos.x;
+      selection.current.y2 = pos.y;
+      updateSelectionRect();
+    },
+
+    onMouseUp: () => {
+      oldPos.current = null;
+      selection.current.visible = false;
+      const { x1, x2, y1, y2 } = selection.current;
+      const moved = x1 !== x2 || y1 !== y2;
+      if (!moved) {
+        updateSelectionRect();
+        return;
+      }
+      if (selectionRectRef.current){
+        const selBox = selectionRectRef.current?.getClientRect();
+
+        const selectedParticipantIds: Array<string> = [];
+        participantRef.current?.forEach((elementNode) => {
+          if(elementNode.current) {
+            var node = (elementNode as React.RefObject<Group>);
+            const elBox = node.current.getClientRect();
+            if (Konva.Util.haveIntersection(selBox, elBox)) {
+              selectedParticipantIds.push(node.current.attrs.id);
+            }
+          }
+        });
+
+        const selectedPropIds: Array<string> = [];
+        propRef.current?.forEach((elementNode) => {
+          if(elementNode.current) {
+            var node = (elementNode as React.RefObject<Group>);
+            const elBox = node.current.getClientRect();
+            if (Konva.Util.haveIntersection(selBox, elBox)) {
+              selectedPropIds.push(node.current.attrs.id);
+            }
+          }
+        });
+
+        const selectedNoteIds: Array<string> = [];
+        noteRef.current?.forEach((elementNode) => {
+          if(elementNode.current) {
+            var node = (elementNode as React.RefObject<Group>);
+            const elBox = node.current.getClientRect();
+            if (Konva.Util.haveIntersection(selBox, elBox)) {
+              selectedNoteIds.push(node.current.attrs.id);
+            }
+          }
+        });
+
+        updateState({selectedItems: [
+          ...participantPositions.filter(x => selectedParticipantIds.includes(x.id))
+            .map(x => ({type: PositionType.participant, participant: x} as Position)),
+          ...propPositions.filter(x => selectedPropIds.includes(x.id))
+            .map(x => ({type: PositionType.prop, prop: x} as Position)),
+          ...noteList.filter(x => selectedNoteIds.includes(x.id))
+            .map(x => ({type: PositionType.note, note: x} as Position)),
+        ]});
+
+        setSelectedIds([...selectedParticipantIds, ...selectedPropIds, ...selectedNoteIds]);
+  
+        updateSelectionRect();
+      }
     }
   }));
 
+  const selectionRectRef = React.useRef<Konva.Rect | null>(null);
+  const selection = React.useRef({
+    visible: false,
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0
+  });
+
+  const updateSelectionRect = () => {
+    if (selectionRectRef.current) {
+      const node = selectionRectRef.current;
+      node.setAttrs({
+        visible: selection.current.visible,
+        x: Math.min(selection.current.x1, selection.current.x2),
+        y: Math.min(selection.current.y1, selection.current.y2),
+        width: Math.abs(selection.current.x1 - selection.current.x2),
+        height: Math.abs(selection.current.y1 - selection.current.y2),
+        fill: "rgba(0, 161, 255, 0.3)"
+      });
+    }
+  };
+
+  const oldPos = React.useRef(null);
+  
   useEffect(() => {
     if(transformerRef?.current && layerRef?.current && selectedIds.length > 0){
       const nodes = selectedIds.map((id) => layerRef!.current!.findOne("#" + id)).filter(x => x !== undefined);
@@ -212,6 +323,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(note, PositionType.note, forceSelect, multiSelect, noteRef.current[index])} 
               alwaysBold={note.alwaysBold}
               draggable
+              ref={noteRef.current[index]}
             />
         )
       }
@@ -231,6 +343,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               draggable={!isAnimating}
               rotation={placement.angle} 
               onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
+              ref={propRef.current[index]}
               />
           )
       } 
@@ -247,6 +360,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect, participantRef.current[index])}} 
               draggable={!isAnimating}
+              ref={participantRef.current[index]}
             />
         )
       }
@@ -273,6 +387,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
           }
         }
       />    
+      <Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef} />
     </Layer>
   )
 }
