@@ -3,19 +3,19 @@ import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition } from "../../models/Position.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { notePresets } from "../../data/ImaHitotabi.ts";
 import ItemButton from "../ItemButton.tsx";
 import { Note } from "../../models/Note.ts";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export default function NotePicker () {
   const {selectedSection, updateState, marginPositions} = useContext(UserContext);
-  const {noteList, updateFormationContext} = useContext(FormationContext);
+  const {notePositions, updatePositionState} = useContext(PositionContext);
   
   function selectPreset(selectedPreset: Note) {
     if(selectedSection === null) return;
 
-    var position = marginPositions.notes[noteList.length % marginPositions.notes.length]
+    var position = marginPositions.notes[notePositions.length % marginPositions.notes.length]
 
     var newNote = {
       id: crypto.randomUUID(),
@@ -35,7 +35,7 @@ export default function NotePicker () {
       alwaysBold: selectedPreset.alwaysBold || false,
     } as NotePosition;
 
-    updateFormationContext({noteList: [...noteList, newNote]});
+    updatePositionState({notePositions: [...notePositions, newNote]});
     updateState({selectedItems: []});
 
     dbController.upsertItem("notePosition", newNote);

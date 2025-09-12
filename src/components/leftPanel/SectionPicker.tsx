@@ -6,7 +6,7 @@ import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../SectionOptionButton.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
-import { NotePosition, ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
 import { propsList, songList } from "../../data/ImaHitotabi.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
@@ -15,9 +15,9 @@ import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 export default function SectionPicker() {
 	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
 		useContext(UserContext);
-	const { participantPositions, propPositions, updatePositionState } =
+	const { participantPositions, propPositions, notePositions, updatePositionState } =
 		useContext(PositionContext);
-	const { participantList, propList, noteList, updateFormationContext } =
+	const { participantList, propList } =
 		useContext(FormationContext);
 	const { isAnimating } =
 		useContext(AnimationContext);
@@ -277,7 +277,7 @@ export default function SectionPicker() {
 				.filter(x => strEquals(x.formationSectionId, section.id))
 				.map(x => x.id);
 
-		const noteIdsToRemove = noteList
+		const noteIdsToRemove = notePositions
 				.filter(x => strEquals(x.formationSectionId, section.id))
 				.map(x => x.id);
 
@@ -290,9 +290,7 @@ export default function SectionPicker() {
 			updatePositionState({
 				participantPositions: participantPositions.filter(x => !participantIdsToRemove.includes(x.id)),
 				propPositions: propPositions.filter(x => !propIdsToRemove.includes(x.id)),
-			});
-			updateFormationContext({
-				noteList: noteList.filter(x => !noteIdsToRemove.includes(x.id)),
+				notePositions: notePositions.filter(x => !noteIdsToRemove.includes(x.id)),
 			});
 			var newSections = currentSections.filter(x => !strEquals(x.id, section.id));
 			updateState({
@@ -346,7 +344,7 @@ export default function SectionPicker() {
 							onDelete={() => onDelete(section)}
 							ref={sectionButtonRef.current[index]}
 							showDelete={currentSections.length > 1}
-							showReset={(participantList.length + propList.length + noteList.length ) > 0}
+							showReset={(participantList.length + propList.length + notePositions.length ) > 0}
 						/>
 					))}
 			</div>

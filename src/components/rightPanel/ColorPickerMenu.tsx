@@ -8,6 +8,7 @@ import { NotePosition, Position, PositionType, splitPositionsByType } from "../.
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { Prop } from "../../models/Prop.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export type ColorPickerMenuProps = {
 }
@@ -16,7 +17,8 @@ export default function ColorPickerMenu() {
   const [selectedColor, setSelectedColor] = useState<any>();
   const userContext = useContext(UserContext);
   const {selectedItems, updateState} = useContext(UserContext);
-  const {noteList, propList, updateFormationContext} = useContext(FormationContext);
+  const {propList, updateFormationContext} = useContext(FormationContext);
+  const {notePositions, updatePositionState} = useContext(PositionContext);
 
   function selectColor(color: ColorStyle) {
     if (selectedItems.length === 0) return;
@@ -34,14 +36,17 @@ export default function ColorPickerMenu() {
     var noteIds = res.notes.map(x => x.id);
 
     updateFormationContext({
-      noteList: [
-        ...noteList.filter(x => !noteIds.includes(x.id)),
-        ...updatedNotes
-      ],
       propList: [
         ...propList.filter(x => !propIds.includes(x.id)),
         ...updatedProps
-      ],});
+      ]
+    });
+    updatePositionState({
+      notePositions: [
+        ...notePositions.filter(x => !noteIds.includes(x.id)),
+        ...updatedNotes
+      ]
+    })
 
     updateState({selectedItems: [
       ...selectedItems.filter(x => x.type === PositionType.prop),

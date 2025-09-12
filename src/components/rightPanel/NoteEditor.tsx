@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { getFromPositionType, NotePosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import TextInput from "../TextInput.tsx";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export default function NoteEditor() {
   const {selectedItems} = useContext(UserContext);
@@ -13,7 +13,7 @@ export default function NoteEditor() {
   const [note, setNote] = useState<NotePosition | null>(null);
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
-  const {noteList, updateFormationContext} = useContext(FormationContext);
+  const {notePositions, updatePositionState} = useContext(PositionContext);
 
   useEffect(() => {
     if (selectedItems.length === 0) return;
@@ -30,15 +30,17 @@ export default function NoteEditor() {
       setText(newValue);
     }
     
-    var updatedNote = {...noteList.find(x => strEquals(x.id, note?.id))!};
+    var updatedNote = {...notePositions.find(x => strEquals(x.id, note?.id))!};
     updatedNote.isSelected = false;
+
     if (type === "text") {
       updatedNote.text = newValue;
     } else {
       updatedNote.label = newValue;
     }
-    updateFormationContext({noteList: [
-      ...noteList.filter(x => !strEquals(x.id, note?.id)),
+    
+    updatePositionState({notePositions: [
+      ...notePositions.filter(x => !strEquals(x.id, note?.id)),
       updatedNote
     ]})
     dbController.upsertItem("notePosition", updatedNote);

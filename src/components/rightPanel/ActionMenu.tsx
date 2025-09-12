@@ -12,11 +12,11 @@ import { strEquals } from "../helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 
 export default function ActionMenu() {
-  const {noteList, participantList, propList, updateFormationContext} = useContext(FormationContext);
+  const {participantList, propList, updateFormationContext} = useContext(FormationContext);
   const userContext = useContext(UserContext);
   const {categories} = useContext(CategoryContext);
   const {selectedItems} = useContext(UserContext);
-  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
   const [selectedPositionType, setSelectedPositionType] = useState<PositionType | null>();
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
 
@@ -109,7 +109,7 @@ export default function ActionMenu() {
     if (notes.length > 0) {
       var selectedItemIds = notes
         .map(x => x.id);
-      updateFormationContext({noteList: noteList.filter(x => !selectedItemIds.includes(x.id))});
+      updatePositionState({notePositions: notePositions.filter(x => !selectedItemIds.includes(x.id))});
       dbController.removeList("notePosition", selectedItemIds);
     }
   }

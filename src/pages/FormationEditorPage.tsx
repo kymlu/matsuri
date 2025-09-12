@@ -65,13 +65,13 @@ export default function FormationEditorPage () {
       try {
         updateFormationContext({
           participantList: participants as Array<Participant>,
-          propList: props as Array<Prop>,
-          noteList: notePosition as Array<NotePosition>,
+          propList: props as Array<Prop>
         });
 
         updatePositionState({
           participantPositions: participantPosition as Array<ParticipantPosition>,
-          propPositions: propPosition as Array<PropPosition>
+          propPositions: propPosition as Array<PropPosition>,
+          notePositions: notePosition as Array<NotePosition>
         });
 
         participantPositions.forEach(p => { // todo: remove, probably

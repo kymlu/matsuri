@@ -24,11 +24,10 @@ export type FormationEditLayerProps = {
 export function FormationEditLayer(props: FormationEditLayerProps) {
   const userContext = useContext(UserContext);
   const {isAnimating} = useContext(AnimationContext);
-  const formationContext = useContext(FormationContext);
-  const {participantList, propList, noteList} = useContext(FormationContext);
+  const {participantList, propList} = useContext(FormationContext);
   const {selectedItems, selectedSection, updateState, gridSize} = useContext(UserContext);
   const positionContext = useContext(PositionContext);
-  const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const layerRef = useRef<Konva.Layer>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -44,7 +43,6 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const [editedNotePIds, setEditedNotePIds] = useState<string[]>([]);
 
   const positionContextRef = useRef(positionContext);
-  const formationContextRef = useRef(formationContext);
 
   // Keep ref up to date
   useEffect(() => {
@@ -137,7 +135,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
             .map(x => ({type: PositionType.participant, participant: x} as Position)),
           ...propPositions.filter(x => selectedPropIds.includes(x.id))
             .map(x => ({type: PositionType.prop, prop: x} as Position)),
-          ...noteList.filter(x => selectedNoteIds.includes(x.id))
+          ...notePositions.filter(x => selectedNoteIds.includes(x.id))
             .map(x => ({type: PositionType.note, note: x} as Position)),
         ]});
 
@@ -186,7 +184,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
         updateState({selectedItems: participants.map(x => ({type: PositionType.participant, participant: x} as Position))});
         setSelectedIds(participants.map(x => x.id));
         break;
-        
+
       case PositionType.prop:
         var props = positionContextRef.current.propPositions
           .filter(x => strEquals(x.formationSectionId, selectedSection?.id));
@@ -195,7 +193,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
         break;
 
       case PositionType.note:
-        var notes = formationContextRef.current.noteList
+        var notes = positionContextRef.current.notePositions
           .filter(x => strEquals(x.formationSectionId, selectedSection?.id));
         updateState({selectedItems: notes.map(x => ({type: PositionType.note, note: x} as Position))});
         setSelectedIds(notes.map(x => x.id));
@@ -256,7 +254,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
       .filter(x => editedPropPIds.includes(x.id))
       .forEach(x => {x.x = x.x2; x.y = x.y2;})
     setEditedPropPIds([]);
-    noteList
+    notePositions
       .filter(x => editedNotePIds.includes(x.id))
       .forEach(x => {x.x = x.x2; x.y = x.y2;})
     setEditedNotePIds([]);
@@ -285,12 +283,12 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   // Update note positions
   useEffect(() => {
     if (userContext.selectedSection) {
-      const filtered = noteList
+      const filtered = notePositions
         .filter(x => strEquals(x.formationSectionId, userContext.selectedSection!.id))
         .sort((a, b) => a.id.localeCompare(b.id));
       setCurrentNotePositions(filtered);
     }
-  }, [userContext.selectedSection, noteList]);
+  }, [userContext.selectedSection, notePositions]);
 
   participantList
     .sort((a, b) => a.id.localeCompare(b.id))
@@ -302,7 +300,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     .forEach((_, index) => 
       propRef.current[index] = React.createRef<Konva.Group>()
     );
-  noteList
+  notePositions
     .sort((a, b) => a.id.localeCompare(b.id))
     .forEach((_, index) => 
       noteRef.current[index] = React.createRef<Konva.Group>()
@@ -328,7 +326,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     }
   }
   function updateNotePosition(id: string, x: number, y: number) {
-    var prop = noteList.find(x => strEquals(x.id, id));
+    var prop = notePositions.find(x => strEquals(x.id, id));
     if (prop) {
       prop.x2 = (prop.x * gridSize + x)/gridSize;
       prop.y2 = (prop.y * gridSize + y)/gridSize; // todo: fix off by 2m
