@@ -39,7 +39,7 @@ export default function GridSettingsMenu() {
         currentValue={gridSize?.toString()}
         onChange={(newValue: string) => {if(!isNullOrUndefinedOrBlank(newValue)){onGridSizeChanged(+newValue)}}}/>
       <CustomSwitch
-        label="遷移をアニメーション化する（工事中）"
+        label="遷移をアニメーション化する"
         defaultChecked={enableAnimation}
         onChange={(checked) => {updateState({enableAnimation: checked})}}/>
     </ExpandableSection>

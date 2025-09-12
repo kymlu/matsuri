@@ -37,7 +37,6 @@ export default function FormationEditor(props: FormationEditorProps) {
 
   // todo: remove empty grid gap when switching sections
   useEffect(() => {
-    return; // broken
     if(isNullOrUndefined(selectedSection)) return;
     
     if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
@@ -139,7 +138,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         }
         
         {
-          !isAnimating &&
+          !isLoading && !isAnimating &&
           <FormationEditLayer ref={editLayerRef}/>
         }
         {

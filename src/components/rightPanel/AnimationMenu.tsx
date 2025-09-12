@@ -14,7 +14,6 @@ export default function AnimationMenu() {
   const {participantPositions} = useContext(PositionContext);
 
   function animate(mode: "fromPrevious" | "all" = "all") {
-    return; // broken
     if (selectedSection === null) return;
     if (mode === "fromPrevious") {
       var sectionIds = [currentSections.find(x => x.order === (selectedSection!.order - 1))!.id, selectedSection!.id];

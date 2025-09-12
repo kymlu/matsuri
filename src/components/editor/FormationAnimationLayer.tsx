@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { Layer } from "react-konva";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
-import { ExportContext } from "../../contexts/ExportContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { objectColorSettings } from "../../themes/colours.ts";
-import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import { useRef } from "react";
 import Konva from "konva";
@@ -18,12 +17,13 @@ export function FormationAnimationLayer() {
   const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {participantList} = useContext(FormationContext);
-  const {enableAnimation, updateState, gridSize} = useContext(UserContext);
+  const {enableAnimation, updateState, previousSectionId, gridSize} = useContext(UserContext);
   const {participantPositions} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const animationLayerRef = useRef<Konva.Layer>(null);
   const animationRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
   const [currentParticipants, setCurrentPartipants] = useState<ParticipantPosition[]>([]);
+  const [prevSectionId, setPrevSectionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (userContext.selectedSection){
@@ -88,19 +88,17 @@ export function FormationAnimationLayer() {
   }, [isAnimating]);
 
   useEffect(() => {
-    return; // broken
-    if(
+    if (
       !enableAnimation ||
-      isNullOrUndefined(userContext.previousSectionId) ||
-      isNullOrUndefined(userContext.selectedSection)) return;
+      isNullOrUndefinedOrBlank(userContext.previousSectionId) ||
+      isNullOrUndefined(userContext.selectedSection))
+      return;
 
-    updateState({isLoading: true});
     getAnimationPaths([userContext.previousSectionId!, userContext.selectedSection!.id], gridSize, participantPositions)
       .then((animationPaths) => {
-        updateState({isLoading: false});
         updateAnimationContext({paths: animationPaths, isAnimating: true});
       });
-  }, [userContext.previousSectionId]);
+  }, [previousSectionId]);
   
   return (
     <Layer

@@ -13,7 +13,7 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 
 export default function SectionPicker() {
-	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
+	const { currentSections, enableAnimation, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
 		useContext(UserContext);
 	const { participantPositions, propPositions, notePositions, updatePositionState } =
 		useContext(PositionContext);
@@ -31,8 +31,10 @@ export default function SectionPicker() {
 		
 	function selectSection(section: FormationSongSection) {
 		if (isLoading || isAnimating) return;
+		console.log("select");
 
 		updateState({
+			isLoading: enableAnimation,
 			previousSectionId: selectedSection ? selectedSection.id : null,
 			selectedSection: section,
 			selectedItems: [],
