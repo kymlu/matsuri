@@ -31,7 +31,6 @@ export default function SectionPicker() {
 		
 	function selectSection(section: FormationSongSection) {
 		if (isLoading || isAnimating) return;
-		console.log("select");
 
 		updateState({
 			isLoading: enableAnimation,
