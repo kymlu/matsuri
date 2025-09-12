@@ -60,10 +60,6 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
       setSelectedIds([]);
     },
 
-    refreshLayer: () => {
-      refreshLayer();
-    },
-
     onMouseDown: (e) => {
       const isElement = e.target.findAncestor(".elements-container");
       const isTransformer = e.target.findAncestor("Transformer");
@@ -176,8 +172,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
 
   const oldPos = React.useRef(null);
 
-  function refreshLayer() {
-    layerRef?.current?.batchDraw();
+  function refreshTransformer() {
+    transformerRef.current?.forceUpdate();
   }
 
   function selectAllFromPositionType(event){
@@ -236,7 +232,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   }, []);
 
   useEffect(() => {
-    refreshLayer(); // todo: fix
+    refreshTransformer();
   }, [userContext.gridSize])
   
   useEffect(() => {
