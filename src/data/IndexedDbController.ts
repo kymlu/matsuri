@@ -133,7 +133,7 @@ export class IndexedDBController {
     });
 
     await Promise.allSettled(runningTasks).then(() => {
-      var dbInitialized = new CustomEvent(CUSTOM_EVENT.dbInitialized.toString());
+      var dbInitialized = new CustomEvent(CUSTOM_EVENT.dbInitialized);
       window.dispatchEvent(dbInitialized);
     });
   }

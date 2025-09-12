@@ -71,21 +71,30 @@ export default function CategoryMenu() {
     var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!;
     var updatedPositions = splitPositionsByType(selectedItems).participants.map(x => ({...x, categoryId: newCategoryId}));
     var positionIds = updatedPositions.map(x => x.id);
+
     setSelectedCategory(newCategory);
     updateState({selectedItems: updatedPositions.map(x => createPosition(x, PositionType.participant))});
-    updatePositionState({participantPositions: [...participantPositions.filter(x => !positionIds.includes(x.id)), ...updatedPositions]});
+    updatePositionState({participantPositions: [
+      ...participantPositions.filter(x => !positionIds.includes(x.id)),
+      ...updatedPositions
+    ]});
     dbController.upsertList("participantPosition", updatedPositions);
   }
 
   async function onSetAllToCategory() {
-    var updatedPositions = (
-      await Promise.all(splitPositionsByType(selectedItems)
-      .participants
-      .map(x => dbController.getPositionsByParticipantId(x.participantId))))
-      .flat()
-      .map(x => ({...x as ParticipantPosition, categoryId: selectedCategory!.id} as ParticipantPosition));
-
+    var participantIds = splitPositionsByType(selectedItems).participants.map(x => x.participantId);
+    var updatedPositions = participantPositions
+      .filter(x => participantIds.includes(x.participantId))
+      .map(x => ({
+        ...x as ParticipantPosition,
+        categoryId: selectedCategory!.id
+      } as ParticipantPosition));
+    
     dbController.upsertList("participantPosition", updatedPositions);
+    updatePositionState({participantPositions: [
+      ...participantPositions.filter(x => !participantIds.includes(x.participantId)),
+      ...updatedPositions
+    ]})
   }
 
   function selectColor(color: ColorStyle, category: ParticipantCategory) {
@@ -136,7 +145,7 @@ export default function CategoryMenu() {
       </RadioGroup>
       {selectedCategory && 
         <Button onClick={() => onSetAllToCategory()} full>
-          全てのセクションに適用
+          すべてのセクションに適用
         </Button>}
     </ExpandableSection>
   )

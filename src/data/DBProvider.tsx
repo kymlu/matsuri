@@ -13,7 +13,7 @@ export const DBProvider = ({ children }) => {
     const init = async () => {
       await dbController.init();
     };
-    window.addEventListener(CUSTOM_EVENT.dbInitialized.toString(), (e) => {
+    window.addEventListener(CUSTOM_EVENT.dbInitialized, (e) => {
       console.log("DB is ready");
       setDbReady(true);
     })

@@ -15,6 +15,7 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { Group } from "konva/lib/Group";
+import { CUSTOM_EVENT } from "../../data/consts.ts";
 
 export type FormationEditLayerProps = {
   ref: React.Ref<any>
@@ -23,8 +24,10 @@ export type FormationEditLayerProps = {
 export function FormationEditLayer(props: FormationEditLayerProps) {
   const userContext = useContext(UserContext);
   const {isAnimating} = useContext(AnimationContext);
+  const formationContext = useContext(FormationContext);
   const {participantList, propList, noteList} = useContext(FormationContext);
   const {selectedItems, selectedSection, updateState, gridSize} = useContext(UserContext);
+  const positionContext = useContext(PositionContext);
   const {participantPositions, propPositions, updatePositionState} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const layerRef = useRef<Konva.Layer>(null);
@@ -40,10 +43,22 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const [editedPropPIds, setEditedPropPIds] = useState<string[]>([]);
   const [editedNotePIds, setEditedNotePIds] = useState<string[]>([]);
 
+  const positionContextRef = useRef(positionContext);
+  const formationContextRef = useRef(formationContext);
+
+  // Keep ref up to date
+  useEffect(() => {
+    positionContextRef.current = positionContext;
+  }, [positionContext]);
+
   useImperativeHandle(props.ref, () => ({
     clearSelections: () => {
       updateState({selectedItems: []});
       setSelectedIds([]);
+    },
+
+    refreshLayer: () => {
+      refreshLayer();
     },
 
     onMouseDown: (e) => {
@@ -157,6 +172,69 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   };
 
   const oldPos = React.useRef(null);
+
+  function refreshLayer() {
+    layerRef?.current?.batchDraw();
+  }
+
+  function selectAllFromPositionType(event){
+    var positionType = (event as CustomEvent)?.detail?.positionType as PositionType;
+    switch (positionType) {
+      case PositionType.participant:
+        var participants = positionContextRef.current.participantPositions
+          .filter(x => strEquals(x.formationSectionId, selectedSection?.id));
+        updateState({selectedItems: participants.map(x => ({type: PositionType.participant, participant: x} as Position))});
+        setSelectedIds(participants.map(x => x.id));
+        break;
+        
+      case PositionType.prop:
+        var props = positionContextRef.current.propPositions
+          .filter(x => strEquals(x.formationSectionId, selectedSection?.id));
+        updateState({selectedItems: props.map(x => ({type: PositionType.prop, prop: x} as Position))});
+        setSelectedIds(props.map(x => x.id));
+        break;
+
+      case PositionType.note:
+        var notes = formationContextRef.current.noteList
+          .filter(x => strEquals(x.formationSectionId, selectedSection?.id));
+        updateState({selectedItems: notes.map(x => ({type: PositionType.note, note: x} as Position))});
+        setSelectedIds(notes.map(x => x.id));
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener(CUSTOM_EVENT.selectAllPositionType, selectAllFromPositionType);
+
+    return () => {
+      window.removeEventListener(CUSTOM_EVENT.selectAllPositionType, selectAllFromPositionType);
+    };
+  }, []);
+
+  function selectAllFromCategory(event){
+    var newSelection = positionContextRef.current.participantPositions
+      .filter(x => strEquals(x.formationSectionId, selectedSection?.id) && 
+        strEquals((event as CustomEvent)?.detail?.categoryId, x.categoryId)
+      );
+
+    updateState({selectedItems: newSelection.map(x => ({type: PositionType.participant, participant: x} as Position))});
+    setSelectedIds(newSelection.map(x => x.id));
+  }
+
+  useEffect(() => {
+    window.addEventListener(CUSTOM_EVENT.selectAllFromCategory, selectAllFromCategory);
+
+    return () => {
+      window.removeEventListener(CUSTOM_EVENT.selectAllFromCategory, selectAllFromCategory);
+    };
+  }, []);
+
+  useEffect(() => {
+    refreshLayer(); // todo: fix
+  }, [userContext.gridSize])
   
   useEffect(() => {
     if(transformerRef?.current && layerRef?.current && selectedIds.length > 0){
@@ -274,7 +352,6 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     type: PositionType,
     forceSelect?: boolean,
     multiSelect?: boolean,
-    ref?: React.Ref<Konva.Group>
   ) {
     if (item === null) return;
 
@@ -320,7 +397,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               borderRadius={note.borderRadius}
               fontSize={gridSize * note.fontGridRatio}
               updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
-              onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(note, PositionType.note, forceSelect, multiSelect, noteRef.current[index])} 
+              onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(note, PositionType.note, forceSelect, multiSelect)} 
               alwaysBold={note.alwaysBold}
               draggable
               ref={noteRef.current[index]}
@@ -339,7 +416,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               startX={getPixel(gridSize, placement.x)} 
               startY={getPixel(gridSize, placement.y)} 
               updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-              onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(placement, PositionType.prop, forceSelect, multiSelect, propRef.current[index])}
+              onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(placement, PositionType.prop, forceSelect, multiSelect)}
               draggable={!isAnimating}
               rotation={placement.angle} 
               onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
@@ -358,7 +435,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               startX={getPixel(gridSize, placement.x)} 
               startY={getPixel(gridSize, placement.y)}
               updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
-              onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect, participantRef.current[index])}} 
+              onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect)}} 
               draggable={!isAnimating}
               ref={participantRef.current[index]}
             />

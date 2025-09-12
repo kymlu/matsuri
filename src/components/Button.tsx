@@ -22,7 +22,9 @@ export default function Button(props: ButtonProps) {
     button-name={props.label}
     disabled={props.disabled ?? false}
     className={classes}
-    onClick={props.onClick}>{props.children}</button>;
+    onClick={props.onClick}>
+      {props.children}
+    </button>;
 }
 
 Button.propTypes = {

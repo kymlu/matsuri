@@ -15,15 +15,23 @@ export default function FormationLeftPanel () {
     setExpanded(true);
   }, [userContext.selectedFormation]);
 
-  var classes = classNames("flex flex-col p-5 overflow-y-auto bg-white border-r-2 border-solid border-grey",
+  var classes = classNames("flex flex-col overflow-y-auto bg-white border-r-2 border-solid border-grey",
     {
-      "w-80 max-w-80": expanded
+      "p-5 w-80 max-w-80": expanded
     }
   );
 
+  var buttonClasses = classNames("pb-2 text-end",
+    {
+      "h-full p-5": !expanded
+    }
+  )
+
   return (
     <div className={classes}>
-      <button className="pb-2 text-end" onClick={() => setExpanded(prev => !prev)}>
+      <button
+        className={buttonClasses}
+        onClick={() => setExpanded(prev => !prev)}>
         {expanded ? "閉じる <" : ">"}
       </button>
       {

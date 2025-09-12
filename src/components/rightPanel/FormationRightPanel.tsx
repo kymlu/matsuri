@@ -32,15 +32,23 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
     setExpanded(true);
   }, [userContext.selectedFormation]);
 
-  var classes = classNames("flex flex-col p-5 overflow-y-auto bg-white border-l-2 border-solid border-grey", 
+  var classes = classNames("flex flex-col overflow-y-auto bg-white border-l-2 border-solid border-grey", 
     {
-      "w-80 max-w-80": expanded
+      "w-80 max-w-80 p-5": expanded
     }
   );
 
+  var buttonClasses = classNames("pb-2 text-start",
+    {
+      "h-full p-5": !expanded
+    }
+  )
+
   return (
     <div className={classes}>
-      <button className="pb-2 text-start" onClick={() => setExpanded(prev => !prev)}>
+      <button
+        className={buttonClasses}
+        onClick={() => setExpanded(prev => !prev)}>
         {expanded ? "閉じる >" : "<"}
       </button>
       {

@@ -6,7 +6,9 @@ export const DEFAULT_WIDTH = 28;
 export const GRID_MARGIN_Y = 2;
 
 export enum CUSTOM_EVENT {
-  "dbInitialized",
+  "dbInitialized" = "dbInitialized",
+  "selectAllFromCategory" = "selectAllFromCategory",
+  "selectAllPositionType" = "selectAllPositionType"
 }
 
 export const CONTEXT_NAMES = {

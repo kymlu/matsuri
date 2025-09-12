@@ -32,9 +32,9 @@ export interface NotePosition extends BasePosition {
 }
 
 export enum PositionType {
-  "participant" = "participant",
-  "prop" = "prop",
-  "note" = "note",
+  "participant" = "参加者",
+  "prop" = "道具",
+  "note" = "メモ",
 }
 
 export type Position =
