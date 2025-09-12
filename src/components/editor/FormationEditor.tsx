@@ -121,7 +121,7 @@ export default function FormationEditor(props: FormationEditorProps) {
         onMouseDown={(e) => { editLayerRef.current?.onMouseDown(e) }}
         onMouseUp={() => { editLayerRef.current?.onMouseUp() }}
         onMouseMove={(e) => { editLayerRef.current?.onMouseMove(e) }}
-        onTouchStart={(event) => {
+        onClick={(event) => {
           if (event.target === event.target.getStage()) {
             editLayerRef.current?.clearSelections();
           }
