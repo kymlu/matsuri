@@ -59,7 +59,7 @@ export default function SectionPicker() {
 		// Copy participant positions
 		return new Promise<number>((resolve, reject) => { 
 			try {
-				if ((participantList.length + propsList.length) == 0) resolve(1);
+				if ((participantList.length + propsList.length) === 0) resolve(1);
 				
 				var allSectionIds = [sourceSection.id, ...targetSectionsArray.map(x => x.id)];
 				var participants = participantPositions.filter(x => allSectionIds.includes(x.formationSectionId));
@@ -321,7 +321,7 @@ export default function SectionPicker() {
 		strEquals(x.id, lastSection?.songSectionId)
 	);
 	var nextSection = lastSectionDetails
-		? songList[0].sections.find((x) => x.order == lastSectionDetails!.order + 1)
+		? songList[0].sections.find((x) => x.order === lastSectionDetails!.order + 1)
 		: undefined;
 
 	return (
