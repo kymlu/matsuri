@@ -172,7 +172,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
 
   const oldPos = React.useRef(null);
 
-  function refreshTransformer() {
+  function refreshTransformer() { // todo: apply this to note label change
     transformerRef.current?.forceUpdate();
   }
 
