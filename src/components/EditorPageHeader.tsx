@@ -43,13 +43,16 @@ export function EditorPageHeader() {
           <MenuItem label="Clear Cache" onClick={() => {
             Object.values(CONTEXT_NAMES).forEach((context) => {
               localStorage.removeItem(context);
-            })}} />
+            });
+            window.location.reload();
+          }} />
           <MenuSeparator />
           <MenuItem label="Clear DB and Cache" onClick={() => {
             Object.values(CONTEXT_NAMES).forEach((context) => {
               localStorage.removeItem(context);
             });
             indexedDB.deleteDatabase(DB_NAME);
+            window.location.reload();
           }} />
         </>
       </CustomMenu>

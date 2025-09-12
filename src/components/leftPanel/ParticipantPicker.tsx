@@ -48,9 +48,7 @@ export default function ParticipantPicker () {
           participantId: newParticipant.id,
           formationSectionId: section!.id,
           x: position[0],
-          x2: position[0],
           y: position[1],
-          y2: position[1],
           categoryId: categoryList[0].id,
           isSelected: false
         } as ParticipantPosition

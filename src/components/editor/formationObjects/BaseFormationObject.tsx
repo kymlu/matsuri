@@ -9,6 +9,8 @@ export interface FormationObjectProps {
   id: string,
   children: ReactNode
   rotation?: number,
+  startX: number,
+  startY: number,
   updatePosition?: (x: number, y: number) => void,
   onClick: (forceSelect?: boolean, multiselect?: boolean) => void,
   draggable?: boolean,
@@ -31,6 +33,8 @@ export default function BaseFormationObject(props: FormationObjectProps) {
       ref={props.ref}
       draggable={props.draggable}
       rotation={props.rotation ?? 0}
+      x={props.startX}
+      y={props.startY}
       onClick={e => {onClick(e.evt)}}
       onTap={e => {onClick()}}
       onDragEnd={e => { // TODO: fix to always save position properly

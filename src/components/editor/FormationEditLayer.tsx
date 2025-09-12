@@ -27,7 +27,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const {participantList, propList} = useContext(FormationContext);
   const {selectedItems, updateState, gridSize} = useContext(UserContext);
   const positionContext = useContext(PositionContext);
-  const {participantPositions, propPositions, notePositions} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const layerRef = useRef<Konva.Layer>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -244,23 +244,6 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     }
   }, [selectedIds]);
 
-  // Reset selection when section changes
-  useEffect(() => {
-    setSelectedIds([]);
-    participantPositions
-      .filter(x => editedPartPIds.includes(x.id))
-      .forEach(x => {x.x = x.x2; x.y = x.y2;})
-    setEditedPartPIds([]);
-    propPositions
-      .filter(x => editedPropPIds.includes(x.id))
-      .forEach(x => {x.x = x.x2; x.y = x.y2;})
-    setEditedPropPIds([]);
-    notePositions
-      .filter(x => editedNotePIds.includes(x.id))
-      .forEach(x => {x.x = x.x2; x.y = x.y2;})
-    setEditedNotePIds([]);
-  }, [userContext.selectedSection]);
-
   // Update participant positions
   useEffect(() => {
     if (userContext.selectedSection) {
@@ -310,28 +293,29 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => strEquals(x.id, id));
     if (participant) {
-      participant.x2 = (participant.x * gridSize + x)/gridSize;
-      participant.y2 = (participant.y * gridSize + y)/gridSize; // todo: fix off by 2m
-      dbController.upsertItem("participantPosition", {...participant, x: participant.x2, y: participant.y2});
+      participant.x = x/gridSize;
+      participant.y = y/gridSize; // todo: fix off by 2m
+      dbController.upsertItem("participantPosition", participant);
       setEditedPartPIds([...editedPartPIds, id]);
+      layerRef.current?.drawScene();
     }
   }
 
   function updatePropPosition(id: string, x: number, y: number) {
     var prop = propPositions.find(x => strEquals(x.id, id));
     if (prop) {
-      prop.x2 = (prop.x * gridSize + x)/gridSize;
-      prop.y2 = (prop.y * gridSize + y)/gridSize; // todo: fix off by 2m
-      dbController.upsertItem("propPosition", {...prop, x: prop.x2, y: prop.y2});
+      prop.x = x/gridSize;
+      prop.y = y/gridSize; // todo: fix off by 2m
+      dbController.upsertItem("propPosition", prop);
       setEditedPropPIds([...editedPropPIds, id]);
     }
   }
   function updateNotePosition(id: string, x: number, y: number) {
-    var prop = notePositions.find(x => strEquals(x.id, id));
-    if (prop) {
-      prop.x2 = (prop.x * gridSize + x)/gridSize;
-      prop.y2 = (prop.y * gridSize + y)/gridSize; // todo: fix off by 2m
-      dbController.upsertItem("notePosition", {...prop, x: prop.x2, y: prop.y2});
+    var note = notePositions.find(x => strEquals(x.id, id));
+    if (note) {
+      note.x = x/gridSize;
+      note.y = y/gridSize; // todo: fix off by 2m
+      dbController.upsertItem("notePosition", note);
       setEditedNotePIds([...editedNotePIds, id]);
     }
   }
@@ -398,6 +382,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(note, PositionType.note, forceSelect, multiSelect)} 
               alwaysBold={note.alwaysBold}
+              showBackground={note.showBackground}
               draggable
               ref={noteRef.current[index]}
             />

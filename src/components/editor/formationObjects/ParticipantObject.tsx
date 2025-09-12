@@ -23,20 +23,20 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
   return (
     <BaseFormationObject
       id={props.id}
+      startX={props.startX}
+      startY={props.startY}
       onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
       updatePosition={props.updatePosition}
       draggable={props.draggable}
       ref={props.ref}>
       <Circle 
-        x={props.startX}
-        y={props.startY}
         radius={gridSize/2}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={gridSize/30} />
       <Text
-        x={props.startX-gridSize/2}
-        y={props.startY-gridSize/2}
+        x={-gridSize/2}
+        y={-gridSize/2}
         width={gridSize}
         height={gridSize}
         text={props.name}

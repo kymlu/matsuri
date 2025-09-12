@@ -39,17 +39,18 @@ export default function PropObject(props: PropObjectProps) {
       updatePosition={props.updatePosition}
       rotation={props.rotation}
       draggable={props.draggable}
+      startX={props.startX}
+      startY={props.startY}
       onTransform={onRotate}
       ref={props.ref}>
-      <Rect x={props.startX}
-        y={props.startY}
+      <Rect
         width={props.length * gridSize}
         height={gridSize}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={gridSize/30} />
-      <Text x={props.startX}
-        y={props.startY + FONT_SIZE}
+      <Text
+        y={FONT_SIZE}
         width={props.length * gridSize}
         // height={gridSize}
         text={props.name}

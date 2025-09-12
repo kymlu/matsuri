@@ -3,8 +3,6 @@ import { ColorStyle } from "../themes/colours.ts"
 export interface BasePosition {
   id: string,
   formationSectionId: string,
-  x2: number,
-  y2: number,
   x: number,
   y: number,
   isSelected: boolean // todo: remove?
@@ -29,6 +27,7 @@ export interface NotePosition extends BasePosition {
   borderRadius: number,
   fontGridRatio: number,
   alwaysBold?: boolean,
+  showBackground?: boolean,
 }
 
 export enum PositionType {

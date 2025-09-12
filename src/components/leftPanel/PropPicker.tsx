@@ -33,9 +33,7 @@ export default function PropPicker () {
         propId: newProp.id,
         formationSectionId: section.id,
         x: position[0],
-        x2: position[0],
         y: position[1],
-        y2: position[1],
         isSelected: false,
         angle: 0
       } as PropPosition;

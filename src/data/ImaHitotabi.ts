@@ -270,7 +270,7 @@ export const notePresets: Array<Note> = [
     color: objectColorSettings.grey4,
     hasLabel: false,
     defaultContent: "1",
-    alwaysBold: true
+    alwaysBold: true,
   },
   {
     label: "メモ (小)",

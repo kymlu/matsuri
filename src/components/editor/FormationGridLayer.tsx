@@ -78,6 +78,7 @@ export default function FormationGridLayer(props: FormationGridProps) {
           borderRadius={10}
           fontSize={gridSize * 0.4}
           alwaysBold
+          showBackground
           />
       </Layer>
     </>

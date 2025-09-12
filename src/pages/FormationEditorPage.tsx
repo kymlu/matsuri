@@ -74,11 +74,6 @@ export default function FormationEditorPage () {
           notePositions: notePosition as Array<NotePosition>
         });
 
-        participantPositions.forEach(p => { // todo: remove, probably
-          p.x2 = p.x;
-          p.y2 = p.y;
-        });
-
         const currentSections = (formationSongSections as Array<FormationSongSection>)
           .sort((a,b) => a.order - b.order);
 

@@ -20,6 +20,7 @@ export interface NoteObjectProps {
   draggable?: boolean,
   fontSize?: number,
   alwaysBold?: boolean,
+  showBackground?: boolean,
   ref?: React.Ref<any>,
 }
 
@@ -32,22 +33,24 @@ export default function NoteObject(props: NoteObjectProps) {
       onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
       updatePosition={props.updatePosition}
       ref={props.ref}
+      startX={props.startX}
+      startY={props.startY}
       draggable={props.draggable}>
-      <Rect
-        x={props.startX}
-        y={props.startY}
-        width={props.length * gridSize}
-        height={props.height * gridSize}
-        fill={props.colour.bgColour}
-        stroke={props.colour.borderColour}
-        strokeWidth={gridSize/30}
-        cornerRadius={props.borderRadius} />
+      {
+        props.showBackground &&
+        <Rect
+          width={props.length * gridSize}
+          height={props.height * gridSize}
+          fill={props.colour.bgColour}
+          stroke={props.colour.borderColour}
+          strokeWidth={gridSize/30}
+          cornerRadius={props.borderRadius} />
+      }
       {
         props.label && 
         <>
           <Text
-            x={props.startX + gridSize / 3 }
-            y={props.startY}
+            x={gridSize / 3 }
             width={(props.length / 2) * gridSize}
             height={0.5 * gridSize}
             text={props.label}
@@ -56,14 +59,14 @@ export default function NoteObject(props: NoteObjectProps) {
             verticalAlign="middle"
             fill={props.colour.textColour}/>
           <Line
-            points={[props.startX, props.startY + 0.5 * gridSize, props.startX + props.length * gridSize, props.startY + 0.5 * gridSize]}
+            points={[0, 0.5 * gridSize, props.length * gridSize, 0.5 * gridSize]}
             stroke={basePalette.black}
             strokeWidth={gridSize/30}/>
         </>
       }
       <Text
-        x={props.startX + gridSize * 0.15}
-        y={props.startY + (props.label ? 0.55 * gridSize : 0)}
+        x={gridSize * 0.15}
+        y={props.label ? 0.55 * gridSize : 0}
         height={props.height * gridSize - (props.label ? 0.55 * gridSize : 0)}
         width={(props.length - 0.3) * gridSize}
         text={props.text}

@@ -21,9 +21,7 @@ export default function NotePicker () {
       id: crypto.randomUUID(),
       formationSectionId: selectedSection.id,
       x: position[0],
-      x2: position[0],
       y: position[1],
-      y2: position[1],
       label: selectedPreset.hasLabel ? "New Note" : "",
       text: selectedPreset.defaultContent,
       color: selectedPreset.color,
@@ -33,6 +31,7 @@ export default function NotePicker () {
       borderRadius: selectedPreset.borderRadius,
       fontGridRatio: selectedPreset.fontGridRatio,
       alwaysBold: selectedPreset.alwaysBold || false,
+      showBackground: true, // todo: allow transparent
     } as NotePosition;
 
     updatePositionState({notePositions: [...notePositions, newNote]});

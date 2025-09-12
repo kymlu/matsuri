@@ -42,6 +42,7 @@ export default function GridSettingsMenu() {
         label="遷移をアニメーション化する"
         defaultChecked={enableAnimation}
         onChange={(checked) => {updateState({enableAnimation: checked})}}/>
+      {/* {todo: add option to change color of section title -> formation level ??} */}
     </ExpandableSection>
   )
 }

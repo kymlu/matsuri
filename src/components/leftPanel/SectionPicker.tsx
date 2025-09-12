@@ -218,9 +218,7 @@ export default function SectionPicker() {
 				{
 					...position,
 					x: marginPositions.participants[index][0],
-					x2: marginPositions.participants[index][0],
 					y: marginPositions.participants[index][1],
-					y2: marginPositions.participants[index][1],
 				} as ParticipantPosition));
 				
 		var resetProps = propPositions
@@ -232,9 +230,7 @@ export default function SectionPicker() {
 				{
 					...position,
 					x: marginPositions.props[index][0],
-					x2: marginPositions.props[index][0],
 					y: marginPositions.props[index][1],
-					y2: marginPositions.props[index][1],
 				} as PropPosition));
 
 		try {
@@ -253,16 +249,6 @@ export default function SectionPicker() {
 					...propPositions.filter(x => !resetPropIds.includes(x.id)),
 					...resetProps
 				],
-			});
-			participantPositions.forEach((p) => {
-				// todo: remove, probably
-				p.x2 = p.x;
-				p.y2 = p.y;
-			});
-			propPositions.forEach((p) => {
-				// todo: remove, probably
-				p.x2 = p.x;
-				p.y2 = p.y;
 			});
 		} catch (e) {
 			console.error("Error parsing user from localStorage:", e);
