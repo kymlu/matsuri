@@ -1,6 +1,5 @@
 import React, { ReactNode, useState } from 'react'
 import { defaultState, PositionState, PositionContext, PositionStateData } from './PositionContext.tsx'
-import { CONTEXT_NAMES } from '../data/consts.ts'
 
 interface Props {
   children: React.ReactNode
@@ -20,7 +19,6 @@ export const PositionContextProvider: React.FunctionComponent<Props> = (props: P
    */
   const updatePositionState = (newState: Partial<PositionState>) => {
     setState(prev => ({ ...prev, ...newState }))
-    localStorage.setItem(CONTEXT_NAMES.position, JSON.stringify({ ...state, ...newState }))
   }
 
   /**

@@ -1,6 +1,5 @@
 import React, { ReactNode, useState } from 'react'
 import { FormationContext, FormationContextData, FormationContextState, defaultFormationContext } from './FormationContext.tsx'
-import { CONTEXT_NAMES } from '../data/consts.ts'
 
 interface Props {
   children: React.ReactNode
@@ -20,7 +19,6 @@ export const FormationContextProvider: React.FunctionComponent<Props> = (props: 
    */
   const updateFormationContext = (newState: Partial<FormationContextState>) => {
     setState(prev => ({ ...prev, ...newState }))
-    localStorage.setItem(CONTEXT_NAMES.formation, JSON.stringify({ ...state, ...newState }))
   }
 
   /**

@@ -1,6 +1,5 @@
 import React, { ReactNode, useState } from 'react'
 import { SectionContext, SectionContextData, SectionContextState, defaultSectionContext } from './SectionContext.tsx'
-import { CONTEXT_NAMES } from '../data/consts.ts'
 
 interface Props {
   children: React.ReactNode
@@ -20,7 +19,6 @@ export const SectionContextProvider: React.FunctionComponent<Props> = (props: Pr
    */
   const updateSectionContext = (newState: Partial<SectionContextState>) => {
     setState(prev => ({ ...prev, ...newState }))
-    localStorage.setItem(CONTEXT_NAMES.section, JSON.stringify({ ...state, ...newState }))
   }
 
   /**
