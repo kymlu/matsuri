@@ -20,7 +20,6 @@ export interface AppState {
   currentSections: Array<FormationSongSection>,
   compareMode: CompareMode,
   isLoading: boolean,
-  enableAnimation: boolean,
   updateState: (newState: Partial<AppState>) => void
 }
 
@@ -39,7 +38,6 @@ export const defaultState: AppState = {
   currentSections: [],
   compareMode: "none",
   isLoading: false,
-  enableAnimation: true,
   updateState: (newState: Partial<AppState>) => {},
 }
 

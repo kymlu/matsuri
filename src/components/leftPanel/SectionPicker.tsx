@@ -11,9 +11,10 @@ import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
 import { propsList, songList } from "../../data/ImaHitotabi.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
+import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 
 export default function SectionPicker() {
-	const { currentSections, enableAnimation, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
+	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
 		useContext(UserContext);
 	const { participantPositions, propPositions, notePositions, updatePositionState } =
 		useContext(PositionContext);
@@ -21,6 +22,8 @@ export default function SectionPicker() {
 		useContext(FormationContext);
 	const { isAnimating } =
 		useContext(AnimationContext);
+	const {enableAnimation} =
+		useContext(SettingsContext);
 
 	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
 

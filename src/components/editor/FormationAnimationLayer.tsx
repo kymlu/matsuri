@@ -12,12 +12,14 @@ import { useRef } from "react";
 import Konva from "konva";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import { ParticipantPosition } from "../../models/Position.ts";
+import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 
 export function FormationAnimationLayer() {
   const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {participantList} = useContext(FormationContext);
-  const {enableAnimation, updateState, previousSectionId, gridSize} = useContext(UserContext);
+  const {updateState, previousSectionId, gridSize} = useContext(UserContext);
+  const {enableAnimation} = useContext(SettingsContext);
   const {participantPositions} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const animationLayerRef = useRef<Konva.Layer>(null);

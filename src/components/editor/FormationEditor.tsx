@@ -16,6 +16,7 @@ import { ExportContext } from "../../contexts/ExportContext.tsx";
 import { FormationGhostLayer } from "./FormationGhostLayer.tsx";
 import { FormationAnimationLayer } from "./FormationAnimationLayer.tsx";
 import { FormationEditLayer } from "./FormationEditLayer.tsx";
+import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 
 export interface FormationEditorProps {
   height: number,
@@ -31,7 +32,8 @@ export default function FormationEditor(props: FormationEditorProps) {
   const {updateExportContext} = useContext(ExportContext);
   const {participantPositions} = useContext(PositionContext);
   useContext(FormationContext);
-  const {selectedFormation, selectedSection, isLoading, enableAnimation, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
+  const {selectedFormation, selectedSection, isLoading, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
+  const {enableAnimation} = useContext(SettingsContext);
   const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
   const canvasWidth = DEFAULT_WIDTH * gridSize;
 
