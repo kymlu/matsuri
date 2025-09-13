@@ -245,8 +245,8 @@ export const notePresets: Array<Note> = [
   },
   {
     label: "メモ (小)",
-    length: 5,
-    height: 1.5,
+    length: 3,
+    height: 1,
     borderRadius: 10,
     fontGridRatio: 0.25,
     color: objectColorSettings.amberLight,
@@ -256,7 +256,7 @@ export const notePresets: Array<Note> = [
   },
   {
     label: "メモ (中)",
-    length: 5,
+    length: 4,
     height: 2,
     borderRadius: 10,
     fontGridRatio: 0.25,

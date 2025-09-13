@@ -9,16 +9,37 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { Prop } from "../../models/Prop.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import CustomSwitch from "../CustomSwitch.tsx";
 
 export type ColorPickerMenuProps = {
 }
 
 export default function ColorPickerMenu() {
   const [selectedColor, setSelectedColor] = useState<any>();
+  const [showTransparentOption, setShowTransparentOption] = useState<boolean>(false);
+  const [isBgShown, setIsBgShown] = useState<boolean>(false);
   const userContext = useContext(UserContext);
   const {selectedItems, updateState} = useContext(UserContext);
   const {propList, updateFormationContext} = useContext(FormationContext);
   const {notePositions, updatePositionState} = useContext(PositionContext);
+
+  const showBgSwitchRef = React.createRef<any>();
+
+  function setBg(newShowBg: boolean) {
+    setIsBgShown(newShowBg);
+    var updatedNotes = splitPositionsByType(selectedItems).notes
+      .map(x => ({...x, showBackground: newShowBg}));
+    
+    var updatedNoteIds = updatedNotes.map(x => x.id);
+    
+    updatePositionState({
+      notePositions: [
+        ...notePositions.filter(x => !updatedNoteIds.includes(x.id)),
+        ...updatedNotes
+      ]
+    });
+    dbController.upsertList("notePosition", updatedNotes);
+  }
 
   function selectColor(color: ColorStyle) {
     if (selectedItems.length === 0) return;
@@ -31,7 +52,7 @@ export default function ColorPickerMenu() {
       .filter(x => propIds.includes(x.id))
       .map(x => ({...x, color: color} as Prop));
 
-    var updatedNotes = res.notes.map(x => ({...x, color: color} as NotePosition));
+    var updatedNotes = res.notes.map(x => ({...x, color: color, showBackground: true} as NotePosition));
     
     var noteIds = res.notes.map(x => x.id);
 
@@ -77,13 +98,36 @@ export default function ColorPickerMenu() {
     } else {
       setSelectedColor(null);
     }
+
+    if (res.props.length === 0 && res.notes.length > 0) {
+      setShowTransparentOption(true);
+      var showBackground = [...new Set(res.notes.map(x => x.showBackground))].includes(true);
+      setIsBgShown(showBackground);
+      showBgSwitchRef.current?.changeChecked(showBackground);
+    } else {
+      setShowTransparentOption(false);
+      setIsBgShown(false);
+    }
   }, [userContext.selectedItems]);
 
   return (
     <ExpandableSection title="色">
-      <ColorPicker
-        selectColor={selectColor}
-        selectedColor={selectedColor}/>
+      <div className="flex flex-col gap-2">
+      {
+        showTransparentOption && 
+        <CustomSwitch
+          ref={showBgSwitchRef}
+          label="背景表示"
+          defaultChecked={isBgShown}
+          onChange={(newValue: boolean) => {setBg(newValue)}}/>
+      }
+      {
+        isBgShown && 
+        <ColorPicker
+          selectColor={selectColor}
+          selectedColor={selectedColor}/>
+      }
+      </div>
     </ExpandableSection>
   )
 }

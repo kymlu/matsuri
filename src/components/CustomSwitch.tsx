@@ -1,14 +1,21 @@
 import { Switch } from "@base-ui-components/react";
-import React from "react";
+import React, { useImperativeHandle } from "react";
 
 export interface CustomSwitchProps {
   label: string
   defaultChecked?: boolean,
-  onChange?: (checked: boolean) => void
+  onChange?: (checked: boolean) => void,
+  ref?: React.Ref<any>,
 }
 
 export default function CustomSwitch(props: CustomSwitchProps){
   const [checked, setChecked] = React.useState<boolean>(props.defaultChecked ?? false);
+
+  useImperativeHandle(props.ref, () => ({
+    changeChecked: (newValue: boolean) => {
+      setChecked(newValue);
+    }
+  }));
 
   function handleChange(checked: boolean){
     setChecked(checked)

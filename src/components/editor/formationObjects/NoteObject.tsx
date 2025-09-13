@@ -57,7 +57,7 @@ export default function NoteObject(props: NoteObjectProps) {
             fontSize={props.fontSize ?? FONT_SIZE}
             fontStyle="bold"
             verticalAlign="middle"
-            fill={props.colour.textColour}/>
+            fill={props.showBackground ? props.colour.textColour : basePalette.black}/>
           <Line
             points={[0, 0.5 * gridSize, props.length * gridSize, 0.5 * gridSize]}
             stroke={basePalette.black}
@@ -65,14 +65,14 @@ export default function NoteObject(props: NoteObjectProps) {
         </>
       }
       <Text
-        x={gridSize * 0.15}
         y={props.label ? 0.55 * gridSize : 0}
         height={props.height * gridSize - (props.label ? 0.55 * gridSize : 0)}
-        width={(props.length - 0.3) * gridSize}
+        width={props.length * gridSize}
         text={props.text}
+        padding={2}
         fontSize={props.fontSize ?? FONT_SIZE}
         fontStyle={props.alwaysBold ? "bold" : "normal"}
-        fill={props.colour.textColour}
+        fill={props.showBackground ? props.colour.textColour : basePalette.black}
         verticalAlign="middle"
         align="center" />
       

@@ -9,7 +9,7 @@ export interface ColorPickerProps {
 }
 
 export default function ColorPicker(props: ColorPickerProps) {
-  return (<div className="grid grid-cols-6 gap-1">
+  return (<div className="grid grid-cols-6 gap-1 justify-items-center">
     {
       Object.values(objectColorSettings).map(color => 
         <ColorSwatch 
