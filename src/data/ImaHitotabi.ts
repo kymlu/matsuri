@@ -10,9 +10,9 @@ import { objectColorSettings } from "../themes/colours.ts";
 export const festivalList: Array<Festival> = [
   {
     id: "1",
-    name: "犬山",
-    startDate: new Date(2025, 5, 30),
-    endDate: new Date(2025, 5, 31),
+    name: "どまつり",
+    startDate: new Date(2025, 8, 30),
+    endDate: new Date(2025, 8, 31),
     note: "",
     formations: [{
       id: "1",
@@ -29,55 +29,9 @@ export const festivalList: Array<Festival> = [
       songId: "1",
       length: 18,
       width: 20,
-    }]
-  },
-  {
-    id: "2",
-    name: "光が丘",
-    startDate: new Date(2025, 7, 20),
-    endDate: new Date(2025, 7, 21),
-    note: "",
-    formations: [{
+    },
+    {
       id: "3",
-      name: "パレード",
-      type: FormationType.parade,
-      songId: "1",
-      length: 80,
-      width: 10,
-    },
-    {
-      id: "4",
-      name: "ステージ",
-      type: FormationType.stage,
-      songId: "1",
-      length: 18,
-      width: 20,
-    }]
-  },
-  {
-    id: "3",
-    name: "どまつり",
-    startDate: new Date(2025, 8, 30),
-    endDate: new Date(2025, 8, 31),
-    note: "",
-    formations: [{
-      id: "5",
-      name: "パレード",
-      type: FormationType.parade,
-      songId: "1",
-      length: 80,
-      width: 10,
-    },
-    {
-      id: "6",
-      name: "ステージ",
-      type: FormationType.stage,
-      songId: "1",
-      length: 18,
-      width: 20,
-    },
-    {
-      id: "7",
       name: "JRステージ",
       type: FormationType.stage,
       songId: "1",
@@ -86,12 +40,29 @@ export const festivalList: Array<Festival> = [
     }]
   },
   {
-    id: "4",
+    id: "2",
     name: "こいやまつり",
     startDate: new Date(2025, 9, 27),
     endDate: new Date(2025, 9, 28),
     note: "",
-    formations: []
+    formations: [
+      {
+        id: "4",
+        name: "パレード",
+        type: FormationType.parade,
+        songId: "1",
+        length: 80,
+        width: 10,
+      },
+      {
+        id: "5",
+        name: "ステージ",
+        type: FormationType.stage,
+        songId: "1",
+        length: 18,
+        width: 20,
+      }
+    ]
   }
 ]
 

@@ -50,9 +50,8 @@ export default function PropObject(props: PropObjectProps) {
         stroke={props.colour.borderColour}
         strokeWidth={gridSize/30} />
       <Text
-        y={FONT_SIZE}
+        y={gridSize/3}
         width={props.length * gridSize}
-        // height={gridSize}
         text={props.name}
         fontSize={gridSize/3}
         fontStyle="bold"
