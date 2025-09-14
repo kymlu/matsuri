@@ -44,7 +44,6 @@ export function exportAllData() {
       propPositions: propPositions as PropPosition[],
       notes: notePositions as NotePosition[],
     };
-    const blob = new Blob([JSON.stringify(toExport)], { type: "json" });
     downloadJson(JSON.stringify(toExport));
   });
 }
@@ -76,7 +75,6 @@ export async function exportFormationData(formationId: string) {
         propPositions: propPositions as PropPosition[],
         notes: notePositions as NotePosition[],
       };
-      const blob = new Blob([JSON.stringify(toExport)], { type: "json" });
       downloadJson(JSON.stringify(toExport));
     })
 
@@ -84,7 +82,7 @@ export async function exportFormationData(formationId: string) {
 }
 
 function downloadJson(data: string) {
-  const blob = new Blob([data], { type: "json" });
+  const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");

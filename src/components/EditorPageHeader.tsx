@@ -4,7 +4,7 @@ import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
 import { Dialog } from "@base-ui-components/react";
-import { exportAllData, exportFormationData } from "./helpers/DataHelper.ts";
+import { exportAllData, exportFormationData } from "./helpers/ExportHelper.ts";
 
 export function EditorPageHeader() {
   const {selectedFormation, selectedFestival, updateState} = useContext(UserContext);
