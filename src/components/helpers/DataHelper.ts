@@ -32,30 +32,68 @@ export function exportAllData() {
     dbController.getAll("propPosition"),
     dbController.getAll("notePosition"),
     dbController.getAll("song"),
-  ]).then(([festivals, categories, formationSection, participant, participantPosition, prop, propPosition, notePosition, song]) => {
-    // todo: move this to a helper
+  ]).then(([festivals, categories, formationSections, participants, participantPositions, props, propPositions, notePositions, songs]) => {
     var toExport: ImportExportModel = {
-      song: song as Song[],
+      song: songs as Song[],
       festival: festivals as Festival[],
-      formationSections: formationSection as FormationSection[],
-      participants: participant as Participant[],
+      formationSections: formationSections as FormationSection[],
+      participants: participants as Participant[],
       categories: categories as ParticipantCategory[],
-      participantPositions: participantPosition as ParticipantPosition[],
-      props: prop as Prop[],
-      propPositions: propPosition as PropPosition[],
-      notes: notePosition as NotePosition[],
+      participantPositions: participantPositions as ParticipantPosition[],
+      props: props as Prop[],
+      propPositions: propPositions as PropPosition[],
+      notes: notePositions as NotePosition[],
     };
     const blob = new Blob([JSON.stringify(toExport)], { type: "json" });
-    const url = URL.createObjectURL(blob);
+    downloadJson(JSON.stringify(toExport));
+  });
+}
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `matsuri_export_${formatDate(new Date)}.json`;
+export async function exportFormationData(formationId: string) {
+  Promise.all([
+    dbController.getAll("festival"),
+    dbController.getByFormationId("formationSection", formationId),
+    dbController.getAll("category"),
+    dbController.getAll("song"),
+  ]).then(async ([festivals, formationSections, categories, songs]) => {
+    Promise.all([
+      dbController.getByFormationId("participant", formationId),
+      dbController.getByFormationId("prop", formationId),
+    ]).then(async ([participants, props]) => {
+      var sectionIds = (formationSections as FormationSection[]).map(x => x.id);
+      var participantPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("participantPosition", id)))).flatMap(x => x);
+      var propPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("propPosition", id)))).flatMap(x => x);
+      var notePositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("notePosition", id)))).flatMap(x => x);
 
-    document.body.appendChild(link);
-    link.click();
+      var toExport: ImportExportModel = {
+        song: songs as Song[],
+        festival: (festivals as Festival[]).filter(x => x.formations.map(x => x.id).includes(formationId)),
+        formationSections: formationSections as FormationSection[],
+        participants: participants as Participant[],
+        categories: categories as ParticipantCategory[],
+        participantPositions: participantPositions as ParticipantPosition[],
+        props: props as Prop[],
+        propPositions: propPositions as PropPosition[],
+        notes: notePositions as NotePosition[],
+      };
+      const blob = new Blob([JSON.stringify(toExport)], { type: "json" });
+      downloadJson(JSON.stringify(toExport));
+    })
 
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  })
+  });
+}
+
+function downloadJson(data: string) {
+  const blob = new Blob([data], { type: "json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `matsuri_export_${formatDate(new Date)}.json`;
+
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
