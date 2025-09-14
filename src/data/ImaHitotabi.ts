@@ -103,38 +103,44 @@ export const songList: Array<Song> = [
     {
       id: "6",
       songId: "1",
-      name: "迎光祭",
+      name: "太陽踊り",
       order: 6
     },
     {
       id: "7",
       songId: "1",
-      name: "ご来光",
+      name: "迎光祭",
       order: 7
     },
     {
       id: "8",
       songId: "1",
-      name: "ラスト1",
+      name: "ご来光",
       order: 8
     },
     {
       id: "9",
       songId: "1",
-      name: "ラスト2",
+      name: "ラスト1",
       order: 9
     },
     {
       id: "10",
       songId: "1",
-      name: "ラスト3",
+      name: "ラスト2",
       order: 10
     },
     {
       id: "11",
       songId: "1",
-      name: "ラスト4",
+      name: "ラスト3",
       order: 11
+    },
+    {
+      id: "12",
+      songId: "1",
+      name: "ラスト4",
+      order: 12
     }]
   }
 ]

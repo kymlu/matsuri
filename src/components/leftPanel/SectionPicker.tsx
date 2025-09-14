@@ -182,7 +182,7 @@ export default function SectionPicker() {
 		var newSection = {
 			id: crypto.randomUUID(),
 			displayName: `${sourceSection.displayName} (1)`,
-			formationId: lastSection.formationId,
+			formationId: sourceSection.formationId,
 			songSectionId: sourceSection.songSectionId,
 			order: sourceSection.order + 1,
 		} as FormationSongSection;
@@ -194,21 +194,22 @@ export default function SectionPicker() {
 				return { ...x, order: x.order + 1 } as FormationSongSection;
 			});
 
-		dbController
-			.upsertList("formationSection", [...updatedSections, newSection])
-			.then(() => {
-        dbController.getByFormationId("formationSection", selectedFormation!.id).then((formationSections) => {
-				updateState({
-					currentSections: [
-						...(formationSections as Array<FormationSongSection>)
-					],
-				});
-				copyPositions(lastSection, newSection as FormationSongSection)?.then(
-					() => {
-						selectSection(newSection);
-					}
-				);
-			})});
+		var updatedSectionIds = updatedSections.map(x => x.id);
+
+		dbController.upsertList("formationSection", [...updatedSections, newSection])
+		updateState({
+			currentSections: [
+				...currentSections.filter(x => !updatedSectionIds.includes(x.id)),
+				...updatedSections,
+				newSection
+			],
+		});
+		
+		copyPositions(sourceSection, newSection as FormationSongSection)?.then(
+			() => {
+				selectSection(newSection);
+			}
+		);
 	}
 
 	function resetPosition(sourceSection: FormationSongSection) {

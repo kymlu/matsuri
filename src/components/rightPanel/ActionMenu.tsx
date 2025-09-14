@@ -174,7 +174,7 @@ export default function ActionMenu() {
     <ExpandableSection title="アクション" defaultIsExpanded>
       <div className="flex flex-col gap-1">
         { 
-          swappableParticipants.length == 2 && 
+          swappableParticipants.length === 2 && 
           <>
             <div 
               className="px-3 py-1.5 border rounded-xl flex flex-col gap-1 w-full">
