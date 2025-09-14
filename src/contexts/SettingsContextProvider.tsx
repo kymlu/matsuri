@@ -29,8 +29,9 @@ export const SettingsContextProvider: React.FunctionComponent<Props> = (props: P
    * Declare the update state method that will handle the state values
    */
   const updateSettingsContext = (newState: Partial<SettingsContextState>) => {
-    setState(prev => ({ ...prev, ...newState }));
-    localStorage.setItem('siteSettings', JSON.stringify(state));
+    var newSettings = {...state, ...newState};
+    setState(newSettings);
+    localStorage.setItem('siteSettings', JSON.stringify(newSettings));
   }
 
   /**
