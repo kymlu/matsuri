@@ -21,7 +21,7 @@ export default function TextInput(props: TextInputProps) {
   }
 
   var inputClasses = classNames(
-    "w-full col-start-1 row-start-1 px-2 text-black border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none",
+    "w-full col-start-1 row-start-1 pl-2 pr-6 text-black border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none",
     {
       "h-6": props.compact,
       "text-center": props.centered,
@@ -37,6 +37,7 @@ export default function TextInput(props: TextInputProps) {
   return (
     <div className={wrapperClasses}>
       <input
+        maxLength={20}
         placeholder={props.placeholder ?? ""}
         value={props.text ?? ""}
         onInput={(event) => handleChange(event)}
