@@ -9,6 +9,19 @@ import { objectColorSettings } from "../themes/colours.ts";
 
 export const festivalList: Array<Festival> = [
   {
+    id: "0",
+    name: "サンプル",
+    note: "",
+    formations: [{
+      id: "0",
+      name: "ステージ",
+      type: FormationType.stage,
+      songId: "1",
+      length: 10,
+      width: 10,
+    }]
+  },
+  {
     id: "1",
     name: "どまつり",
     startDate: new Date(2025, 8, 30),

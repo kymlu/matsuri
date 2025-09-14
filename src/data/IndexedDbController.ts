@@ -2,6 +2,7 @@ import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../compo
 import { FormationSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
 import { categoryList, festivalList, songList } from "./ImaHitotabi.ts";
+import { sampleFormation } from "./SampleFormation.ts";
 
 type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "formationSection";
 
@@ -67,7 +68,7 @@ export class IndexedDBController {
   }
 
   async addData() {
-    console.log("Adding data");
+    console.log("Adding data");    
     const tasks = [
       {
         name: "festival",
@@ -100,16 +101,22 @@ export class IndexedDBController {
             const sections = festivalList
               .flatMap(festival => 
                 festival.formations.map(formation => 
-                  [songList.find(song => strEquals(song.id, formation.songId))
-                    ?.sections
-                    ?.sort((a, b) => a.order - b.order)[0]]
-                    ?.map(section => ({
-                      id: crypto.randomUUID().toString(),
-                      displayName: section?.name,
-                      songSectionId: section!.id,
-                      formationId: formation.id,
-                      order: 1,
-                    } as FormationSection))
+                  {
+                    if (strEquals(formation.id, "0")) {
+                      return sampleFormation.formationSections
+                    } else {
+                      return [songList.find(song => strEquals(song.id, formation.songId))
+                        ?.sections
+                        ?.sort((a, b) => a.order - b.order)[0]]
+                        ?.map(section => ({
+                          id: crypto.randomUUID().toString(),
+                          displayName: section?.name,
+                          songSectionId: section!.id,
+                          formationId: formation.id,
+                          order: 1,
+                        } as FormationSection))
+                    }
+                  }
                 ).flatMap(x => x)
               ).flatMap(x => x); // flatten all the way
 
@@ -118,7 +125,47 @@ export class IndexedDBController {
             return this.upsertList("formationSection", sections);
           }
         })
-      }
+      },
+      {
+        name: "participants",
+        promise: () => this.getAll("participant").then(list => {
+          if ((list as Array<any>).length === 0) {
+            this.upsertList("participant", sampleFormation.participants);
+          }
+        })
+      },
+      {
+        name: "props",
+        promise: () => this.getAll("prop").then(list => {
+          if ((list as Array<any>).length === 0) {
+            this.upsertList("prop", sampleFormation.props);
+          }
+        })
+      },
+      {
+        name: "participantPosition",
+        promise: () => this.getAll("participantPosition").then(list => {
+          if ((list as Array<any>).length === 0) {
+            this.upsertList("participantPosition", sampleFormation.participantPositions);
+          }
+        })
+      },
+      {
+        name: "propPosition",
+        promise: () => this.getAll("propPosition").then(list => {
+          if ((list as Array<any>).length === 0) {
+            this.upsertList("propPosition", sampleFormation.propPositions);
+          }
+        })
+      },
+      {
+        name: "notePositions",
+        promise: () => this.getAll("notePosition").then(list => {
+          if ((list as Array<any>).length === 0) {
+            this.upsertList("notePosition", sampleFormation.notes);
+          }
+        })
+      },
     ];    
 
     // Handle each as it resolves

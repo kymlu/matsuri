@@ -89,7 +89,7 @@ function downloadJson(data: string) {
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = `matsuri_export_${formatDate(new Date)}.json`;
+  link.download = `matsuri_${formatDate(new Date)}.json`;
 
   document.body.appendChild(link);
   link.click();
