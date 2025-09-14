@@ -17,7 +17,7 @@ export default function ActionMenu() {
   const {participantList, propList, updateFormationContext} = useContext(FormationContext);
   const userContext = useContext(UserContext);
   const {categories} = useContext(CategoryContext);
-  const {selectedItems, currentSections, selectedSection} = useContext(UserContext);
+  const {selectedItems, currentSections, selectedSection, updateState} = useContext(UserContext);
   const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
   const [selectedPositionType, setSelectedPositionType] = useState<PositionType | null>();
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
@@ -168,6 +168,8 @@ export default function ActionMenu() {
       updatePositionState({notePositions: notePositions.filter(x => !selectedItemIds.includes(x.id))});
       dbController.removeList("notePosition", selectedItemIds);
     }
+
+    updateState({selectedItems: []});
   }
   
   return (
