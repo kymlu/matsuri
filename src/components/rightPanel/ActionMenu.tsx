@@ -26,7 +26,7 @@ export default function ActionMenu() {
 
   useEffect(() => {
     var currentPositionTypes = new Set(selectedItems.map(x => x.type));
-    if (currentPositionTypes.size == 1) {
+    if (currentPositionTypes.size === 1) {
       setSelectedPositionType(currentPositionTypes.values().next().value);
       
       var positionType = currentPositionTypes.values().next().value;
@@ -48,7 +48,7 @@ export default function ActionMenu() {
     setSwapMenuExpanded(false);
 
     var currentCategories = new Set(splitPositionsByType(userContext.selectedItems).participants.map(x => x.categoryId));
-    if (currentCategories.size == 1) {
+    if (currentCategories.size === 1) {
       var catId = currentCategories.values().next().value;
       setSelectedCategory(categories.find(x => strEquals(x.id, catId)) ?? null);
     } else {

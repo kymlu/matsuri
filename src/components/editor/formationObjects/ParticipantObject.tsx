@@ -30,7 +30,7 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       draggable={props.draggable}
       ref={props.ref}>
       <Circle 
-        radius={gridSize/2}
+        radius={(gridSize/2) * 0.9}
         fill={props.colour.bgColour}
         stroke={props.colour.borderColour}
         strokeWidth={gridSize/30} />
