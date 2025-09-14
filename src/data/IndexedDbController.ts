@@ -1,5 +1,5 @@
 import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../components/helpers/GlobalHelper.ts";
-import { FormationSongSection } from "../models/FormationSection.ts";
+import { FormationSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
 import { categoryList, festivalList, songList } from "./ImaHitotabi.ts";
 
@@ -109,7 +109,7 @@ export class IndexedDBController {
                       songSectionId: section!.id,
                       formationId: formation.id,
                       order: 1,
-                    } as FormationSongSection))
+                    } as FormationSection))
                 ).flatMap(x => x)
               ).flatMap(x => x); // flatten all the way
 

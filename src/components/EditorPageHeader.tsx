@@ -4,6 +4,7 @@ import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
 import { Dialog } from "@base-ui-components/react";
+import { exportAllData } from "./helpers/DataHelper.ts";
 
 export function EditorPageHeader() {
   const {selectedFormation, selectedFestival, updateState} = useContext(UserContext);
@@ -40,6 +41,10 @@ export function EditorPageHeader() {
         <img alt="Extra settings" src="icons/settings.svg" className='size-8 max-w-8 max-h-8'/>
         }>
         <>
+          <MenuItem label="JSONでデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
+          <MenuSeparator />
+          <MenuItem label="ログダウンロード（無効）" onClick={() => {  }} />
+          <MenuSeparator />
           <MenuItem label="Clear Cache" onClick={() => {
             Object.values(CONTEXT_NAMES).forEach((context) => {
               localStorage.removeItem(context);

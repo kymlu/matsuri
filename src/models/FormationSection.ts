@@ -1,7 +1,4 @@
-import { Formation } from "./Formation"
-import { SongSection } from "./SongSection"
-
-export interface FormationSongSection {
+export interface FormationSection {
   id: string,
   displayName: string,
   songSectionId: string,

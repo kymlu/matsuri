@@ -7,7 +7,7 @@ import FormationEditor from '../components/editor/FormationEditor.tsx';
 import { dbController } from '../data/DBProvider.tsx';
 import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
-import { FormationSongSection } from '../models/FormationSection.ts';
+import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined } from '../components/helpers/GlobalHelper.ts';
 import { DEFAULT_WIDTH } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
@@ -23,7 +23,7 @@ export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
   const {updateFormationContext} = useContext(FormationContext);
   const {selectedFormation, updateState} = useContext(UserContext);
-  const {participantPositions, updatePositionState} = useContext(PositionContext);
+  const {updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext);
   const {isExporting, exportProgress} = useContext(ExportContext);
 
@@ -60,7 +60,7 @@ export default function FormationEditorPage () {
         dbController.getAll("participantPosition"),
         dbController.getAll("propPosition"),
         dbController.getAll("notePosition"),
-      ]).then(([formationSongSections, participants, props,
+      ]).then(([formationSections, participants, props,
         participantPosition, propPosition, notePosition]) => {
       try {
         updateFormationContext({
@@ -74,7 +74,7 @@ export default function FormationEditorPage () {
           notePositions: notePosition as Array<NotePosition>
         });
 
-        const currentSections = (formationSongSections as Array<FormationSongSection>)
+        const currentSections = (formationSections as Array<FormationSection>)
           .sort((a,b) => a.order - b.order);
 
         const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })

@@ -1,15 +1,15 @@
 import React from 'react';
-import { FormationSongSection } from '../models/FormationSection';
+import { FormationSection } from '../models/FormationSection';
 
 export interface SectionContextState {
-  sections: Array<FormationSongSection>,
+  sections: Array<FormationSection>,
   updateSectionContext: (newState: Partial<SectionContextState>) => void
 }
 
 export type SectionContextData = Omit<SectionContextState, 'updateSectionContext'>;
 
 export const defaultSectionContext: SectionContextState = {
-  sections: Array<FormationSongSection>(),
+  sections: Array<FormationSection>(),
   updateSectionContext: (newState: Partial<SectionContextState>) => {},
 }
 

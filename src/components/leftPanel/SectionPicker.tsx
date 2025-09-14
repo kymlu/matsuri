@@ -1,7 +1,7 @@
 import React, { useContext, useRef } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { FormationSongSection } from "../../models/FormationSection.ts";
+import { FormationSection } from "../../models/FormationSection.ts";
 import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../SectionOptionButton.tsx";
@@ -32,7 +32,7 @@ export default function SectionPicker() {
       sectionButtonRef.current[index] = React.createRef<HTMLDivElement>()
     );
 		
-	function selectSection(section: FormationSongSection) {
+	function selectSection(section: FormationSection) {
 		if (isLoading || isAnimating) return;
 
 		updateState({
@@ -48,8 +48,8 @@ export default function SectionPicker() {
 	}
 
 	function copyPositions(
-		sourceSection: FormationSongSection,
-		targetSections: FormationSongSection | FormationSongSection[]
+		sourceSection: FormationSection,
+		targetSections: FormationSection | FormationSection[]
 	) {
 		if (isNullOrUndefined(selectedSection) || isNullOrUndefined(targetSections))
 			return;
@@ -135,12 +135,12 @@ export default function SectionPicker() {
 		});
 	}
 
-	function copyToCurrent(sourceSection: FormationSongSection) {
+	function copyToCurrent(sourceSection: FormationSection) {
 		if (isNullOrUndefined(selectedSection)) return;
 		copyPositions(sourceSection, selectedSection!);
 	}
 
-	function copyToFuture(sourceSection: FormationSongSection) {
+	function copyToFuture(sourceSection: FormationSection) {
 		if (isNullOrUndefined(selectedSection)) return;
 
 		const futureSections = currentSections.filter(
@@ -151,7 +151,7 @@ export default function SectionPicker() {
 	}
 
 	function copyToNewSection(
-		lastSection: FormationSongSection,
+		lastSection: FormationSection,
 		nextSectionId: string
 	) {
 		var countOfThisSection = currentSections.filter((x) =>
@@ -166,11 +166,11 @@ export default function SectionPicker() {
 			formationId: lastSection.formationId,
 			songSectionId: nextSectionId,
 			order: lastSection.order + 1,
-		} as FormationSongSection;
+		} as FormationSection;
 
 		dbController.upsertItem("formationSection", newSection).then(() => {
 			updateState({ currentSections: [...currentSections, newSection] });
-			copyPositions(lastSection, newSection as FormationSongSection)?.then(
+			copyPositions(lastSection, newSection as FormationSection)?.then(
 				() => {
 					selectSection(newSection);
 				}
@@ -178,20 +178,20 @@ export default function SectionPicker() {
 		});
 	}
 
-  function duplicate(sourceSection: FormationSongSection) {
+  function duplicate(sourceSection: FormationSection) {
 		var newSection = {
 			id: crypto.randomUUID(),
 			displayName: `${sourceSection.displayName} (1)`,
 			formationId: sourceSection.formationId,
 			songSectionId: sourceSection.songSectionId,
 			order: sourceSection.order + 1,
-		} as FormationSongSection;
+		} as FormationSection;
 
 		var updatedSections = currentSections
       .filter((x) => x.order > sourceSection.order)
 			.slice()
 			.map((x) => {
-				return { ...x, order: x.order + 1 } as FormationSongSection;
+				return { ...x, order: x.order + 1 } as FormationSection;
 			});
 
 		var updatedSectionIds = updatedSections.map(x => x.id);
@@ -205,14 +205,14 @@ export default function SectionPicker() {
 			],
 		});
 		
-		copyPositions(sourceSection, newSection as FormationSongSection)?.then(
+		copyPositions(sourceSection, newSection as FormationSection)?.then(
 			() => {
 				selectSection(newSection);
 			}
 		);
 	}
 
-	function resetPosition(sourceSection: FormationSongSection) {
+	function resetPosition(sourceSection: FormationSection) {
 		var resetParticipants = participantPositions
 			.filter((position) =>
 				strEquals(position.formationSectionId, sourceSection.id)
@@ -259,7 +259,7 @@ export default function SectionPicker() {
 		}
 	}
 
-	function onDelete(section: FormationSongSection) {
+	function onDelete(section: FormationSection) {
 		const participantIdsToRemove = participantPositions
 			.filter(x => strEquals(x.formationSectionId, section.id))
 			.map(x => x.id);
@@ -291,7 +291,7 @@ export default function SectionPicker() {
 		});
 	}
 
-  function onNameChange(section: FormationSongSection, newName: string) {
+  function onNameChange(section: FormationSection, newName: string) {
     var updatedSection = {...section, displayName: newName};
     dbController.upsertItem("formationSection", updatedSection).then(() => {
       updateState({
