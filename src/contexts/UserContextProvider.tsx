@@ -29,7 +29,7 @@ export const UserContextProvider: React.FunctionComponent<Props> = (props: Props
    * Declare the update state method that will handle the state values
    */
   const updateState = (newState: Partial<AppState>) => {
-    setState(prev => ({ ...prev, ...newState }))
+    setState(prev => ({ ...prev, ...newState }));
   }
 
   /**

@@ -15,12 +15,12 @@ export const SettingsContextProvider: React.FunctionComponent<Props> = (props: P
   const [state, setState] = useState<SettingsContextState>(defaultState)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('userManager');
-    if (storedUser) {
+    const storedSettings = localStorage.getItem('siteSettings');
+    if (storedSettings) {
       try {
-        setState(JSON.parse(storedUser));
+        setState(JSON.parse(storedSettings));
       } catch (e) {
-        console.error('Error parsing user from localStorage:', e);
+        console.error('Error parsing settings from localStorage:', e);
       }
     }
   }, []);
@@ -29,7 +29,8 @@ export const SettingsContextProvider: React.FunctionComponent<Props> = (props: P
    * Declare the update state method that will handle the state values
    */
   const updateSettingsContext = (newState: Partial<SettingsContextState>) => {
-    setState(prev => ({ ...prev, ...newState }))
+    setState(prev => ({ ...prev, ...newState }));
+    localStorage.setItem('siteSettings', JSON.stringify(state));
   }
 
   /**

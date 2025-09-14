@@ -8,7 +8,7 @@ import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 
 export default function GridSettingsMenu() {
   const {compareMode, gridSize, updateState} = useContext(UserContext);
-  const {enableAnimation, updateSettingsContext} = useContext(SettingsContext);
+  const {enableAnimation, enableGridSnap, updateSettingsContext} = useContext(SettingsContext);
 
   function onCompareModeChanged(value: string) {
     updateState({compareMode: value as CompareMode});
@@ -44,6 +44,10 @@ export default function GridSettingsMenu() {
         label="遷移をアニメーション化する"
         defaultChecked={enableAnimation}
         onChange={(checked) => {updateSettingsContext({enableAnimation: checked})}}/>
+      <CustomSwitch
+        label="グリッドスナップ"
+        defaultChecked={enableGridSnap}
+        onChange={(checked) => {updateSettingsContext({enableGridSnap: checked})}}/>
       {/* {todo: add option to change color of section title -> formation level ??} */}
     </ExpandableSection>
   )

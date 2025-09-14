@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface SettingsContextState {
   enableAnimation: boolean,
+  enableGridSnap: boolean,
   updateSettingsContext: (newState: Partial<SettingsContextState>) => void
 }
 
@@ -11,6 +12,7 @@ export type SettingsContextData = Omit<SettingsContextState, 'updateState'>;
 
 export const defaultState: SettingsContextState = {
   enableAnimation: true,
+  enableGridSnap: true,
   updateSettingsContext: (newState: Partial<SettingsContextState>) => {},
 }
 

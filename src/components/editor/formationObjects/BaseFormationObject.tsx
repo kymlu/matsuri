@@ -4,6 +4,7 @@ import Konva from "konva";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
 import { UserContext } from "../../../contexts/UserContext.tsx";
+import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
 
 export interface FormationObjectProps {
   id: string,
@@ -20,6 +21,7 @@ export interface FormationObjectProps {
 
 export default function BaseFormationObject(props: FormationObjectProps) {
   const snapSize = useContext(UserContext).gridSize/2;
+  const {enableGridSnap} = useContext(SettingsContext);
   function onClick(e?: MouseEvent) {
     if (!props.draggable) return;
 
@@ -41,8 +43,8 @@ export default function BaseFormationObject(props: FormationObjectProps) {
         props.onClick(true);
         const node = e.target;
         
-        var x = Math.round(node.x() / snapSize) * snapSize;
-        var y = Math.round(node.y() / snapSize) * snapSize;
+        var x = enableGridSnap ? Math.round(node.x() / snapSize) * snapSize : node.x();
+        var y = enableGridSnap ? Math.round(node.y() / snapSize) * snapSize : node.y();
         node.to({
           x: x,
           y: y,
