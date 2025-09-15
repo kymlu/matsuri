@@ -209,7 +209,7 @@ export class IndexedDBController {
   }
 
   async getByFormationId(storeName: "participant" | "prop" | "formationSection", formationId: string) {
-    console.log(`getByFormationId ${storeName} called`);
+    console.log(`getByFormationId ${storeName} called on ${formationId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore(storeName, "readonly").index("formationId");
       const request = index.getAll(formationId);
@@ -225,7 +225,7 @@ export class IndexedDBController {
   }
 
   async getPositionsByParticipantId(participantId: string) {
-    console.log(`getPositionsByParticipantId`);
+    console.log(`getPositionsByParticipantId called on ${participantId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore("participantPosition", "readonly").index("participantId");
       const request = index.getAll(participantId);
@@ -241,7 +241,7 @@ export class IndexedDBController {
   }
 
   async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition", formationSectionId: string) {
-    console.log(`getByFormationSectionId ${storeName} called`);
+    console.log(`getByFormationSectionId ${storeName} called on ${formationSectionId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore(storeName, "readonly").index("formationSectionId");
       const request = index.getAll(formationSectionId);
@@ -257,7 +257,7 @@ export class IndexedDBController {
   }
 
   async findById(storeName: TableName, id: string) {
-    console.log(`findById ${storeName} called`);
+    console.log(`findById ${storeName} called on ${id}`);
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").get(id);
       request.onsuccess = () => {

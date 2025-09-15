@@ -7,19 +7,7 @@ import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { ParticipantPosition, PropPosition, NotePosition } from "../../models/Position.ts";
 import { Prop } from "../../models/Prop.ts";
 import { Song } from "../../models/Song.ts";
-
-function formatDate(date = new Date()) {
-  const pad = (n) => String(n).padStart(2, '0');
-
-  const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1); // getMonth() is 0-based
-  const day = pad(date.getDate());
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  const seconds = pad(date.getSeconds());
-
-  return `${year}${month}${day}${hours}${minutes}${seconds}`;
-}
+import { formatExportDate } from "./DateHelper.ts";
 
 export function exportAllData() {
   Promise.all([
@@ -82,12 +70,16 @@ export async function exportFormationData(formationId: string) {
 }
 
 function downloadJson(data: string) {
-  const blob = new Blob([data], { type: "application/json" });
+  downloadFile(data, "application/json", `matsuri_formation_${formatExportDate(new Date)}.json`)
+}
+
+export function downloadFile(data: string, type: string, fileName: string) {
+  const blob = new Blob([data], { type: type });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = `matsuri_${formatDate(new Date)}.json`;
+  link.download = fileName;
 
   document.body.appendChild(link);
   link.click();

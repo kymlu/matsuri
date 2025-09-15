@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
 import { Dialog } from "@base-ui-components/react";
 import { exportAllData, exportFormationData } from "./helpers/ExportHelper.ts";
+import { downloadLogs } from "./helpers/LogHelper.ts";
 
 export function EditorPageHeader() {
   const {selectedFormation, selectedFestival, updateState} = useContext(UserContext);
@@ -50,7 +51,7 @@ export function EditorPageHeader() {
               <MenuSeparator />
             </>
           }
-          <MenuItem label="ログダウンロード（無効）" onClick={() => {  }} />
+          <MenuItem label="ログダウンロード" onClick={() => { downloadLogs(); }} />
           <MenuSeparator />
           <MenuItem label="Clear Cache" onClick={() => {
             Object.values(CONTEXT_NAMES).forEach((context) => {
