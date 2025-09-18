@@ -1,6 +1,12 @@
 import { ParticipantPosition } from "../../models/Position.ts";
 
-export async function getAnimationPaths(sectionIds: string[], gridSize: number, participants: Array<ParticipantPosition>): Promise<Record<string, string>> {
+export async function getAnimationPaths(
+  sectionIds: string[],
+  gridSize: number,
+  participants: Array<ParticipantPosition>,
+  topMargin: number,
+  sideMargin: number,
+): Promise<Record<string, string>> {
   // todo: add props
   var participantList = participants
     .filter(x => sectionIds.includes(x.formationSectionId))
@@ -19,9 +25,9 @@ export async function getAnimationPaths(sectionIds: string[], gridSize: number, 
         .sort((a, b) => sectionIds.indexOf(a.formationSectionId) - sectionIds.indexOf(b.formationSectionId))
         .reduce((acc, point, index) => {
           if (index === 0) {
-            return `M${point.x * gridSize} ${point.y * gridSize}`;
+            return `M${(point.x + sideMargin) * gridSize} ${(point.y + topMargin) * gridSize}`;
           } else {
-            return `${acc} L${point.x * gridSize} ${point.y * gridSize}`;
+            return `${acc} L${(point.x + sideMargin) * gridSize} ${(point.y + topMargin) * gridSize}`;
           }
         }, "");
       return [key, path];

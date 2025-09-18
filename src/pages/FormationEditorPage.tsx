@@ -9,7 +9,7 @@ import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined } from '../components/helpers/GlobalHelper.ts';
-import { DEFAULT_WIDTH } from '../data/consts.ts';
+import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import { Prop } from '../models/Prop.ts';
 import { Participant } from '../models/Participant.ts';
@@ -105,6 +105,10 @@ export default function FormationEditorPage () {
     });
   }, [userContext.selectedFormation]);
 
+  function setValueOrDefault(defaultValue: number, value?: number) : number {
+    return (value ?? -1) >= 0 ? value! : defaultValue
+  }
+
   return (
       <div className='h-full overflow-hidden'>
         <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 grid-rows-[60px_calc(100svh-60px)]'>
@@ -116,8 +120,11 @@ export default function FormationEditorPage () {
             <div className='flex flex-1 h-full min-h-0 overflow-auto'>
               <FormationEditor
                 ref={formationEditorRef}
-                width={selectedFormation?.width ?? 20}
-                height={selectedFormation?.length ?? 20}/>
+                width={setValueOrDefault(20, selectedFormation?.width)}
+                height={setValueOrDefault(20, selectedFormation?.length)}
+                topMargin={setValueOrDefault(DEFAULT_TOP_MARGIN, selectedFormation?.topMargin)}
+                bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
+                sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}/>
             </div>
             <FormationRightPanel exportFunc={(exportName: string) => {
               formationEditorRef.current?.exportToPdf(exportName);

@@ -3,7 +3,7 @@ import { Layer, Rect, Transformer } from "react-konva";
 import { createPosition, getAllIds, getFromPositionType, NotePosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
 import { objectColorSettings, basePalette } from "../../themes/colours.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
-import { getPixel } from "./FormationHelper.ts";
+import { getPixel } from "../helpers/FormationHelper.ts";
 import NoteObject from "./formationObjects/NoteObject.tsx";
 import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
 import PropObject from "./formationObjects/PropObject.tsx";
@@ -18,6 +18,9 @@ import { Group } from "konva/lib/Group";
 import { CUSTOM_EVENT } from "../../data/consts.ts";
 
 export type FormationEditLayerProps = {
+  topMargin: number,
+  bottomMargin: number,
+  sideMargin: number,
   ref: React.Ref<any>
 }
 
@@ -293,8 +296,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   function updateParticipantPosition(id: string, x: number, y: number) {
     var participant = participantPositions.find(x => strEquals(x.id, id));
     if (participant) {
-      participant.x = x/gridSize;
-      participant.y = y/gridSize; // todo: fix off by 2m
+      participant.x = x/gridSize - props.sideMargin;
+      participant.y = y/gridSize - props.topMargin; // todo: fix off by 2m
       dbController.upsertItem("participantPosition", participant);
       setEditedPartPIds([...editedPartPIds, id]);
       layerRef.current?.drawScene();
@@ -304,8 +307,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   function updatePropPosition(id: string, x: number, y: number) {
     var prop = propPositions.find(x => strEquals(x.id, id));
     if (prop) {
-      prop.x = x/gridSize;
-      prop.y = y/gridSize; // todo: fix off by 2m
+      prop.x = x/gridSize - props.sideMargin;
+      prop.y = y/gridSize - props.topMargin; // todo: fix off by 2m
       dbController.upsertItem("propPosition", prop);
       setEditedPropPIds([...editedPropPIds, id]);
     }
@@ -313,8 +316,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   function updateNotePosition(id: string, x: number, y: number) {
     var note = notePositions.find(x => strEquals(x.id, id));
     if (note) {
-      note.x = x/gridSize;
-      note.y = y/gridSize; // todo: fix off by 2m
+      note.x = x/gridSize - props.sideMargin;
+      note.y = y/gridSize - props.topMargin; // todo: fix off by 2m
       dbController.upsertItem("notePosition", note);
       setEditedNotePIds([...editedNotePIds, id]);
     }
@@ -371,8 +374,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               id={note.id}
               key={note.id}
               colour={note.color ?? objectColorSettings.blueLight} 
-              startX={getPixel(gridSize, note.x)} 
-              startY={getPixel(gridSize, note.y)}
+              startX={getPixel(gridSize, note.x, props.sideMargin)} 
+              startY={getPixel(gridSize, note.y, props.topMargin)}
               height={note.height}
               length={note.width}
               label={note.label}
@@ -397,8 +400,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               name={propList.find(x => strEquals(placement.propId, x.id))?.name ?? ""}
               colour={propList.find(x => strEquals(placement.propId, x.id))?.color ?? objectColorSettings.purpleLight} 
               length={propList.find(x => strEquals(placement.propId, x.id))?.length ?? 11}
-              startX={getPixel(gridSize, placement.x)} 
-              startY={getPixel(gridSize, placement.y)} 
+              startX={getPixel(gridSize, placement.x, props.sideMargin)} 
+              startY={getPixel(gridSize, placement.y, props.topMargin)}
               updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(placement, PositionType.prop, forceSelect, multiSelect)}
               draggable={!isAnimating}
@@ -416,8 +419,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               key={placement.id}
               name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
               colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
-              startX={getPixel(gridSize, placement.x)} 
-              startY={getPixel(gridSize, placement.y)}
+              startX={getPixel(gridSize, placement.x, props.sideMargin)} 
+              startY={getPixel(gridSize, placement.y, props.topMargin)}
               updatePosition={(x, y) => updateParticipantPosition(placement.id, x, y)}
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect)}} 
               draggable={!isAnimating}

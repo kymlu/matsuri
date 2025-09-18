@@ -14,7 +14,13 @@ import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 
-export function FormationAnimationLayer() {
+export type FormationAnimationLayerProps = {
+  topMargin: number,
+  bottomMargin: number,
+  sideMargin: number,
+}
+
+export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
   const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {participantList} = useContext(FormationContext);
@@ -96,7 +102,13 @@ export function FormationAnimationLayer() {
       isNullOrUndefined(userContext.selectedSection))
       return;
 
-    getAnimationPaths([userContext.previousSectionId!, userContext.selectedSection!.id], gridSize, participantPositions)
+    getAnimationPaths(
+      [userContext.previousSectionId!, userContext.selectedSection!.id],
+      gridSize,
+      participantPositions,
+      props.topMargin,
+      props.sideMargin
+      )
       .then((animationPaths) => {
         updateAnimationContext({paths: animationPaths, isAnimating: true});
       });

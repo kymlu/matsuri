@@ -1,3 +1,3 @@
 export function getPixel(gridSize: number, gridX: number, margin?: number): number {
-  return gridX * gridSize - (margin ?? 0);
+  return (gridX + (margin ?? 0)) * gridSize;
 }

@@ -12,7 +12,10 @@ export interface FormationGridProps {
   canvasWidth: number,
   height: number,
   width: number,
-  isParade?: boolean
+  isParade?: boolean,
+  topMargin: number,
+  bottomMargin: number,
+  sideMargin: number,
 }
 
 export default function FormationGridLayer(props: FormationGridProps) {
@@ -20,35 +23,36 @@ export default function FormationGridLayer(props: FormationGridProps) {
   var gridHeight = Math.ceil(props.canvasHeight/gridSize);
   var gridWidth = Math.ceil(props.canvasWidth/gridSize);
 
-  var emptySpaceX = gridWidth/2 - props.width/2;
-
   return (
     <>
       <Layer
         listening={false}>
+        {/** Grid lines */}
         {[...Array(gridHeight)].map((_, i) => (
           <Line key={i} 
             points={[0, (i + 1) * gridSize, props.canvasWidth + gridSize, (i + 1) * gridSize]}
-            dash={i % 2 === 0 ? [1, 1] : [4, 2]}
+            dash={i % 2 === gridHeight / 2 ? [1, 1] : [4, 2]}
             stroke={i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
             strokeWidth={1} />
         ))}
         {[...Array(gridWidth)].map((_, i) => (
           <Line key={i} 
             points={[(i + 1) * gridSize, 0, (i + 1) * gridSize, props.canvasHeight + gridSize]}
-            dash={i % 2 === 0 ? [1, 1] : [4, 2]}
-            stroke={(i + 1) === DEFAULT_WIDTH/2 ? basePalette.primary.main : i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
-            strokeWidth={(i + 1) === (Math.ceil(props.canvasWidth/gridSize)/2) ? 2 : 1} />
+            dash={i % 2 === (gridWidth / 2) % 2 ? [1, 1] : [4, 2]}
+            stroke={(i + 1) === gridWidth/2 ? basePalette.primary.main : i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
+            strokeWidth={(i + 1) === (Math.ceil(gridWidth)/2) ? 2 : 1} />
         ))}
+        {/** Width limit lines */}
         <Line
-          points={[(emptySpaceX) * gridSize, gridSize * 2, (emptySpaceX) * gridSize, props.canvasHeight + gridSize]}
+          points={[props.sideMargin * gridSize, gridSize * 2, props.sideMargin * gridSize, props.canvasHeight + gridSize]}
           strokeWidth={2}
           stroke={basePalette.primary.main}/>
         <Line
-          points={[(gridWidth - emptySpaceX) * gridSize, gridSize * 2, (gridWidth - emptySpaceX) * gridSize, props.canvasHeight + gridSize]}
+          points={[(gridWidth - props.sideMargin) * gridSize, gridSize * 2, (gridWidth - props.sideMargin) * gridSize, props.canvasHeight + gridSize]}
           strokeWidth={2}
           stroke={basePalette.primary.main}/>
       </Layer>
+      {/** Markers */}
       <Layer
         key={"Meter"}
         listening={false}>
@@ -56,17 +60,18 @@ export default function FormationGridLayer(props: FormationGridProps) {
           <LengthMeterMarker 
             key={i}
             startX={props.canvasWidth - 2 * gridSize}
-            startY={i * gridSize + 7 * gridSize/4}
+            startY={i * gridSize + (props.topMargin - 0.25) * gridSize}
             value={props.isParade ? Math.abs(props.height - i) : i}/>
         ))}
-        {[...Array(gridWidth + 2)].map((_, i) => (
-          (i % 2 === 0 && i !== 0 && i !== (gridWidth)) &&
+        {[...Array(gridWidth)].map((_, i) => (
+          ((gridWidth / 2) % 2 === i % 2 && i !== 0 && i !== (gridWidth)) &&
           <WidthMeterMarker
             key={i}
             startY={gridSize * 1.25}
             startX={i * gridSize}
             value={Math.abs(Math.round(i - gridWidth/2))}/>
         ))}
+        {/** Section name */}
         <NoteObject
           id="sectionName"
           text={selectedSection?.displayName ?? ""}
@@ -74,7 +79,7 @@ export default function FormationGridLayer(props: FormationGridProps) {
           startY={gridSize * 0.25}
           height={1.1}
           length={3}
-          colour={objectColorSettings.purpleLightest}
+          colour={objectColorSettings.purpleLightest} //{/** todo: customize */}
           borderRadius={10}
           fontSize={gridSize * 0.4}
           alwaysBold

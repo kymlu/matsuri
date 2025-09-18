@@ -5,6 +5,6 @@ export interface Festival {
   name: string,
   startDate?: Date,
   endDate?: Date,
-  note: string,
+  note?: string,
   formations: Array<Formation>
 }

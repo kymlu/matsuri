@@ -11,10 +11,13 @@ export class IndexedDBController {
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open(DB_NAME, 2);
+    const request = indexedDB.open(DB_NAME, 3);
     request.onupgradeneeded = async (event) => {
-      console.log("Upgrading database");
       const db = (event.target as IDBOpenDBRequest).result;
+      const oldVersion = event.oldVersion;
+      const newVersion = event.newVersion;
+
+      console.log(`Upgrading database from ${oldVersion} to ${newVersion}`);
       if (!db.objectStoreNames.contains("festival")) { // todo: additional indexes?
         db.createObjectStore("festival", { keyPath: "id", autoIncrement: true });
       }
@@ -30,27 +33,40 @@ export class IndexedDBController {
       if (!db.objectStoreNames.contains("participant")) {
         const participantStore = db.createObjectStore("participant", { keyPath: "id", autoIncrement: true });
         participantStore.createIndex("formationId", "formationId", { unique: false });
+      } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
+        (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participant").clear();
       }
 
       if (!db.objectStoreNames.contains("prop")) {
         const propStore = db.createObjectStore("prop", { keyPath: "id", autoIncrement: true });
         propStore.createIndex("formationId", "formationId", { unique: false });
+      } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
+        (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("prop").clear();
       }
 
       if (!db.objectStoreNames.contains("participantPosition")) {
         const participantPositionStore = db.createObjectStore("participantPosition", { keyPath: "id", autoIncrement: true });
         participantPositionStore.createIndex("participantId", "participantId", { unique: false });
         participantPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+      } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
+        (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participantPosition").clear();
       }
+
       if (!db.objectStoreNames.contains("propPosition")) {
         const propPositionStore = db.createObjectStore("propPosition", { keyPath: "id", autoIncrement: true });
         propPositionStore.createIndex("propId", "propId", { unique: false });
         propPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+      } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
+        (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("propPosition").clear();
       }
+
       if (!db.objectStoreNames.contains("notePosition")) {
         const notePositionStore = db.createObjectStore("notePosition", { keyPath: "id", autoIncrement: true });
         notePositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+      } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
+        (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("notePosition").clear();
       }
+
       if (!db.objectStoreNames.contains("formationSection")) {
         const formationSectionStore = db.createObjectStore("formationSection", { keyPath: "id", autoIncrement: true });
         formationSectionStore.createIndex("formationId", "formationId", { unique: false });

@@ -5,6 +5,9 @@ export interface Formation {
   type: FormationType,
   length: number,
   width: number,
+  topMargin?: number,
+  sideMargin?: number,
+  bottomMargin?: number,
 }
 
 export enum FormationType {

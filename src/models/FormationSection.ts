@@ -4,6 +4,6 @@ export interface FormationSection {
   songSectionId: string,
   order: number,
   formationId: string,
-  version: number,
-  head: number
+  version?: number,
+  head?: number
 }

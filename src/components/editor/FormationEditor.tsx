@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef } from "react";
 import { Stage } from "react-konva";
-import { DEFAULT_WIDTH, GRID_MARGIN_Y } from "../../data/consts.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGridLayer from "./FormationGridLayer.tsx";
@@ -21,6 +20,9 @@ import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 export interface FormationEditorProps {
   height: number,
   width: number,
+  topMargin: number,
+  bottomMargin: number,
+  sideMargin: number,
   ref: React.Ref<any>,
 }
 
@@ -34,8 +36,8 @@ export default function FormationEditor(props: FormationEditorProps) {
   useContext(FormationContext);
   const {selectedFormation, selectedSection, isLoading, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
   const {enableAnimation} = useContext(SettingsContext);
-  const canvasHeight = (props.height + GRID_MARGIN_Y * 2) * gridSize;
-  const canvasWidth = DEFAULT_WIDTH * gridSize;
+  const canvasHeight = (props.height + props.topMargin + props.bottomMargin) * gridSize;
+  const canvasWidth = (props.width + props.sideMargin * 2) * gridSize;
 
   // todo: remove empty grid gap when switching sections
   useEffect(() => {
@@ -46,7 +48,9 @@ export default function FormationEditor(props: FormationEditorProps) {
       getAnimationPaths([userContext.previousSectionId!,
         userContext.selectedSection!.id],
         gridSize,
-        participantPositions)
+        participantPositions,
+        props.topMargin,
+        props.sideMargin)
         .then((animationPaths) => {
           updateState({isLoading: false});
           updateAnimationContext({paths: animationPaths, isAnimating: true});
@@ -133,19 +137,32 @@ export default function FormationEditor(props: FormationEditorProps) {
           canvasWidth={canvasWidth}
           height={props.height}
           width={props.width}
+          topMargin={props.topMargin}
+          bottomMargin={props.bottomMargin}
+          sideMargin={props.sideMargin}
           isParade={selectedFormation?.type === FormationType.parade}/>
           
         { compareMode !== "none" &&
-          <FormationGhostLayer/>
+          <FormationGhostLayer
+            topMargin={props.topMargin}
+            bottomMargin={props.bottomMargin}
+            sideMargin={props.sideMargin}/>
         }
         
         {
           !isLoading && !isAnimating &&
-          <FormationEditLayer ref={editLayerRef}/>
+          <FormationEditLayer 
+            topMargin={props.topMargin}
+            bottomMargin={props.bottomMargin}
+            sideMargin={props.sideMargin}
+            ref={editLayerRef}/>
         }
         {
           !isLoading && isAnimating &&
-          <FormationAnimationLayer/>
+          <FormationAnimationLayer
+            topMargin={props.topMargin}
+            bottomMargin={props.bottomMargin}
+            sideMargin={props.sideMargin}/>
         }
       </Stage>
     </div>

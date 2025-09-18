@@ -5,6 +5,7 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN } from "../../data/consts.ts";
 
 export default function AnimationMenu() {
   const {gridSize} = useContext(UserContext);
@@ -23,7 +24,7 @@ export default function AnimationMenu() {
 
     updateState({isLoading: true});
 
-    getAnimationPaths(sectionIds, gridSize, participantPositions)
+    getAnimationPaths(sectionIds, gridSize, participantPositions, selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN, selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)
       .then((animationPaths) => {
         updateAnimationContext({paths: animationPaths, isAnimating: true});
       });

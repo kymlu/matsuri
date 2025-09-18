@@ -3,7 +3,9 @@ import { objectColorSettings } from "../themes/colours.ts";
 export const GRID_SIZE = 40;
 export const FONT_SIZE = 12;
 export const DEFAULT_WIDTH = 28;
-export const GRID_MARGIN_Y = 2;
+export const DEFAULT_TOP_MARGIN = 2;
+export const DEFAULT_BOTTOM_MARGIN = 2;
+export const DEFAULT_SIDE_MARGIN = 6;
 
 export enum CUSTOM_EVENT {
   "dbInitialized" = "dbInitialized",
