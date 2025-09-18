@@ -25,10 +25,10 @@ export default function GridSettingsMenu() {
         options={[
           {label: "前", value: "previous"},
           {label: "無", value: "none"},
-          {label: "後", value: "next"}
+          {label: "次", value: "next"}
         ]}
         currentValue={compareMode?.toString()}
-        defaultValue="none"
+        defaultValue={compareMode ?? "none"}
         onChange={(newValue: string) => {if(!isNullOrUndefinedOrBlank(newValue)){onCompareModeChanged(newValue)}}}/>
       <CustomToggleGroup
         label="グリッドサイズ"
@@ -37,7 +37,7 @@ export default function GridSettingsMenu() {
           {label: "中", value: "40"},
           {label: "大", value: "52"}
         ]}
-        defaultValue="40"
+        defaultValue={gridSize?.toString() ?? "40"}
         currentValue={gridSize?.toString()}
         onChange={(newValue: string) => {if(!isNullOrUndefinedOrBlank(newValue)){onGridSizeChanged(+newValue)}}}/>
       <CustomSwitch
