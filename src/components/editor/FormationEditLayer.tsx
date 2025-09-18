@@ -28,7 +28,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const userContext = useContext(UserContext);
   const {isAnimating} = useContext(AnimationContext);
   const {participantList, propList} = useContext(FormationContext);
-  const {selectedItems, updateState, gridSize} = useContext(UserContext);
+  const {selectedItems, updateState, gridSize, selectedSection} = useContext(UserContext);
   const positionContext = useContext(PositionContext);
   const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
@@ -46,16 +46,11 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const [editedNotePIds, setEditedNotePIds] = useState<string[]>([]);
 
   const positionContextRef = useRef(positionContext);
-  const userContextRef = useRef(userContext);
 
   // Keep ref up to date
   useEffect(() => {
     positionContextRef.current = positionContext;
   }, [positionContext]);
-
-  useEffect(() => {
-    userContextRef.current = userContext;
-  }, [userContextRef]);
 
   useImperativeHandle(props.ref, () => ({
     clearSelections: () => {
@@ -184,21 +179,21 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     switch (positionType) {
       case PositionType.participant:
         var participants = positionContextRef.current.participantPositions
-          .filter(x => strEquals(x.formationSectionId, userContextRef.current.selectedSection?.id));
+          .filter(x => strEquals(x.formationSectionId, userContext.selectedSection?.id));
         updateState({selectedItems: participants.map(x => ({type: PositionType.participant, participant: x} as Position))});
         setSelectedIds(participants.map(x => x.id));
         break;
 
       case PositionType.prop:
         var props = positionContextRef.current.propPositions
-          .filter(x => strEquals(x.formationSectionId, userContextRef.current.selectedSection?.id));
+          .filter(x => strEquals(x.formationSectionId, userContext.selectedSection?.id));
         updateState({selectedItems: props.map(x => ({type: PositionType.prop, prop: x} as Position))});
         setSelectedIds(props.map(x => x.id));
         break;
 
       case PositionType.note:
         var notes = positionContextRef.current.notePositions
-          .filter(x => strEquals(x.formationSectionId, userContextRef.current.selectedSection?.id));
+          .filter(x => strEquals(x.formationSectionId, userContext.selectedSection?.id));
         updateState({selectedItems: notes.map(x => ({type: PositionType.note, note: x} as Position))});
         setSelectedIds(notes.map(x => x.id));
         break;
@@ -214,11 +209,11 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     return () => {
       window.removeEventListener(CUSTOM_EVENT.selectAllPositionType, selectAllFromPositionType);
     };
-  }, []);
+  }, [userContext]);
 
   function selectAllFromCategory(event){
     var newSelection = positionContextRef.current.participantPositions
-      .filter(x => strEquals(x.formationSectionId, userContextRef.current.selectedSection?.id) && 
+      .filter(x => strEquals(x.formationSectionId, userContext.selectedSection?.id) && 
         strEquals((event as CustomEvent)?.detail?.categoryId, x.categoryId)
       );
 
@@ -232,7 +227,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     return () => {
       window.removeEventListener(CUSTOM_EVENT.selectAllFromCategory, selectAllFromCategory);
     };
-  }, []);
+  }, [userContext]);
 
   useEffect(() => {
     refreshTransformer();

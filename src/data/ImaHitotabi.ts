@@ -235,18 +235,18 @@ export const propsList: Array<Prop> = [
 
 //奇、偶、座り、中、高、左隊、右隊、旗、山伏、前隊、後隊
 export const categoryList: Array<ParticipantCategory> = [
-  { id: "0", name: "一般", color: objectColorSettings["amberLight"], order: 0, showInLegend: true, showInParadeGuide: false },
+  { id: "0", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
   { id: "1", name: "スタッフ", color: objectColorSettings["grey3"], order: 1, showInLegend: true, showInParadeGuide: false },
   { id: "2", name: "奇", color: objectColorSettings["redLightest"], order: 8, showInLegend: false, showInParadeGuide: false },
   { id: "3", name: "偶", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
-  { id: "4", name: "座り", color: objectColorSettings["redLightest"], order: 10, showInLegend: true, showInParadeGuide: false },
+  { id: "4", name: "座り", color: objectColorSettings["redLight"], order: 10, showInLegend: true, showInParadeGuide: false },
   { id: "5", name: "中", color: objectColorSettings["greenLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
   { id: "6", name: "高", color: objectColorSettings["cyanLight"], order: 12, showInLegend: true, showInParadeGuide: false },
   { id: "7", name: "左隊", color: objectColorSettings["orangeLightest"], order: 6, showInLegend: true, showInParadeGuide: false },
   { id: "8", name: "右隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: true, showInParadeGuide: false },
   { id: "9", name: "旗", color: objectColorSettings["violetLight"], order: 2, showInLegend: false, showInParadeGuide: false },
   { id: "10", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
-  { id: "11", name: "前隊", color: objectColorSettings["redLight"], order: 4, showInLegend: false, showInParadeGuide: true },
+  { id: "11", name: "前隊", color: objectColorSettings["orangeLight"], order: 4, showInLegend: false, showInParadeGuide: true },
   { id: "12", name: "後隊", color: objectColorSettings["blueLight"], order: 5, showInLegend: false, showInParadeGuide: true },
 ]
 
