@@ -21,6 +21,7 @@ export interface FormationObjectProps {
 
 export default function BaseFormationObject(props: FormationObjectProps) {
   const snapSize = useContext(UserContext).gridSize/2;
+  const mode = useContext(UserContext).mode;
   const {enableGridSnap} = useContext(SettingsContext);
   function onClick(e?: MouseEvent) {
     if (!props.draggable) return;
@@ -39,8 +40,18 @@ export default function BaseFormationObject(props: FormationObjectProps) {
       y={props.startY}
       onClick={e => {onClick(e.evt)}}
       onTap={e => {onClick()}}
-      onDragEnd={e => { // TODO: fix to always save position properly
+      onDragStart={e => {
         props.onClick(true);
+        
+        if (mode === "view") {
+          e.target.stopDrag();
+        }
+      }}
+      onDragEnd={e => { // TODO: fix to always save position properly
+        if (mode === "view") {
+          return;
+        }
+
         const node = e.target;
         
         var x = enableGridSnap ? Math.round(node.x() / snapSize) * snapSize : node.x();

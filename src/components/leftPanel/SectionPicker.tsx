@@ -12,6 +12,7 @@ import { propsList, songList } from "../../data/ImaHitotabi.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function SectionPicker() {
 	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
@@ -347,7 +348,7 @@ export default function SectionPicker() {
 							<img
 								alt="Add icon"
 								className="m-auto size-6"
-								src="icons/add_black.svg"/>
+								src={ICON.addBlack}/>
 						</div>}>
           {nextSection && (
             <>

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { CONTEXT_NAMES, DB_NAME } from "../data/consts.ts";
+import { CONTEXT_NAMES, DB_NAME, ICON } from "../data/consts.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
@@ -39,7 +39,7 @@ export function EditorPageHeader() {
       </h1>
       }
       <CustomMenu trigger={
-        <img alt="Extra settings" src="icons/settings.svg" className='size-8 max-w-8 max-h-8'/>
+        <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
         }>
         <>
           <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}

@@ -4,6 +4,7 @@ import { Formation } from '../models/Formation.ts';
 import { Position } from '../models/Position.ts';
 import { FormationSection } from '../models/FormationSection.ts';
 import { GRID_SIZE } from '../data/consts.ts';
+import { AppMode } from '../pages/FestivalManager.tsx';
 
 export interface AppState {
   selectedFestival: Festival | null,
@@ -20,6 +21,9 @@ export interface AppState {
   currentSections: Array<FormationSection>,
   compareMode: CompareMode,
   isLoading: boolean,
+  mode?: AppMode,
+  showNotes: boolean,
+  showLegend: boolean,
   updateState: (newState: Partial<AppState>) => void
 }
 
@@ -38,6 +42,8 @@ export const defaultState: AppState = {
   currentSections: [],
   compareMode: "none",
   isLoading: false,
+  showNotes: true,
+  showLegend: false,
   updateState: (newState: Partial<AppState>) => {},
 }
 

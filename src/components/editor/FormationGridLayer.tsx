@@ -28,19 +28,19 @@ export default function FormationGridLayer(props: FormationGridProps) {
       <Layer
         listening={false}>
         {/** Grid lines */}
-        {[...Array(gridHeight)].map((_, i) => (
+        {[...Array(gridHeight + 1)].map((_, i) => (
           <Line key={i} 
-            points={[0, (i + 1) * gridSize, props.canvasWidth + gridSize, (i + 1) * gridSize]}
-            dash={i % 2 === gridHeight / 2 ? [1, 1] : [4, 2]}
-            stroke={i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
+            points={[0, (i) * gridSize, props.canvasWidth + gridSize, (i) * gridSize]}
+            dash={i % 2 !== gridHeight / 2 ? [1, 1] : [4, 2]}
+            stroke={i % 2 !== 0 ? basePalette.grey[300] : basePalette.grey[400]}
             strokeWidth={1} />
         ))}
-        {[...Array(gridWidth)].map((_, i) => (
+        {[...Array(gridWidth + 1)].map((_, i) => (
           <Line key={i} 
-            points={[(i + 1) * gridSize, 0, (i + 1) * gridSize, props.canvasHeight + gridSize]}
-            dash={i % 2 === (gridWidth / 2) % 2 ? [1, 1] : [4, 2]}
-            stroke={(i + 1) === gridWidth/2 ? basePalette.primary.main : i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
-            strokeWidth={(i + 1) === (Math.ceil(gridWidth)/2) ? 2 : 1} />
+            points={[i * gridSize, 0, i * gridSize, props.canvasHeight + gridSize]}
+            dash={i % 2 !== (gridWidth / 2) % 2 ? [1, 1] : [4, 2]}
+            stroke={i === gridWidth/2 ? basePalette.primary.main : i % 2 === 0 ? basePalette.grey[300] : basePalette.grey[400]}
+            strokeWidth={(i) === (Math.ceil(gridWidth)/2) ? 2 : 1} />
         ))}
         {/** Width limit lines */}
         <Line
@@ -75,7 +75,7 @@ export default function FormationGridLayer(props: FormationGridProps) {
         <NoteObject
           id="sectionName"
           text={selectedSection?.displayName ?? ""}
-          startX={gridSize * 0.75}
+          startX={100}
           startY={gridSize * 0.25}
           height={1.1}
           length={3}

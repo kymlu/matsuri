@@ -12,6 +12,7 @@ import { PositionType } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import ExportMenu from "./ExportMenu.tsx";
 import classNames from "classnames";
+import { ICON } from "../../data/consts.ts";
 
 export type FormationRightPanelProps = {
   exportFunc?: (exportName: string) => void
@@ -38,9 +39,9 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
     }
   );
 
-  var buttonClasses = classNames("pb-2 text-start",
+  var buttonClasses = classNames("pb-2",
     {
-      "h-full p-5": !expanded
+      "h-full p-5 items-center": !expanded
     }
   )
 
@@ -49,7 +50,9 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
       <button
         className={buttonClasses}
         onClick={() => setExpanded(prev => !prev)}>
-        {expanded ? "閉じる >" : "<"}
+        <img
+          className="size-8"
+          src={expanded ? ICON.arrowMenuOpenBlack : ICON.arrowMenuCloseBlack}/>
       </button>
       {
         expanded && 

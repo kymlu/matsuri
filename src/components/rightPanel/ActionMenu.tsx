@@ -6,7 +6,7 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { PositionType, splitPositionsByType } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { CUSTOM_EVENT } from "../../data/consts.ts";
+import { CUSTOM_EVENT, ICON } from "../../data/consts.ts";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
@@ -189,7 +189,7 @@ export default function ActionMenu() {
                   </span>
                   <img 
                     className="text-center size-6" 
-                    src={swapMenuExpanded ? "icons/expand_less_black.svg": "icons/expand_more_black.svg"}
+                    src={swapMenuExpanded ? ICON.expandLessBlack : ICON.expandMoreBlack}
                     alt={swapMenuExpanded ? "Collapse icon": "Expand icon"}
                   />
               </button>

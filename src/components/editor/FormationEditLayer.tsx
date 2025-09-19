@@ -28,7 +28,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const userContext = useContext(UserContext);
   const {isAnimating} = useContext(AnimationContext);
   const {participantList, propList} = useContext(FormationContext);
-  const {selectedItems, updateState, gridSize, selectedSection} = useContext(UserContext);
+  const {selectedItems, updateState, gridSize, mode} = useContext(UserContext);
   const positionContext = useContext(PositionContext);
   const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
@@ -61,7 +61,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     onMouseDown: (e) => {
       const isElement = e.target.findAncestor(".elements-container");
       const isTransformer = e.target.findAncestor("Transformer");
-      if (isElement || isTransformer) {
+      if (isElement || isTransformer || mode === "view") {
         return;
       }
   
@@ -75,7 +75,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     },
     
     onMouseMove: (e) => {
-      if (!selection.current.visible) {
+      if (!selection.current.visible || mode === "view") {
         return;
       }
       const pos = e.target.getStage().getPointerPosition();
@@ -108,26 +108,30 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
         });
 
         const selectedPropIds: Array<string> = [];
-        propRef.current?.forEach((elementNode) => {
-          if(elementNode.current) {
-            var node = (elementNode as React.RefObject<Group>);
-            const elBox = node.current.getClientRect();
-            if (Konva.Util.haveIntersection(selBox, elBox)) {
-              selectedPropIds.push(node.current.attrs.id);
+        if (mode === "edit") {
+          propRef.current?.forEach((elementNode) => {
+            if(elementNode.current) {
+              var node = (elementNode as React.RefObject<Group>);
+              const elBox = node.current.getClientRect();
+              if (Konva.Util.haveIntersection(selBox, elBox)) {
+                selectedPropIds.push(node.current.attrs.id);
+              }
             }
-          }
-        });
+          });
+        }
 
         const selectedNoteIds: Array<string> = [];
-        noteRef.current?.forEach((elementNode) => {
-          if(elementNode.current) {
-            var node = (elementNode as React.RefObject<Group>);
-            const elBox = node.current.getClientRect();
-            if (Konva.Util.haveIntersection(selBox, elBox)) {
-              selectedNoteIds.push(node.current.attrs.id);
+        if (mode === "edit") {
+          noteRef.current?.forEach((elementNode) => {
+            if(elementNode.current) {
+              var node = (elementNode as React.RefObject<Group>);
+              const elBox = node.current.getClientRect();
+              if (Konva.Util.haveIntersection(selBox, elBox)) {
+                selectedNoteIds.push(node.current.attrs.id);
+              }
             }
-          }
-        });
+          });
+        }
 
         updateState({selectedItems: [
           ...participantPositions.filter(x => selectedParticipantIds.includes(x.id))
@@ -336,7 +340,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   ) {
     if (item === null) return;
 
-    if (multiSelect) {
+    if (multiSelect && mode === "edit") {
       var newList: Position[] = [];
       if (!selectedItems.map(x => getFromPositionType(x).id).includes(item.id)) {
         newList = [...selectedItems, createPosition(item)];
@@ -362,7 +366,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   return (
     <Layer 
       ref={layerRef}>
-      {
+      { userContext.showNotes &&
         currentNotes
           .map((note, index) => 
             <NoteObject 
@@ -381,7 +385,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(note, PositionType.note, forceSelect, multiSelect)} 
               alwaysBold={note.alwaysBold}
               showBackground={note.showBackground}
-              draggable
+              draggable={mode === "edit"}
               ref={noteRef.current[index]}
             />
         )
@@ -399,7 +403,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               startY={getPixel(gridSize, placement.y, props.topMargin)}
               updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => selectItem(placement, PositionType.prop, forceSelect, multiSelect)}
-              draggable={!isAnimating}
+              draggable={!isAnimating && mode === "edit"}
               rotation={placement.angle} 
               onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
               ref={propRef.current[index]}

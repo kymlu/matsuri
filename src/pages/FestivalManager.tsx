@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import '../index.css';
 import Button from '../components/Button.tsx';
@@ -8,9 +8,13 @@ import { UserContext } from '../contexts/UserContext.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Formation } from '../models/Formation.ts';
 import Divider from '../components/Divider.tsx';
+import CustomToggleGroup from '../components/CustomToggleGroup.tsx';
+
+export type AppMode = "view" | "edit";
 
 export default function FestivalManager () {
-  const {updateState} = useContext(UserContext)
+  const {updateState} = useContext(UserContext);
+  const [mode, setMode] = useState<AppMode>("view");
   let navigate = useNavigate();
 
   function onClick(festival: Festival, selectedFormation: Formation) {
@@ -18,14 +22,32 @@ export default function FestivalManager () {
         selectedFestival: festival,
         selectedFormation: selectedFormation,
         selectedItems: [],
+        mode: mode,
+        showNotes: true,
     });
-    navigate("/formation");
+    if (mode === "view") {
+      updateState({gridSize: 40})
+    }
+    navigate(mode === "edit" ? "/formation" : "/viewer");
   }
 
   return (
     <div className='flex flex-col w-full gap-2'>
       <div className='m-auto mt-10'>
-        <h1 className='text-2xl font-bold'>祭り</h1>
+        <div className='flex justify-between'>
+          <h1 className='text-2xl font-bold'>祭り</h1>
+          <CustomToggleGroup
+            defaultValue="view"
+            label="モード"
+            options={[{
+              label:  "閲",
+              value: "view"
+            }, {
+              label: "編",
+              value: "edit"
+            }]}
+            onChange={(newValue) => setMode(newValue as AppMode)}/>
+        </div>
         <Divider/>
         <div className='grid landscape:grid-cols-[auto,1fr] gap-3'>
           {

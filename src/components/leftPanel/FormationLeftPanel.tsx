@@ -6,6 +6,7 @@ import Divider from "../Divider.tsx";
 import NotePicker from "./NotePicker.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import classNames from "classnames";
+import { ICON } from "../../data/consts.ts";
 
 export default function FormationLeftPanel () {
   const userContext = useContext(UserContext)
@@ -21,9 +22,9 @@ export default function FormationLeftPanel () {
     }
   );
 
-  var buttonClasses = classNames("pb-2 text-end",
+  var buttonClasses = classNames("flex pb-2 justify-end",
     {
-      "h-full p-5": !expanded
+      "h-full p-5 items-center": !expanded
     }
   )
 
@@ -32,7 +33,9 @@ export default function FormationLeftPanel () {
       <button
         className={buttonClasses}
         onClick={() => setExpanded(prev => !prev)}>
-        {expanded ? "閉じる <" : ">"}
+        <img
+          className="size-8"
+          src={expanded ? ICON.arrowMenuCloseBlack : ICON.arrowMenuOpenBlack}/>
       </button>
       {
         expanded && 

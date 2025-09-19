@@ -3,6 +3,7 @@ import className from "classnames";
 import CustomMenu from "./CustomMenu.tsx";
 import { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import TextInput from "./TextInput.tsx";
+import { ICON } from "../data/consts.ts";
 
 export interface ListOptionButtonProps {
   text: string,
@@ -75,7 +76,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
         <div className="flex justify-center">
           <img
             alt="Settings icon"
-            src={props.isSelected ? "icons/settings_white.svg" : "icons/settings.svg"}
+            src={props.isSelected ? ICON.settingsWhite : ICON.settings}
             className='size-4'/>
         </div>}>
         {
@@ -114,7 +115,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
         <div className="flex justify-center col-start-2 row-start-1">
           <img
             alt="Confirm name"
-            src={"icons/check_white.svg"}
+            src={ICON.checkWhite}
             className='size-4'/>
         </div>
       </button>}

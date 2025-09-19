@@ -4,6 +4,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import FormationEditorPage from './pages/FormationEditorPage.tsx';
 import FestivalManager from './pages/FestivalManager.tsx';
 import { RequireDB } from './data/RequireDb.tsx';
+import ViewOnlyPage from './pages/ViewOnlyPage.tsx';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<FestivalManager />} />
         <Route path="/formation" element={<RequireDB><FormationEditorPage /></RequireDB>} />
+        <Route path="/viewer" element={<RequireDB><ViewOnlyPage/></RequireDB>} />
         <Route path="*" element={<Navigate to="/" replace/>}/>
       </Routes>
     </HashRouter>

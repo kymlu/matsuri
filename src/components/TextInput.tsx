@@ -1,6 +1,7 @@
 import React from "react";
 import { isNullOrUndefinedOrBlank } from "./helpers/GlobalHelper.ts";
 import classNames from "classnames";
+import { ICON } from "../data/consts.ts";
 
 export type TextInputProps = {
   text?: string,
@@ -47,7 +48,7 @@ export default function TextInput(props: TextInputProps) {
       <button className="col-start-1 row-start-1 pr-2 ml-auto text-end" onClick={() => {onClear()}}>
           <img
             className="size-4"
-            src="icons/clear.svg"
+            src={ICON.clear}
             alt="Clear text"/>
       </button>}
     </div>

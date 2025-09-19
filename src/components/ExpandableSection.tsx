@@ -1,4 +1,5 @@
 import React from "react";
+import { ICON } from "../data/consts.ts";
 
 export interface ExpandableSectionProps {
   children: React.ReactNode,
@@ -31,7 +32,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
         <span className="text-left">{props.title}</span>
         <img 
           className="text-center size-6" 
-          src={expanded ? "icons/expand_less_black.svg": "icons/expand_more_black.svg"}
+          src={expanded ? ICON.expandLessBlack: ICON.expandMoreBlack}
           alt={expanded ? "Collapse icon": "Expand icon"}
           />
       </button>
