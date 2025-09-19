@@ -17,8 +17,11 @@ export const festivalList: Array<Festival> = [
       name: "ステージ",
       type: FormationType.stage,
       songId: "1",
-      length: 10,
+      length: 5,
       width: 10,
+      topMargin: 2,
+      bottomMargin: 4,
+      sideMargin: 6
     }]
   },
   {

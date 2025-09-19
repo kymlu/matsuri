@@ -51,12 +51,20 @@ export default function FormationGridLayer(props: FormationGridProps) {
           points={[(gridWidth - props.sideMargin) * gridSize, gridSize * 2, (gridWidth - props.sideMargin) * gridSize, props.canvasHeight + gridSize]}
           strokeWidth={2}
           stroke={basePalette.primary.main}/>
+        {
+          // Stage limits
+          (!props.isParade ?? true) && 
+          <Line
+            points={[(props.sideMargin - 1) * gridSize, (props.height + props.topMargin) * gridSize, (props.width + props.sideMargin + 1) * gridSize, (props.height + props.topMargin) * gridSize]}
+            strokeWidth={2}
+            stroke={basePalette.primary.main}/>
+        }
       </Layer>
       {/** Markers */}
       <Layer
         key={"Meter"}
         listening={false}>
-        {[...Array(props.height + 1)].map((_, i) => ( // todo: if parade, move up to starting position so that it doesn't span the whole position
+        {[...Array(props.height + props.bottomMargin - 1)].map((_, i) => ( // todo: if parade, move up to starting position so that it doesn't span the whole position
           <LengthMeterMarker 
             key={i}
             startX={props.canvasWidth - 2 * gridSize}
