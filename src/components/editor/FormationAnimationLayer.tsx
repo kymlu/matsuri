@@ -102,16 +102,14 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
       isNullOrUndefined(userContext.selectedSection))
       return;
 
-    getAnimationPaths(
+    var animationPaths = getAnimationPaths(
       [userContext.previousSectionId!, userContext.selectedSection!.id],
       gridSize,
       participantPositions,
       props.topMargin,
       props.sideMargin
       )
-      .then((animationPaths) => {
-        updateAnimationContext({paths: animationPaths, isAnimating: true});
-      });
+    updateAnimationContext({paths: animationPaths, isAnimating: true});
   }, [previousSectionId]);
   
   return (

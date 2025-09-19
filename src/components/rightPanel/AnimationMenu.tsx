@@ -24,10 +24,8 @@ export default function AnimationMenu() {
 
     updateState({isLoading: true});
 
-    getAnimationPaths(sectionIds, gridSize, participantPositions, selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN, selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)
-      .then((animationPaths) => {
-        updateAnimationContext({paths: animationPaths, isAnimating: true});
-      });
+    var animationPaths = getAnimationPaths(sectionIds, gridSize, participantPositions, selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN, selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)
+    updateAnimationContext({paths: animationPaths, isAnimating: true});
   }
   
   return (

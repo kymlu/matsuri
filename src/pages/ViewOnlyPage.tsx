@@ -18,6 +18,9 @@ import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator } from '../components/CustomToolbar.tsx';
 import { CustomToolbarButton } from '../components/CustomToolbarButton.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
+import { AnimationPath } from '../models/AnimationPath.ts';
+import { getAnimationPaths } from '../components/helpers/AnimationHelper.ts';
+import { AnimationContext } from '../contexts/AnimationContext.tsx';
 
 export default function ViewOnlyPage () {
   const userContext = useContext(UserContext);
@@ -26,11 +29,14 @@ export default function ViewOnlyPage () {
   const {updatePositionState} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext);
   const {isExporting, exportProgress} = useContext(ExportContext);
+  const {updateAnimationContext} = useContext(AnimationContext);
 
   const [selectedSectionId, setSelectedSectionId] = useState<string>("");
   const [firstSectionId, setFirstSectionId] = useState<string>("");
   const [lastSectionId, setLastSectionId] = useState<string>("");
   const [showPrevious, setShowPrevious] = useState<boolean>(false);
+
+  const [animationPaths, setAnimationPaths] = useState<AnimationPath[]>([]);
 
   const navigate = useNavigate()
   const formationEditorRef = React.createRef<any>();
@@ -49,8 +55,6 @@ export default function ViewOnlyPage () {
     setSelectedSectionId(userContext.selectedSection?.id ?? "");
   }, [userContext.selectedSection]);
   
-  // to do: load all adjacent animations + loading screen
-
   useEffect(() => {
     Promise.all(
       [
@@ -83,13 +87,15 @@ export default function ViewOnlyPage () {
       ]).then(([formationSections, participants, props,
         participantPosition, propPosition, notePosition]) => {
       try {
+        var participantPositions = participantPosition as Array<ParticipantPosition>;
+
         updateFormationContext({
           participantList: participants as Array<Participant>,
           propList: props as Array<Prop>
         });
 
         updatePositionState({
-          participantPositions: participantPosition as Array<ParticipantPosition>,
+          participantPositions: participantPositions,
           propPositions: propPosition as Array<PropPosition>,
           notePositions: notePosition as Array<NotePosition>
         });
@@ -119,6 +125,37 @@ export default function ViewOnlyPage () {
             notes: topPositions
           },
         });
+
+        var newPaths: AnimationPath[] = [];
+        
+        Array.from({length: currentSections.length - 1}).forEach((_, i) => {
+          newPaths.push(
+            {
+              fromSectionId: currentSections[i].id,
+              toSectionId: currentSections[i + 1].id,
+              paths: getAnimationPaths(
+                [currentSections[i].id, currentSections[i + 1].id],
+                userContext.gridSize,
+                participantPositions,
+                selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN,
+                selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN
+              )
+            },
+            {
+              fromSectionId: currentSections[i + 1].id,
+              toSectionId: currentSections[i].id,
+              paths: getAnimationPaths(
+                [currentSections[i + 1].id, currentSections[i].id],
+                userContext.gridSize,
+                participantPositions,
+                selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN,
+                selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN
+              )
+            }
+          );
+        });
+        setAnimationPaths(newPaths);
+        console.log(newPaths);
       } catch (e) {
         console.error('Error parsing user from localStorage:', e);
       }
@@ -132,7 +169,18 @@ export default function ViewOnlyPage () {
   function changeSection(isNext?: boolean) {
     var index = userContext.currentSections.sort((a, b) => a.order - b.order).findIndex(x => strEquals(selectedSectionId, x.id));
     var nextSection = userContext.currentSections.sort((a, b) => a.order - b.order)[index + (isNext ? 1 : -1)];
-    updateState({selectedSection: nextSection});
+    var from = selectedSectionId;
+    var to = nextSection.id;
+    var paths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to))?.paths;
+    if (paths) {
+      updateAnimationContext({
+        paths: paths,
+        isAnimating: true
+      });
+    }
+    updateState({
+      selectedSection: nextSection
+    });
   }
 
   return (

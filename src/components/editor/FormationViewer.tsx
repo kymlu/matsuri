@@ -34,7 +34,6 @@ export default function FormationViewer(props: FormationViewerProps) {
   const {participantPositions} = useContext(PositionContext);
   useContext(FormationContext);
   const {selectedFormation, selectedSection, isLoading, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
-  const {enableAnimation} = useContext(SettingsContext);
   const canvasHeight = (props.height + props.topMargin + props.bottomMargin) * gridSize;
   const canvasWidth = (props.width + props.sideMargin * 2) * gridSize;
 
@@ -42,18 +41,16 @@ export default function FormationViewer(props: FormationViewerProps) {
   useEffect(() => {
     if(isNullOrUndefined(selectedSection)) return;
     
-    if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
+    if(userContext.previousSectionId && userContext.selectedSection) {
       updateState({isLoading: true});
-      getAnimationPaths([userContext.previousSectionId!,
+      var animationPaths = getAnimationPaths([userContext.previousSectionId!,
         userContext.selectedSection!.id],
         gridSize,
         participantPositions,
         props.topMargin,
         props.sideMargin)
-        .then((animationPaths) => {
-          updateState({isLoading: false});
-          updateAnimationContext({paths: animationPaths, isAnimating: true});
-        });
+      updateState({isLoading: false});
+      updateAnimationContext({paths: animationPaths, isAnimating: true});
     }
   }, [userContext.selectedSection]);
 

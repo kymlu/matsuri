@@ -35,7 +35,7 @@ export function EditorPageHeader() {
       {
       selectedFormation && selectedFestival &&
       <h1 className='px-2 font-bold text-center'>
-        {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) ・ {selectedFestival?.name}
+        {selectedFormation?.name}{mode === "edit" && ` (${selectedFormation.width} x ${selectedFormation.length})`}・ {selectedFestival?.name}
       </h1>
       }
       <div className="flex flex-row gap-2">

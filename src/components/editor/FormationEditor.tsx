@@ -45,16 +45,14 @@ export default function FormationEditor(props: FormationEditorProps) {
     
     if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
       updateState({isLoading: true});
-      getAnimationPaths([userContext.previousSectionId!,
+      var animationPaths = getAnimationPaths([userContext.previousSectionId!,
         userContext.selectedSection!.id],
         gridSize,
         participantPositions,
         props.topMargin,
         props.sideMargin)
-        .then((animationPaths) => {
-          updateState({isLoading: false});
-          updateAnimationContext({paths: animationPaths, isAnimating: true});
-        });
+      updateState({isLoading: false});
+      updateAnimationContext({paths: animationPaths, isAnimating: true});
     }
   }, [userContext.selectedSection]);
 

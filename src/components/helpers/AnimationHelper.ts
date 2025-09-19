@@ -1,12 +1,12 @@
 import { ParticipantPosition } from "../../models/Position.ts";
 
-export async function getAnimationPaths(
+export function getAnimationPaths(
   sectionIds: string[],
   gridSize: number,
   participants: Array<ParticipantPosition>,
   topMargin: number,
   sideMargin: number,
-): Promise<Record<string, string>> {
+): Record<string, string> {
   // todo: add props
   var participantList = participants
     .filter(x => sectionIds.includes(x.formationSectionId))
