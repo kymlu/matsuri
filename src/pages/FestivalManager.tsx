@@ -33,8 +33,8 @@ export default function FestivalManager () {
 
   return (
     <div className='flex flex-col w-full gap-2'>
-      <div className='m-auto mt-10'>
-        <div className='flex justify-between'>
+      <div className='m-auto max-w-[90svw] mt-10'>
+        <div className='flex items-center justify-between'>
           <h1 className='text-2xl font-bold'>祭り</h1>
           <CustomToggleGroup
             defaultValue="view"
@@ -49,12 +49,12 @@ export default function FestivalManager () {
             onChange={(newValue) => setMode(newValue as AppMode)}/>
         </div>
         <Divider/>
-        <div className='grid landscape:grid-cols-[auto,1fr] gap-3'>
+        <div className='grid landscape:grid-cols-[auto,1fr] items-center gap-3'>
           {
             festivalList.map(festival =>
               <React.Fragment key={festival.name}>
                 <h2 className='text-xl'>{festival.name}</h2>
-                <div className='flex flex-row gap-3'>
+                <div className='flex flex-row flex-wrap gap-3'>
                   {festival.formations
                     .map(formation => 
                       <Button 
