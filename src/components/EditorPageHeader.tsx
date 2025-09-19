@@ -8,7 +8,7 @@ import { exportAllData, exportFormationData } from "./helpers/ExportHelper.ts";
 import { downloadLogs } from "./helpers/LogHelper.ts";
 
 export function EditorPageHeader() {
-  const {selectedFormation, selectedFestival, updateState} = useContext(UserContext);
+  const {selectedFormation, selectedFestival, updateState, mode} = useContext(UserContext);
   const navigate = useNavigate()
   const [showSiteInfo, setShowSiteInfo] = useState<boolean>(false);
   
@@ -38,37 +38,57 @@ export function EditorPageHeader() {
         {selectedFormation?.name} ({selectedFormation.width} x {selectedFormation.length}) ・ {selectedFestival?.name}
       </h1>
       }
-      <CustomMenu trigger={
-        <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
-        }>
-        <>
-          <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
-          <MenuSeparator />
-          {
-            selectedFormation && 
-            <>
-              <MenuItem label="当隊列のデータダウンロード" onClick={() => { exportFormationData(selectedFormation!.id) }} /> {/** add function to download for formation/festival only? */}
-              <MenuSeparator />
-            </>
-          }
-          <MenuItem label="ログダウンロード" onClick={() => { downloadLogs(); }} />
-          <MenuSeparator />
-          <MenuItem label="Clear Cache" onClick={() => {
-            Object.values(CONTEXT_NAMES).forEach((context) => {
-              localStorage.removeItem(context);
-            });
-            window.location.reload();
-          }} />
-          <MenuSeparator />
-          <MenuItem label="Clear DB and Cache" onClick={() => {
-            Object.values(CONTEXT_NAMES).forEach((context) => {
-              localStorage.removeItem(context);
-            });
-            indexedDB.deleteDatabase(DB_NAME);
-            window.location.reload();
-          }} />
-        </>
-      </CustomMenu>
+      <div className="flex flex-row gap-2">
+        { mode === "edit" && 
+          <button
+            onClick={() => {
+              updateState({mode: "view"});
+              navigate("/viewer");
+            }}>
+            <img className='size-8 max-w-8 max-h-8' src={ICON.visibility}/>
+          </button>
+        }
+        { mode === "view" &&
+          <button
+            onClick={() => {
+              updateState({mode: "edit"});
+              navigate("/formation");
+              }}>
+            <img className='size-8 max-w-8 max-h-8' src={ICON.edit}/>
+          </button>
+        }
+        <CustomMenu trigger={
+          <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
+          }>
+          <>
+            <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
+            <MenuSeparator />
+            {
+              selectedFormation && 
+              <>
+                <MenuItem label="当隊列のデータダウンロード" onClick={() => { exportFormationData(selectedFormation!.id) }} /> {/** add function to download for formation/festival only? */}
+                <MenuSeparator />
+              </>
+            }
+            <MenuItem label="ログダウンロード" onClick={() => { downloadLogs(); }} />
+            <MenuSeparator />
+            <MenuItem label="Clear Cache" onClick={() => {
+              Object.values(CONTEXT_NAMES).forEach((context) => {
+                localStorage.removeItem(context);
+              });
+              window.location.reload();
+            }} />
+            <MenuSeparator />
+            <MenuItem label="Clear DB and Cache" onClick={() => {
+              Object.values(CONTEXT_NAMES).forEach((context) => {
+                localStorage.removeItem(context);
+              });
+              indexedDB.deleteDatabase(DB_NAME);
+              window.location.reload();
+            }} />
+          </>
+        </CustomMenu>
+      </div>
       <Dialog.Root open={showSiteInfo} modal dismissible onOpenChange={() => setShowSiteInfo(false)}>
           <Dialog.Portal>
             <Dialog.Backdrop className="fixed inset-0 bg-black opacity-20 transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 dark:opacity-70" />
