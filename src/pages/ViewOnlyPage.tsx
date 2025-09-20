@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import FormationEditor from '../components/editor/FormationEditor.tsx';
 import { FormationSection } from '../models/FormationSection.ts';
-import { strEquals } from '../components/helpers/GlobalHelper.ts';
+import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN } from '../data/consts.ts';
 import { ExportContext } from '../contexts/ExportContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
@@ -36,8 +36,8 @@ export default function ViewOnlyPage () {
   }, [userContext.selectedFestival, userContext.selectedFormation])
 
   useEffect(() => {
-    setFirstSectionId(userContext.currentSections.sort((a, b) => a.order - b.order)[0]?.id ?? "");
-    setLastSectionId(userContext.currentSections.sort((a, b) => b.order - a.order)[0]?.id ?? "");
+    setFirstSectionId(userContext.currentSections?.sort((a, b) => a.order - b.order)[0]?.id ?? "");
+    setLastSectionId(userContext.currentSections?.sort((a, b) => b.order - a.order)[0]?.id ?? "");
   }, [userContext.currentSections]);
 
   useEffect(() => {
@@ -45,12 +45,13 @@ export default function ViewOnlyPage () {
   }, [userContext.selectedSection]);
 
   useEffect(() => {
+    if (isNullOrUndefined(userContext.currentSections) || isNullOrUndefined(participantPositions)) return;
     generateAnimationPaths(userContext.currentSections, positionContext.participantPositions);
-  }, [userContext.currentSections, positionContext.participantPositions]);
+  }, [userContext.gridSize, userContext.currentSections, positionContext.participantPositions]);
 
   useEffect(() => {
     generateAnimationPaths(userContext.currentSections, participantPositions);
-  }, [userContext.gridSize, userContext.currentSections]);
+  }, [userContext.currentSections]);
 
   function generateAnimationPaths(sections: Array<FormationSection>, participantPositions: ParticipantPosition[]){
     var newPaths: AnimationPath[] = [];

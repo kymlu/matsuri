@@ -40,6 +40,7 @@ export default function FormationEditorPage () {
 
   useEffect(() => {
     if(userContext.mode === "view" || isNullOrUndefined(selectedFormation)) return;
+    
     const leftPositions = Array.from({ length: (selectedFormation!.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
       .map((_, col) => [-2, col]);
     
