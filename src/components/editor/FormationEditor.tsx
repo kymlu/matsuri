@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef } from "react";
 import { Stage } from "react-konva";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { GroupBySectionId, PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGridLayer from "./layers/FormationGridLayer.tsx";
 import { isNullOrUndefined } from "../helpers/GlobalHelper.ts";
-import { useState } from "react";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import Konva from "konva";
@@ -16,6 +15,15 @@ import { FormationGhostLayer } from "./layers/FormationGhostLayer.tsx";
 import { FormationAnimationLayer } from "./layers/FormationAnimationLayer.tsx";
 import { FormationEditLayer } from "./layers/FormationEditLayer.tsx";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
+import { useNavigate } from "react-router-dom";
+import { dbController } from "../../data/DBProvider.tsx";
+import { FormationSection } from "../../models/FormationSection.ts";
+import { Participant } from "../../models/Participant.ts";
+import { ParticipantPosition, PropPosition, NotePosition } from "../../models/Position.ts";
+import { Prop } from "../../models/Prop.ts";
+import { GetAllForFormation } from "../../data/DataController.ts";
+import { CategoryContext } from "../../contexts/CategoryContext.tsx";
+import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 
 export interface FormationEditorProps {
   height: number,
@@ -32,14 +40,73 @@ export default function FormationEditor(props: FormationEditorProps) {
   const userContext = useContext(UserContext);
   const {isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {updateExportContext} = useContext(ExportContext);
-  const {participantPositions} = useContext(PositionContext);
-  useContext(FormationContext);
+  const {participantPositions, updatePositionState} = useContext(PositionContext);
+  const {updateFormationContext} = useContext(FormationContext);
   const {selectedFormation, selectedSection, isLoading, currentSections, compareMode, updateState, gridSize} = useContext(UserContext);
   const {enableAnimation} = useContext(SettingsContext);
   const canvasHeight = (props.height + props.topMargin + props.bottomMargin) * gridSize;
   const canvasWidth = (props.width + props.sideMargin * 2) * gridSize;
+  const {updateCategoryContext} = useContext(CategoryContext);
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    Promise.all(
+      [
+        dbController.getAll("category"),
+      ]).then(([categoryList]) => {
+      try {
+        updateCategoryContext({
+          categories: categoryList as Array<ParticipantCategory>
+        });
+      } catch (e) {
+        console.error('Error parsing user from localStorage:', e);
+      }
+    });
+  }, []);
 
   // todo: remove empty grid gap when switching sections
+
+  useEffect(() => {
+    if (isNullOrUndefined(selectedFormation)) {
+      navigate("../");
+      return;
+    }
+    
+    GetAllForFormation(selectedFormation?.id!, (
+      formationSections: FormationSection[],
+      participants: Participant[],
+      props: Prop[],
+      participantPositions: ParticipantPosition[],
+      propPositions: PropPosition[],
+      notePositions: NotePosition[]) => {
+        try {
+          updateFormationContext({
+            participantList: participants as Array<Participant>,
+            propList: props as Array<Prop>
+          });
+
+          updatePositionState({
+            participantPositions: participantPositions,
+            propPositions: propPositions,
+            notePositions: notePositions
+          });
+
+          const currentSections = (formationSections as Array<FormationSection>)
+            .sort((a,b) => a.order - b.order);
+
+          updateState({
+            isLoading: false,
+            previousSectionId: null,
+            currentSections: currentSections,
+            selectedSection: currentSections[0],
+          });
+        } catch (e) {
+          console.error('Error parsing user from localStorage:', e);
+        }
+      });
+  }, [userContext.selectedFormation]);
+
   useEffect(() => {
     if(isNullOrUndefined(selectedSection)) return;
     

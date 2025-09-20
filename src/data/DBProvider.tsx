@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { IndexedDBController } from './IndexedDbController.ts';
+import { IndexedDBManager } from './IndexedDbManager.ts';
 import { CUSTOM_EVENT } from './consts.ts';
 
 const DBContext = createContext({ dbReady: false });
 
-export const dbController: IndexedDBController = new IndexedDBController();
+export const dbController: IndexedDBManager = new IndexedDBManager();
 
 export const DBProvider = ({ children }) => {
   const [dbReady, setDbReady] = useState(false);

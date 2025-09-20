@@ -82,12 +82,12 @@ export default function FormationGridLayer(props: FormationGridProps) {
         <NoteObject
           id="sectionName"
           text={selectedSection?.displayName ?? ""}
-          startX={100}
-          startY={gridSize * 0.25}
-          height={1.1}
-          length={3}
-          colour={objectColorSettings.purpleLightest} //{/** todo: customize */}
-          borderRadius={10}
+          startX={(props.sideMargin + props.width/2 - 2.5) * gridSize}
+          startY={gridSize * 0.1}
+          height={0.75}
+          length={5}
+          colour={objectColorSettings.white}
+          borderRadius={0}
           fontSize={gridSize * 0.4}
           alwaysBold
           showBackground

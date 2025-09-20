@@ -15,8 +15,6 @@ import CustomMenu from "../CustomMenu.tsx";
 import Button from "../Button.tsx";
 import { ICON } from "../../data/consts.ts";
 
-// todo: bug: select participant, move, select colour, refresh. Will return to the original position but keep colour
-
 export default function CategoryMenu() {
   const {selectedItems, updateState} = useContext(UserContext);
   const userContext = useContext(UserContext);

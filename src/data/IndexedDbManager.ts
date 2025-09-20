@@ -6,7 +6,7 @@ import { sampleFormation } from "./SampleFormation.ts";
 
 type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "formationSection";
 
-export class IndexedDBController {
+export class IndexedDBManager {
   db!: IDBDatabase;
   isInitialized: boolean = false;
 
