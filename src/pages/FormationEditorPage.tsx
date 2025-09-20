@@ -40,22 +40,22 @@ export default function FormationEditorPage () {
 
   useEffect(() => {
     if(userContext.mode === "view" || isNullOrUndefined(selectedFormation)) return;
-    const leftPositions = Array.from({ length: (DEFAULT_WIDTH - selectedFormation!.width) / 2 - 1 })
-      .flatMap((_, row) =>
-        Array.from({ length: selectedFormation!.length }).map((_, col) => [ row + 1, col + 2])
-      );
+    const leftPositions = Array.from({ length: (selectedFormation!.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
+      .map((_, col) => [-2, col]);
     
-    const rightPositions = Array.from({ length: (selectedFormation?.length ?? 10) })
-      .map((_, col) => [ (DEFAULT_WIDTH + selectedFormation!.width) / 2, col + 2]);
+    const rightPositions = Array.from({ length: (selectedFormation?.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
+      .map((_, col) => [ selectedFormation!.width, col]);
 
-    const topPositions = Array.from({ length: DEFAULT_WIDTH - 4 })
-      .map((_, col) => [col + 2, 2]);
-      
+    const topPositions = Array.from({ length: (selectedFormation?.width ?? DEFAULT_WIDTH) + (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN) })
+      .flatMap((_, row) =>
+        Array.from({ length: 2 }).map((_, col) => [ row - (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)/2, col])
+      )
+
     updateState({
       marginPositions: {
-        participants: leftPositions,
+        participants: topPositions,
         props: rightPositions,
-        notes: topPositions
+        notes: leftPositions
       },
     });
   }, [userContext.selectedFormation, userContext.mode]);

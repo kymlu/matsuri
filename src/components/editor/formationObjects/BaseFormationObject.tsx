@@ -64,7 +64,6 @@ export default function BaseFormationObject(props: FormationObjectProps) {
             props.updatePosition(node.attrs.x, node.attrs.y)
           }
         });
-        console.log(x, y);
       }}>
       {props.children}
     </Group>

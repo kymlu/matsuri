@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Circle, Text } from "react-konva";
-import { ColorStyle } from "../../../themes/colours.ts";
+import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
@@ -15,6 +15,7 @@ export interface ParticipantObjectProps {
   onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
   draggable?: boolean,
   ref?: React.Ref<Konva.Group>,
+  selected?: boolean,
 }
 
 export default function ParticipantObject(props: ParticipantObjectProps) {
@@ -32,8 +33,8 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       <Circle 
         radius={(gridSize/2) * 0.9}
         fill={props.colour.bgColour}
-        stroke={props.colour.borderColour}
-        strokeWidth={gridSize/30} />
+        stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
+        strokeWidth={props.selected ? gridSize/20 : gridSize/30} />
       <Text
         x={-gridSize/2}
         y={-gridSize/2}

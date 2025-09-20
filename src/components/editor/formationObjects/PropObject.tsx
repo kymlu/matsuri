@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Rect, Text } from "react-konva";
 import BaseFormationObject from "./BaseFormationObject.tsx";
-import { ColorStyle } from "../../../themes/colours.ts";
+import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
 import { UserContext } from "../../../contexts/UserContext.tsx";
@@ -19,6 +19,7 @@ export interface PropObjectProps {
   onRotate?: (rotation: number, x: number, y: number) => void,
   rotation: number,
   ref?: React.Ref<any>,
+  selected?: boolean,
 }
 
 export default function PropObject(props: PropObjectProps) {
@@ -46,8 +47,8 @@ export default function PropObject(props: PropObjectProps) {
         width={props.length * gridSize}
         height={gridSize}
         fill={props.colour.bgColour}
-        stroke={props.colour.borderColour}
-        strokeWidth={gridSize/30} />
+        stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
+        strokeWidth={props.selected ? gridSize/20 : gridSize/30} />
       <Text
         y={gridSize/3}
         width={props.length * gridSize}

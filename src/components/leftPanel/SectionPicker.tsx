@@ -222,8 +222,8 @@ export default function SectionPicker() {
 			.map((position, index) => (
 				{
 					...position,
-					x: marginPositions.participants[index][0],
-					y: marginPositions.participants[index][1],
+					x: marginPositions.participants[index % marginPositions.participants.length][0],
+					y: marginPositions.participants[index % marginPositions.participants.length][1],
 				} as ParticipantPosition));
 				
 		var resetProps = propPositions
@@ -234,8 +234,8 @@ export default function SectionPicker() {
 			.map((position, index) => (
 				{
 					...position,
-					x: marginPositions.props[index][0],
-					y: marginPositions.props[index][1],
+					x: marginPositions.props[index % marginPositions.props.length][0],
+					y: marginPositions.props[index % marginPositions.props.length][1],
 				} as PropPosition));
 
 		try {

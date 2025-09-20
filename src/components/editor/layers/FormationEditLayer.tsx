@@ -59,6 +59,8 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
     },
 
     onMouseDown: (e) => {
+      if (e.target !== e.target.getStage()) return;
+      
       const isElement = e.target.findAncestor(".elements-container");
       const isTransformer = e.target.findAncestor("Transformer");
       if (isElement || isTransformer || mode === "view") {
@@ -387,6 +389,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               showBackground={note.showBackground}
               draggable={mode === "edit"}
               ref={noteRef.current[index]}
+              selected={selectedIds.includes(note.id)}
             />
         )
       }
@@ -407,6 +410,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               rotation={placement.angle} 
               onRotate={(angle, x, y) => updatePropRotation(placement.id, angle, x, y)}
               ref={propRef.current[index]}
+              selected={selectedIds.includes(placement.id)}
               />
           )
       } 
@@ -424,6 +428,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
               onClick={(forceSelect?: boolean, multiSelect?: boolean) => {selectItem(placement, PositionType.participant, forceSelect, multiSelect)}} 
               draggable={!isAnimating}
               ref={participantRef.current[index]}
+              selected={selectedIds.includes(placement.id)}
             />
         )
       }

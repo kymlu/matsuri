@@ -22,6 +22,7 @@ export interface NoteObjectProps {
   alwaysBold?: boolean,
   showBackground?: boolean,
   ref?: React.Ref<any>,
+  selected?: boolean,
 }
 
 export default function NoteObject(props: NoteObjectProps) {
@@ -37,13 +38,13 @@ export default function NoteObject(props: NoteObjectProps) {
       startY={props.startY}
       draggable={props.draggable}>
       {
-        props.showBackground &&
+        (props.showBackground || props.selected) &&
         <Rect
           width={props.length * gridSize}
           height={props.height * gridSize}
-          fill={props.colour.bgColour}
-          stroke={props.colour.borderColour}
-          strokeWidth={gridSize/30}
+          fill={props.showBackground ? props.colour.bgColour : undefined}
+          stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
+          strokeWidth={props.selected ? gridSize/20 : gridSize/30}
           cornerRadius={props.borderRadius} />
       }
       {
