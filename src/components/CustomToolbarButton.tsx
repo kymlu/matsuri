@@ -17,7 +17,7 @@ export function CustomToolbarButton(props: CustomToolbarButtonProp) {
     "flex-row": props.iconLeft ?? false,
     "flex-row-reverse": !props.iconLeft,
     "opacity-30 cursor-default": props.disabled,
-    "hover:bg-grey-300 hover:data-[pressed]:bg-grey-300 data-[pressed]:bg-grey-200": !props.disabled,
+    "lg:hover:bg-grey-300 lg:hover:data-[pressed]:bg-grey-300 data-[pressed]:bg-grey-200": !props.disabled,
   })
 
   return (

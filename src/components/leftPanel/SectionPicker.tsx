@@ -346,7 +346,7 @@ export default function SectionPicker() {
 				<CustomMenu
 					full
 					trigger={
-						<div className="w-full hover:bg-grey-200">
+						<div className="w-full lg:hover:bg-grey-200">
 							<img
 								alt="Add icon"
 								className="m-auto size-6"

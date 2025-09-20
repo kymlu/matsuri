@@ -199,21 +199,21 @@ export default function ActionMenu() {
                 swapMenuExpanded && 
                 <div className="flex flex-col gap-1 mx-6">
                   <button
-                    className="hover:bg-grey-200"
+                    className="lg:hover:bg-grey-200"
                     onClick={() => swapParticipants("current")}
                     button-name="This section only">
                     当セクションのみ
                   </button>
                   <Divider compact/>
                   <button
-                    className="hover:bg-grey-200"
+                    className="lg:hover:bg-grey-200"
                     onClick={() => swapParticipants("currentOnwards")}
                     button-name="This section and after">
                     以降のセクション
                   </button>
                   <Divider compact/>
                   <button
-                    className="hover:bg-grey-200"
+                    className="lg:hover:bg-grey-200"
                     onClick={() => swapParticipants("all")}
                     button-name="All sections">
                     すべてのセクション

@@ -12,7 +12,7 @@ export interface ItemButtonProps {
 }
 
 export default function ItemButton (props: ItemButtonProps) {
-  const classes = className("border-primary border-2 rounded-md w-fit px-2 hover:bg-grey-100", {
+  const classes = className("border-primary border-2 rounded-md w-fit px-2 lg:hover:bg-grey-100", {
     "bg-grey-200": props.isDisabled
   });
   return (

@@ -13,9 +13,9 @@ type ButtonProps = {
 }
 
 export default function Button(props: ButtonProps) {
-  const classes = className("px-3 py-1.5 border rounded-xl hover:bg-grey-100", {
+  const classes = className("px-3 py-1.5 border rounded-xl lg:hover:bg-grey-100", {
     "w-full": props.full,
-    "bg-primary text-white hover:bg-primary-light font-bold": props.primary,
+    "bg-primary text-white lg:hover:bg-primary-light font-bold": props.primary,
   });
 
   return <button 

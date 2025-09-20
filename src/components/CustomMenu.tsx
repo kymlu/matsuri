@@ -9,7 +9,7 @@ export type CustomMenuProps = {
 }
 
 export default function CustomMenu (props: CustomMenuProps) {
-  const triggerClassNames = classNames("hover:opacity-80", {
+  const triggerClassNames = classNames("lg:hover:opacity-80", {
     "w-full": props.full,
   });
 
@@ -49,7 +49,7 @@ export interface MenuItemProps {
 export function MenuItem({ label, onClick }) {
   return (
     <Menu.Item
-      className="p-1 text-center rounded-md cursor-pointer hover:bg-grey-200"
+      className="p-1 text-center rounded-md cursor-pointer lg:hover:bg-grey-200"
       onClick={(e) => {
         e.stopPropagation();
         onClick(e);

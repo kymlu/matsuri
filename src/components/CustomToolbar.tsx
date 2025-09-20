@@ -47,7 +47,7 @@ export function CustomToolbarSeparator() {
 
 export function CustomToolbarGroup(props: {children: React.ReactNode}) {
   return (
-    <Toolbar.Group className="flex flex-row items-center flex-shrink-0 gap-1 data-[orientation=vertical]:flex-col w-full">
+    <Toolbar.Group className="flex flex-row items-center flex-shrink-0 gap-1 data-[orientation=vertical]:flex-col">
       {props.children}
     </Toolbar.Group>
   )
