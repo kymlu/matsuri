@@ -51,7 +51,7 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
         className={buttonClasses}
         onClick={() => setExpanded(prev => !prev)}>
         <img
-          className="size-8"
+          className="size-6"
           src={expanded ? ICON.arrowMenuOpenBlack : ICON.arrowMenuCloseBlack}/>
       </button>
       {
