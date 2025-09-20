@@ -194,7 +194,7 @@ export default function ViewOnlyPage () {
           <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey'>
             <EditorPageHeader/>
           </header>
-          <div className='flex justify-center flex-1 h-full min-h-0 px-5 py-2 overflow-auto'>
+          <div className='flex flex-1 h-full min-h-0 px-5 py-2 overflow-auto'>
             <FormationEditor
               ref={formationEditorRef}
               width={setValueOrDefault(20, selectedFormation?.width)}

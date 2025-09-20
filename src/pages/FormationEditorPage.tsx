@@ -118,7 +118,7 @@ export default function FormationEditorPage () {
           </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>
-            <div className='flex justify-center flex-1 h-full min-h-0 overflow-auto'>
+            <div className='flex flex-1 h-full min-h-0 overflow-auto'>
               <FormationEditor
                 ref={formationEditorRef}
                 width={setValueOrDefault(20, selectedFormation?.width)}

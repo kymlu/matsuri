@@ -33,6 +33,21 @@ export function FormationViewerToolbar(props: FormationViewToolbarProps) {
           iconFileName={ICON.chevronForwardBlack}
           onClick={() => {props.changeSection?.(true)}}/>
       </CustomToolbarGroup>
+      <CustomToolbarSeparator/>
+      <CustomToolbarGroup>
+        <CustomToolbarButton
+          iconFileName={ICON.zoomOutBlack}
+          onClick={() => {
+            updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
+          }}
+          disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
+        <CustomToolbarButton
+          iconFileName={ICON.zoomInBlack}
+          onClick={() => {
+            updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
+          }}
+          disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
+      </CustomToolbarGroup>
       { false && userContext.selectedItems.length > 0 &&  // todo implement
         <>
           <CustomToolbarSeparator/>
@@ -60,21 +75,6 @@ export function FormationViewerToolbar(props: FormationViewToolbarProps) {
             updateState({compareMode: showPrevious ? "none" : "previous"})
             setShowPrevious(prev => !prev);
           }}/>
-      </CustomToolbarGroup>
-      <CustomToolbarSeparator/>
-      <CustomToolbarGroup>
-        <CustomToolbarButton
-          iconFileName={ICON.zoomOutBlack}
-          onClick={() => {
-            updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
-          }}
-          disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
-        <CustomToolbarButton
-          iconFileName={ICON.zoomInBlack}
-          onClick={() => {
-            updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
-          }}
-          disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
       </CustomToolbarGroup>
       <CustomToolbarSeparator/>
       <CustomToolbarGroup>

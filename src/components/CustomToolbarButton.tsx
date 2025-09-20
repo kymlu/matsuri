@@ -13,7 +13,7 @@ export type CustomToolbarButtonProp = {
 }
 
 export function CustomToolbarButton(props: CustomToolbarButtonProp) {
-  var className = classNames("flex items-center gap-1 h-8 px-1 rounded-md flex-shrink-0", {
+  var className = classNames("group flex items-center gap-1 h-8 px-1 rounded-md flex-shrink-0", {
     "flex-row": props.iconLeft ?? false,
     "flex-row-reverse": !props.iconLeft,
     "opacity-30 cursor-default": props.disabled,
@@ -29,7 +29,7 @@ export function CustomToolbarButton(props: CustomToolbarButtonProp) {
       className={className}
       onClick={() => {if(!props.disabled) props.onClick?.()}}>
       {props.iconFileName && <img src={props.iconFileName} className="size-6"/>}
-      {props.text && <span className="text-nowrap">{props.text}</span>}
+      {props.text && <span className="text-nowrap group-data-[orientation=vertical]:hidden">{props.text}</span>}
     </Toolbar.Button>
   )
 }
