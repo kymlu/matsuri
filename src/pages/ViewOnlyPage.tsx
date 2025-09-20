@@ -49,14 +49,10 @@ export default function ViewOnlyPage () {
     generateAnimationPaths(userContext.currentSections, positionContext.participantPositions);
   }, [userContext.gridSize, userContext.currentSections, positionContext.participantPositions]);
 
-  useEffect(() => {
-    generateAnimationPaths(userContext.currentSections, participantPositions);
-  }, [userContext.currentSections]);
-
   function generateAnimationPaths(sections: Array<FormationSection>, participantPositions: ParticipantPosition[]){
     var newPaths: AnimationPath[] = [];
         
-    Array.from({length: sections.length - 1}).forEach((_, i) => {
+    Array.from({length: sections?.length - 1}).forEach((_, i) => {
       newPaths.push(
         {
           fromSectionId: sections[i].id,

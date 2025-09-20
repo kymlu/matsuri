@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Formation } from '../models/Formation.ts';
 import Divider from '../components/Divider.tsx';
 import CustomToggleGroup from '../components/CustomToggleGroup.tsx';
+import { LAST_UPDATED } from '../data/consts.ts';
 
 export type AppMode = "view" | "edit";
 
@@ -71,6 +72,7 @@ export default function FestivalManager () {
           }
         </div>
       </div>
+      <span className='fixed opacity-50 bottom-2 left-2'>{LAST_UPDATED}</span>
     </div>
   )
 }
