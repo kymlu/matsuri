@@ -46,7 +46,8 @@ export default function FestivalManager () {
               label: "編",
               value: "edit"
             }]}
-            onChange={(newValue) => setMode(newValue as AppMode)}/>
+            onChange={(newValue) => setMode(newValue as AppMode)}
+            currentValue={mode}/>
         </div>
         <Divider/>
         <div className='grid landscape:grid-cols-[auto,1fr] items-center gap-3'>

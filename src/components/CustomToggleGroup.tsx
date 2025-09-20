@@ -21,7 +21,7 @@ export default function CustomToggleGroup(props: CustomToggleGroupProps){
       <label>{props.label}</label>
       <ToggleGroup
         defaultValue={[props.defaultValue]} 
-        onValueChange={(value) => props.onChange?.(value[0])} // TODO: fix this to be a single select
+        onValueChange={(value) => props.onChange?.(value[0])}
         className="flex flex-row border-2 border-solid rounded-md border-primary">
           {
             props.options.map(option => 
