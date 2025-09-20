@@ -134,8 +134,9 @@ export default function FormationEditor(props: FormationEditorProps) {
         format: [stage.width()/2, stage.height()/2]});
 
       console.log("generating ", exportName);
+      var sortedSections = currentSections.sort((a, b) => a.order - b.order);
       for (let i = 0; i < currentSections.length; i++) {
-        const section = currentSections[i];
+        const section = sortedSections[i];
     
         updateState({
           selectedSection: section,
