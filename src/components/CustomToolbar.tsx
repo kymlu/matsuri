@@ -1,6 +1,9 @@
 import { Toolbar } from "@base-ui-components/react";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { CustomToolbarButton } from "./CustomToolbarButton.tsx";
+import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../data/consts.ts";
+import { UserContext } from "../contexts/UserContext.tsx";
 
 export type CustomToolbarProps = {
   children: React.ReactNode
@@ -45,10 +48,35 @@ export function CustomToolbarSeparator() {
   return <Toolbar.Separator orientation="vertical" className="w-px h-6 data-[orientation=vertical]:h-px data-[orientation=vertical]:w-full m-1 bg-gray-300"/>
 }
 
-export function CustomToolbarGroup(props: {children: React.ReactNode}) {
+export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnVertical?: boolean}) {
+  var classnames = classNames("flex flex-row items-center flex-shrink-0 gap-1 data-[orientation=vertical]:flex-col", {
+    "data-[orientation=vertical]:flex-col-reverse": props.reverseOnVertical
+  })
   return (
-    <Toolbar.Group className="flex flex-row items-center flex-shrink-0 gap-1 data-[orientation=vertical]:flex-col">
+    <Toolbar.Group className={classnames}>
       {props.children}
     </Toolbar.Group>
+  )
+}
+
+export function ZoomToolbarGroup() {
+  const userContext = useContext(UserContext);
+  const {updateState} = useContext(UserContext);
+  
+  return (
+    <CustomToolbarGroup reverseOnVertical>
+      <CustomToolbarButton
+        iconFileName={ICON.zoomOutBlack}
+        onClick={() => {
+          updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
+        }}
+        disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
+      <CustomToolbarButton
+        iconFileName={ICON.zoomInBlack}
+        onClick={() => {
+          updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
+        }}
+        disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
+    </CustomToolbarGroup>
   )
 }

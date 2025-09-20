@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../../../data/consts.ts";
-import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator } from "../../CustomToolbar.tsx";
+import { ICON } from "../../../data/consts.ts";
+import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator, ZoomToolbarGroup } from "../../CustomToolbar.tsx";
 import { CustomToolbarButton } from "../../CustomToolbarButton.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { strEquals } from "../../helpers/GlobalHelper.ts";
@@ -34,20 +34,7 @@ export function FormationViewerToolbar(props: FormationViewToolbarProps) {
           onClick={() => {props.changeSection?.(true)}}/>
       </CustomToolbarGroup>
       <CustomToolbarSeparator/>
-      <CustomToolbarGroup>
-        <CustomToolbarButton
-          iconFileName={ICON.zoomOutBlack}
-          onClick={() => {
-            updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
-          }}
-          disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
-        <CustomToolbarButton
-          iconFileName={ICON.zoomInBlack}
-          onClick={() => {
-            updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
-          }}
-          disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
-      </CustomToolbarGroup>
+      <ZoomToolbarGroup/>
       { false && userContext.selectedItems.length > 0 &&  // todo implement
         <>
           <CustomToolbarSeparator/>
