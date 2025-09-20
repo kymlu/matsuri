@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/matsuri/static/css/main.9a70cdd9.css",
-    "main.js": "/matsuri/static/js/main.1c10cff6.js",
+    "main.js": "/matsuri/static/js/main.2a459af1.js",
     "static/js/239.d6c4dac5.chunk.js": "/matsuri/static/js/239.d6c4dac5.chunk.js",
     "static/js/977.6b7577cd.chunk.js": "/matsuri/static/js/977.6b7577cd.chunk.js",
     "static/js/455.aaccb29e.chunk.js": "/matsuri/static/js/455.aaccb29e.chunk.js",
     "service-worker.js": "/matsuri/service-worker.js",
     "index.html": "/matsuri/index.html",
     "main.9a70cdd9.css.map": "/matsuri/static/css/main.9a70cdd9.css.map",
-    "main.1c10cff6.js.map": "/matsuri/static/js/main.1c10cff6.js.map",
+    "main.2a459af1.js.map": "/matsuri/static/js/main.2a459af1.js.map",
     "239.d6c4dac5.chunk.js.map": "/matsuri/static/js/239.d6c4dac5.chunk.js.map",
     "977.6b7577cd.chunk.js.map": "/matsuri/static/js/977.6b7577cd.chunk.js.map",
     "455.aaccb29e.chunk.js.map": "/matsuri/static/js/455.aaccb29e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9a70cdd9.css",
-    "static/js/main.1c10cff6.js"
+    "static/js/main.2a459af1.js"
   ]
 }
