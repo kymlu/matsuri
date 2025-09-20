@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { Rect, Text } from "react-konva";
-import { FONT_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { ColorStyle } from "../../../themes/colours.ts";
 import { Shape, ShapeConfig } from "konva/lib/Shape";

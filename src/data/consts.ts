@@ -1,5 +1,10 @@
-export const GRID_SIZE = 40;
-export const FONT_SIZE = 12;
+export const MIN_GRID_SIZE = 20;
+export const MAX_GRID_SIZE = 100;
+export const DEFAULT_GRID_SIZE = 40;
+export const GRID_SIZE_INCREMENT = 20;
+
+export const DEFAULT_FONT_SIZE = 12;
+
 export const DEFAULT_WIDTH = 28;
 export const DEFAULT_TOP_MARGIN = 2;
 export const DEFAULT_BOTTOM_MARGIN = 2;
@@ -47,6 +52,8 @@ export const ICON = {
   settings: "icons/settings.svg",
   textFieldsAltBlack: "icons/text_fields_alt_black.svg",
   visibility: "icons/visibility.svg",
+  zoomInBlack: "icons/zoom_in_black.svg",
+  zoomOutBlack: "icons/zoom_out_black.svg",
 }
 
 export const DB_NAME = "MatsuriDB";

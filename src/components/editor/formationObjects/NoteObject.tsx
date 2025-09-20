@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Line, Rect, Text } from "react-konva";
-import { FONT_SIZE } from "../../../data/consts.ts";
+import { DEFAULT_FONT_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
@@ -54,7 +54,7 @@ export default function NoteObject(props: NoteObjectProps) {
             width={(props.length / 2) * gridSize}
             height={0.5 * gridSize}
             text={props.label}
-            fontSize={props.fontSize ?? FONT_SIZE}
+            fontSize={props.fontSize ?? DEFAULT_FONT_SIZE}
             fontStyle="bold"
             verticalAlign="middle"
             fill={props.showBackground ? props.colour.textColour : basePalette.black}/>
@@ -70,7 +70,7 @@ export default function NoteObject(props: NoteObjectProps) {
         width={props.length * gridSize}
         text={props.text}
         padding={2}
-        fontSize={props.fontSize ?? FONT_SIZE}
+        fontSize={props.fontSize ?? DEFAULT_FONT_SIZE}
         fontStyle={props.alwaysBold ? "bold" : "normal"}
         fill={props.showBackground ? props.colour.textColour : basePalette.black}
         verticalAlign="middle"

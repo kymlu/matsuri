@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { Text } from "react-konva";
-import { FONT_SIZE } from "../../../data/consts.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export interface MeterMarkerProps {

@@ -7,7 +7,7 @@ import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
-import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, ICON } from '../data/consts.ts';
+import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, GRID_SIZE_INCREMENT, ICON, MAX_GRID_SIZE, MIN_GRID_SIZE } from '../data/consts.ts';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import { Prop } from '../models/Prop.ts';
 import { Participant } from '../models/Participant.ts';
@@ -26,7 +26,7 @@ export default function ViewOnlyPage () {
   const userContext = useContext(UserContext);
   const {updateFormationContext} = useContext(FormationContext);
   const {selectedFormation, updateState} = useContext(UserContext);
-  const {updatePositionState} = useContext(PositionContext);
+  const {updatePositionState, participantPositions} = useContext(PositionContext);
   const {updateCategoryContext} = useContext(CategoryContext);
   const {isExporting, exportProgress} = useContext(ExportContext);
   const {updateAnimationContext} = useContext(AnimationContext);
@@ -126,41 +126,48 @@ export default function ViewOnlyPage () {
           },
         });
 
-        var newPaths: AnimationPath[] = [];
-        
-        Array.from({length: currentSections.length - 1}).forEach((_, i) => {
-          newPaths.push(
-            {
-              fromSectionId: currentSections[i].id,
-              toSectionId: currentSections[i + 1].id,
-              paths: getAnimationPaths(
-                [currentSections[i].id, currentSections[i + 1].id],
-                userContext.gridSize,
-                participantPositions,
-                selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN,
-                selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN
-              )
-            },
-            {
-              fromSectionId: currentSections[i + 1].id,
-              toSectionId: currentSections[i].id,
-              paths: getAnimationPaths(
-                [currentSections[i + 1].id, currentSections[i].id],
-                userContext.gridSize,
-                participantPositions,
-                selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN,
-                selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN
-              )
-            }
-          );
-        });
-        setAnimationPaths(newPaths);
-        console.log(newPaths);
+        generateAnimationPaths(currentSections, participantPositions);
       } catch (e) {
         console.error('Error parsing user from localStorage:', e);
       }
     });
   }, [userContext.selectedFormation]);
+
+  useEffect(() => {
+    generateAnimationPaths(userContext.currentSections, participantPositions);
+  }, [userContext.gridSize]);
+
+  function generateAnimationPaths(sections: Array<FormationSection>, participantPositions: Array<ParticipantPosition>){
+    var newPaths: AnimationPath[] = [];
+        
+    Array.from({length: sections.length - 1}).forEach((_, i) => {
+      newPaths.push(
+        {
+          fromSectionId: sections[i].id,
+          toSectionId: sections[i + 1].id,
+          paths: getAnimationPaths(
+            [sections[i].id, sections[i + 1].id],
+            userContext.gridSize,
+            participantPositions,
+            selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN,
+            selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN
+          )
+        },
+        {
+          fromSectionId: sections[i + 1].id,
+          toSectionId: sections[i].id,
+          paths: getAnimationPaths(
+            [sections[i + 1].id, sections[i].id],
+            userContext.gridSize,
+            participantPositions,
+            selectedFormation?.topMargin ?? DEFAULT_TOP_MARGIN,
+            selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN
+          )
+        }
+      );
+    });
+    setAnimationPaths(newPaths);
+  }
 
   function setValueOrDefault(defaultValue: number, value?: number) : number {
     return (value ?? -1) >= 0 ? value! : defaultValue
@@ -238,6 +245,21 @@ export default function ViewOnlyPage () {
                     updateState({compareMode: showPrevious ? "none" : "previous"})
                     setShowPrevious(prev => !prev);
                   }}/>
+              </CustomToolbarGroup>
+              <CustomToolbarSeparator/>
+              <CustomToolbarGroup>
+                <CustomToolbarButton
+                  iconFileName={ICON.zoomOutBlack}
+                  onClick={() => {
+                    updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
+                  }}
+                  disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
+                <CustomToolbarButton
+                  iconFileName={ICON.zoomInBlack}
+                  onClick={() => {
+                    updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
+                  }}
+                  disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
               </CustomToolbarGroup>
               <CustomToolbarSeparator/>
               <CustomToolbarGroup>
