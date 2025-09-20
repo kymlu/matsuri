@@ -173,7 +173,9 @@ export default function ActionMenu() {
   }
   
   return (
-    <ExpandableSection title="アクション" defaultIsExpanded>
+    <ExpandableSection
+      title="アクション"
+      defaultIsExpanded titleIcon={ICON.leftClickBlack}>
       <div className="flex flex-col gap-1">
         { 
           swappableParticipants.length === 2 && 

@@ -6,6 +6,7 @@ import { getFromPositionType, NotePosition } from "../../models/Position.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import TextInput from "../TextInput.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function NoteEditor() {
   const {selectedItems} = useContext(UserContext);
@@ -47,7 +48,9 @@ export default function NoteEditor() {
   };
   
   return (
-    <ExpandableSection title="テキスト修正">
+    <ExpandableSection
+      title="テキスト修正"
+      titleIcon={ICON.textFieldsAltBlack}>
       <label>
         タイトル（任意）
       </label>

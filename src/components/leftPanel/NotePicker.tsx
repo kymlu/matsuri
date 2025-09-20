@@ -7,6 +7,7 @@ import { notePresets } from "../../data/ImaHitotabi.ts";
 import ItemButton from "../ItemButton.tsx";
 import { Note } from "../../models/Note.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function NotePicker () {
   const {selectedSection, updateState, marginPositions} = useContext(UserContext);
@@ -41,7 +42,9 @@ export default function NotePicker () {
   }
 
   return (
-    <ExpandableSection title="メモ">
+    <ExpandableSection
+      title="メモ"
+      titleIcon={ICON.noteStackBlack}>
         <div className="flex flex-row flex-wrap gap-2">
         { notePresets.map((preset, index) => (
           <ItemButton

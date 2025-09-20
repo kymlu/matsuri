@@ -13,6 +13,7 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import ColorPicker from "./ColorPicker.tsx";
 import CustomMenu from "../CustomMenu.tsx";
 import Button from "../Button.tsx";
+import { ICON } from "../../data/consts.ts";
 
 // todo: bug: select participant, move, select colour, refresh. Will return to the original position but keep colour
 
@@ -107,6 +108,7 @@ export default function CategoryMenu() {
   return (
     <ExpandableSection
       title="カテゴリー"
+      titleIcon={ICON.categoryBlack}
       onToggle={() => scrollToCategory()}>
       <RadioGroup
         value={selectedCategory?.id ?? ""}

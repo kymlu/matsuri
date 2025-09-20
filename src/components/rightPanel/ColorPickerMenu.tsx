@@ -10,6 +10,7 @@ import { Prop } from "../../models/Prop.ts";
 import { strEquals } from "../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import CustomSwitch from "../CustomSwitch.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export type ColorPickerMenuProps = {
 }
@@ -111,7 +112,9 @@ export default function ColorPickerMenu() {
   }, [userContext.selectedItems]);
 
   return (
-    <ExpandableSection title="色">
+    <ExpandableSection
+      title="色"
+      titleIcon={ICON.colorsBlack}>
       <div className="flex flex-col gap-2">
       {
         showTransparentOption && 

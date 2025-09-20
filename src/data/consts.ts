@@ -1,5 +1,3 @@
-import { objectColorSettings } from "../themes/colours.ts";
-
 export const GRID_SIZE = 40;
 export const FONT_SIZE = 12;
 export const DEFAULT_WIDTH = 28;
@@ -32,15 +30,22 @@ export const ICON = {
   chevronForwardBlack: "icons/chevron_forward_black.svg",
   clearBlack: "icons/clear_black.svg",
   clear: "icons/clear.svg",
+  colorsBlack: "icons/colors_black.svg",
   edit: "icons/edit.svg",
   expandLessBlack: "icons/expand_less_black.svg",
   expandMoreBlack: "icons/expand_more_black.svg",
   familiarFaceAndZoneBlack: "icons/familiar_face_and_zone_black.svg",
+  flagBlack: "icons/flag_black.svg",
   fileExportBlack: "icons/file_export_black.svg",
   footprintBlack: "icons/footprint_black.svg",
+  groups2Black: "icons/groups_2_black.svg",
+  leftClickBlack: "icons/left_click_black.svg",
+  listsBlack: "icons/lists_black.svg",
   noteStackBlack: "icons/note_stack_black.svg",
   settingsWhite: "icons/settings_white.svg",
+  settingsBlack: "icons/settings_black.svg",
   settings: "icons/settings.svg",
+  textFieldsAltBlack: "icons/text_fields_alt_black.svg",
   visibility: "icons/visibility.svg",
 }
 

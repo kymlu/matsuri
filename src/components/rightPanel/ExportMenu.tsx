@@ -3,6 +3,7 @@ import ExpandableSection from "../ExpandableSection.tsx";
 import Button from "../Button.tsx";
 import TextInput from "../TextInput.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export type ExportMenuProps = {
   exportFunc?: (exportName: string) => void
@@ -18,7 +19,9 @@ export default function ExportMenu(props: ExportMenuProps) {
   }
 
   return (
-    <ExpandableSection title="エクスポート">
+    <ExpandableSection
+      title="エクスポート"
+      titleIcon={ICON.fileExportBlack}>
       <div className="flex flex-row gap-2">
         <TextInput
           placeholder="ファイル名を入力"

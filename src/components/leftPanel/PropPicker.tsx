@@ -9,6 +9,7 @@ import { objectColorSettings } from "../../themes/colours.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function PropPicker () {
   const {propPositions, updatePositionState} = useContext(PositionContext);
@@ -47,7 +48,9 @@ export default function PropPicker () {
   }
   
   return (
-    <ExpandableSection title="大道具">
+    <ExpandableSection
+      title="大道具"
+      titleIcon={ICON.flagBlack}>
         <div className="flex flex-row flex-wrap gap-2">
         {propsList
           .sort((a, b) => a.name.localeCompare(b.name))

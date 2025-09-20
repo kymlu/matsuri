@@ -316,7 +316,9 @@ export default function SectionPicker() {
 		: undefined;
 
 	return (
-		<ExpandableSection title="セクション" defaultIsExpanded>
+		<ExpandableSection
+			title="セクション"
+			defaultIsExpanded titleIcon={ICON.listsBlack}>
 			<div className="flex flex-col overflow-x-hidden overflow-y-auto max-h-28">
 				{currentSections
 					.sort((a, b) => a.order - b.order)

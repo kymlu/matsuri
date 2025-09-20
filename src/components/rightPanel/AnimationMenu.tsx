@@ -5,7 +5,7 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN } from "../../data/consts.ts";
+import { DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, ICON } from "../../data/consts.ts";
 
 export default function AnimationMenu() {
   const {gridSize} = useContext(UserContext);
@@ -29,7 +29,9 @@ export default function AnimationMenu() {
   }
   
   return (
-    <ExpandableSection title="アニメーション">
+    <ExpandableSection
+      title="アニメーション"
+      titleIcon={ICON.footprintBlack}>
       { !isAnimating &&
         <Button onClick={() => {animate()}}>全ての移動可視化</Button>
       }

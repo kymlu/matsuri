@@ -10,6 +10,7 @@ import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpe
 import { dbController } from "../../data/DBProvider.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import TextInput from "../TextInput.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function ParticipantPicker () {
   const [filterText, setFilterText] = useState<string>("");
@@ -64,7 +65,9 @@ export default function ParticipantPicker () {
     .sort((a, b) => a.isPlaceholder ? -100 : 0 || a.name.localeCompare(b.name));
   
   return (
-    <ExpandableSection title="参加者">
+    <ExpandableSection
+      title="参加者"
+      titleIcon={ICON.groups2Black}>
       <TextInput
         clearable
         text={filterText}

@@ -5,6 +5,7 @@ import CustomToggleGroup from "../CustomToggleGroup.tsx";
 import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
 import CustomSwitch from "../CustomSwitch.tsx";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function GridSettingsMenu() {
   const {compareMode, gridSize, updateState} = useContext(UserContext);
@@ -19,7 +20,7 @@ export default function GridSettingsMenu() {
   }
   
   return (
-    <ExpandableSection title="表示設定" defaultIsExpanded>
+    <ExpandableSection title="表示設定" defaultIsExpanded titleIcon={ICON.settingsBlack}>
       <CustomToggleGroup
         label="セクション比較"
         options={[

@@ -7,6 +7,7 @@ import { Participant } from "../../models/Participant.ts";
 import { Prop } from "../../models/Prop.ts";
 import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
 import { dbController } from "../../data/DBProvider.tsx";
+import { ICON } from "../../data/consts.ts";
 
 export default function NameEditor() {
   const userContext = useContext(UserContext);
@@ -63,7 +64,7 @@ export default function NameEditor() {
   };
   
   return (
-    <ExpandableSection title="名前修正">
+    <ExpandableSection title="名前修正" titleIcon={ICON.textFieldsAltBlack}>
       <input
         value={inputValue}
         onInput={(event) => handleChange(event)}

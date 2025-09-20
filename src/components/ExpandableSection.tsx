@@ -4,6 +4,7 @@ import { ICON } from "../data/consts.ts";
 export interface ExpandableSectionProps {
   children: React.ReactNode,
   title: string,
+  titleIcon?: string,
   defaultIsExpanded?: boolean,
   onToggle?: () => void
 }
@@ -29,9 +30,15 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
         button-name={`Toggle the ${props.title} section`}
         className="flex flex-row justify-between w-full font-bold align-middle"
         onClick={() => toggle()}>
-        <span className="text-left">{props.title}</span>
+        <div className="flex flex-row gap-2">
+          {
+            props.titleIcon &&
+            <img className="size-6" src={props.titleIcon} alt={props.title + " icon"}/>
+          }
+          <span className="text-left">{props.title}</span>
+        </div>
         <img 
-          className="text-center size-6" 
+          className="size-6" 
           src={expanded ? ICON.expandLessBlack: ICON.expandMoreBlack}
           alt={expanded ? "Collapse icon": "Expand icon"}
           />
