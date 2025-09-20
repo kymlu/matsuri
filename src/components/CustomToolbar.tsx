@@ -7,7 +7,9 @@ export type CustomToolbarProps = {
 
 export function CustomToolbar(props: CustomToolbarProps) {
   return (
-    <Toolbar.Root orientation="horizontal" className="absolute flex p-2 mx-5 overflow-auto align-middle rounded-md outline outline-grey-800 bottom-3 bg-grey-50">
+    <Toolbar.Root
+      orientation="horizontal"
+      className="absolute flex self-center p-2 mx-auto overflow-auto align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50">
       {props.children}
     </Toolbar.Root>
   )

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useImperativeHandle, useRef } from "react
 import { Stage } from "react-konva";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import FormationGridLayer from "./FormationGridLayer.tsx";
+import FormationGridLayer from "./layers/FormationGridLayer.tsx";
 import { isNullOrUndefined } from "../helpers/GlobalHelper.ts";
 import { useState } from "react";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
@@ -12,9 +12,9 @@ import { FormationType } from "../../models/Formation.ts";
 import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
 import jsPDF from "jspdf";
 import { ExportContext } from "../../contexts/ExportContext.tsx";
-import { FormationGhostLayer } from "./FormationGhostLayer.tsx";
-import { FormationAnimationLayer } from "./FormationAnimationLayer.tsx";
-import { FormationEditLayer } from "./FormationEditLayer.tsx";
+import { FormationGhostLayer } from "./layers/FormationGhostLayer.tsx";
+import { FormationAnimationLayer } from "./layers/FormationAnimationLayer.tsx";
+import { FormationEditLayer } from "./layers/FormationEditLayer.tsx";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 
 export interface FormationEditorProps {

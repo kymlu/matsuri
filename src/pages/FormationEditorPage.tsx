@@ -18,6 +18,7 @@ import { PositionContext } from '../contexts/PositionContext.tsx';
 import { ParticipantPosition, PropPosition, NotePosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
+import { FormationEditorToolbar } from '../components/editor/toolbars/FormationEditorToolbar.tsx';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);
@@ -117,7 +118,7 @@ export default function FormationEditorPage () {
           </header>
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel/>
-            <div className='flex flex-1 h-full min-h-0 overflow-auto'>
+            <div className='flex justify-center flex-1 h-full min-h-0 overflow-auto'>
               <FormationEditor
                 ref={formationEditorRef}
                 width={setValueOrDefault(20, selectedFormation?.width)}
@@ -125,6 +126,7 @@ export default function FormationEditorPage () {
                 topMargin={setValueOrDefault(DEFAULT_TOP_MARGIN, selectedFormation?.topMargin)}
                 bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
                 sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}/>
+              <FormationEditorToolbar/>
             </div>
             <FormationRightPanel exportFunc={(exportName: string) => {
               formationEditorRef.current?.exportToPdf(exportName);

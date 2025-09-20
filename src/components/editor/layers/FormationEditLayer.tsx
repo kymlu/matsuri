@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Layer, Rect, Transformer } from "react-konva";
-import { createPosition, getAllIds, getFromPositionType, NotePosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
-import { objectColorSettings, basePalette } from "../../themes/colours.ts";
-import { strEquals } from "../helpers/GlobalHelper.ts";
-import { getPixel } from "../helpers/FormationHelper.ts";
-import NoteObject from "./formationObjects/NoteObject.tsx";
-import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
-import PropObject from "./formationObjects/PropObject.tsx";
+import { createPosition, getAllIds, getFromPositionType, NotePosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../../models/Position.ts";
+import { objectColorSettings, basePalette } from "../../../themes/colours.ts";
+import { strEquals } from "../../helpers/GlobalHelper.ts";
+import { getPixel } from "../../helpers/FormationHelper.ts";
+import NoteObject from "../formationObjects/NoteObject.tsx";
+import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
+import PropObject from "../formationObjects/PropObject.tsx";
 import Konva from "konva";
-import { AnimationContext } from "../../contexts/AnimationContext.tsx";
-import { CategoryContext } from "../../contexts/CategoryContext.tsx";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { dbController } from "../../data/DBProvider.tsx";
+import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
+import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
+import { FormationContext } from "../../../contexts/FormationContext.tsx";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { dbController } from "../../../data/DBProvider.tsx";
 import { Group } from "konva/lib/Group";
-import { CUSTOM_EVENT } from "../../data/consts.ts";
+import { CUSTOM_EVENT } from "../../../data/consts.ts";
 
 export type FormationEditLayerProps = {
   topMargin: number,

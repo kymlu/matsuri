@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Layer } from "react-konva";
-import { AnimationContext } from "../../contexts/AnimationContext.tsx";
-import { CategoryContext } from "../../contexts/CategoryContext.tsx";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { objectColorSettings } from "../../themes/colours.ts";
-import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
-import ParticipantObject from "./formationObjects/ParticipantObject.tsx";
+import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
+import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
+import { FormationContext } from "../../../contexts/FormationContext.tsx";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { objectColorSettings } from "../../../themes/colours.ts";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../../helpers/GlobalHelper.ts";
+import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
 import { useRef } from "react";
 import Konva from "konva";
-import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
-import { ParticipantPosition } from "../../models/Position.ts";
-import { SettingsContext } from "../../contexts/SettingsContext.tsx";
+import { getAnimationPaths } from "../../helpers/AnimationHelper.ts";
+import { ParticipantPosition } from "../../../models/Position.ts";
+import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
 
 export type FormationAnimationLayerProps = {
   topMargin: number,

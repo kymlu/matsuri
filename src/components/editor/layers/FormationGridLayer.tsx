@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
 import { Layer, Line } from "react-konva";
-import { DEFAULT_WIDTH } from "../../data/consts.ts";
-import { basePalette, objectColorSettings } from "../../themes/colours.ts";
-import LengthMeterMarker from "./formationObjects/LengthMeterMarker.tsx";
-import WidthMeterMarker from "./formationObjects/WidthMeterMarker.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import NoteObject from "./formationObjects/NoteObject.tsx";
+import { basePalette, objectColorSettings } from "../../../themes/colours.ts";
+import LengthMeterMarker from "../formationObjects/LengthMeterMarker.tsx";
+import WidthMeterMarker from "../formationObjects/WidthMeterMarker.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import NoteObject from "../formationObjects/NoteObject.tsx";
 
 export interface FormationGridProps {
   canvasHeight: number,

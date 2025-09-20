@@ -23,14 +23,14 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
   const {selectedItems} = useContext(UserContext);
   const {participantList} = useContext(FormationContext);
   const [selectedPositionTypes, setSelectedPositionTypes] = useState<Set<PositionType>>();
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = React.useState(false);
 
   useEffect(() => {
     setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
   }, [userContext.selectedItems])
 
   useEffect(() => {
-    setExpanded(true);
+    setExpanded(false);
   }, [userContext.selectedFormation]);
 
   var classes = classNames("flex flex-col overflow-y-auto bg-white border-l-2 border-solid border-grey", 

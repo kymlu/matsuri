@@ -15,12 +15,11 @@ import { ExportContext } from '../contexts/ExportContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { ParticipantPosition, PropPosition, NotePosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
-import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator } from '../components/CustomToolbar.tsx';
-import { CustomToolbarButton } from '../components/CustomToolbarButton.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
 import { AnimationPath } from '../models/AnimationPath.ts';
 import { getAnimationPaths } from '../components/helpers/AnimationHelper.ts';
 import { AnimationContext } from '../contexts/AnimationContext.tsx';
+import { FormationViewerToolbar } from '../components/editor/toolbars/FormationViewerToolbar.tsx';
 
 export default function ViewOnlyPage () {
   const userContext = useContext(UserContext);
@@ -34,7 +33,6 @@ export default function ViewOnlyPage () {
   const [selectedSectionId, setSelectedSectionId] = useState<string>("");
   const [firstSectionId, setFirstSectionId] = useState<string>("");
   const [lastSectionId, setLastSectionId] = useState<string>("");
-  const [showPrevious, setShowPrevious] = useState<boolean>(false);
 
   const [animationPaths, setAnimationPaths] = useState<AnimationPath[]>([]);
 
@@ -204,73 +202,14 @@ export default function ViewOnlyPage () {
               topMargin={setValueOrDefault(DEFAULT_TOP_MARGIN, selectedFormation?.topMargin)}
               bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
               sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}/>
-            <CustomToolbar>
-              <CustomToolbarGroup>
-                <CustomToolbarButton
-                  iconLeft
-                  text="前へ"
-                  disabled={strEquals(firstSectionId, selectedSectionId)}
-                  iconFileName={ICON.chevronBackwardBlack}
-                  onClick={() => {changeSection(false)}}/>
-                <CustomToolbarButton
-                  text="次へ"
-                  disabled={strEquals(lastSectionId, selectedSectionId)}
-                  iconFileName={ICON.chevronForwardBlack}
-                  onClick={() => {changeSection(true)}}/>
-              </CustomToolbarGroup>
-              { false && userContext.selectedItems.length > 0 &&  // todo implement
-                <>
-                  <CustomToolbarSeparator/>
-                  <CustomToolbarGroup>
-                    <CustomToolbarButton
-                      text="フォーカス"
-                      iconFileName={ICON.familiarFaceAndZoneBlack}
-                      onClick={() => {}}/>
-                  </CustomToolbarGroup>
-                </>
-              }
-              <CustomToolbarSeparator/>
-              <CustomToolbarGroup>
-                <CustomToolbarButton
-                  isToggle
-                  text="メモ表示"
-                  iconFileName={ICON.noteStackBlack}
-                  defaultValue={userContext.showNotes}
-                  onClick={() => updateState({showNotes: !userContext.showNotes})}/>
-                <CustomToolbarButton isToggle
-                  text="前の隊列表示"
-                  iconFileName={ICON.footprintBlack}
-                  defaultValue={showPrevious}
-                  onClick={() => {
-                    updateState({compareMode: showPrevious ? "none" : "previous"})
-                    setShowPrevious(prev => !prev);
-                  }}/>
-              </CustomToolbarGroup>
-              <CustomToolbarSeparator/>
-              <CustomToolbarGroup>
-                <CustomToolbarButton
-                  iconFileName={ICON.zoomOutBlack}
-                  onClick={() => {
-                    updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
-                  }}
-                  disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
-                <CustomToolbarButton
-                  iconFileName={ICON.zoomInBlack}
-                  onClick={() => {
-                    updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
-                  }}
-                  disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
-              </CustomToolbarGroup>
-              <CustomToolbarSeparator/>
-              <CustomToolbarGroup>
-                <CustomToolbarButton
-                  text="エクスポート"
-                  iconFileName={ICON.fileExportBlack}
-                  onClick={() => {
-                    formationEditorRef.current?.exportToPdf(exportName);
-                  }}/>
-              </CustomToolbarGroup>
-            </CustomToolbar>
+            <FormationViewerToolbar
+              changeSection={changeSection}
+              firstSectionId={firstSectionId}
+              lastSectionId={lastSectionId}
+              selectedSectionId={selectedSectionId}
+              export={() => {
+                formationEditorRef.current?.exportToPdf(exportName);
+              }}/>
           </div>
         </div>
         <ExportProgressDialog

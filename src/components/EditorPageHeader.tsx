@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { CONTEXT_NAMES, DB_NAME, ICON } from "../data/consts.ts";
+import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../data/consts.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
@@ -42,7 +42,7 @@ export function EditorPageHeader() {
         { mode === "edit" && 
           <button
             onClick={() => {
-              updateState({mode: "view"});
+              updateState({mode: "view", gridSize: DEFAULT_GRID_SIZE});
               navigate("/viewer");
             }}>
             <img className='size-8 max-w-8 max-h-8' src={ICON.visibility}/>
@@ -51,7 +51,7 @@ export function EditorPageHeader() {
         { mode === "view" &&
           <button
             onClick={() => {
-              updateState({mode: "edit"});
+              updateState({mode: "edit", gridSize: DEFAULT_GRID_SIZE});
               navigate("/formation");
               }}>
             <img className='size-8 max-w-8 max-h-8' src={ICON.edit}/>
