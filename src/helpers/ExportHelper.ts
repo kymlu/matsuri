@@ -272,7 +272,3 @@ export async function exportToPdf(
 
   pdf.save(fileName ?? `${formation.name}_formation.pdf`);
 }
-
-function getYOfText(baseY: number, textHeight: number): number {
-  return baseY - textHeight / 2
-}

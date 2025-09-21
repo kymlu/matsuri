@@ -1,4 +1,4 @@
-export const LAST_UPDATED = "更新 9月21日 2:45"
+export const LAST_UPDATED = "更新 9月21日 19:40"
 
 export const MIN_GRID_SIZE = 20;
 export const MAX_GRID_SIZE = 100;
