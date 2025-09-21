@@ -12,7 +12,7 @@ import { ExportContext } from '../contexts/ExportContext.tsx';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
 import { FormationEditorToolbar } from '../components/editor/toolbars/FormationEditorToolbar.tsx';
-import { isNullOrUndefined } from '../components/helpers/GlobalHelper.ts';
+import { isNullOrUndefined } from '../helpers/GlobalHelper.ts';
 
 export default function FormationEditorPage () {
   const userContext = useContext(UserContext);

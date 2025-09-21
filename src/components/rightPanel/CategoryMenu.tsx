@@ -4,7 +4,7 @@ import { Radio, RadioGroup } from "@base-ui-components/react";
 import { ColorStyle } from "../../themes/colours.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import ColorSwatch from "./ColorSwatch.tsx";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";

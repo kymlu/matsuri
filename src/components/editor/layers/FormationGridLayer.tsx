@@ -67,14 +67,14 @@ export default function FormationGridLayer(props: FormationGridProps) {
           <LengthMeterMarker 
             key={i}
             startX={props.canvasWidth - 2 * gridSize}
-            startY={i * gridSize + (props.topMargin - 0.25) * gridSize}
+            startY={(i + props.topMargin - 0.25) * gridSize}
             value={props.isParade ? Math.abs(props.height - i) : i}/>
         ))}
         {[...Array(gridWidth)].map((_, i) => (
           ((gridWidth / 2) % 2 === i % 2 && i !== 0 && i !== (gridWidth)) &&
           <WidthMeterMarker
             key={i}
-            startY={gridSize * 1.25}
+            startY={gridSize * 1.5}
             startX={i * gridSize}
             value={Math.abs(Math.round(i - gridWidth/2))}/>
         ))}

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { Participant } from "../../models/Participant.ts";
 import { Prop } from "../../models/Prop.ts";
 import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";

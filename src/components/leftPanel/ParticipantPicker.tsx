@@ -6,7 +6,7 @@ import ItemButton from "../ItemButton.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import TextInput from "../TextInput.tsx";

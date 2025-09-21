@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useImperativeHandle, useRef, useState } f
 import { Layer, Rect, Transformer } from "react-konva";
 import { createPosition, getAllIds, getFromPositionType, NotePosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../../models/Position.ts";
 import { objectColorSettings, basePalette } from "../../../themes/colours.ts";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
-import { getPixel } from "../../helpers/FormationHelper.ts";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { getPixel } from "../../../helpers/FormationHelper.ts";
 import NoteObject from "../formationObjects/NoteObject.tsx";
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
 import PropObject from "../formationObjects/PropObject.tsx";
@@ -30,7 +30,7 @@ export function FormationEditLayer(props: FormationEditLayerProps) {
   const {participantList, propList} = useContext(FormationContext);
   const {selectedItems, updateState, gridSize, mode} = useContext(UserContext);
   const positionContext = useContext(PositionContext);
-  const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions} = useContext(PositionContext);
   const {categories} = useContext(CategoryContext);
   const layerRef = useRef<Konva.Layer>(null);
   const transformerRef = useRef<Konva.Transformer>(null);

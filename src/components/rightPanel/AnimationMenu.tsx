@@ -3,7 +3,7 @@ import ExpandableSection from "../ExpandableSection.tsx";
 import Button from "../Button.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
-import { getAnimationPaths } from "../helpers/AnimationHelper.ts";
+import { getAnimationPaths } from "../../helpers/AnimationHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, ICON } from "../../data/consts.ts";
 

@@ -3,7 +3,7 @@ import { ICON } from "../../../data/consts.ts";
 import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator, ZoomToolbarGroup } from "../../CustomToolbar.tsx";
 import { CustomToolbarButton } from "../../CustomToolbarButton.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
 
 export type FormationViewToolbarProps = {
   firstSectionId?: string,

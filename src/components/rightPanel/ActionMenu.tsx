@@ -8,7 +8,7 @@ import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { CUSTOM_EVENT, ICON } from "../../data/consts.ts";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { Participant } from "../../models/Participant.ts";
 import Divider from "../Divider.tsx";

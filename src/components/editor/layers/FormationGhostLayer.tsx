@@ -1,16 +1,17 @@
 import React, { useContext, useEffect } from "react"
 import { Layer } from "react-konva"
 import { objectColorSettings } from "../../../themes/colours.ts"
-import { strEquals } from "../../helpers/GlobalHelper.ts"
+import { strEquals } from "../../../helpers/GlobalHelper.ts"
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx"
 import PropObject from "../formationObjects/PropObject.tsx"
-import { getPixel } from "../../helpers/FormationHelper.ts"
+import { getPixel } from "../../../helpers/FormationHelper.ts"
 import { FormationContext } from "../../../contexts/FormationContext.tsx"
 import { UserContext } from "../../../contexts/UserContext.tsx"
 import { CategoryContext } from "../../../contexts/CategoryContext.tsx"
 import { ParticipantPosition, PropPosition } from "../../../models/Position.ts"
 import { useState } from "react"
 import { PositionContext } from "../../../contexts/PositionContext.tsx"
+import { groupByKey } from "../../../helpers/GroupingHelper.ts"
 
 export type FormationGhostLayerProps = {
   topMargin: number,

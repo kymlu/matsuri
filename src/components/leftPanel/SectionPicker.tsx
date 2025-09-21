@@ -2,7 +2,7 @@ import React, { useContext, useRef } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { FormationSection } from "../../models/FormationSection.ts";
-import { isNullOrUndefined, strEquals } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, strEquals } from "../../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../SectionOptionButton.tsx";
 import { dbController } from "../../data/DBProvider.tsx";

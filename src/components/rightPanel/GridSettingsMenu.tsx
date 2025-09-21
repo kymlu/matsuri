@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { CompareMode, UserContext } from "../../contexts/UserContext.tsx";
 import CustomToggleGroup from "../CustomToggleGroup.tsx";
-import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefinedOrBlank } from "../../helpers/GlobalHelper.ts";
 import CustomSwitch from "../CustomSwitch.tsx";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 import { ICON } from "../../data/consts.ts";

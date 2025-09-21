@@ -7,7 +7,7 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { NotePosition, Position, PositionType, splitPositionsByType } from "../../models/Position.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { Prop } from "../../models/Prop.ts";
-import { strEquals } from "../helpers/GlobalHelper.ts";
+import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import CustomSwitch from "../CustomSwitch.tsx";
 import { ICON } from "../../data/consts.ts";

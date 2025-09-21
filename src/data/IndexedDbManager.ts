@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../components/helpers/GlobalHelper.ts";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import { FormationSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
 import { categoryList, festivalList, songList } from "./ImaHitotabi.ts";

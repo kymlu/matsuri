@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import FormationEditor from '../components/editor/FormationEditor.tsx';
 import { FormationSection } from '../models/FormationSection.ts';
-import { isNullOrUndefined, strEquals } from '../components/helpers/GlobalHelper.ts';
+import { isNullOrUndefined, strEquals } from '../helpers/GlobalHelper.ts';
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN } from '../data/consts.ts';
 import { ExportContext } from '../contexts/ExportContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
@@ -10,7 +10,7 @@ import { ParticipantPosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
 import { AnimationPath } from '../models/AnimationPath.ts';
-import { getAnimationPaths } from '../components/helpers/AnimationHelper.ts';
+import { getAnimationPaths } from '../helpers/AnimationHelper.ts';
 import { AnimationContext } from '../contexts/AnimationContext.tsx';
 import { FormationViewerToolbar } from '../components/editor/toolbars/FormationViewerToolbar.tsx';
 

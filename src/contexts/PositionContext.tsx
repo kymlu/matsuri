@@ -18,16 +18,3 @@ export const defaultState: PositionState = {
 }
 
 export const PositionContext = React.createContext<PositionState>(defaultState)
-
-export function GroupBySectionId<T extends { formationSectionId: string }>(
-  items: T[]
-): Record<string, T[]> {
-  return items.reduce((acc, item) => {
-    const formationSectionId = item.formationSectionId;
-    if (!acc[formationSectionId]) {
-      acc[formationSectionId] = [];
-    }
-    acc[formationSectionId].push(item);
-    return acc;
-  }, {} as Record<string, T[]>);
-}
