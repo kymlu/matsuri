@@ -1,9 +1,11 @@
 import React from 'react';
 import { useState } from 'react';
 import { ReactNode } from 'react';
+import { Path } from '../models/AnimationPath.ts';
 
 export interface AnimationContextState {
-  paths: Record<string, string>,
+  participantPaths: Record<string, Path>,
+  propPaths: Record<string, Path>
   isAnimating: boolean,
   updateAnimationContext: (newState: Partial<AnimationContextState>) => void
 }
@@ -11,7 +13,8 @@ export interface AnimationContextState {
 export type AnimationContextData = Omit<AnimationContextState, 'updateAnimationContext'>;
 
 export const defaultAnimationContext: AnimationContextState = {
-  paths: {},
+  participantPaths: {},
+  propPaths: {},
   isAnimating: false,
   updateAnimationContext: (newState: Partial<AnimationContextState>) => {},
 }

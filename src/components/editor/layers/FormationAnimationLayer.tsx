@@ -6,48 +6,58 @@ import { objectColorSettings } from "../../../themes/colours.ts";
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
 import { useRef } from "react";
 import Konva from "konva";
-import { ParticipantPosition } from "../../../models/Position.ts";
+import { ParticipantPosition, PropPosition } from "../../../models/Position.ts";
 import { Participant } from "../../../models/Participant.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { Prop } from "../../../models/Prop.ts";
+import PropObject from "../formationObjects/PropObject.tsx";
 
 export type FormationAnimationLayerProps = {
   topMargin: number,
   bottomMargin: number,
   sideMargin: number,
   participants: Record<string, Participant>,
+  props: Record<string, Prop>,
   categories: Record<string, ParticipantCategory>,
-  positions: ParticipantPosition[]
+  participantPositions: ParticipantPosition[],
+  propPositions: PropPosition[],
 }
 
 export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
-  const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
+  const {participantPaths, propPaths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {updateState} = useContext(UserContext);
   const {followingId} = useContext(VisualSettingsContext);
   const animationLayerRef = useRef<Konva.Layer>(null);
-  const animationRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
   
   Object.keys(props.participants)
     .forEach((_, index) => 
-      animationRef.current[index] = React.createRef<Konva.Group>()
+      participantRef.current[index] = React.createRef<Konva.Group>()
+    );
+  Object.keys(props.props)
+    .forEach((_, index) => 
+      propRef.current[index] = React.createRef<Konva.Group>()
     );
     
   useEffect(() => {
-    if(!isAnimating) return;
+    if (!isAnimating) return;
+
     updateState({isLoading: false});
 
     const steps = 30;
 
     const animationPromises: Promise<void>[] = [];
 
-    Object.entries(paths)
+    Object.entries(participantPaths)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .forEach(([, pathData], index) => {
         const path = new Konva.Path({
           x: 0,
           y: 0,
-          data: pathData,
+          data: pathData.path,
         });
 
         const pathLen = path.getLength();
@@ -60,8 +70,45 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             pos++;
 
             const pt = path.getPointAtLength(pos * step);
-            if (pt && animationRef?.current[index]) {
-              animationRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
+            if (pt && participantRef?.current[index]) {
+              participantRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
+            }
+
+            if (pos >= steps) {
+              anim.stop();
+              resolve();
+            }
+          });
+
+          anim.start();
+        });
+
+        animationPromises.push(animPromise);
+      });
+    Object.entries(propPaths)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .forEach(([, pathData], index) => {
+        const path = new Konva.Path({
+          x: 0,
+          y: 0,
+          data: pathData.path,
+        });
+        console.log(pathData);
+
+        const pathLen = path.getLength();
+        const step = pathLen / steps;
+        const anglePerStep = (pathData.toAngle! - pathData.fromAngle!)/steps;
+        let pos = 0;
+
+        // Wrap each animation in a Promise
+        const animPromise = new Promise<void>((resolve) => {
+          const anim = new Konva.Animation(() => {
+            pos++;
+
+            const pt = path.getPointAtLength(pos * step);
+            if (pt && propRef?.current[index]) {
+              propRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
+              propRef.current[index]?.current?.rotation(pathData.fromAngle! + pos * anglePerStep);
             }
 
             if (pos >= steps) {
@@ -85,7 +132,26 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
     <Layer
       listening={false}
       useRef={animationLayerRef}>
-      {props.positions
+      {props.propPositions
+        ?.sort((a, b) => a.propId.localeCompare(b.propId))
+        .map((placement, index) => {
+          const prop = props.props[placement.propId];
+          if (!prop) return;
+          return <PropObject 
+            id={"animate" + placement.id}
+            key={placement.id}
+            name={prop.name!} 
+            colour={prop.color ?? objectColorSettings["amberLight"]} 
+            startX={0} 
+            startY={0}
+            ref={propRef.current[index]}
+            length={prop.length}
+            rotation={0}
+          />;
+        }
+        )
+      }
+      {props.participantPositions
         ?.sort((a, b) => a.participantId.localeCompare(b.participantId))
         .map((placement, index) => {
           const participant = props.participants[placement.participantId];
@@ -97,7 +163,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             colour={placement.categoryId ? props.categories[placement.categoryId]?.color || objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
             startX={0} 
             startY={0}
-            ref={animationRef.current[index]}
+            ref={participantRef.current[index]}
             following={strEquals(followingId, placement.participantId)}
           />;
         }

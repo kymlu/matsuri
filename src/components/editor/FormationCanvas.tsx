@@ -5,7 +5,7 @@ import FormationGridLayer from "./layers/FormationGridLayer.tsx";
 import { isNullOrUndefined, strEquals } from "../../helpers/GlobalHelper.ts";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { FormationType } from "../../models/Formation.ts";
-import { getAnimationPaths } from "../../helpers/AnimationHelper.ts";
+import { getParticipantAnimationPaths, getPropAnimationPaths } from "../../helpers/AnimationHelper.ts";
 import { FormationGhostLayer } from "./layers/FormationGhostLayer.tsx";
 import { FormationAnimationLayer } from "./layers/FormationAnimationLayer.tsx";
 import { FormationMainLayer } from "./layers/FormationMainLayer.tsx";
@@ -27,7 +27,7 @@ export interface FormationCanvasProps {
   sideMargin: number,
   ref: React.Ref<any>,
   categories: Record<string, ParticipantCategory>;
-  setAnimationPaths: (paths: AnimationPath[]) => void,
+  setAnimationPaths: (participantPaths: AnimationPath[]) => void,
   setFollowingPositions?: (newPosition: Record<string, ParticipantPosition> | null) => void
 }
 
@@ -58,14 +58,21 @@ export default function FormationCanvas(props: FormationCanvasProps) {
     
     if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
       updateState({isLoading: true});
-      var animationPaths = getAnimationPaths([userContext.previousSectionId!,
-        userContext.selectedSection!.id],
+      var participantPaths = getParticipantAnimationPaths(
+        [userContext.previousSectionId!, userContext.selectedSection!.id],
         gridSize,
         Object.values(participantPositions).flat(),
         props.topMargin,
-        props.sideMargin)
+        props.sideMargin);
+      var propPaths = getPropAnimationPaths(
+        [userContext.previousSectionId!, userContext.selectedSection!.id],
+        gridSize,
+        Object.values(propPositions).flat(),
+        props.topMargin,
+        props.sideMargin);
+      console.log(propPaths);
       updateState({isLoading: false});
-      updateAnimationContext({paths: animationPaths, isAnimating: true});
+      updateAnimationContext({participantPaths: participantPaths, propPaths: propPaths, isAnimating: true});
     }
   }, [userContext.selectedSection]);
 
@@ -155,7 +162,9 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             bottomMargin={props.bottomMargin}
             sideMargin={props.sideMargin}
             participants={participantList}
-            positions={participantPositions[selectedSection.id]}
+            participantPositions={participantPositions[selectedSection.id]}
+            props={propList}
+            propPositions={propPositions[selectedSection.id]}
             categories={props.categories}/>
         }
       </Stage>

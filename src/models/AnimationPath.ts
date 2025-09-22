@@ -1,5 +1,12 @@
 export interface AnimationPath {
   fromSectionId: string,
   toSectionId: string,
-  paths: Record<string, string>,
+  participantPaths: Record<string, Path>,
+  propPaths: Record<string, Path>,
+}
+
+export interface Path {
+  path: string,
+  fromAngle?: number,
+  toAngle?: number
 }

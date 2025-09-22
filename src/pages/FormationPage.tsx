@@ -35,7 +35,6 @@ export type MarginPositions = {
 
 export default function FormationPage () {
   const userContext = useContext(UserContext);
-  const positionContext = useContext(PositionContext);
   const {updateState, selectedSection} = useContext(UserContext);
   const {gridSize, followingId} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
@@ -74,18 +73,13 @@ export default function FormationPage () {
   useEffect(() => {
     setSelectedSectionId(userContext.selectedSection?.id ?? "");
   }, [userContext.selectedSection]);
-
-  useEffect(() => {
-    /// todo: inefficient
-    if (isNullOrUndefined(userContext.currentSections) || isNullOrUndefined(participantPositions) || isNullOrUndefined(selectedFormation)) return;
-    generateAnimationPaths(userContext.currentSections, Object.values(positionContext.participantPositions).flat(), gridSize, selectedFormation?.topMargin, selectedFormation?.sideMargin);
-  }, [gridSize, userContext.currentSections, positionContext.participantPositions, selectedFormation]);
-
+  
   useEffect(() => {
     if(appMode === "view") {
       setAnimationPaths(generateAnimationPaths(
         userContext.currentSections,
         Object.values(participantPositions).flat(),
+        Object.values(propPositions).flat(),
         gridSize,
         selectedFormation?.topMargin,
         selectedFormation?.sideMargin));
@@ -111,6 +105,7 @@ export default function FormationPage () {
       notePositions: NotePosition[]) => {
         try {
           var groupedParticipantPositions = groupByKey(participantPositions, "formationSectionId")
+          var groupedPropPositions = groupByKey(propPositions, "formationSectionId")
           updateEntitiesContext({
             participantList: indexByKey(participants, "id"),
             propList: indexByKey(propList, "id")
@@ -118,7 +113,7 @@ export default function FormationPage () {
 
           updatePositionContextState({
             participantPositions: groupedParticipantPositions,
-            propPositions: groupByKey(propPositions, "formationSectionId"),
+            propPositions: groupedPropPositions,
             notePositions: groupByKey(notePositions, "formationSectionId"),
           });
 
@@ -138,6 +133,7 @@ export default function FormationPage () {
           setAnimationPaths(generateAnimationPaths(
             currentSections,
             Object.values(groupedParticipantPositions).flat(),
+            Object.values(groupedPropPositions).flat(),
             gridSize,
             selectedFormation?.topMargin,
             selectedFormation?.sideMargin));
@@ -196,10 +192,12 @@ export default function FormationPage () {
     var nextSection = userContext.currentSections.sort((a, b) => a.order - b.order)[index + (isNext ? 1 : -1)];
     var from = selectedSectionId;
     var to = nextSection.id;
-    var paths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to))?.paths;
-    if (paths) {
+    var participantPaths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to))?.participantPaths;
+    var propPaths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to))?.propPaths;
+    if (participantPaths) {
       updateAnimationContext({
-        paths: paths,
+        participantPaths: participantPaths,
+        propPaths: propPaths,
         isAnimating: true
       });
     }
