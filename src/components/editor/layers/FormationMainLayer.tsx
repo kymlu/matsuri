@@ -408,7 +408,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				!selectedItems.map((x) => getFromPositionType(x).id).includes(item.id)
 			) {
 				updateState({ selectedItems: [createPosition(item)] });
-				setSelectedIds(new Set(item.id));
+				setSelectedIds(new Set([item.id]));
 			} else if (!forceSelect) {
 				updateState({ selectedItems: [] });
 				setSelectedIds(new Set());

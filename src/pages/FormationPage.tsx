@@ -259,7 +259,7 @@ export default function FormationPage () {
                 }}/>
               {
                 selectedSection && followingId && followingPositions && selectedFormation &&
-                <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] sm:landscape:top-auto sm:landscape:left-2 sm:landscape:bottom-2 sm:landscape:translate-x-0 rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
+                <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] landscape:top-auto landscape:left-3 landscape:bottom-3 landscape:translate-x-0 rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
                   <span className='font-bold'>
                     {`${participantList[followingId].displayName}`}
                   </span>
