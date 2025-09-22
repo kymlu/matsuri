@@ -61,6 +61,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const noteRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+	const [isSinglePropSelected, setIsSinglePropSelected] = useState<boolean>(false);
 
 	const positionContextRef = useRef(positionContext);
 
@@ -368,10 +369,11 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 
 	function updatePropRotation(id: string, angle: number, x: number, y: number) {
 		var prop = props.propPositions.find((x) => strEquals(x.id, id));
+		console.log("updatePropRotation")
 		if (prop) {
 			prop.angle = angle;
-			prop.x = x / gridSize; //(x * gridSize + x)/gridSize;
-			prop.y = y / gridSize; //(y * gridSize + y)/gridSize;
+			prop.x = x / gridSize - props.sideMargin;
+			prop.y = y / gridSize - props.topMargin;
 			dbController.upsertItem("propPosition", prop);
 		}
 	}
@@ -383,6 +385,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		multiSelect?: boolean
 	) {
 		if (item === null || appMode === "view") return;
+
+		var singlePropSelected = false;
 
 		if (multiSelect) {
 			var newList: Position[] = [];
@@ -409,11 +413,16 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			) {
 				updateState({ selectedItems: [createPosition(item)] });
 				setSelectedIds(new Set([item.id]));
+				if (type === PositionType.prop) {
+					singlePropSelected = true;
+				}
 			} else if (!forceSelect) {
 				updateState({ selectedItems: [] });
 				setSelectedIds(new Set());
 			}
 		}
+
+		setIsSinglePropSelected(singlePropSelected);
 	}
 
 	return (
@@ -508,7 +517,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				flipEnabled={false}
 				ref={transformerRef}
 				resizeEnabled={false}
-				rotateEnabled={false} // todo implement in single select prop etc.
+				rotateEnabled={isSinglePropSelected}
 				borderStrokeWidth={2}
 				borderStroke={basePalette.primary.main}
 				anchorStrokeWidth={2}
@@ -519,9 +528,10 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				]}
 				rotationSnapTolerance={10}
 				onTransformEnd={(event) => {
-					console.log("rotation is broken");
-					console.log(event.target);
-					//props.onTransform?.(event.target);
+					updatePropRotation(event.target.attrs.id,
+							event.target.attrs.rotation,
+							event.target.attrs.x,
+							event.target.attrs.y);
 				}}
 			/>
 			<Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef} />
