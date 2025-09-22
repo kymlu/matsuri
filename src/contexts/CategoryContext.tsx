@@ -2,14 +2,14 @@ import React from 'react';
 import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 
 export interface CategoryContextState {
-  categories: Array<ParticipantCategory>,
+  categories: Record<string, ParticipantCategory>,
   updateCategoryContext: (newState: Partial<CategoryContextState>) => void
 }
 
 export type CategoryContextData = Omit<CategoryContextState, 'updateCategoryContext'>;
 
 export const defaultCategoryContext: CategoryContextState = {
-  categories: Array<ParticipantCategory>(),
+  categories: {},
   updateCategoryContext: (newState: Partial<CategoryContextState>) => {},
 }
 

@@ -21,12 +21,12 @@ export default function CategoryMenu() {
   const [editingId, setEditingId] = useState<string | undefined | null>(null);
   const {categories, updateCategoryContext} = useContext(CategoryContext);
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
-  const {participantPositions, updatePositionState} = useContext(PositionContext);
+  const {participantPositions, updatePositionContextState} = useContext(PositionContext);
 
 	const categoryOptionRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
 
   useEffect(() => {
-    categories
+    Object.values(categories)
       .forEach((_, index) => 
         categoryOptionRef.current[index] = React.createRef<HTMLDivElement>()
       );
@@ -39,7 +39,7 @@ export default function CategoryMenu() {
         .map(x => x.participant.categoryId);
         
       if (new Set(selectedCategories).size === 1) {
-        var category = categories.find(x => strEquals(x.id, selectedCategories[0]))!;
+        var category = categories[selectedCategories[0]!];
         setSelectedCategory(category);
       } else {
         setSelectedCategory(null);
@@ -67,13 +67,13 @@ export default function CategoryMenu() {
   }
 
   function onChangeCategory(newCategoryId: string) {
-    var newCategory = categories.find(x => strEquals(x.id, newCategoryId))!;
+    var newCategory = categories[newCategoryId]!;
     var updatedPositions = splitPositionsByType(selectedItems).participants.map(x => ({...x, categoryId: newCategoryId}));
     var positionIds = updatedPositions.map(x => x.id);
 
     setSelectedCategory(newCategory);
     updateState({selectedItems: updatedPositions.map(x => createPosition(x, PositionType.participant))});
-    updatePositionState({participantPositions: [
+    updatePositionContextState({participantPositions: [
       ...participantPositions.filter(x => !positionIds.includes(x.id)),
       ...updatedPositions
     ]});
@@ -90,16 +90,17 @@ export default function CategoryMenu() {
       } as ParticipantPosition));
     
     dbController.upsertList("participantPosition", updatedPositions);
-    updatePositionState({participantPositions: [
+    updatePositionContextState({participantPositions: [
       ...participantPositions.filter(x => !participantIds.includes(x.participantId)),
       ...updatedPositions
     ]})
   }
 
   function selectColor(color: ColorStyle, category: ParticipantCategory) {
-    var newCategory = {...category, color: color} as ParticipantCategory;
-    dbController.upsertItem("category", newCategory);
-    updateCategoryContext({categories: [...categories.filter(c => !strEquals(c.id, category.id)), newCategory]})
+    var updatedCategories = {...categories};
+    updatedCategories[category.id].color = color;
+    dbController.upsertItem("category", updatedCategories[category.id]);
+    updateCategoryContext({categories: updatedCategories})
     setEditingId(null);
   }
 
@@ -113,7 +114,7 @@ export default function CategoryMenu() {
         onValueChange={(value) => onChangeCategory(value as string)}>
         <div className="flex flex-col overflow-x-hidden overflow-y-auto gap-x-6 max-h-32">
           {
-            categories
+            Object.values(categories)
               .sort((a, b) => a.order - b.order)
               .map((category, index) => 
               <div

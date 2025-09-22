@@ -4,13 +4,13 @@ import ColorPicker from "./ColorPicker.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { ColorStyle, objectColorSettings } from "../../themes/colours.ts";
 import { dbController } from "../../data/DBProvider.tsx";
-import { NotePosition, Position, PositionType, splitPositionsByType } from "../../models/Position.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { Prop } from "../../models/Prop.ts";
+import { Position, PositionType, splitPositionsByType } from "../../models/Position.ts";
+import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import CustomSwitch from "../CustomSwitch.tsx";
 import { ICON } from "../../data/consts.ts";
+import { indexByKey, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../helpers/GroupingHelper.ts";
 
 export type ColorPickerMenuProps = {
 }
@@ -20,9 +20,9 @@ export default function ColorPickerMenu() {
   const [showTransparentOption, setShowTransparentOption] = useState<boolean>(false);
   const [isBgShown, setIsBgShown] = useState<boolean>(false);
   const userContext = useContext(UserContext);
-  const {selectedItems, updateState} = useContext(UserContext);
-  const {propList, updateFormationContext} = useContext(FormationContext);
-  const {notePositions, updatePositionState} = useContext(PositionContext);
+  const {selectedItems, selectedSection, updateState} = useContext(UserContext);
+  const {propList, updateEntitiesContext} = useContext(EntitiesContext);
+  const {notePositions, updatePositionContextState} = useContext(PositionContext);
 
   const showBgSwitchRef = React.createRef<any>();
 
@@ -32,12 +32,15 @@ export default function ColorPickerMenu() {
       .map(x => ({...x, showBackground: newShowBg}));
     
     var updatedNoteIds = updatedNotes.map(x => x.id);
+    var updatedNotePositions = replaceItemsFromDifferentSource(
+      notePositions,
+      updatedNoteIds,
+      updatedNotes,
+      (item) => item.formationSectionId,
+      (item) => item.id);
     
-    updatePositionState({
-      notePositions: [
-        ...notePositions.filter(x => !updatedNoteIds.includes(x.id)),
-        ...updatedNotes
-      ]
+    updatePositionContextState({
+      notePositions: updatedNotePositions
     });
     dbController.upsertList("notePosition", updatedNotes);
   }
@@ -48,35 +51,32 @@ export default function ColorPickerMenu() {
     var res = splitPositionsByType(selectedItems);
     var propIds = res.props.map(x => x.propId);
 
-    var updatedProps = propList
-      .slice()
-      .filter(x => propIds.includes(x.id))
-      .map(x => ({...x, color: color} as Prop));
-
-    var updatedNotes = res.notes.map(x => ({...x, color: color, showBackground: true} as NotePosition));
-    
-    var noteIds = res.notes.map(x => x.id);
-
-    updateFormationContext({
-      propList: [
-        ...propList.filter(x => !propIds.includes(x.id)),
-        ...updatedProps
-      ]
-    });
-    updatePositionState({
-      notePositions: [
-        ...notePositions.filter(x => !noteIds.includes(x.id)),
-        ...updatedNotes
-      ]
+    var updatedProps = {...propList};
+    propIds.forEach(id => {
+      updatedProps[id].color = color;
     })
+    updateEntitiesContext({propList: updatedProps});
+    
+    var noteIds = new Set(res.notes.map(x => x.id));
+    var updatedNotes = [...notePositions[selectedSection!.id]];
+    noteIds.forEach(id => {
+      updatedNotes[id].color = color;
+    });
+    
+    updatePositionContextState({
+      notePositions: {
+        ...notePositions,
+        [selectedSection!.id]: updatedNotes,
+      }
+    });
 
     updateState({selectedItems: [
       ...selectedItems.filter(x => x.type === PositionType.prop),
-      ...updatedNotes.map(x => ({note: x, type: PositionType.note} as Position)),
+      ...updatedNotes.filter(x => noteIds.has(x.id)).map(x => ({note: x, type: PositionType.note} as Position)),
     ]});
 
     Promise.all([
-      dbController.upsertList("prop", updatedProps),
+      dbController.upsertList("prop", selectValuesByKeys(updatedProps, propIds)),
       dbController.upsertList("notePosition", updatedNotes),  
     ]);
   }
@@ -84,7 +84,7 @@ export default function ColorPickerMenu() {
   useEffect(()=> {
     var res = splitPositionsByType(userContext.selectedItems);
     var propIds = res.props.map(x => x.propId);
-    var allColors = new Set(propList.filter(x => propIds.includes(x.id))?.map(x => x.color?.twColor));
+    var allColors = new Set(selectValuesByKeys(propList, propIds)?.map(x => x.color?.twColor));
     
     (res.notes.map(x => x.color?.twColor) as Array<string>)
       .forEach(color => {

@@ -7,14 +7,15 @@ import { Prop } from "../../models/Prop.ts";
 import { PropPosition } from "../../models/Position.ts";
 import { objectColorSettings } from "../../themes/colours.ts";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { ICON } from "../../data/consts.ts";
+import { addItemsToRecordByKey, addItemToRecord } from "../../helpers/GroupingHelper.ts";
 
-export default function PropPicker () {
-  const {propPositions, updatePositionState} = useContext(PositionContext);
-  const {currentSections, selectedSection, marginPositions} = useContext(UserContext);
-  const {propList, updateFormationContext} = useContext(FormationContext);
+export default function PropPicker (props: {margins: number[][]}) {
+  const {propPositions, updatePositionContextState} = useContext(PositionContext);
+  const {currentSections, selectedSection} = useContext(UserContext);
+  const {propList, updateEntitiesContext} = useContext(EntitiesContext);
 
   function selectProp(selectedProp: Prop) {
     if(selectedSection === null) return;
@@ -26,7 +27,7 @@ export default function PropPicker () {
       formationId: selectedSection.formationId
     } as Prop;
 
-    var position = marginPositions.props[propList.length % marginPositions.props.length]
+    var position = props.margins[Object.values(propList).length % props.margins.length]
     
     var newPositions: PropPosition[] = currentSections.map(section => {
       return {
@@ -40,8 +41,11 @@ export default function PropPicker () {
       } as PropPosition;
     });
 
-    updateFormationContext({propList: [...propList, newProp]});
-    updatePositionState({propPositions: [...propPositions, ...newPositions]});
+    var updatedProps = addItemToRecord(propList, newProp.id, newProp);
+    updateEntitiesContext({propList: updatedProps});
+
+    var updatedPositions = addItemsToRecordByKey(propPositions, newPositions, (item) => item.formationSectionId);
+    updatePositionContextState({propPositions: updatedPositions});
 
     dbController.upsertItem("prop", newProp);
     dbController.upsertList("propPosition", newPositions);

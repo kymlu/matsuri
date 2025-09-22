@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 import '../index.css';
 import Button from '../components/Button.tsx';
@@ -9,27 +9,28 @@ import { useNavigate } from 'react-router-dom';
 import { Formation } from '../models/Formation.ts';
 import Divider from '../components/Divider.tsx';
 import CustomToggleGroup from '../components/CustomToggleGroup.tsx';
-import { LAST_UPDATED } from '../data/consts.ts';
-
-export type AppMode = "view" | "edit";
+import { DEFAULT_GRID_SIZE, LAST_UPDATED } from '../data/consts.ts';
+import { AppMode, AppModeContext } from '../contexts/AppModeContext.tsx';
+import { FormationContext } from '../contexts/FormationContext.tsx';
+import { GridSizeContext } from '../contexts/GridSizeContext.tsx';
 
 export default function FestivalManager () {
   const {updateState} = useContext(UserContext);
-  const [mode, setMode] = useState<AppMode>("view");
+  const {updateGridSizeContext} = useContext(GridSizeContext);
+  const {appMode, updateAppModeContext} = useContext(AppModeContext);
+  const {updateFormationContext} = useContext(FormationContext);
   let navigate = useNavigate();
 
   function onClick(festival: Festival, selectedFormation: Formation) {
     updateState({
         selectedFestival: festival,
-        selectedFormation: selectedFormation,
         selectedItems: [],
-        mode: mode,
         showNotes: true,
     });
-    if (mode === "view") {
-      updateState({gridSize: 40})
-    }
-    navigate(mode === "edit" ? "/formation" : "/viewer");
+    updateFormationContext({selectedFormation: selectedFormation});    
+    updateGridSizeContext({gridSize: DEFAULT_GRID_SIZE})
+    
+    navigate("/formation");
   }
 
   return (
@@ -41,14 +42,14 @@ export default function FestivalManager () {
             defaultValue="view"
             label="モード"
             options={[{
-              label:  "閲",
+              label:  "閲", // todo: change to icons
               value: "view"
             }, {
               label: "編",
               value: "edit"
             }]}
-            onChange={(newValue) => setMode(newValue as AppMode)}
-            currentValue={mode}/>
+            onChange={(newValue) => updateAppModeContext({appMode: newValue as AppMode})}
+            currentValue={appMode}/>
         </div>
         <Divider/>
         <div className='grid landscape:grid-cols-[auto,1fr] items-center gap-3'>

@@ -4,21 +4,23 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import Button from "../Button.tsx";
 import { dbController } from "../../data/DBProvider.tsx";
 import { PositionType, splitPositionsByType } from "../../models/Position.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { EntitiesContext, EntitiesContextState } from "../../contexts/EntitiesContext.tsx";
+import { PositionContext, PositionContextState } from "../../contexts/PositionContext.tsx";
 import { CUSTOM_EVENT, ICON } from "../../data/consts.ts";
 import { CategoryContext } from "../../contexts/CategoryContext.tsx";
 import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { Participant } from "../../models/Participant.ts";
 import Divider from "../Divider.tsx";
+import { removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../helpers/GroupingHelper.ts";
 
 export default function ActionMenu() {
-  const {participantList, propList, updateFormationContext} = useContext(FormationContext);
+  const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);
   const userContext = useContext(UserContext);
   const {categories} = useContext(CategoryContext);
   const {selectedItems, currentSections, selectedSection, updateState} = useContext(UserContext);
-  const {participantPositions, propPositions, notePositions, updatePositionState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
+  
   const [selectedPositionType, setSelectedPositionType] = useState<PositionType | null>();
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
   const [swapMenuExpanded, setSwapMenuExpanded] = useState<boolean>(false);
@@ -34,8 +36,7 @@ export default function ActionMenu() {
         var participantIds = selectedItems
           .filter(x => x.type === PositionType.participant)
           .map(x => x.participant.participantId);
-        setSwappableParticipants(participantList
-          .filter(x => participantIds.includes(x.id))
+        setSwappableParticipants(selectValuesByKeys(participantList, participantIds)
           .sort((a, b) => a.displayName.localeCompare(b.displayName)));
       } else {
         setSwappableParticipants([]);
@@ -50,7 +51,7 @@ export default function ActionMenu() {
     var currentCategories = new Set(splitPositionsByType(userContext.selectedItems).participants.map(x => x.categoryId));
     if (currentCategories.size === 1) {
       var catId = currentCategories.values().next().value;
-      setSelectedCategory(categories.find(x => strEquals(x.id, catId)) ?? null);
+      setSelectedCategory(categories[catId] ?? null);
     } else {
       setSelectedCategory(null);
     }
@@ -72,8 +73,9 @@ export default function ActionMenu() {
         break;
     }
 
-    var updatedPositions = participantPositions
-      .filter(x => sectionIds.includes(x.formationSectionId) &&
+    var updatedPositions = selectValuesByKeys(participantPositions, sectionIds)
+      .flat()
+      .filter(x =>
         (strEquals(x.participantId, swappableParticipants[0].id) ||
         strEquals(x.participantId, swappableParticipants[1].id)))
       .map(x => ({
@@ -83,11 +85,15 @@ export default function ActionMenu() {
 
     var updatedPositionIds = updatedPositions.map(x => x.id);
 
-    updatePositionState({
-      participantPositions: [
-        ...participantPositions.filter(x => !updatedPositionIds.includes(x.id)),
-        ...updatedPositions
-      ],
+    var updatedParticipantPositions = replaceItemsFromDifferentSource(
+      participantPositions,
+      updatedPositionIds,
+      updatedPositions,
+      (item) => item.formationSectionId,
+      (item) => item.id);
+
+    updatePositionContextState({
+      participantPositions: updatedParticipantPositions,
     });
     
     dbController.upsertList("participantPosition", updatedPositions);
@@ -115,60 +121,39 @@ export default function ActionMenu() {
     window.dispatchEvent(selectAllEvent);
   }
   
-  function deleteObject() {
+  function deleteObjects() { // todo: update transformer
     if (selectedItems.length === 0) return;
 
     const {participants, props, notes} = splitPositionsByType(selectedItems);
 
+    var updatedPositions: Partial<PositionContextState> = {};
+    var updatedEntities: Partial<EntitiesContextState> = {};
+
     if (participants.length > 0) {
-      var selectedParticipantIds = participants
-        .map(x => x.participantId);
-      var participantsToRemove = participantPositions.filter(x => selectedParticipantIds.includes(x.participantId)).map(x => x.id);
-      Promise.all([
-        dbController.removeList("participant", selectedParticipantIds),
-        dbController.removeList("participantPosition", participantsToRemove)
-      ]).then(() => {
-        try {
-          updatePositionState({
-            participantPositions: participantPositions.filter(x => !participantsToRemove.includes(x.id)),
-          });
-          updateFormationContext({
-            participantList: participantList.filter(x => !selectedParticipantIds.includes(x.id))
-          });
-        } catch (e) {
-          console.error('Error parsing user from localStorage:', e);
-        }
-      });
+      var selectedParticipantIds = new Set(participants.map(x => x.participantId));
+      var positionsToRemove = new Set(Object.values(participantPositions).flat().filter(x => selectedParticipantIds.has(x.participantId)).map(x => x.id));
+      dbController.removeList("participant", [...selectedParticipantIds]);
+      dbController.removeList("participantPosition", [...positionsToRemove]);
+      updatedPositions.participantPositions = removeItemsByCondition(participantPositions, (item) => positionsToRemove.has(item.id));
+      updatedEntities.participantList = removeKeysFromRecord(participantList, selectedParticipantIds);
     }
 
     if (props.length > 0) {
-      var selectedPropIds = props
-        .map(x => x.propId);
-      var propsToRemove = propPositions.filter(x => selectedPropIds.includes(x.propId)).map(x => x.id);
-      Promise.all([
-        dbController.removeList("prop", selectedPropIds),
-        dbController.removeList("propPosition", propsToRemove)
-      ]).then(() => {
-        try {
-          updatePositionState({
-            propPositions: propPositions.filter(x => !propsToRemove.includes(x.id)),
-          });
-          updateFormationContext({
-            propList: propList.filter(x => !selectedPropIds.includes(x.id))
-          });
-        } catch (e) {
-          console.error('Error parsing user from localStorage:', e);
-        }
-      });
+      var selectedPropIds = new Set(props.map(x => x.propId));
+      var positionsToRemove = new Set(Object.values(propPositions).flat().filter(x => selectedPropIds.has(x.propId)).map(x => x.id));
+      dbController.removeList("prop", [...selectedPropIds]);
+      dbController.removeList("propPosition", [...positionsToRemove]);
+      updatedPositions.propPositions = removeItemsByCondition(propPositions, (item) => positionsToRemove.has(item.id));
+      updatedEntities.propList = removeKeysFromRecord(propList, selectedPropIds);
     }
 
     if (notes.length > 0) {
-      var selectedItemIds = notes
-        .map(x => x.id);
-      updatePositionState({notePositions: notePositions.filter(x => !selectedItemIds.includes(x.id))});
-      dbController.removeList("notePosition", selectedItemIds);
+      var positionsToRemove = new Set(notes.map(x => x.id));
+      updatedPositions.notePositions = removeItemsByCondition(notePositions, (item) => positionsToRemove.has(item.id));
+      dbController.removeList("notePosition", [...positionsToRemove]);
     }
-
+    updateEntitiesContext(updatedEntities);
+    updatePositionContextState(updatedPositions);
     updateState({selectedItems: []});
   }
   
@@ -241,7 +226,7 @@ export default function ActionMenu() {
         }
         <Button full
           label="Delete item"
-          onClick={() => {deleteObject()}}>
+          onClick={() => {deleteObjects()}}>
           削除
         </Button>
       </div>

@@ -1,4 +1,45 @@
+import { DEFAULT_TOP_MARGIN, DEFAULT_SIDE_MARGIN } from "../data/consts.ts";
+import { AnimationPath } from "../models/AnimationPath.ts";
+import { FormationSection } from "../models/FormationSection.ts";
 import { ParticipantPosition } from "../models/Position.ts";
+
+export function generateAnimationPaths(
+  sections: Array<FormationSection>,
+  participantPositions: ParticipantPosition[],
+  gridSize: number,
+  topMargin?: number,
+  sideMargin?: number,
+): AnimationPath[]{
+  var newPaths: AnimationPath[] = [];
+      
+  Array.from({length: sections?.length - 1}).forEach((_, i) => {
+    newPaths.push(
+      {
+        fromSectionId: sections[i].id,
+        toSectionId: sections[i + 1].id,
+        paths: getAnimationPaths(
+          [sections[i].id, sections[i + 1].id],
+          gridSize,
+          participantPositions,
+          topMargin ?? DEFAULT_TOP_MARGIN,
+          sideMargin ?? DEFAULT_SIDE_MARGIN
+        )
+      },
+      {
+        fromSectionId: sections[i + 1].id,
+        toSectionId: sections[i].id,
+        paths: getAnimationPaths(
+          [sections[i + 1].id, sections[i].id],
+          gridSize,
+          participantPositions,
+          topMargin ?? DEFAULT_TOP_MARGIN,
+          sideMargin ?? DEFAULT_SIDE_MARGIN
+        )
+      }
+    );
+  });
+  return newPaths;
+}
 
 export function getAnimationPaths(
   sectionIds: string[],

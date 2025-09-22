@@ -3,7 +3,7 @@ import classNames from "classnames";
 import React, { useContext, useEffect, useState } from "react";
 import { CustomToolbarButton } from "./CustomToolbarButton.tsx";
 import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../data/consts.ts";
-import { UserContext } from "../contexts/UserContext.tsx";
+import { GridSizeContext } from "../contexts/GridSizeContext.tsx";
 
 export type CustomToolbarProps = {
   children: React.ReactNode
@@ -60,23 +60,44 @@ export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnV
 }
 
 export function ZoomToolbarGroup() {
-  const userContext = useContext(UserContext);
-  const {updateState} = useContext(UserContext);
+  const {gridSize, updateGridSizeContext} = useContext(GridSizeContext);
   
   return (
     <CustomToolbarGroup reverseOnVertical>
       <CustomToolbarButton
         iconFileName={ICON.zoomOutBlack}
         onClick={() => {
-          updateState({gridSize: userContext.gridSize - GRID_SIZE_INCREMENT});
+          updateGridSizeContext({gridSize: gridSize - GRID_SIZE_INCREMENT});
         }}
-        disabled={userContext.gridSize <= MIN_GRID_SIZE}/>
+        disabled={gridSize <= MIN_GRID_SIZE}/>
       <CustomToolbarButton
         iconFileName={ICON.zoomInBlack}
         onClick={() => {
-          updateState({gridSize: userContext.gridSize + GRID_SIZE_INCREMENT});
+          updateGridSizeContext({gridSize: gridSize + GRID_SIZE_INCREMENT});
         }}
-        disabled={userContext.gridSize >= MAX_GRID_SIZE}/>
+        disabled={gridSize >= MAX_GRID_SIZE}/>
+    </CustomToolbarGroup>
+  )
+}
+
+export function NavigateToolbarGroup(props: {
+  disablePrevious: boolean,
+  disableNext: boolean,
+  onChange?: (isNext: boolean) => void,
+}) {
+  return (
+    <CustomToolbarGroup>
+      <CustomToolbarButton
+        iconLeft
+        text="前へ"
+        disabled={props.disablePrevious}
+        iconFileName={ICON.chevronBackwardBlack}
+        onClick={() => {props.onChange?.(false)}}/>
+      <CustomToolbarButton
+        text="次へ"
+        disabled={props.disableNext}
+        iconFileName={ICON.chevronForwardBlack}
+        onClick={() => {props.onChange?.(true)}}/>
     </CustomToolbarGroup>
   )
 }

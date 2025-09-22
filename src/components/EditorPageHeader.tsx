@@ -6,9 +6,15 @@ import { UserContext } from "../contexts/UserContext.tsx";
 import { exportAllData, exportFormationData } from "../helpers/ExportHelper.ts";
 import { downloadLogs } from "../helpers/LogHelper.ts";
 import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
+import { AppModeContext } from "../contexts/AppModeContext.tsx";
+import { FormationContext } from "../contexts/FormationContext.tsx";
+import { GridSizeContext } from "../contexts/GridSizeContext.tsx";
 
 export function EditorPageHeader() {
-  const {selectedFormation, selectedFestival, updateState, mode} = useContext(UserContext);
+  const {selectedFestival, updateState} = useContext(UserContext);
+  const {updateGridSizeContext} = useContext(GridSizeContext);
+  const {selectedFormation, updateFormationContext} = useContext(FormationContext);
+  const {appMode, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate()
   const [showSiteInfo, setShowSiteInfo] = useState<boolean>(false);
   
@@ -21,11 +27,11 @@ export function EditorPageHeader() {
         <>
           <MenuItem label="ホームに戻る" onClick={() => {
             updateState({
-              selectedFormation: null,
               selectedSection: null,
               selectedFestival: null,
               selectedItems: [],
             });
+            updateFormationContext({selectedFormation: undefined});
             navigate("../");
           }} />
           <MenuSeparator/>
@@ -35,25 +41,25 @@ export function EditorPageHeader() {
       {
       selectedFormation && selectedFestival &&
       <h1 className='px-2 font-bold text-center'>
-        {selectedFormation?.name}{mode === "edit" && ` (${selectedFormation.width} x ${selectedFormation.length})`}・ {selectedFestival?.name}
+        {selectedFormation?.name}{appMode === "edit" && ` (${selectedFormation.width} x ${selectedFormation.length})`}・ {selectedFestival?.name}
       </h1>
       }
       <div className="flex flex-row gap-2">
-        { mode === "edit" && 
+        { appMode === "edit" && 
           <button
             onClick={() => {
-              updateState({mode: "view", gridSize: DEFAULT_GRID_SIZE});
-              navigate("/viewer");
+              updateGridSizeContext({gridSize: DEFAULT_GRID_SIZE});
+              updateAppModeContext({appMode: "view"});
             }}>
             <img className='size-8 max-w-8 max-h-8' src={ICON.visibility}/>
           </button>
         }
-        { mode === "view" &&
+        { appMode === "view" &&
           <button
             onClick={() => {
-              updateState({mode: "edit", gridSize: DEFAULT_GRID_SIZE});
-              navigate("/formation");
-              }}>
+              updateGridSizeContext({gridSize: DEFAULT_GRID_SIZE});
+              updateAppModeContext({appMode: "edit"});
+            }}>
             <img className='size-8 max-w-8 max-h-8' src={ICON.edit}/>
           </button>
         }

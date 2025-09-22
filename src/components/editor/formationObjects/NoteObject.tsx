@@ -3,7 +3,7 @@ import { Line, Rect, Text } from "react-konva";
 import { DEFAULT_FONT_SIZE } from "../../../data/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { basePalette, ColorStyle } from "../../../themes/colours.ts";
-import { UserContext } from "../../../contexts/UserContext.tsx";
+import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
 
 export interface NoteObjectProps {
   id: string,
@@ -26,7 +26,7 @@ export interface NoteObjectProps {
 }
 
 export default function NoteObject(props: NoteObjectProps) {
-  const {gridSize} = useContext(UserContext);
+  const {gridSize} = useContext(GridSizeContext);
 
   return (
     <BaseFormationObject

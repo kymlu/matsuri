@@ -4,13 +4,15 @@ import Button from "../Button.tsx";
 import TextInput from "../TextInput.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import { ICON } from "../../data/consts.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export type ExportMenuProps = {
   exportFunc?: (exportName: string) => void
 }
 
 export default function ExportMenu(props: ExportMenuProps) {
-  const { selectedFestival, selectedFormation } = useContext(UserContext);
+  const { selectedFestival } = useContext(UserContext);
+  const {selectedFormation} = useContext(FormationContext);
   var defaultName = selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : '');
   const [exportName, setExportName] = React.useState(defaultName);
 

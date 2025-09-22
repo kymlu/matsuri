@@ -3,8 +3,9 @@ import { Group } from "react-konva";
 import Konva from "konva";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
-import { UserContext } from "../../../contexts/UserContext.tsx";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
+import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
+import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
 
 export interface FormationObjectProps {
   id: string,
@@ -20,8 +21,9 @@ export interface FormationObjectProps {
 }
 
 export default function BaseFormationObject(props: FormationObjectProps) {
-  const snapSize = useContext(UserContext).gridSize/2;
-  const mode = useContext(UserContext).mode;
+  const {appMode} = useContext(AppModeContext);
+  const {gridSize} = useContext(GridSizeContext);
+  const snapSize = gridSize/2;
   const {enableGridSnap} = useContext(SettingsContext);
   function onClick(e?: MouseEvent) {
     if (!props.draggable) return;
@@ -43,12 +45,12 @@ export default function BaseFormationObject(props: FormationObjectProps) {
       onDragStart={e => {
         props.onClick(true);
         
-        if (mode === "view") {
+        if (appMode === "view") {
           e.target.stopDrag();
         }
       }}
       onDragEnd={e => { // TODO: fix to always save position properly
-        if (mode === "view") {
+        if (appMode === "view") {
           return;
         }
 

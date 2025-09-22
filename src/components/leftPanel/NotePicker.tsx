@@ -8,15 +8,16 @@ import ItemButton from "../ItemButton.tsx";
 import { Note } from "../../models/Note.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { ICON } from "../../data/consts.ts";
+import { addItemToRecordArray } from "../../helpers/GroupingHelper.ts";
 
-export default function NotePicker () {
-  const {selectedSection, updateState, marginPositions} = useContext(UserContext);
-  const {notePositions, updatePositionState} = useContext(PositionContext);
+export default function NotePicker (props: {margins: number[][]}) {
+  const {selectedSection, updateState} = useContext(UserContext);
+  const {notePositions, updatePositionContextState} = useContext(PositionContext);
   
   function selectPreset(selectedPreset: Note) {
     if(selectedSection === null) return;
 
-    var position = marginPositions.notes[notePositions.length % marginPositions.notes.length]
+    var position = props.margins[Object.values(notePositions).flat().length % props.margins.length]
 
     var newNote = {
       id: crypto.randomUUID(),
@@ -35,7 +36,9 @@ export default function NotePicker () {
       showBackground: true, // todo: allow transparent
     } as NotePosition;
 
-    updatePositionState({notePositions: [...notePositions, newNote]});
+    var updatedNotePositions = addItemToRecordArray(notePositions, selectedSection.id, newNote);
+
+    updatePositionContextState({notePositions: updatedNotePositions});
     updateState({selectedItems: []});
 
     dbController.upsertItem("notePosition", newNote);

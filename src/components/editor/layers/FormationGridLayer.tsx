@@ -3,8 +3,8 @@ import { Layer, Line } from "react-konva";
 import { basePalette, objectColorSettings } from "../../../themes/colours.ts";
 import LengthMeterMarker from "../formationObjects/LengthMeterMarker.tsx";
 import WidthMeterMarker from "../formationObjects/WidthMeterMarker.tsx";
-import { UserContext } from "../../../contexts/UserContext.tsx";
 import NoteObject from "../formationObjects/NoteObject.tsx";
+import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
 
 export interface FormationGridProps {
   canvasHeight: number,
@@ -15,12 +15,13 @@ export interface FormationGridProps {
   topMargin: number,
   bottomMargin: number,
   sideMargin: number,
+  sectionName: string,
 }
 
 export default function FormationGridLayer(props: FormationGridProps) {
-  const {gridSize, selectedSection} = useContext(UserContext);
-  var gridHeight = Math.ceil(props.canvasHeight/gridSize);
-  var gridWidth = Math.ceil(props.canvasWidth/gridSize);
+  const {gridSize} = useContext(GridSizeContext);
+  const gridHeight = Math.ceil(props.canvasHeight/gridSize);
+  const gridWidth = Math.ceil(props.canvasWidth/gridSize);
 
   return (
     <>
@@ -81,7 +82,7 @@ export default function FormationGridLayer(props: FormationGridProps) {
         {/** Section name */}
         <NoteObject
           id="sectionName"
-          text={selectedSection?.displayName ?? ""}
+          text={props.sectionName}
           startX={(props.sideMargin + props.width/2 - 2.5) * gridSize}
           startY={gridSize * 0.1}
           height={0.75}

@@ -4,17 +4,18 @@ import ParticipantPicker from "./ParticipantPicker.tsx";
 import PropPicker from "./PropPicker.tsx";
 import Divider from "../Divider.tsx";
 import NotePicker from "./NotePicker.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
 import classNames from "classnames";
 import { ICON } from "../../data/consts.ts";
+import { MarginPositions } from "../../pages/FormationPage.tsx";
+import { AppModeContext } from "../../contexts/AppModeContext.tsx";
 
-export default function FormationLeftPanel () {
-  const userContext = useContext(UserContext)
+export default function FormationLeftPanel (props: {marginPositions: MarginPositions}) {
+  const {appMode} = useContext(AppModeContext)
   const [expanded, setExpanded] = React.useState(true);
 
   useEffect(() => {
     setExpanded(true);
-  }, [userContext.selectedFormation]);
+  }, [appMode]);
 
   var classes = classNames("flex flex-col overflow-y-auto bg-white border-r-2 border-solid border-grey",
     {
@@ -41,13 +42,13 @@ export default function FormationLeftPanel () {
         expanded && 
         <>
           <Divider/>
-          <SectionPicker/>
+          <SectionPicker margins={props.marginPositions}/>
           <Divider/>
-          <ParticipantPicker/>
+          <ParticipantPicker margins={props.marginPositions.participants}/>
           <Divider/>
-          <PropPicker/>
+          <PropPicker margins={props.marginPositions.props}/>
           <Divider/>
-          <NotePicker/>
+          <NotePicker margins={props.marginPositions.notes}/>
         </>
       }
     </div>

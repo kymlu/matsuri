@@ -8,7 +8,7 @@ export interface ToggleProps {
 }
 
 export interface CustomToggleGroupProps {
-  label: string
+  label: string, // TODO: add icon support
   defaultValue: string,
   options: Array<ToggleProps>,
   onChange?: (newValue: string) => void,

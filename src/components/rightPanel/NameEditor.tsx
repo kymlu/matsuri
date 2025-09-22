@@ -1,10 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../ExpandableSection.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
-import { Participant } from "../../models/Participant.ts";
-import { Prop } from "../../models/Prop.ts";
+import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
 import { dbController } from "../../data/DBProvider.tsx";
 import { ICON } from "../../data/consts.ts";
@@ -12,7 +9,7 @@ import { ICON } from "../../data/consts.ts";
 export default function NameEditor() {
   const userContext = useContext(UserContext);
   const {selectedItems} = useContext(UserContext);
-  const {participantList, propList, updateFormationContext} = useContext(FormationContext);
+  const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);
 
   const [inputValue, setInputValue] = useState("");
   const [selectedItem, setSelectedItem] = useState<ParticipantPosition | PropPosition | null>(null);
@@ -25,11 +22,11 @@ export default function NameEditor() {
     if (item.type === PositionType.participant) {
       setSelectedItem(item.participant);
       var id = item.participant.participantId;
-      name = participantList.find(x => strEquals(x.id, id))!.displayName;
+      name = participantList[id].displayName;
     } else if (item.type === PositionType.prop) {
       setSelectedItem(item.prop);
       var propId = item.prop.propId;
-      name = propList.find(x => strEquals(x.id, propId))!.name;
+      name = propList[propId].name;
     }
     
     setInputValue(name);
@@ -40,26 +37,16 @@ export default function NameEditor() {
     setInputValue(newValue);
     
     if (isParticipantPosition(selectedItem)) {
-      var updatedParticipant = {
-        ...participantList.find(x => strEquals(x.id, selectedItem.participantId)),
-        displayName: newValue
-      } as Participant;
-      updateFormationContext({participantList: [
-        ...participantList.filter(x => !strEquals(x.id, selectedItem.participantId)),
-        updatedParticipant
-      ]})
-      dbController.upsertItem("participant", updatedParticipant);
+      var updatedParticipants = {...participantList};
+      updatedParticipants[selectedItem.participantId].displayName = newValue;
+      updateEntitiesContext({participantList: updatedParticipants});
+      dbController.upsertItem("participant", updatedParticipants[selectedItem.participantId]);
       
     } else if (isPropPosition(selectedItem)) {
-      var updatedProp = {
-        ...propList.find(x => strEquals(x.id, selectedItem.propId)),
-        name: newValue
-      } as Prop;
-      updateFormationContext({propList: [
-        ...propList.filter(x => !strEquals(x.id, selectedItem.propId)),
-        updatedProp
-      ]})
-      dbController.upsertItem("prop", updatedProp);
+      var updatedProps = {...propList};
+      updatedProps[selectedItem.propId] = newValue;
+      updateEntitiesContext({propList: updatedProps});
+      dbController.upsertItem("prop", updatedProps[selectedItem.propId]);
     }
   };
   

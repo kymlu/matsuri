@@ -1,5 +1,7 @@
+import { indexByKey } from "../helpers/GroupingHelper.ts";
 import { FormationSection } from "../models/FormationSection.ts";
 import { Participant } from "../models/Participant.ts";
+import { ParticipantCategory } from "../models/ParticipantCategory.ts";
 import { NotePosition, ParticipantPosition, PropPosition } from "../models/Position";
 import { Prop } from "../models/Prop.ts";
 import { dbController } from "./DBProvider.tsx";
@@ -47,4 +49,14 @@ export async function GetAllForFormation(
     propPositions,
     notePositions
   );
+}
+
+export async function GetAllCategories(): Promise<Record<string, ParticipantCategory>> {
+  return dbController.getAll("category")
+    .then((categoryList) => {
+      return indexByKey(categoryList as ParticipantCategory[], "id");
+    }).catch(e => {
+      console.error('Error parsing user from localStorage:', e);
+      return {};
+    });
 }

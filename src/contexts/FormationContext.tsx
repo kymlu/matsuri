@@ -1,19 +1,35 @@
-import React from 'react';
-import { Participant } from '../models/Participant.ts';
-import { Prop } from '../models/Prop.ts';
+import React, { ReactNode, useState, createContext } from 'react';
+import { Formation } from '../models/Formation';
 
 export interface FormationContextState {
-  participantList: Array<Participant>,
-  propList: Array<Prop>,
-  updateFormationContext: (newState: Partial<FormationContextState>) => void
+  selectedFormation?: Formation;
+  updateFormationContext: (newState: Partial<FormationContextData>) => void;
 }
 
-export type FormationContextData = Omit<FormationContextState, 'updateFormationContext'>;
+type FormationContextData = {
+  selectedFormation: Formation;
+};
 
-export const defaultFormationContext: FormationContextState = {
-  participantList: Array<Participant>(),
-  propList: Array<Prop>(),
-  updateFormationContext: (newState: Partial<FormationContextState>) => {},
+const defaultFormationState: FormationContextState = {
+  updateFormationContext: () => {},
+};
+
+export const FormationContext = createContext<FormationContextState>(defaultFormationState);
+
+interface Props {
+  children: ReactNode;
 }
 
-export const FormationContext = React.createContext<FormationContextState>(defaultFormationContext)
+export const FormationContextProvider: React.FC<Props> = ({ children }) => {
+  const [state, setState] = useState<FormationContextData>({} as FormationContextData);
+
+  const updateFormationContext = (newState: Partial<FormationContextData>) => {
+    setState((prev) => ({ ...prev, ...newState }));
+  };
+
+  return (
+    <FormationContext.Provider value={{ ...state, updateFormationContext }}>
+      {children}
+    </FormationContext.Provider>
+  );
+};

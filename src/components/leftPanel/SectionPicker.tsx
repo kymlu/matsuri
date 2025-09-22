@@ -9,18 +9,20 @@ import { dbController } from "../../data/DBProvider.tsx";
 import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../CustomMenu.tsx";
 import { propsList, songList } from "../../data/ImaHitotabi.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { SettingsContext } from "../../contexts/SettingsContext.tsx";
 import { ICON } from "../../data/consts.ts";
+import { MarginPositions } from "../../pages/FormationPage.tsx";
+import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../helpers/GroupingHelper.ts";
 
-export default function SectionPicker() {
-	const { currentSections, selectedFormation, selectedSection, updateState, marginPositions, isLoading } =
+export default function SectionPicker(props: {margins: MarginPositions}) {
+	const { currentSections, selectedSection, updateState, isLoading } =
 		useContext(UserContext);
-	const { participantPositions, propPositions, notePositions, updatePositionState } =
+	const { participantPositions, propPositions, notePositions, updatePositionContextState } =
 		useContext(PositionContext);
 	const { participantList, propList } =
-		useContext(FormationContext);
+		useContext(EntitiesContext);
 	const { isAnimating } =
 		useContext(AnimationContext);
 	const {enableAnimation} =
@@ -63,11 +65,11 @@ export default function SectionPicker() {
 		// Copy participant positions
 		return new Promise<number>((resolve, reject) => { 
 			try {
-				if ((participantList.length + propsList.length) === 0) resolve(1);
+				if ((Object.keys(participantList).length + Object.keys(propsList).length) === 0) resolve(1);
 				
 				var allSectionIds = [sourceSection.id, ...targetSectionsArray.map(x => x.id)];
-				var participants = participantPositions.filter(x => allSectionIds.includes(x.formationSectionId));
-				var props = propPositions.filter(x => allSectionIds.includes(x.formationSectionId));
+				var participants = selectValuesByKeys(participantPositions, allSectionIds).flat();
+				var props = selectValuesByKeys(propPositions, allSectionIds).flat();
 				
 				const copiedParticipantPositions = participants
 					.filter((position) =>
@@ -118,16 +120,25 @@ export default function SectionPicker() {
 				dbController.upsertList("participantPosition", copiedParticipantPositions);
 				dbController.upsertList("propPosition", copiedPropPositions);
 
-				updatePositionState({
-					participantPositions: [
-						...participantPositions.filter(x => !participantsToRemove.includes(x.id)),
-						...copiedParticipantPositions
-					],
-					propPositions: [
-						...propPositions.filter(x => !propsToRemove.includes(x.id)),
-						...copiedPropPositions
-					],
+				var updatedParticipantPositions = replaceItemsFromDifferentSource(
+					participantPositions,
+					participantsToRemove,
+					copiedParticipantPositions,
+					(item) => item.formationSectionId,
+					(item) => item.id);
+					
+				var updatedPropPositions = replaceItemsFromDifferentSource(
+					propPositions,
+					propsToRemove,
+					copiedPropPositions,
+					(item) => item.formationSectionId,
+					(item) => item.id);
+
+				updatePositionContextState({
+					participantPositions: updatedParticipantPositions,
+					propPositions: updatedPropPositions,
 				});
+				
 				resolve(1);
 			} catch (error) {
 				console.error("Error updating positions:", error);
@@ -214,28 +225,22 @@ export default function SectionPicker() {
 	}
 
 	function resetPosition(sourceSection: FormationSection) {
-		var resetParticipants = participantPositions
-			.filter((position) =>
-				strEquals(position.formationSectionId, sourceSection.id)
-			)
+		var resetParticipants = participantPositions[sourceSection.id]
 			.sort((a, b) => a.participantId.localeCompare(b.participantId))
 			.map((position, index) => (
 				{
 					...position,
-					x: marginPositions.participants[index % marginPositions.participants.length][0],
-					y: marginPositions.participants[index % marginPositions.participants.length][1],
+					x: props.margins.participants[index % props.margins.participants.length][0],
+					y: props.margins.participants[index % props.margins.participants.length][1],
 				} as ParticipantPosition));
 				
-		var resetProps = propPositions
-			.filter((position) =>
-				strEquals(position.formationSectionId, sourceSection.id)
-			)
+		var resetProps = propPositions[sourceSection.id]
 			.sort((a, b) => a.propId.localeCompare(b.propId))
 			.map((position, index) => (
 				{
 					...position,
-					x: marginPositions.props[index % marginPositions.props.length][0],
-					y: marginPositions.props[index % marginPositions.props.length][1],
+					x: props.margins.props[index % props.margins.props.length][0],
+					y: props.margins.props[index % props.margins.props.length][1],
 				} as PropPosition));
 
 		try {
@@ -245,15 +250,12 @@ export default function SectionPicker() {
 			var resetParticipantIds = resetParticipants.map(x => x.id);
 			var resetPropIds = resetProps.map(x => x.id);
 
-			updatePositionState({
-				participantPositions: [
-					...participantPositions.filter(x => !resetParticipantIds.includes(x.id)),
-					...resetParticipants
-				],
-				propPositions: [
-					...propPositions.filter(x => !resetPropIds.includes(x.id)),
-					...resetProps
-				],
+			var updatedParticipantPositions = addItemsToRecordByKey(removeItemsByCondition(participantPositions, x => resetParticipantIds.includes(x.id)), resetParticipants, (item) => item.formationSectionId);
+			var updatedPropPositions = addItemsToRecordByKey(removeItemsByCondition(propPositions, x => resetPropIds.includes(x.id)), resetProps, (item) => item.formationSectionId);
+
+			updatePositionContextState({
+				participantPositions: updatedParticipantPositions,
+				propPositions: updatedPropPositions,
 			});
 		} catch (e) {
 			console.error("Error parsing user from localStorage:", e);
@@ -261,17 +263,9 @@ export default function SectionPicker() {
 	}
 
 	function onDelete(section: FormationSection) {
-		const participantIdsToRemove = participantPositions
-			.filter(x => strEquals(x.formationSectionId, section.id))
-			.map(x => x.id);
-
-		const propIdsToRemove = propPositions
-				.filter(x => strEquals(x.formationSectionId, section.id))
-				.map(x => x.id);
-
-		const noteIdsToRemove = notePositions
-				.filter(x => strEquals(x.formationSectionId, section.id))
-				.map(x => x.id);
+		const participantIdsToRemove = participantPositions[section.id].map(x => x.id);
+		const propIdsToRemove = propPositions[section.id].map(x => x.id);
+		const noteIdsToRemove = notePositions[section.id].map(x => x.id);
 
 		Promise.all([
 			dbController.removeList("participantPosition", participantIdsToRemove),
@@ -279,10 +273,10 @@ export default function SectionPicker() {
 			dbController.removeList("notePosition", noteIdsToRemove),
 			dbController.removeItem("formationSection", section.id),
 		]).then(()=>{
-			updatePositionState({
-				participantPositions: participantPositions.filter(x => !participantIdsToRemove.includes(x.id)),
-				propPositions: propPositions.filter(x => !propIdsToRemove.includes(x.id)),
-				notePositions: notePositions.filter(x => !noteIdsToRemove.includes(x.id)),
+			updatePositionContextState({
+				participantPositions: removeKeysFromRecord(participantPositions, new Set(section.id)),
+				propPositions: removeKeysFromRecord(propPositions, new Set(section.id)),
+				notePositions: removeKeysFromRecord(notePositions, new Set(section.id)),
 			});
 			var newSections = currentSections.filter(x => !strEquals(x.id, section.id));
 			updateState({
@@ -338,7 +332,7 @@ export default function SectionPicker() {
 							onDelete={() => onDelete(section)}
 							ref={sectionButtonRef.current[index]}
 							showDelete={currentSections.length > 1}
-							showReset={(participantList.length + propList.length + notePositions.length ) > 0}
+							showReset={(Object.keys(participantList).length + Object.keys(propList).length + Object.keys(notePositions).length) > 0}
 						/>
 					))}
 			</div>

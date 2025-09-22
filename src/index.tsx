@@ -5,13 +5,15 @@ import App from './App.tsx';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration.ts';
 import { UserContextProvider } from './contexts/UserContextProvider.tsx';
 import { CategoryContextProvider } from './contexts/CategoryContextProvider.tsx';
-import { PositionContextProvider } from './contexts/PositionContextProvider.tsx';
 import { SectionContextProvider } from './contexts/SectionContextProvider.tsx';
 import { DBProvider } from './data/DBProvider.tsx';
 import { AnimationContextProvider } from './contexts/AnimationContextProvider.tsx';
-import { FormationContextProvider } from './contexts/FormationContextProvider.tsx';
-import { ExportContextProvider } from './contexts/ExportContextProvider.tsx';
 import { SettingsContextProvider } from './contexts/SettingsContextProvider.tsx';
+import { AppModeContextProvider } from './contexts/AppModeContext.tsx';
+import { EntitiesContextProvider } from './contexts/EntitiesContextProvider.tsx';
+import { FormationContextProvider } from './contexts/FormationContext.tsx';
+import { GridSizeContextProvider } from './contexts/GridSizeContext.tsx';
+import { PositionContextProvider } from './contexts/PositionContext.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -24,13 +26,17 @@ root.render(
           <CategoryContextProvider>
             <SectionContextProvider>
               <AnimationContextProvider>
-                <FormationContextProvider>
-                  <ExportContextProvider>
-                    <SettingsContextProvider>
-                      <App />
-                    </SettingsContextProvider>
-                  </ExportContextProvider>
-                </FormationContextProvider>
+                <EntitiesContextProvider>
+                  <SettingsContextProvider>
+                    <AppModeContextProvider>
+                      <FormationContextProvider>
+                        <GridSizeContextProvider>
+                          <App />
+                        </GridSizeContextProvider>
+                      </FormationContextProvider>
+                    </AppModeContextProvider>
+                  </SettingsContextProvider>
+                </EntitiesContextProvider>
               </AnimationContextProvider>
             </SectionContextProvider>
           </CategoryContextProvider>

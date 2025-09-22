@@ -12,7 +12,6 @@ import { Prop } from "../models/Prop.ts";
 import { Song } from "../models/Song.ts";
 import { basePalette } from "../themes/colours.ts";
 import { formatExportDate } from "./DateHelper.ts";
-import { groupByKey } from "./GroupingHelper.ts";
 
 export function exportAllData() {
   Promise.all([
@@ -97,21 +96,14 @@ export async function exportToPdf(
   fileName: string,
   formation: Formation,
   sections: FormationSection[],
-  participantPositions: ParticipantPosition[],
-  participants: Participant[],
-  propPositions: PropPosition[],
-  props: Prop[],
-  notePositions: NotePosition[],
-  categories: ParticipantCategory[],
+  participantPositions: Record<string, ParticipantPosition[]>,
+  participants: Record<string, Participant>,
+  propPositions: Record<string, PropPosition[]>,
+  props: Record<string, Prop>,
+  notePositions: Record<string, NotePosition[]>,
+  categories: Record<string, ParticipantCategory>,
   updateProgress: (progress: number) => void,
 ) {
-  var groupedParticipants = groupByKey(participants, "id");
-  var groupedProps = groupByKey(props, "id");
-  var groupedCategories = groupByKey(categories, "id");
-  var groupedPartPos = groupByKey(participantPositions, "formationSectionId");
-  var groupedPropPos = groupByKey(propPositions, "formationSectionId");
-  var groupedNotePos = groupByKey(notePositions, "formationSectionId");
-
   const grid : number = 20;
   const sideMargin = formation.sideMargin ?? DEFAULT_SIDE_MARGIN;
   const topMargin = formation.topMargin ?? DEFAULT_TOP_MARGIN;
@@ -225,7 +217,7 @@ export async function exportToPdf(
     pdf.rect((width/2) * grid - textWidth/2 - grid, grid/4, textWidth + grid * 2, grid/2, "FD");
     pdf.text(section.displayName, (width/2) * grid, grid * 0.6, {align: "center"})
 
-    groupedNotePos[section.id]?.forEach(n => {
+    notePositions[section.id]?.forEach(n => {
       pdf.setFontSize(grid * n.fontGridRatio)
       if (n.showBackground) {
         pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
@@ -242,8 +234,8 @@ export async function exportToPdf(
     });
 
     pdf.setFontSize(8)
-    groupedPropPos[section.id]?.forEach(p => {
-      var prop = groupedProps[p.propId ?? ""]?.[0];
+    propPositions[section.id]?.forEach(p => {
+      var prop = props[p.propId ?? ""]?.[0];
       pdf.setDrawColor(prop?.color?.borderColour ?? basePalette.black);
       pdf.setFillColor(prop?.color?.bgColour ?? basePalette.white);
       pdf.rect((sideMargin + p.x) * grid, (p.y + topMargin) * grid, prop.length * grid, grid, "FD");
@@ -252,12 +244,12 @@ export async function exportToPdf(
       pdf.text(prop?.name ?? "", (sideMargin + p.x + prop.length/2) * grid, (topMargin + p.y + 0.5) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid * prop.length});
     });
 
-    groupedPartPos[section.id]?.forEach(p => {
-      var category = groupedCategories[p.categoryId ?? ""]?.[0];
+    participantPositions[section.id]?.forEach(p => {
+      var category = categories[p.categoryId ?? ""]?.[0];
       pdf.setDrawColor(category?.color.borderColour ?? basePalette.black);
       pdf.setFillColor(category?.color.bgColour ?? basePalette.white);
       pdf.circle((sideMargin + p.x) * grid, (p.y + topMargin) * grid, grid * 0.4, "FD");
-      var participant = groupedParticipants[p.participantId]?.[0];
+      var participant = participants[p.participantId]?.[0];
       pdf.setTextColor(category?.color.textColour ?? basePalette.black);
       var textHeight = pdf.getTextDimensions(participant?.displayName ?? "", {maxWidth: grid}).h;
       pdf.text(participant?.displayName ?? "", (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});

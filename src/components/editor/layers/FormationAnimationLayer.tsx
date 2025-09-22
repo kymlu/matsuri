@@ -1,48 +1,31 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Layer } from "react-konva";
 import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
-import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
-import { FormationContext } from "../../../contexts/FormationContext.tsx";
-import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { objectColorSettings } from "../../../themes/colours.ts";
-import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../../../helpers/GlobalHelper.ts";
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
 import { useRef } from "react";
 import Konva from "konva";
-import { getAnimationPaths } from "../../../helpers/AnimationHelper.ts";
 import { ParticipantPosition } from "../../../models/Position.ts";
-import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
+import { Participant } from "../../../models/Participant.ts";
+import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 
 export type FormationAnimationLayerProps = {
   topMargin: number,
   bottomMargin: number,
   sideMargin: number,
+  participants: Record<string, Participant>,
+  categories: Record<string, ParticipantCategory>,
+  positions: ParticipantPosition[]
 }
 
 export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
-  const userContext = useContext(UserContext);
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
-  const {participantList} = useContext(FormationContext);
-  const {updateState, previousSectionId, gridSize} = useContext(UserContext);
-  const {enableAnimation} = useContext(SettingsContext);
-  const {participantPositions} = useContext(PositionContext);
-  const {categories} = useContext(CategoryContext);
+  const {updateState} = useContext(UserContext);
   const animationLayerRef = useRef<Konva.Layer>(null);
   const animationRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
-  const [currentParticipants, setCurrentPartipants] = useState<ParticipantPosition[]>([]);
-  const [prevSectionId, setPrevSectionId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (userContext.selectedSection){
-      setCurrentPartipants(participantPositions
-        .filter(x => strEquals(x.formationSectionId, userContext.selectedSection!.id))
-        .sort((a, b) => a.participantId.localeCompare(b.participantId)));
-    }
-  }, [userContext.selectedSection]);
   
-  participantList
-    .sort((a, b) => a.id.localeCompare(b.id))
+  Object.keys(props.participants)
     .forEach((_, index) => 
       animationRef.current[index] = React.createRef<Konva.Group>()
     );
@@ -94,39 +77,26 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
       updateAnimationContext({isAnimating: false});
     });
   }, [isAnimating]);
-
-  useEffect(() => {
-    if (
-      !enableAnimation ||
-      isNullOrUndefinedOrBlank(userContext.previousSectionId) ||
-      isNullOrUndefined(userContext.selectedSection))
-      return;
-
-    var animationPaths = getAnimationPaths(
-      [userContext.previousSectionId!, userContext.selectedSection!.id],
-      gridSize,
-      participantPositions,
-      props.topMargin,
-      props.sideMargin
-      )
-    updateAnimationContext({paths: animationPaths, isAnimating: true});
-  }, [previousSectionId]);
   
   return (
     <Layer
       listening={false}
       useRef={animationLayerRef}>
-      {currentParticipants
-        .map((placement, index) => 
-          <ParticipantObject 
+      {props.positions
+        ?.sort((a, b) => a.participantId.localeCompare(b.participantId))
+        .map((placement, index) => {
+          const participant = props.participants[placement.participantId];
+          if (!participant) return;
+          return <ParticipantObject 
             id={"animate" + placement.id}
             key={placement.id}
-            name={participantList.find(x=> strEquals(placement.participantId, x.id))?.displayName!} 
-            colour={categories.find(x => strEquals(x.id, placement.categoryId))?.color || objectColorSettings["amberLight"]} 
+            name={participant.displayName!} 
+            colour={placement.categoryId ? props.categories[placement.categoryId]?.color || objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
             startX={0} 
             startY={0}
             ref={animationRef.current[index]}
-          />
+          />;
+        }
         )
       }
     </Layer>

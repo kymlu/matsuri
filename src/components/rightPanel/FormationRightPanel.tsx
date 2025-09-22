@@ -9,10 +9,11 @@ import ActionMenu from "./ActionMenu.tsx";
 import NameEditor from "./NameEditor.tsx";
 import NoteEditor from "./NoteEditor.tsx";
 import { PositionType } from "../../models/Position.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import ExportMenu from "./ExportMenu.tsx";
 import classNames from "classnames";
 import { ICON } from "../../data/consts.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
 
 export type FormationRightPanelProps = {
   exportFunc?: (exportName: string) => void
@@ -20,8 +21,9 @@ export type FormationRightPanelProps = {
 
 export default function FormationRightPanel (props: FormationRightPanelProps) {
   const userContext = useContext(UserContext);
+  const {selectedFormation} = useContext(FormationContext);
   const {selectedItems} = useContext(UserContext);
-  const {participantList} = useContext(FormationContext);
+  const {participantList} = useContext(EntitiesContext);
   const [selectedPositionTypes, setSelectedPositionTypes] = useState<Set<PositionType>>();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -31,7 +33,7 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
 
   useEffect(() => {
     setExpanded(false);
-  }, [userContext.selectedFormation]);
+  }, [selectedFormation]);
 
   var classes = classNames("flex flex-col overflow-y-auto bg-white border-l-2 border-solid border-grey", 
     {
@@ -98,7 +100,7 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
             </>
           }
           <GridSettingsMenu/>
-          { false && participantList.length > 0 && 
+          { false && Object.values(participantList).length > 0 && 
             <>
               <Divider/>
               <AnimationMenu/>

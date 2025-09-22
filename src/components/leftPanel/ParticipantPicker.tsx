@@ -8,15 +8,18 @@ import { UserContext } from "../../contexts/UserContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../../helpers/GlobalHelper.ts";
 import { dbController } from "../../data/DBProvider.tsx";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import TextInput from "../TextInput.tsx";
 import { ICON } from "../../data/consts.ts";
+import { FormationContext } from "../../contexts/FormationContext.tsx";
+import { addItemsToRecordByKey, addItemToRecord, addItemToRecordArray } from "../../helpers/GroupingHelper.ts";
 
-export default function ParticipantPicker () {
+export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");
-  const {participantList, updateFormationContext} = useContext(FormationContext);
-  const {selectedSection, currentSections, marginPositions, selectedFormation} = useContext(UserContext);
-  const {participantPositions, updatePositionState} = useContext(PositionContext);
+  const {participantList, updateEntitiesContext} = useContext(EntitiesContext);
+  const {selectedSection, currentSections} = useContext(UserContext);
+  const {selectedFormation} = useContext(FormationContext);
+  const {participantPositions, updatePositionContextState} = useContext(PositionContext);
 
   function setFilterTextWrapper(value: string) {
     setFilterText(value);
@@ -24,7 +27,7 @@ export default function ParticipantPicker () {
   
   // const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
 
-  function selectParticipant(selectedParticipant: ParticipantOption) {
+  function addParticipant(selectedParticipant: ParticipantOption) {
     if(isNullOrUndefined(selectedFormation) || isNullOrUndefined(selectedSection) === null) return;
 
     var newParticipant: Participant = {
@@ -34,14 +37,16 @@ export default function ParticipantPicker () {
       memberId: selectedParticipant.id
     }
 
+    var flattenedParticipants = Object.values(participantList);
+
     if (selectedParticipant.isPlaceholder) {
-      newParticipant.displayName = `${selectedParticipant.name} ${participantList.length + 1}`;
-    } else if (participantList.some(x => strEquals(x.memberId, selectedParticipant.id))) {
-      var count = participantList.filter(x => strEquals(x.memberId, selectedParticipant.id)).length;
+      newParticipant.displayName = `${selectedParticipant.name} ${flattenedParticipants.length + 1}`;
+    } else if (flattenedParticipants.some(x => strEquals(x.memberId, selectedParticipant.id))) {
+      var count = flattenedParticipants.filter(x => strEquals(x.memberId, selectedParticipant.id)).length;
       newParticipant.displayName = `${selectedParticipant.name} ${count}`;
     }
     
-    var position = marginPositions.participants[participantList.length % marginPositions.participants.length];
+    var position = props.margins[flattenedParticipants.length % props.margins.length];
     var newPositions = currentSections.map(section => 
       {
         return {
@@ -54,10 +59,16 @@ export default function ParticipantPicker () {
           isSelected: false
         } as ParticipantPosition
       });
+
+    
+    var updatedParticipants = addItemToRecord(participantList, newParticipant.id, newParticipant);
+    updateEntitiesContext({participantList: updatedParticipants});
+    
+    var updatedPositions = addItemsToRecordByKey(participantPositions, newPositions, (item) => item.formationSectionId);
+    updatePositionContextState({participantPositions: updatedPositions});
+    
     dbController.upsertItem("participant", newParticipant);
     dbController.upsertList("participantPosition", newPositions);
-    updateFormationContext({participantList: [...participantList, newParticipant]});
-    updatePositionState({participantPositions: [...participantPositions, ...newPositions]});
   }
 
   var participantListDisplay = teamMembers
@@ -81,7 +92,7 @@ export default function ParticipantPicker () {
             item={participant}
             display={participant.name}
             //isDisabled={selectedParticipants.includes(participant.id)}
-            onClick={() => selectParticipant(participant)}/>)} 
+            onClick={() => addParticipant(participant)}/>)} 
         {
           !isNullOrUndefinedOrBlank(filterText) &&
           <>
@@ -89,7 +100,7 @@ export default function ParticipantPicker () {
               item={{name: filterText} as ParticipantOption}
               display={`NEW: "${filterText}"`}
               //isDisabled={selectedParticipants.includes(participant.id)}
-              onClick={() => selectParticipant({name: filterText} as ParticipantOption)}/> 
+              onClick={() => addParticipant({name: filterText} as ParticipantOption)}/> 
           </>
         }
       </div>

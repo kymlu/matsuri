@@ -9,12 +9,12 @@ import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { ICON } from "../../data/consts.ts";
 
 export default function NoteEditor() {
-  const {selectedItems} = useContext(UserContext);
+  const {selectedItems, selectedSection} = useContext(UserContext);
 
   const [note, setNote] = useState<NotePosition | null>(null);
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
-  const {notePositions, updatePositionState} = useContext(PositionContext);
+  const {notePositions, updatePositionContextState} = useContext(PositionContext);
 
   useEffect(() => {
     if (selectedItems.length === 0) return;
@@ -31,20 +31,17 @@ export default function NoteEditor() {
       setText(newValue);
     }
     
-    var updatedNote = {...notePositions.find(x => strEquals(x.id, note?.id))!};
-    updatedNote.isSelected = false;
+    var updatedNotes = {...notePositions};
+    updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id))!.isSelected = false;
 
     if (type === "text") {
-      updatedNote.text = newValue;
+      updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id))!.text = newValue;
     } else {
-      updatedNote.label = newValue;
+      updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id))!.label = newValue;
     }
     
-    updatePositionState({notePositions: [
-      ...notePositions.filter(x => !strEquals(x.id, note?.id)),
-      updatedNote
-    ]})
-    dbController.upsertItem("notePosition", updatedNote);
+    updatePositionContextState({notePositions: updatedNotes})
+    dbController.upsertItem("notePosition", updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id)));
   };
   
   return (

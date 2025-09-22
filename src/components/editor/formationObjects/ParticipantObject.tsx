@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { Circle, Text } from "react-konva";
 import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
-import { UserContext } from "../../../contexts/UserContext.tsx";
 import Konva from "konva";
+import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
 
 export interface ParticipantObjectProps {
   id: string,
@@ -18,8 +18,10 @@ export interface ParticipantObjectProps {
   selected?: boolean,
 }
 
+// Todo: show position if selected in view mode
+
 export default function ParticipantObject(props: ParticipantObjectProps) {
-  const {gridSize} = useContext(UserContext);
+  const {gridSize} = useContext(GridSizeContext);
   
   return (
     <BaseFormationObject
