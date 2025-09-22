@@ -13,7 +13,7 @@ export interface PropObjectProps {
   colour: ColorStyle,
   startX: number,
   startY: number,
-  onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
+  onClick?: (isMoving?: boolean, multiSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
   onRotate?: (rotation: number, x: number, y: number) => void,
@@ -35,7 +35,7 @@ export default function PropObject(props: PropObjectProps) {
   return (
     <BaseFormationObject
       id={props.id}
-      onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
+      onClick={(isMoving?: boolean, multiSelect?: boolean) => props.onClick?.(isMoving, multiSelect)}
       updatePosition={props.updatePosition}
       rotation={props.rotation}
       draggable={props.draggable}

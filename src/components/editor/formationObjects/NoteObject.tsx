@@ -15,7 +15,7 @@ export interface NoteObjectProps {
   borderRadius?: number,
   startX: number,
   startY: number,
-  onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
+  onClick?: (isMoving?: boolean, multiSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
   fontSize?: number,
@@ -31,7 +31,7 @@ export default function NoteObject(props: NoteObjectProps) {
   return (
     <BaseFormationObject
       id={props.id}
-      onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
+      onClick={(isMoving?: boolean, multiSelect?: boolean) => props.onClick?.(isMoving, multiSelect)}
       updatePosition={props.updatePosition}
       ref={props.ref}
       startX={props.startX}

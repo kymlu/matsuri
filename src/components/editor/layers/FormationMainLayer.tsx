@@ -109,7 +109,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			selection.current.visible = false;
 			const { x1, x2, y1, y2 } = selection.current;
 			const moved = x1 !== x2 || y1 !== y2;
-			if (!moved) {
+			if (!moved || selectedIds.size > 0) {
 				updateSelectionRect();
 				return;
 			}
@@ -173,11 +173,15 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					],
 				});
 
-				setSelectedIds(new Set([
+				var allSelectedIds = new Set([
 					...selectedParticipantIds,
 					...selectedPropIds,
 					...selectedNoteIds,
-				]));
+				]);
+				
+				setSelectedIds(allSelectedIds);
+
+				setIsSinglePropSelected(allSelectedIds.size === 1 && selectedPropIds.length === 1);
 
 				updateSelectionRect();
 			}
@@ -381,11 +385,10 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	function selectItem(
 		item: ParticipantPosition | PropPosition | NotePosition | null,
 		type: PositionType,
-		forceSelect?: boolean,
-		multiSelect?: boolean
+		isMoving?: boolean,
+		multiSelect?: boolean,
 	) {
-		if (item === null || appMode === "view") return;
-
+		if (item === null || appMode === "view" || (isMoving && selectedIds.has(item.id))) return;
 		var singlePropSelected = false;
 
 		if (multiSelect) {
@@ -416,7 +419,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				if (type === PositionType.prop) {
 					singlePropSelected = true;
 				}
-			} else if (!forceSelect) {
+			} else if (!isMoving) {
 				updateState({ selectedItems: [] });
 				setSelectedIds(new Set());
 			}
@@ -442,8 +445,11 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						borderRadius={note.borderRadius}
 						fontSize={gridSize * note.fontGridRatio}
 						updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
-						onClick={(forceSelect?: boolean, multiSelect?: boolean) =>
-							selectItem(note, PositionType.note, forceSelect, multiSelect)
+						onClick={(isMoving?: boolean, multiSelect?: boolean) =>
+							selectItem(note,
+								PositionType.note,
+								isMoving,
+								multiSelect)
 						}
 						alwaysBold={note.alwaysBold}
 						showBackground={note.showBackground}
@@ -465,8 +471,11 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					startX={getPixel(gridSize, placement.x, props.sideMargin)}
 					startY={getPixel(gridSize, placement.y, props.topMargin)}
 					updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
-					onClick={(forceSelect?: boolean, multiSelect?: boolean) =>
-						selectItem(placement, PositionType.prop, forceSelect, multiSelect)
+					onClick={(isMoving?: boolean, multiSelect?: boolean) =>
+						selectItem(placement,
+							PositionType.prop,
+							isMoving,
+							multiSelect)
 					}
 					draggable={!isAnimating && appMode === "edit"}
 					rotation={placement.angle}
@@ -493,12 +502,12 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					updatePosition={(x, y) =>
 						updateParticipantPosition(placement.id, x, y)
 					}
-					onClick={(forceSelect?: boolean, multiSelect?: boolean) => {
+					onClick={(isMoving?: boolean, multiSelect?: boolean) => {
 						if (appMode === "edit") {
 							selectItem(
 								placement,
 								PositionType.participant,
-								forceSelect,
+								isMoving,
 								multiSelect
 							);
 						} else {

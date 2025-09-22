@@ -12,7 +12,7 @@ export interface ParticipantObjectProps {
   startX: number,
   startY: number,
   updatePosition?: (x: number, y: number) => void,
-  onClick?: (forceSelect?: boolean, multiSelect?: boolean) => void,
+  onClick?: (isMoving?: boolean, multiSelect?: boolean) => void,
   draggable?: boolean,
   ref?: React.Ref<Konva.Group>,
   selected?: boolean,
@@ -29,7 +29,7 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       id={props.id}
       startX={props.startX}
       startY={props.startY}
-      onClick={(forceSelect?: boolean, multiSelect?: boolean) => props.onClick?.(forceSelect, multiSelect)}
+      onClick={(isMoving?: boolean, multiSelect?: boolean) => props.onClick?.(isMoving, multiSelect)}
       updatePosition={props.updatePosition}
       draggable={props.draggable}
       ref={props.ref}>

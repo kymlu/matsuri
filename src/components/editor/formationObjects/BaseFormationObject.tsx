@@ -14,7 +14,7 @@ export interface FormationObjectProps {
   startX: number,
   startY: number,
   updatePosition?: (x: number, y: number) => void,
-  onClick: (forceSelect?: boolean, multiselect?: boolean) => void,
+  onClick: (isMoving?: boolean, multiselect?: boolean) => void,
   draggable?: boolean,
   onTransform?: (item: Shape<ShapeConfig> | Stage) => void,
   ref?: React.Ref<Konva.Group>,
