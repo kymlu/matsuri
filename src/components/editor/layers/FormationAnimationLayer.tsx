@@ -136,7 +136,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
         ?.sort((a, b) => a.propId.localeCompare(b.propId))
         .map((placement, index) => {
           const prop = props.props[placement.propId];
-          if (!prop) return;
+          if (!prop) return <></>;
           return <PropObject 
             id={"animate" + placement.id}
             key={placement.id}
@@ -155,7 +155,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
         ?.sort((a, b) => a.participantId.localeCompare(b.participantId))
         .map((placement, index) => {
           const participant = props.participants[placement.participantId];
-          if (!participant) return;
+          if (!participant) return <></>;
           return <ParticipantObject 
             id={"animate" + placement.id}
             key={placement.id}
