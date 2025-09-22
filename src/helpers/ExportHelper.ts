@@ -151,7 +151,7 @@ export async function exportToPdf(
     pdf.setDrawColor(basePalette.grey[400])
 
     pdf.setLineWidth(0.6);
-    {[...Array(length + 1)].forEach((_, i) => {
+    [...Array(length + 1)].forEach((_, i) => {
       if (i === 0 || i === length) return;
 
       if (i % 2 === length % 2) {
@@ -162,9 +162,9 @@ export async function exportToPdf(
         pdf.setDrawColor(basePalette.grey[300]);
       }
       pdf.line(0, (i) * grid, width * grid, (i) * grid);
-    })}
+    });
 
-    {[...Array(width + 1)].forEach((_, i) => {
+    [...Array(width + 1)].forEach((_, i) => {
       if (i === 0 || i === width) return;
 
       if (i % 2 === width % 2) {
@@ -182,7 +182,7 @@ export async function exportToPdf(
           pdf.setDrawColor(basePalette.grey[400]);
         }          }
       pdf.line(i * grid, 0, i * grid, length * grid);
-    })}
+    });
 
     pdf.setLineDashPattern([1, 0], 0);
     pdf.setDrawColor(basePalette.primary.main)

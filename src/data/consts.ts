@@ -1,9 +1,9 @@
-export const LAST_UPDATED = "更新 9月21日 19:40"
+export const LAST_UPDATED = "更新 9月23日 00:00"
 
 export const MIN_GRID_SIZE = 20;
-export const MAX_GRID_SIZE = 100;
+export const MAX_GRID_SIZE = 80;
 export const DEFAULT_GRID_SIZE = 40;
-export const GRID_SIZE_INCREMENT = 20;
+export const GRID_SIZE_INCREMENT = 10;
 
 export const DEFAULT_FONT_SIZE = 12;
 

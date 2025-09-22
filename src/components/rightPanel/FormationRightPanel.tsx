@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import Divider from "../Divider.tsx";
 import CategoryMenu from "./CategoryMenu.tsx";
 import GridSettingsMenu from "./GridSettingsMenu.tsx";
-import AnimationMenu from "./AnimationMenu.tsx";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import ColorPickerMenu from "./ColorPickerMenu.tsx";
 import ActionMenu from "./ActionMenu.tsx";
@@ -98,12 +97,6 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
             </>
           }
           <GridSettingsMenu/>
-          { false && Object.values(participantList).length > 0 && 
-            <>
-              <Divider/>
-              <AnimationMenu/>
-            </>
-          }
           <Divider/>
           <ExportMenu exportFunc={props.exportFunc}/>
         </>

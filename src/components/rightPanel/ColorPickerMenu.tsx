@@ -10,7 +10,7 @@ import { strEquals } from "../../helpers/GlobalHelper.ts";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import CustomSwitch from "../CustomSwitch.tsx";
 import { ICON } from "../../data/consts.ts";
-import { indexByKey, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../helpers/GroupingHelper.ts";
+import { replaceItemsFromDifferentSource, selectValuesByKeys } from "../../helpers/GroupingHelper.ts";
 
 export type ColorPickerMenuProps = {
 }
