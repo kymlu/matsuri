@@ -34,7 +34,7 @@ export function FormationGhostLayer(props: FormationGhostLayerProps) {
           ?.map(placement =>
             {
               const prop = props.props[placement.propId];
-              if (!prop) return;
+              if (!prop) return <></>;
 
               return <PropObject 
                 id={"ghost" + placement.id}
@@ -53,7 +53,7 @@ export function FormationGhostLayer(props: FormationGhostLayerProps) {
           ?.map(placement => 
             {
               const participant = props.participants[placement.participantId];
-              if (!participant) return;
+              if (!participant) return <></>;
 
               return <ParticipantObject 
                 id={"ghost" + placement.id}

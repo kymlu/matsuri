@@ -12,7 +12,7 @@ import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import TextInput from "../TextInput.tsx";
 import { ICON } from "../../data/consts.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { addItemsToRecordByKey, addItemToRecord, addItemToRecordArray } from "../../helpers/GroupingHelper.ts";
+import { addItemsToRecordByKey, addItemToRecord } from "../../helpers/GroupingHelper.ts";
 
 export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");

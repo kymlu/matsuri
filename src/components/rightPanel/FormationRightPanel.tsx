@@ -8,7 +8,6 @@ import ActionMenu from "./ActionMenu.tsx";
 import NameEditor from "./NameEditor.tsx";
 import NoteEditor from "./NoteEditor.tsx";
 import { PositionType } from "../../models/Position.ts";
-import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import ExportMenu from "./ExportMenu.tsx";
 import classNames from "classnames";
 import { ICON } from "../../data/consts.ts";
@@ -22,7 +21,6 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
   const userContext = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
   const {selectedItems} = useContext(UserContext);
-  const {participantList} = useContext(EntitiesContext);
   const [selectedPositionTypes, setSelectedPositionTypes] = useState<Set<PositionType>>();
   const [expanded, setExpanded] = React.useState(false);
 
