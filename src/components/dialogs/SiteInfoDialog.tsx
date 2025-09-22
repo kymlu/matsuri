@@ -2,15 +2,10 @@ import React from "react";
 import CustomDialog from "./CustomDialog.tsx";
 import { LAST_UPDATED } from "../../data/consts.ts";
 
-export type SiteInfoDialogProps = {
-  isOpen: boolean,
-}
-
-export function SiteInfoDialog(props: SiteInfoDialogProps) {
+export function SiteInfoDialog() {
   return (
     <CustomDialog
-      title="サイト情報"
-      isOpen={props.isOpen}>
+      title="サイト情報">
       工事中
       <br/>
       {LAST_UPDATED}

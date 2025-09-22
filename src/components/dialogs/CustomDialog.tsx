@@ -4,11 +4,10 @@ import React from "react";
 export type CustomDialogProps = {
   children: React.ReactNode,
   title: string,
-  isOpen?: boolean,
 }
 
 export default function CustomDialog(props: CustomDialogProps) {
-  return (<Dialog.Root open={props.isOpen} modal>
+  return (
     <Dialog.Portal>
       <Dialog.Backdrop className="fixed inset-0 bg-black opacity-20 transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 dark:opacity-70" />
       <Dialog.Popup className="fixed top-1/2 left-1/2 -mt-8 w-96 max-w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-50 p-6 text-gray-900 outline outline-1 outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300">
@@ -16,5 +15,5 @@ export default function CustomDialog(props: CustomDialogProps) {
         {props.children}
       </Dialog.Popup>
     </Dialog.Portal>
-  </Dialog.Root>)
+  )
 }

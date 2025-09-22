@@ -9,6 +9,7 @@ import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
 import { FormationContext } from "../contexts/FormationContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
+import { Dialog } from "@base-ui-components/react";
 
 export function EditorPageHeader() {
   const {selectedFestival, updateState} = useContext(UserContext);
@@ -35,7 +36,14 @@ export function EditorPageHeader() {
             navigate("../");
           }} />
           <MenuSeparator/>
-          <MenuItem label="サイト情報" onClick={() => {setShowSiteInfo(true)}}/>
+          <div className="flex justify-center p-1">
+            <Dialog.Root>
+              <Dialog.Trigger>
+                  サイト情報
+              </Dialog.Trigger>
+              <SiteInfoDialog/>
+            </Dialog.Root>
+          </div>
         </>
       </CustomMenu>
       {
@@ -95,7 +103,6 @@ export function EditorPageHeader() {
           </>
         </CustomMenu>
       </div>
-      <SiteInfoDialog isOpen={showSiteInfo}/>
     </>
   )
 }
