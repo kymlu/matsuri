@@ -12,11 +12,11 @@ import CustomToggleGroup from '../components/CustomToggleGroup.tsx';
 import { DEFAULT_GRID_SIZE, LAST_UPDATED } from '../data/consts.ts';
 import { AppMode, AppModeContext } from '../contexts/AppModeContext.tsx';
 import { FormationContext } from '../contexts/FormationContext.tsx';
-import { GridSizeContext } from '../contexts/GridSizeContext.tsx';
+import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';
 
 export default function FestivalManager () {
   const {updateState} = useContext(UserContext);
-  const {updateGridSizeContext} = useContext(GridSizeContext);
+  const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {appMode, updateAppModeContext} = useContext(AppModeContext);
   const {updateFormationContext} = useContext(FormationContext);
   let navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function FestivalManager () {
         showNotes: true,
     });
     updateFormationContext({selectedFormation: selectedFormation});    
-    updateGridSizeContext({gridSize: DEFAULT_GRID_SIZE})
+    updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE})
     
     navigate("/formation");
   }

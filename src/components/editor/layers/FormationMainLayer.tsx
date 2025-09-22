@@ -15,7 +15,6 @@ import {
 	Position,
 	PositionType,
 	PropPosition,
-	splitPositionsByType,
 } from "../../../models/Position.ts";
 import { objectColorSettings, basePalette } from "../../../themes/colours.ts";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
@@ -34,7 +33,7 @@ import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { Participant } from "../../../models/Participant.ts";
 import { Prop } from "../../../models/Prop.ts";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export type FormationMainLayerProps = {
 	topMargin: number;
@@ -45,21 +44,16 @@ export type FormationMainLayerProps = {
 	participants: Record<string, Participant>;
 	props: Record<string, Prop>;
 	partPositions: ParticipantPosition[];
-	updatePartPositions?: (updatedRecord: ParticipantPosition[]) => void;
 	propPositions: PropPosition[];
-	updatePropPositions?: (updatedRecord: PropPosition[]) => void;
 	notePositions: NotePosition[];
-	updateNotePositions?: (updatedRecord: NotePosition[]) => void;
-	gridSize: number;
 };
 
 export function FormationMainLayer(props: FormationMainLayerProps) {
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize, followingId} = useContext(VisualSettingsContext);
 	const userContext = useContext(UserContext);
 	const { isAnimating } = useContext(AnimationContext);
 	const { appMode } = useContext(AppModeContext);
-	const { selectedItems, updateState } =
-		useContext(UserContext);
+	const { selectedItems, updateState } = useContext(UserContext);
 	const positionContext = useContext(PositionContext);
 	const layerRef = useRef<Konva.Layer>(null);
 	const transformerRef = useRef<Konva.Transformer>(null);
@@ -501,6 +495,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					draggable={!isAnimating}
 					ref={participantRef.current[index]}
 					selected={selectedIds.includes(placement.id)}
+					following={strEquals(placement.participantId, followingId)}
 				/>
 			))}
 			<Transformer

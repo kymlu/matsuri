@@ -4,7 +4,7 @@ import BaseFormationObject from "./BaseFormationObject.tsx";
 import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export interface PropObjectProps {
   id: string,
@@ -23,7 +23,7 @@ export interface PropObjectProps {
 }
 
 export default function PropObject(props: PropObjectProps) {
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize} = useContext(VisualSettingsContext);
 
   function onRotate(item: Shape<ShapeConfig> | Stage) {
     if (props.onRotate) {

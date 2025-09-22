@@ -8,7 +8,7 @@ import { NotePosition, ParticipantPosition, PropPosition } from "../../../models
 import { Participant } from "../../../models/Participant.ts"
 import { Prop } from "../../../models/Prop.ts"
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts"
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx"
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx"
 
 export type FormationGhostLayerProps = {
   topMargin: number,
@@ -23,7 +23,7 @@ export type FormationGhostLayerProps = {
 }
 
 export function FormationGhostLayer(props: FormationGhostLayerProps) {
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize} = useContext(VisualSettingsContext);
 
   return (
     <Layer

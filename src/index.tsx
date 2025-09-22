@@ -10,10 +10,10 @@ import { DBProvider } from './data/DBProvider.tsx';
 import { AnimationContextProvider } from './contexts/AnimationContextProvider.tsx';
 import { SettingsContextProvider } from './contexts/SettingsContextProvider.tsx';
 import { AppModeContextProvider } from './contexts/AppModeContext.tsx';
-import { EntitiesContextProvider } from './contexts/EntitiesContextProvider.tsx';
 import { FormationContextProvider } from './contexts/FormationContext.tsx';
-import { GridSizeContextProvider } from './contexts/GridSizeContext.tsx';
+import { VisualSettingsContextProvider } from './contexts/VisualSettingsContext.tsx';
 import { PositionContextProvider } from './contexts/PositionContext.tsx';
+import { EntitiesContextProvider } from './contexts/EntitiesContext.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -30,9 +30,9 @@ root.render(
                   <SettingsContextProvider>
                     <AppModeContextProvider>
                       <FormationContextProvider>
-                        <GridSizeContextProvider>
+                        <VisualSettingsContextProvider>
                           <App />
-                        </GridSizeContextProvider>
+                        </VisualSettingsContextProvider>
                       </FormationContextProvider>
                     </AppModeContextProvider>
                   </SettingsContextProvider>

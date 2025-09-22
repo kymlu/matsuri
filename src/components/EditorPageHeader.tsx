@@ -8,11 +8,11 @@ import { downloadLogs } from "../helpers/LogHelper.ts";
 import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
 import { FormationContext } from "../contexts/FormationContext.tsx";
-import { GridSizeContext } from "../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 
 export function EditorPageHeader() {
   const {selectedFestival, updateState} = useContext(UserContext);
-  const {updateGridSizeContext} = useContext(GridSizeContext);
+  const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation, updateFormationContext} = useContext(FormationContext);
   const {appMode, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate()
@@ -48,7 +48,7 @@ export function EditorPageHeader() {
         { appMode === "edit" && 
           <button
             onClick={() => {
-              updateGridSizeContext({gridSize: DEFAULT_GRID_SIZE});
+              updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
               updateAppModeContext({appMode: "view"});
             }}>
             <img className='size-8 max-w-8 max-h-8' src={ICON.visibility}/>
@@ -57,7 +57,7 @@ export function EditorPageHeader() {
         { appMode === "view" &&
           <button
             onClick={() => {
-              updateGridSizeContext({gridSize: DEFAULT_GRID_SIZE});
+              updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
               updateAppModeContext({appMode: "edit"});
             }}>
             <img className='size-8 max-w-8 max-h-8' src={ICON.edit}/>

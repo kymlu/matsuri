@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined, strEquals } from '../helpers/GlobalHelper.ts';
-import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH } from '../data/consts.ts';
+import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, ICON } from '../data/consts.ts';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
@@ -24,7 +24,7 @@ import { AppModeContext } from '../contexts/AppModeContext.tsx';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
 import FormationRightPanel from '../components/rightPanel/FormationRightPanel.tsx';
-import { GridSizeContext } from '../contexts/GridSizeContext.tsx';
+import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 
 export type MarginPositions = {
@@ -36,8 +36,8 @@ export type MarginPositions = {
 export default function FormationPage () {
   const userContext = useContext(UserContext);
   const positionContext = useContext(PositionContext);
-  const {updateState} = useContext(UserContext);
-  const {gridSize} = useContext(GridSizeContext);
+  const {updateState, selectedSection} = useContext(UserContext);
+  const {gridSize, followingId} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {appMode} = useContext(AppModeContext);
   const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
@@ -60,6 +60,7 @@ export default function FormationPage () {
   const [sections, setSections] = useState<FormationSection[]>([]);
   const [categories, setCategories] = useState<Record<string, ParticipantCategory>>({});
   const [marginPositions, setMarginPositions] = useState<MarginPositions>({participants: [], props: [], notes: []});
+  const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition> | null>(null);
 
   useEffect(() => {
     setExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
@@ -79,6 +80,17 @@ export default function FormationPage () {
     if (isNullOrUndefined(userContext.currentSections) || isNullOrUndefined(participantPositions) || isNullOrUndefined(selectedFormation)) return;
     generateAnimationPaths(userContext.currentSections, Object.values(positionContext.participantPositions).flat(), gridSize, selectedFormation?.topMargin, selectedFormation?.sideMargin);
   }, [gridSize, userContext.currentSections, positionContext.participantPositions, selectedFormation]);
+
+  useEffect(() => {
+    if(appMode === "view") {
+      setAnimationPaths(generateAnimationPaths(
+        userContext.currentSections,
+        Object.values(participantPositions).flat(),
+        gridSize,
+        selectedFormation?.topMargin,
+        selectedFormation?.sideMargin));
+    }
+  }, [appMode, gridSize]);
   
   useEffect(() => {
     if (isNullOrUndefined(selectedFormation)) {
@@ -234,7 +246,8 @@ export default function FormationPage () {
                 bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
                 sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}
                 setAnimationPaths={setAnimationPaths}
-                categories={categories}/>
+                categories={categories}
+                setFollowingPositions={setFollowingPositions}/>
               <FormationViewToolbar
                 changeSection={changeSection}
                 firstSectionId={firstSectionId}
@@ -243,6 +256,24 @@ export default function FormationPage () {
                 export={() => {
                   exportPdf();
                 }}/>
+              {
+                selectedSection && followingId && followingPositions && selectedFormation &&
+                <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
+                  <span className='font-bold'>
+                    {`${participantList[followingId].displayName}`}
+                  </span>
+                  <div className='flex flex-row gap-2'>
+                    <div className='flex gap-1'>
+                      <img src={ICON.heightBlack} className='size-6'/>
+                      <span>{`${followingPositions[selectedSection.id]?.x}m`}</span>
+                    </div>
+                    <div className='flex gap-1'>
+                      <img src={ICON.arrowRangeBlack} className='size-6'/>
+                      <span>{`${followingPositions[selectedSection.id]?.y}m`}</span>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
           }
       <ExportProgressDialog

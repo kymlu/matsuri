@@ -9,6 +9,8 @@ import Konva from "konva";
 import { ParticipantPosition } from "../../../models/Position.ts";
 import { Participant } from "../../../models/Participant.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
 
 export type FormationAnimationLayerProps = {
   topMargin: number,
@@ -22,6 +24,7 @@ export type FormationAnimationLayerProps = {
 export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
   const {paths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {updateState} = useContext(UserContext);
+  const {followingId} = useContext(VisualSettingsContext);
   const animationLayerRef = useRef<Konva.Layer>(null);
   const animationRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
   
@@ -95,6 +98,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             startX={0} 
             startY={0}
             ref={animationRef.current[index]}
+            following={strEquals(followingId, placement.participantId)}
           />;
         }
         )

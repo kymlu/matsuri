@@ -72,8 +72,6 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
             <>
               <CategoryMenu/>
               <Divider/>
-              {/* <SwapMenu/>
-              <Divider/> */}
             </>
           }
           { selectedItems.length > 0 &&

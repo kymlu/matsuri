@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Text } from "react-konva";
-import { UserContext } from "../../../contexts/UserContext.tsx";
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export interface MeterMarkerProps {
   value: number,
@@ -11,7 +10,7 @@ export interface MeterMarkerProps {
 }
 
 export default function LengthMeterMarker(props: MeterMarkerProps) {
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize} = useContext(VisualSettingsContext);
 
   return (
       <Text 

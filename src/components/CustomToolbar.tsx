@@ -3,7 +3,7 @@ import classNames from "classnames";
 import React, { useContext, useEffect, useState } from "react";
 import { CustomToolbarButton } from "./CustomToolbarButton.tsx";
 import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../data/consts.ts";
-import { GridSizeContext } from "../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 
 export type CustomToolbarProps = {
   children: React.ReactNode
@@ -30,7 +30,7 @@ export function CustomToolbar(props: CustomToolbarProps) {
 
   const verticalToolbar = isLandscape && height <= 768;
 
-  const classes = classNames("absolute flex max-w-[80svw] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
+  const classes = classNames("absolute flex max-w-[90svw] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
     "right-3 flex-col overflow-y-auto overflow-x-hidden items-center": verticalToolbar,
     "left-1/2 translate-x-[-50%] overflow-x-auto overflow-y-hidden": !verticalToolbar,
   })
@@ -60,20 +60,20 @@ export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnV
 }
 
 export function ZoomToolbarGroup() {
-  const {gridSize, updateGridSizeContext} = useContext(GridSizeContext);
+  const {gridSize, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   
   return (
     <CustomToolbarGroup reverseOnVertical>
       <CustomToolbarButton
         iconFileName={ICON.zoomOutBlack}
         onClick={() => {
-          updateGridSizeContext({gridSize: gridSize - GRID_SIZE_INCREMENT});
+          updateVisualSettingsContext({gridSize: gridSize - GRID_SIZE_INCREMENT});
         }}
         disabled={gridSize <= MIN_GRID_SIZE}/>
       <CustomToolbarButton
         iconFileName={ICON.zoomInBlack}
         onClick={() => {
-          updateGridSizeContext({gridSize: gridSize + GRID_SIZE_INCREMENT});
+          updateVisualSettingsContext({gridSize: gridSize + GRID_SIZE_INCREMENT});
         }}
         disabled={gridSize >= MAX_GRID_SIZE}/>
     </CustomToolbarGroup>

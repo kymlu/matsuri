@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Stage } from "react-konva";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGridLayer from "./layers/FormationGridLayer.tsx";
-import { isNullOrUndefined } from "../../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, strEquals } from "../../helpers/GlobalHelper.ts";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { FormationType } from "../../models/Formation.ts";
 import { getAnimationPaths } from "../../helpers/AnimationHelper.ts";
@@ -14,9 +14,10 @@ import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { AnimationPath } from "../../models/AnimationPath.ts";
 import { FormationContext } from "../../contexts/FormationContext.tsx";
 import { AppModeContext } from "../../contexts/AppModeContext.tsx";
-import { GridSizeContext } from "../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../contexts/VisualSettingsContext.tsx";
 import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { ParticipantPosition } from "../../models/Position.ts";
 
 export interface FormationCanvasProps {
   height: number,
@@ -27,6 +28,7 @@ export interface FormationCanvasProps {
   ref: React.Ref<any>,
   categories: Record<string, ParticipantCategory>;
   setAnimationPaths: (paths: AnimationPath[]) => void,
+  setFollowingPositions?: (newPosition: Record<string, ParticipantPosition> | null) => void
 }
 
 export default function FormationCanvas(props: FormationCanvasProps) {
@@ -36,7 +38,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
   const {isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {appMode} = useContext(AppModeContext);
   const {selectedSection, isLoading, currentSections, compareMode, updateState} = useContext(UserContext);
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize, followingId} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {enableAnimation} = useContext(SettingsContext);
   const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
@@ -66,6 +68,22 @@ export default function FormationCanvas(props: FormationCanvasProps) {
       updateAnimationContext({paths: animationPaths, isAnimating: true});
     }
   }, [userContext.selectedSection]);
+
+  useEffect(() => {
+    if(followingId) {
+      var newFollowingPositions = {};
+      Object.keys(participantPositions).forEach((key) => {
+        var position = participantPositions[key].filter(x => strEquals(x.participantId, followingId));
+        if (position.length > 0) {
+          newFollowingPositions[key] = position[0];
+        }
+      })
+      props.setFollowingPositions?.(newFollowingPositions);
+      console.log(newFollowingPositions);
+    } else {
+      props.setFollowingPositions?.(null);
+    }
+  }, [followingId]);
 
   useEffect(() => {
     if (compareMode !== "none") {
@@ -129,7 +147,6 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             partPositions={participantPositions[selectedSection.id]}
             propPositions={propPositions[selectedSection.id]}
             notePositions={notePositions[selectedSection.id]}
-            gridSize={gridSize}
             />
         }
         {

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Circle, Group, Text } from "react-konva";
 import { basePalette } from "../../../themes/colours.ts";
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export interface MeterMarkerProps {
   value: number,
@@ -11,7 +11,7 @@ export interface MeterMarkerProps {
 }
 
 export default function WidthMeterMarker(props: MeterMarkerProps) {
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize} = useContext(VisualSettingsContext);
   return (
     <Group>
       <Circle

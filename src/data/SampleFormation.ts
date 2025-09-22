@@ -1117,7 +1117,7 @@ export const sampleFormation = {
       "participantId": "9d6ad3c0-d6d6-479e-861b-ae8706322500",
       "formationSectionId": "68c4a2e2-ad4d-4c5f-8fc4-3081729e5c28",
       "x": 5,
-      "y": 1,
+      "y": 1.5,
       "categoryId": "0",
       "isSelected": false
     },
@@ -1711,7 +1711,7 @@ export const sampleFormation = {
       "participantId": "9d6ad3c0-d6d6-479e-861b-ae8706322500",
       "formationSectionId": "b94d433c-ca84-442a-99df-3e496e73a042",
       "x": 5,
-      "y": 1,
+      "y": 1.5,
       "categoryId": "0",
       "isSelected": false
     },
@@ -1837,7 +1837,7 @@ export const sampleFormation = {
       "participantId": "9d6ad3c0-d6d6-479e-861b-ae8706322500",
       "formationSectionId": "da8605ec-de37-488a-a2e8-b9d3e6e10788",
       "x": 5,
-      "y": 1,
+      "y": 1.5,
       "categoryId": "0",
       "isSelected": false
     },
@@ -2121,8 +2121,8 @@ export const sampleFormation = {
     {
       "id": "09753e6a-36ff-49af-9565-a177f14e50c9",
       "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": 8,
-      "y": 3.5,
+      "x": -0.5,
+      "y": 1.5,
       "label": "",
       "text": "5-6",
       "color": {
@@ -2142,8 +2142,8 @@ export const sampleFormation = {
     {
       "id": "3289d344-95a0-42b2-b1aa-0487ee05217a",
       "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": 8,
-      "y": 2.5,
+      "x": -0.5,
+      "y": 0.5,
       "label": "",
       "text": "3-4",
       "color": {
@@ -2163,8 +2163,8 @@ export const sampleFormation = {
     {
       "id": "ea74c879-c7e8-430e-8da7-38a44b2d645f",
       "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": 8,
-      "y": 4.5,
+      "x": -0.5,
+      "y": 2.5,
       "label": "",
       "text": "7-8",
       "color": {

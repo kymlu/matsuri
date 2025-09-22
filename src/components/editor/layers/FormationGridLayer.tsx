@@ -4,7 +4,7 @@ import { basePalette, objectColorSettings } from "../../../themes/colours.ts";
 import LengthMeterMarker from "../formationObjects/LengthMeterMarker.tsx";
 import WidthMeterMarker from "../formationObjects/WidthMeterMarker.tsx";
 import NoteObject from "../formationObjects/NoteObject.tsx";
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export interface FormationGridProps {
   canvasHeight: number,
@@ -19,7 +19,7 @@ export interface FormationGridProps {
 }
 
 export default function FormationGridLayer(props: FormationGridProps) {
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize} = useContext(VisualSettingsContext);
   const gridHeight = Math.ceil(props.canvasHeight/gridSize);
   const gridWidth = Math.ceil(props.canvasWidth/gridSize);
 

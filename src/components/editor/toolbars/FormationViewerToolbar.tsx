@@ -4,6 +4,8 @@ import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator, NavigateTool
 import { CustomToolbarButton } from "../../CustomToolbarButton.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
+import { PositionType } from "../../../models/Position.ts";
 
 export type FormationViewToolbarProps = {
   firstSectionId?: string,
@@ -11,11 +13,13 @@ export type FormationViewToolbarProps = {
   selectedSectionId?: string,
   changeSection?: (isNext: boolean) => void,
   export?: () => void,
+  changeFollowing?: () => void,
 }
 
 export function FormationViewToolbar(props: FormationViewToolbarProps) {
   const userContext = useContext(UserContext);
   const {updateState} = useContext(UserContext);
+  const {updateVisualSettingsContext, followingId} = useContext(VisualSettingsContext);
   const [showPrevious, setShowPrevious] = useState<boolean>(false);
 
   return (
@@ -26,14 +30,18 @@ export function FormationViewToolbar(props: FormationViewToolbarProps) {
         onChange={props.changeSection}/>
       <CustomToolbarSeparator/>
       <ZoomToolbarGroup/>
-      { false && userContext.selectedItems.length > 0 &&  // todo implement
+      { (userContext.selectedItems.length === 1 || followingId !== null) &&
         <>
           <CustomToolbarSeparator/>
           <CustomToolbarGroup>
             <CustomToolbarButton
               text="フォーカス"
               iconFileName={ICON.familiarFaceAndZoneBlack}
-              onClick={() => {}}/>
+              isPressed={followingId !== null}
+              onClick={() => {
+                const selectedItemId = userContext.selectedItems.filter(x => x.type === PositionType.participant)[0].participant.participantId;
+                updateVisualSettingsContext({followingId: strEquals(selectedItemId, followingId) ? null : selectedItemId});
+              }}/>
           </CustomToolbarGroup>
         </>
       }
@@ -43,12 +51,12 @@ export function FormationViewToolbar(props: FormationViewToolbarProps) {
           isToggle
           text="メモ表示"
           iconFileName={ICON.noteStackBlack}
-          defaultValue={userContext.showNotes}
+          isPressed={userContext.showNotes}
           onClick={() => updateState({showNotes: !userContext.showNotes})}/>
         <CustomToolbarButton isToggle
           text="前の隊列表示"
           iconFileName={ICON.footprintBlack}
-          defaultValue={showPrevious}
+          isPressed={showPrevious}
           onClick={() => {
             updateState({compareMode: showPrevious ? "none" : "previous"})
             setShowPrevious(prev => !prev);

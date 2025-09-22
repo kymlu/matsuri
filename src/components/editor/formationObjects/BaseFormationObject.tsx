@@ -5,7 +5,7 @@ import { Shape, ShapeConfig } from "konva/lib/Shape";
 import { Stage } from "konva/lib/Stage";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
-import { GridSizeContext } from "../../../contexts/GridSizeContext.tsx";
+import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export interface FormationObjectProps {
   id: string,
@@ -22,7 +22,7 @@ export interface FormationObjectProps {
 
 export default function BaseFormationObject(props: FormationObjectProps) {
   const {appMode} = useContext(AppModeContext);
-  const {gridSize} = useContext(GridSizeContext);
+  const {gridSize} = useContext(VisualSettingsContext);
   const snapSize = gridSize/2;
   const {enableGridSnap} = useContext(SettingsContext);
   function onClick(e?: MouseEvent) {

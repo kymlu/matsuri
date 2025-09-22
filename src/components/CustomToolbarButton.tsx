@@ -1,4 +1,4 @@
-import { Toggle, Toolbar } from "@base-ui-components/react";
+import { Toolbar } from "@base-ui-components/react";
 import classNames from "classnames";
 import React from "react";
 
@@ -8,8 +8,8 @@ export type CustomToolbarButtonProp = {
   onClick?: () => void,
   iconLeft?: boolean,
   isToggle?: boolean,
-  defaultValue?: boolean,
-  disabled?: boolean
+  isPressed?: boolean,
+  disabled?: boolean,
 }
 
 export function CustomToolbarButton(props: CustomToolbarButtonProp) {
@@ -17,15 +17,12 @@ export function CustomToolbarButton(props: CustomToolbarButtonProp) {
     "flex-row": props.iconLeft ?? false,
     "flex-row-reverse": !props.iconLeft,
     "opacity-30 cursor-default": props.disabled,
-    "lg:hover:bg-grey-300 lg:hover:data-[pressed]:bg-grey-300 data-[pressed]:bg-grey-200": !props.disabled,
+    "bg-grey-200": props.isPressed,
+    "lg:hover:bg-grey-300 md:hover:bg-grey-300": !props.disabled,
   })
 
   return (
     <Toolbar.Button
-      render={props.isToggle ?
-         <Toggle
-          pressed={props.defaultValue ?? false}/> : 
-         <button/>} 
       className={className}
       onClick={() => {if(!props.disabled) props.onClick?.()}}>
       {props.iconFileName && <img src={props.iconFileName} className="size-6"/>}
