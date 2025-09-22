@@ -49,7 +49,7 @@ export type FormationMainLayerProps = {
 };
 
 export function FormationMainLayer(props: FormationMainLayerProps) {
-  const {gridSize, followingId} = useContext(VisualSettingsContext);
+  const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
 	const userContext = useContext(UserContext);
 	const { isAnimating } = useContext(AnimationContext);
 	const { appMode } = useContext(AppModeContext);
@@ -60,7 +60,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const noteRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
-	const [selectedIds, setSelectedIds] = useState<string[]>([]);
+	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
 	const positionContextRef = useRef(positionContext);
 
@@ -72,7 +72,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	useImperativeHandle(props.ref, () => ({
 		clearSelections: () => {
 			updateState({ selectedItems: [] });
-			setSelectedIds([]);
+			setSelectedIds(new Set());
 		},
 
 		onMouseDown: (e) => {
@@ -172,11 +172,11 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					],
 				});
 
-				setSelectedIds([
+				setSelectedIds(new Set([
 					...selectedParticipantIds,
 					...selectedPropIds,
 					...selectedNoteIds,
-				]);
+				]));
 
 				updateSelectionRect();
 			}
@@ -225,7 +225,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 							({ type: PositionType.participant, participant: x } as Position)
 					),
 				});
-				setSelectedIds(participants.map((x) => x.id));
+				setSelectedIds(new Set(participants.map((x) => x.id)));
 				break;
 
 			case PositionType.prop:
@@ -235,7 +235,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						(x) => ({ type: PositionType.prop, prop: x } as Position)
 					),
 				});
-				setSelectedIds(props.map((x) => x.id));
+				setSelectedIds(new Set(props.map((x) => x.id)));
 				break;
 
 			case PositionType.note:
@@ -245,7 +245,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						(x) => ({ type: PositionType.note, note: x } as Position)
 					),
 				});
-				setSelectedIds(notes.map((x) => x.id));
+				setSelectedIds(new Set(notes.map((x) => x.id)));
 				break;
 
 			default:
@@ -278,7 +278,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				(x) => ({ type: PositionType.participant, participant: x } as Position)
 			),
 		});
-		setSelectedIds(newSelection.map((x) => x.id));
+		setSelectedIds(new Set(newSelection.map((x) => x.id)));
 	}
 
 	useEffect(() => {
@@ -303,9 +303,9 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (
 			transformerRef?.current &&
 			layerRef?.current &&
-			selectedIds.length > 0
+			selectedIds.size > 0
 		) {
-			const nodes = selectedIds
+			const nodes = [...selectedIds]
 				.map((id) => layerRef!.current!.findOne("#" + id))
 				.filter((x) => x !== undefined);
 			transformerRef?.current!.nodes(nodes);
@@ -382,9 +382,9 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		forceSelect?: boolean,
 		multiSelect?: boolean
 	) {
-		if (item === null) return;
+		if (item === null || appMode === "view") return;
 
-		if (multiSelect && appMode === "edit") {
+		if (multiSelect) {
 			var newList: Position[] = [];
 			if (
 				!selectedItems.map((x) => getFromPositionType(x).id).includes(item.id)
@@ -400,7 +400,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				];
 				updateState({ selectedItems: newList });
 			}
-			setSelectedIds(getAllIds(newList));
+			setSelectedIds(new Set(getAllIds(newList)));
 		} else {
 			// not already selected
 			if (
@@ -408,10 +408,10 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				!selectedItems.map((x) => getFromPositionType(x).id).includes(item.id)
 			) {
 				updateState({ selectedItems: [createPosition(item)] });
-				setSelectedIds([item.id]);
+				setSelectedIds(new Set(item.id));
 			} else if (!forceSelect) {
 				updateState({ selectedItems: [] });
-				setSelectedIds([]);
+				setSelectedIds(new Set());
 			}
 		}
 	}
@@ -440,7 +440,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						showBackground={note.showBackground}
 						draggable={appMode === "edit"}
 						ref={noteRef.current[index]}
-						selected={selectedIds.includes(note.id)}
+						selected={selectedIds.has(note.id)}
 					/>
 				))}
 			{props.propPositions?.map((placement, index) => (
@@ -465,7 +465,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						updatePropRotation(placement.id, angle, x, y)
 					}
 					ref={propRef.current[index]}
-					selected={selectedIds.includes(placement.id)}
+					selected={selectedIds.has(placement.id)}
 				/>
 			))}
 			{props.partPositions?.map((placement, index) => (
@@ -485,16 +485,22 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						updateParticipantPosition(placement.id, x, y)
 					}
 					onClick={(forceSelect?: boolean, multiSelect?: boolean) => {
-						selectItem(
-							placement,
-							PositionType.participant,
-							forceSelect,
-							multiSelect
-						);
+						if (appMode === "edit") {
+							selectItem(
+								placement,
+								PositionType.participant,
+								forceSelect,
+								multiSelect
+							);
+						} else {
+							updateVisualSettingsContext({
+								followingId: strEquals(followingId, placement.participantId) ? null : placement.participantId
+							});
+						}
 					}}
 					draggable={!isAnimating}
 					ref={participantRef.current[index]}
-					selected={selectedIds.includes(placement.id)}
+					selected={appMode === "edit" && selectedIds.has(placement.id)}
 					following={strEquals(placement.participantId, followingId)}
 				/>
 			))}

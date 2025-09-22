@@ -38,7 +38,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
   const {isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {appMode} = useContext(AppModeContext);
   const {selectedSection, isLoading, currentSections, compareMode, updateState} = useContext(UserContext);
-  const {gridSize, followingId} = useContext(VisualSettingsContext);
+  const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {enableAnimation} = useContext(SettingsContext);
   const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
@@ -79,7 +79,6 @@ export default function FormationCanvas(props: FormationCanvasProps) {
         }
       })
       props.setFollowingPositions?.(newFollowingPositions);
-      console.log(newFollowingPositions);
     } else {
       props.setFollowingPositions?.(null);
     }
@@ -104,6 +103,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
         onClick={(event) => {
           if (event.target === event.target.getStage()) {
             editLayerRef.current?.clearSelections();
+            updateVisualSettingsContext({followingId: null});
           }
         }}>
         {
@@ -133,7 +133,6 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             categories={props.categories}
             />
         }
-        
         {
           !isLoading && !isAnimating && selectedSection &&
           <FormationMainLayer 

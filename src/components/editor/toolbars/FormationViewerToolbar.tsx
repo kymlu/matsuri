@@ -4,8 +4,6 @@ import { CustomToolbar, CustomToolbarGroup, CustomToolbarSeparator, NavigateTool
 import { CustomToolbarButton } from "../../CustomToolbarButton.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
-import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
-import { PositionType } from "../../../models/Position.ts";
 
 export type FormationViewToolbarProps = {
   firstSectionId?: string,
@@ -19,7 +17,6 @@ export type FormationViewToolbarProps = {
 export function FormationViewToolbar(props: FormationViewToolbarProps) {
   const userContext = useContext(UserContext);
   const {updateState} = useContext(UserContext);
-  const {updateVisualSettingsContext, followingId} = useContext(VisualSettingsContext);
   const [showPrevious, setShowPrevious] = useState<boolean>(false);
 
   return (
@@ -30,21 +27,6 @@ export function FormationViewToolbar(props: FormationViewToolbarProps) {
         onChange={props.changeSection}/>
       <CustomToolbarSeparator/>
       <ZoomToolbarGroup/>
-      { (userContext.selectedItems.length === 1 || followingId !== null) &&
-        <>
-          <CustomToolbarSeparator/>
-          <CustomToolbarGroup>
-            <CustomToolbarButton
-              text="フォーカス"
-              iconFileName={ICON.familiarFaceAndZoneBlack}
-              isPressed={followingId !== null}
-              onClick={() => {
-                const selectedItemId = userContext.selectedItems.filter(x => x.type === PositionType.participant)[0].participant.participantId;
-                updateVisualSettingsContext({followingId: strEquals(selectedItemId, followingId) ? null : selectedItemId});
-              }}/>
-          </CustomToolbarGroup>
-        </>
-      }
       <CustomToolbarSeparator/>
       <CustomToolbarGroup>
         <CustomToolbarButton
