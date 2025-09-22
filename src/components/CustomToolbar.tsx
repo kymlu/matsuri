@@ -45,7 +45,10 @@ export function CustomToolbar(props: CustomToolbarProps) {
 }
 
 export function CustomToolbarSeparator() {
-  return <Toolbar.Separator orientation="vertical" className="w-px h-6 data-[orientation=vertical]:h-px data-[orientation=vertical]:w-full m-1 bg-gray-300"/>
+  return <div className="flex w-full">
+    <Toolbar.Separator
+      className="w-px h-6 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full m-1 bg-gray-300"/>
+  </div>
 }
 
 export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnVertical?: boolean}) {
