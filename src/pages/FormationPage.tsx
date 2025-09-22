@@ -26,6 +26,7 @@ import FormationLeftPanel from '../components/leftPanel/FormationLeftPanel.tsx';
 import FormationRightPanel from '../components/rightPanel/FormationRightPanel.tsx';
 import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
+import { FormationType } from '../models/Formation.ts';
 
 export type MarginPositions = {
   participants: number[][],
@@ -36,7 +37,7 @@ export type MarginPositions = {
 export default function FormationPage () {
   const userContext = useContext(UserContext);
   const {updateState, selectedSection} = useContext(UserContext);
-  const {gridSize, followingId} = useContext(VisualSettingsContext);
+  const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {appMode} = useContext(AppModeContext);
   const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
@@ -91,6 +92,9 @@ export default function FormationPage () {
       navigate("../");
       return;
     }
+
+    updateVisualSettingsContext({followingId: null});
+    setFollowingPositions(null);
 
     GetAllCategories().then((categories) => {
       setCategories(categories);
@@ -264,11 +268,11 @@ export default function FormationPage () {
                   <div className='flex flex-row gap-2'>
                     <div className='flex gap-1'>
                       <img src={ICON.heightBlack} className='size-6'/>
-                      <span>{`${followingPositions[selectedSection.id]?.x}m`}</span>
+                      <span>{`${selectedFormation.type === FormationType.parade ? selectedFormation.length - followingPositions[selectedSection.id]?.y : followingPositions[selectedSection.id]?.y}m`}</span>
                     </div>
                     <div className='flex gap-1'>
                       <img src={ICON.arrowRangeBlack} className='size-6'/>
-                      <span>{`${followingPositions[selectedSection.id]?.y}m`}</span>
+                      <span>{`${Math.abs(selectedFormation.width/2 - followingPositions[selectedSection.id]?.x)}m`}</span>
                     </div>
                   </div>
                 </div>
