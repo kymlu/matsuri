@@ -16,6 +16,7 @@ import {
 	Position,
 	PositionType,
 	PropPosition,
+	splitPositionsByType,
 } from "../../../models/Position.ts";
 import { objectColorSettings, basePalette, objectPalette } from "../../../themes/colours.ts";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
@@ -66,6 +67,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const arrowRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isSinglePropSelected, setIsSinglePropSelected] = useState<boolean>(false);
+	const [isSingleArrowSelected, setIsSingleArrowSelected] = useState<boolean>(false);
 
 	const positionContextRef = useRef(positionContext);
 
@@ -199,6 +201,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				setSelectedIds(allSelectedIds);
 
 				setIsSinglePropSelected(allSelectedIds.size === 1 && selectedPropIds.size === 1);
+				setIsSingleArrowSelected(allSelectedIds.size === 1 && selectedArrowIds.size === 1);
 
 				updateSelectionRect();
 			}
@@ -335,7 +338,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (
 			transformerRef?.current &&
 			layerRef?.current &&
-			selectedIds.size > 0
+			selectedIds.size > 0 && 
+			!isSingleArrowSelected
 		) {
 			const nodes = [...selectedIds]
 				.map((id) => layerRef!.current!.findOne("#" + id))
@@ -344,7 +348,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		} else {
 			transformerRef?.current!.nodes([]);
 		}
-	}, [selectedIds]);
+	}, [selectedIds, isSingleArrowSelected]);
 
 	useEffect(() => {
 		Object.values(props.participants)
@@ -433,7 +437,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		multiSelect?: boolean,
 	) {
 		if (item === null || appMode === "view" || (isMoving && selectedIds.has(item.id))) return;
-		var singlePropSelected = false;
+		var singlePropSelected = false; // todo: set on multiselect
+		var singleArrowSelected = false;
 
 		if (multiSelect) {
 			var newList: Position[] = [];
@@ -441,7 +446,13 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				!selectedItems.map((x) => getFromPositionType(x).id).includes(item.id)
 			) {
 				newList = [...selectedItems, createPosition(item)];
-				updateState({ selectedItems: newList });
+				if (newList.length === 1) {
+					if (type === PositionType.arrow) {
+						singleArrowSelected = true;
+					} else if (type === PositionType.prop) {
+						singlePropSelected = true;
+					}
+				}
 			} else {
 				newList = [
 					...selectedItems.filter(
@@ -449,8 +460,17 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 							x.type !== type || !strEquals(getFromPositionType(x).id, item.id)
 					),
 				];
-				updateState({ selectedItems: newList });
+				if (newList.length === 1) {
+					var split = splitPositionsByType(newList);
+					if (split.arrows.length === 1) {
+						singleArrowSelected = true;
+					} else if (split.props.length === 1) {
+						singlePropSelected = true;
+					}
+				}
 			}
+			updateState({ selectedItems: newList });
+			updateState({ selectedItems: newList });
 			setSelectedIds(new Set(getAllIds(newList)));
 		} else {
 			// not already selected
@@ -458,20 +478,21 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				selectedItems.length === 0 ||
 				!selectedItems.map((x) => getFromPositionType(x).id).includes(item.id)
 			) {
-				console.log("add", createPosition(item))
 				updateState({ selectedItems: [createPosition(item)] });
 				setSelectedIds(new Set([item.id]));
 				if (type === PositionType.prop) {
 					singlePropSelected = true;
+				} else if (type === PositionType.arrow) {
+					singleArrowSelected = true;
 				}
 			} else if (!isMoving) {
-				console.log("remove")
 				updateState({ selectedItems: [] });
 				setSelectedIds(new Set());
 			}
 		}
 
 		setIsSinglePropSelected(singlePropSelected);
+		setIsSingleArrowSelected(singleArrowSelected);
 	}
 
 	return (
@@ -492,6 +513,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						pointerAtBeginning={arrow.pointerAtBeginning}
 						pointerAtEnding={arrow.pointerAtEnding}
 						draggable
+						selected={selectedIds.has(arrow.id)}
+						isOnlyOneSelected={selectedIds.has(arrow.id) && isSingleArrowSelected}
 						onClick={(isMoving?: boolean, multiSelect?: boolean) => {
 							selectItem(arrow, PositionType.arrow, isMoving,multiSelect);
 						}}
