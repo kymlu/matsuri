@@ -60,7 +60,10 @@ export default function ColorPickerMenu() {
     var noteIds = new Set(res.notes.map(x => x.id));
     var updatedNotes = [...notePositions[selectedSection!.id]];
     noteIds.forEach(id => {
-      updatedNotes[id].color = color;
+      var note = updatedNotes.find(x => strEquals(x.id, id));
+      if (note) {
+        note.color = color;
+      }
     });
     
     updatePositionContextState({
@@ -115,14 +118,14 @@ export default function ColorPickerMenu() {
       setSelectedColor(null);
     }
 
-    if (res.props.length === 0 && res.notes.length > 0) {
+    if (res.props.length && res.notes.length > 0) {
       setShowTransparentOption(true);
       var showBackground = [...new Set(res.notes.map(x => x.showBackground))].includes(true);
       setIsBgShown(showBackground);
       showBgSwitchRef.current?.changeChecked(showBackground);
     } else {
       setShowTransparentOption(false);
-      setIsBgShown(false);
+      setIsBgShown(true);
     }
   }, [userContext.selectedItems]);
 
