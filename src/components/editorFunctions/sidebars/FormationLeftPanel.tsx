@@ -9,7 +9,7 @@ import { Sidebar } from "./Sidebar.tsx";
 
 export default function FormationLeftPanel (props: {marginPositions: MarginPositions}) {
   return (
-    <Sidebar isLeft>
+    <Sidebar defaultExpanded isLeft>
       <FormationEditorLeftContent marginPositions={props.marginPositions}/>
     </Sidebar>
   )

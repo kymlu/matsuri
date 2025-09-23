@@ -491,7 +491,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					name={props.participants[placement.participantId]?.displayName ?? ""}
 					colour={
 						placement.categoryId
-							? props.categories[placement.categoryId].color ??
+							? props.categories[placement?.categoryId]?.color ??
 							  objectColorSettings["amberLight"]
 							: objectColorSettings["amberLight"]
 					}

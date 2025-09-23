@@ -16,7 +16,7 @@ import Button from "../../Button.tsx";
 import { ICON } from "../../../data/consts.ts";
 
 export default function CategoryMenu() {
-  const {selectedItems, updateState} = useContext(UserContext);
+  const {selectedItems, updateState, selectedSection} = useContext(UserContext);
   const userContext = useContext(UserContext);
   const [editingId, setEditingId] = useState<string | undefined | null>(null);
   const {categories, updateCategoryContext} = useContext(CategoryContext);
@@ -67,33 +67,43 @@ export default function CategoryMenu() {
   }
 
   function onChangeCategory(newCategoryId: string) {
+    var participants = splitPositionsByType(selectedItems).participants;
+    var updatedPositions: ParticipantPosition[] = [];
+    var ids = new Set(participants.map(x => x.id));
+    var updatedRecord = {...participantPositions};
+    updatedRecord[selectedSection!.id]
+      .filter(x => ids.has(x.id))
+      .forEach(x => {
+        x.categoryId = newCategoryId
+        updatedPositions.push(x);
+      });
+    
     var newCategory = categories[newCategoryId]!;
-    var updatedPositions = splitPositionsByType(selectedItems).participants.map(x => ({...x, categoryId: newCategoryId}));
-    var positionIds = updatedPositions.map(x => x.id);
 
     setSelectedCategory(newCategory);
     updateState({selectedItems: updatedPositions.map(x => createPosition(x, PositionType.participant))});
-    updatePositionContextState({participantPositions: [
-      ...participantPositions.filter(x => !positionIds.includes(x.id)),
-      ...updatedPositions
-    ]});
+    updatePositionContextState({participantPositions: updatedRecord});
     dbController.upsertList("participantPosition", updatedPositions);
   }
 
   async function onSetAllToCategory() {
-    var participantIds = splitPositionsByType(selectedItems).participants.map(x => x.participantId);
-    var updatedPositions = participantPositions
-      .filter(x => participantIds.includes(x.participantId))
-      .map(x => ({
-        ...x as ParticipantPosition,
-        categoryId: selectedCategory!.id
-      } as ParticipantPosition));
+    var participantIds = new Set(splitPositionsByType(selectedItems).participants.map(x => x.participantId));
+    
+    var updatedRecord = {...participantPositions};
+    var updatedPositions: ParticipantPosition[] = [];
+    Object.keys(updatedRecord).forEach(key => {
+      updatedRecord[key]
+        .filter(x => participantIds.has(x.participantId))
+        .forEach(x => {
+          x.categoryId = selectedCategory!.id;
+          updatedPositions.push(x);
+        });
+    });
+
+    
     
     dbController.upsertList("participantPosition", updatedPositions);
-    updatePositionContextState({participantPositions: [
-      ...participantPositions.filter(x => !participantIds.includes(x.participantId)),
-      ...updatedPositions
-    ]})
+    updatePositionContextState({participantPositions: updatedRecord});
   }
 
   function selectColor(color: ColorStyle, category: ParticipantCategory) {

@@ -135,7 +135,6 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             props={propList}
             partPositions={participantPositions[ghostSectionId]}
             propPositions={propPositions[ghostSectionId]}
-            notePositions={notePositions[ghostSectionId]}
             categories={props.categories}
             />
         }

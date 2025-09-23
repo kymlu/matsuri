@@ -18,7 +18,6 @@ export type FormationGhostLayerProps = {
   props: Record<string, Prop>,
   partPositions: ParticipantPosition[],
   propPositions: PropPosition[],
-  notePositions: NotePosition[],
   categories: Record<string, ParticipantCategory>,
 }
 

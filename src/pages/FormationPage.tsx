@@ -16,7 +16,6 @@ import { GetAllCategories, GetAllForFormation } from '../data/DataController.ts'
 import { groupByKey, indexByKey } from '../helpers/GroupingHelper.ts';
 import { Participant } from '../models/Participant.ts';
 import { Prop } from '../models/Prop.ts';
-import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { exportToPdf } from '../helpers/ExportHelper.ts';
 import { FormationToolbar } from '../components/formation/toolbars/FormationToolbar.tsx';
 import { AppModeContext } from '../contexts/AppModeContext.tsx';
@@ -26,6 +25,7 @@ import FormationRightPanel from '../components/editorFunctions/sidebars/Formatio
 import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { FormationType } from '../models/Formation.ts';
+import { CategoryContext } from '../contexts/CategoryContext.tsx';
 
 export type MarginPositions = {
   participants: number[][],
@@ -36,6 +36,7 @@ export type MarginPositions = {
 export default function FormationPage () {
   const userContext = useContext(UserContext);
   const {updateState, selectedSection} = useContext(UserContext);
+  const {categories, updateCategoryContext} = useContext(CategoryContext);
   const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {appMode} = useContext(AppModeContext);
@@ -56,7 +57,6 @@ export default function FormationPage () {
 
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [exportProgress, setExportProgress] = useState<number>(0);
-  const [categories, setCategories] = useState<Record<string, ParticipantCategory>>({});
   const [marginPositions, setMarginPositions] = useState<MarginPositions>({participants: [], props: [], notes: []});
   const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition> | null>(null);
 
@@ -95,7 +95,7 @@ export default function FormationPage () {
     setFollowingPositions(null);
 
     GetAllCategories().then((categories) => {
-      setCategories(categories);
+      updateCategoryContext({categories: categories});
     });
     
     GetAllForFormation(selectedFormation?.id!, (

@@ -6,15 +6,16 @@ import Divider from "../../Divider.tsx";
 
 export type SidebarProps = {
   isLeft?: boolean,
+  defaultExpanded?: boolean,
   children: React.ReactNode,
 }
 
 export function Sidebar(props: SidebarProps) {
   const {appMode} = useContext(AppModeContext)
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = React.useState(props.defaultExpanded);
 
   useEffect(() => {
-    setExpanded(true);
+    setExpanded(props.defaultExpanded);
   }, [appMode]);
 
   var classes = classNames("flex flex-col overflow-y-auto bg-white border-solid border-grey",
