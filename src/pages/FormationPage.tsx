@@ -18,8 +18,7 @@ import { Participant } from '../models/Participant.ts';
 import { Prop } from '../models/Prop.ts';
 import { ParticipantCategory } from '../models/ParticipantCategory.ts';
 import { exportToPdf } from '../helpers/ExportHelper.ts';
-import { FormationViewToolbar } from '../components/formation/toolbars/FormationViewerToolbar.tsx';
-import { FormationEditorToolbar } from '../components/formation/toolbars/FormationEditorToolbar.tsx';
+import { FormationToolbar } from '../components/formation/toolbars/FormationToolbar.tsx';
 import { AppModeContext } from '../contexts/AppModeContext.tsx';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import FormationLeftPanel from '../components/editorFunctions/sidebars/FormationLeftPanel.tsx';
@@ -187,20 +186,25 @@ export default function FormationPage () {
     setExportProgress(100);
   } 
 
-  function changeSection(isNext?: boolean) {
-    var index = userContext.currentSections.sort((a, b) => a.order - b.order).findIndex(x => strEquals(selectedSectionId, x.id));
-    var nextSection = userContext.currentSections.sort((a, b) => a.order - b.order)[index + (isNext ? 1 : -1)];
-    var from = selectedSectionId;
-    var to = nextSection.id;
-    var participantPaths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to))?.participantPaths;
-    var propPaths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to))?.propPaths;
-    if (participantPaths) {
-      updateAnimationContext({
-        participantPaths: participantPaths,
-        propPaths: propPaths,
-        isAnimating: true
-      });
+  function changeSection(section?: FormationSection, isNext?: boolean) {
+    const index = userContext.currentSections.sort((a, b) => a.order - b.order).findIndex(x => strEquals(selectedSectionId, x.id));
+    const nextSection = section ?? userContext.currentSections.sort((a, b) => a.order - b.order)[index + (isNext ? 1 : -1)];
+    const from = selectedSectionId;
+    const to = nextSection.id;
+    const paths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to));
+
+    if (paths) {
+      const participantPaths = paths?.participantPaths;
+      const propPaths = paths?.propPaths;
+      if (participantPaths || propPaths) {
+        updateAnimationContext({
+          participantPaths: participantPaths,
+          propPaths: propPaths,
+          isAnimating: true
+        });
+      }
     }
+
     updateState({
       selectedSection: nextSection
     });
@@ -226,7 +230,6 @@ export default function FormationPage () {
                   sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}
                   setAnimationPaths={setAnimationPaths}
                   categories={categories}/>
-                <FormationEditorToolbar/>
               </div>
               <FormationRightPanel exportFunc={(exportName: string) => {
                 setExportName(exportName);
@@ -247,14 +250,6 @@ export default function FormationPage () {
                 setAnimationPaths={setAnimationPaths}
                 categories={categories}
                 setFollowingPositions={setFollowingPositions}/>
-              <FormationViewToolbar
-                changeSection={changeSection}
-                firstSectionId={firstSectionId}
-                lastSectionId={lastSectionId}
-                selectedSectionId={selectedSectionId}
-                export={() => {
-                  exportPdf();
-                }}/>
               {
                 selectedSection && followingId && followingPositions && selectedFormation &&
                 <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] landscape:top-auto landscape:left-3 landscape:bottom-3 landscape:translate-x-0 rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
@@ -275,6 +270,14 @@ export default function FormationPage () {
               }
             </div>
           }
+          <FormationToolbar
+            changeSection={changeSection}
+            firstSectionId={firstSectionId}
+            lastSectionId={lastSectionId}
+            selectedSectionId={selectedSectionId}
+            export={() => {
+              exportPdf();
+            }}/>
       <ExportProgressDialog
         exportName={exportName}
         isOpen={isExporting}

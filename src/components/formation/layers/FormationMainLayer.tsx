@@ -379,7 +379,6 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			prop.angle = angle;
 			prop.x = x / gridSize - props.sideMargin;
 			prop.y = y / gridSize - props.topMargin;
-			console.log(prop.x, prop.y);
 			dbController.upsertItem("propPosition", prop);
 		}
 	}
@@ -536,8 +535,6 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				]}
 				rotationSnapTolerance={10}
 				onTransformEnd={(event) => {
-					console.log(event.target.attrs);
-
 					updatePropRotation(event.target.attrs.id,
 							event.target.attrs.rotation,
 							event.target.attrs.x,

@@ -93,7 +93,6 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
           y: 0,
           data: pathData.path,
         });
-        console.log(pathData);
 
         const pathLen = path.getLength();
         const step = pathLen / steps;

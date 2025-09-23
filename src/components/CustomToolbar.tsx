@@ -1,9 +1,6 @@
 import { Toolbar } from "@base-ui-components/react";
 import classNames from "classnames";
-import React, { useContext, useEffect, useState } from "react";
-import { CustomToolbarButton } from "./CustomToolbarButton.tsx";
-import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../data/consts.ts";
-import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
+import React, { useEffect, useState } from "react";
 
 export type CustomToolbarProps = {
   children: React.ReactNode
@@ -30,7 +27,7 @@ export function CustomToolbar(props: CustomToolbarProps) {
 
   const verticalToolbar = isLandscape && height <= 768;
 
-  const classes = classNames("absolute flex max-w-[90svw] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
+  const classes = classNames("absolute flex max-w-[90svw] max-h-[calc(100svh-80px)] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
     "right-3 flex-col overflow-y-auto overflow-x-hidden items-center": verticalToolbar,
     "left-1/2 translate-x-[-50%] overflow-x-auto overflow-y-hidden": !verticalToolbar,
   })
@@ -62,45 +59,36 @@ export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnV
   )
 }
 
-export function ZoomToolbarGroup() {
-  const {gridSize, updateVisualSettingsContext} = useContext(VisualSettingsContext);
-  
-  return (
-    <CustomToolbarGroup reverseOnVertical>
-      <CustomToolbarButton
-        iconFileName={ICON.zoomOutBlack}
-        onClick={() => {
-          updateVisualSettingsContext({gridSize: gridSize - GRID_SIZE_INCREMENT});
-        }}
-        disabled={gridSize <= MIN_GRID_SIZE}/>
-      <CustomToolbarButton
-        iconFileName={ICON.zoomInBlack}
-        onClick={() => {
-          updateVisualSettingsContext({gridSize: gridSize + GRID_SIZE_INCREMENT});
-        }}
-        disabled={gridSize >= MAX_GRID_SIZE}/>
-    </CustomToolbarGroup>
-  )
+export type CustomToolbarButtonProp = {
+  iconFileName?: string,
+  text?: string,
+  onClick?: () => void,
+  iconLeft?: boolean,
+  isToggle?: boolean,
+  isPressed?: boolean,
+  disabled?: boolean,
+  isDiv?: boolean,
+  ref?: React.Ref<HTMLButtonElement>,
 }
 
-export function NavigateToolbarGroup(props: {
-  disablePrevious: boolean,
-  disableNext: boolean,
-  onChange?: (isNext: boolean) => void,
-}) {
+export function CustomToolbarButton(props: CustomToolbarButtonProp) {
+  var className = classNames("group flex items-center gap-1 h-8 px-1 rounded-md flex-shrink-0", {
+    "flex-row": props.iconLeft ?? false,
+    "flex-row-reverse": !props.iconLeft,
+    "opacity-30 cursor-default": props.disabled,
+    "bg-grey-200": props.isPressed,
+    "lg:hover:bg-grey-300 md:hover:bg-grey-300": !props.disabled,
+  });
+
   return (
-    <CustomToolbarGroup>
-      <CustomToolbarButton
-        iconLeft
-        text="前へ"
-        disabled={props.disablePrevious}
-        iconFileName={ICON.chevronBackwardBlack}
-        onClick={() => {props.onChange?.(false)}}/>
-      <CustomToolbarButton
-        text="次へ"
-        disabled={props.disableNext}
-        iconFileName={ICON.chevronForwardBlack}
-        onClick={() => {props.onChange?.(true)}}/>
-    </CustomToolbarGroup>
+    <Toolbar.Button
+      nativeButton={!props.isDiv}
+      render={props.isDiv ? <div></div> : <button></button>}
+      ref={props.ref}
+      className={className}
+      onClick={() => {if(!props.disabled) props.onClick?.()}}>
+      {props.iconFileName && <img src={props.iconFileName} className="size-6"/>}
+      {props.text && <span className="text-nowrap group-data-[orientation=vertical]:hidden">{props.text}</span>}
+    </Toolbar.Button>
   )
 }

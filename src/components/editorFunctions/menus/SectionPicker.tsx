@@ -318,11 +318,11 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 					.sort((a, b) => a.order - b.order)
 					.map((section, index, array) => (
 						<SectionOptionButton
+							canEdit={true}
 							disabled={isLoading || isAnimating}
 							key={section.id}
 							text={section.displayName ?? "No Name"}
 							isSelected={strEquals(selectedSection?.id, section.id)}
-							isBottom={index === array.length - 1}
               onEditName={(newName) => onNameChange(section, newName)}
 							onClick={() => selectSection(section)}
 							onCopyToCurrent={() => copyToCurrent(section)}

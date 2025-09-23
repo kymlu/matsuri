@@ -4,6 +4,7 @@ import React from "react";
 
 export type CustomMenuProps = {
   trigger: React.ReactNode;
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'inline-end' | 'inline-start';
   full?: boolean;
   children: React.ReactNode;
 }
@@ -13,7 +14,6 @@ export default function CustomMenu (props: CustomMenuProps) {
     "w-full": props.full,
   });
 
-
   return (
     <Menu.Root>
       <Menu.Trigger className={triggerClassNames} onClick={(e) => {e.stopPropagation()}}>
@@ -21,7 +21,7 @@ export default function CustomMenu (props: CustomMenuProps) {
         </Menu.Trigger>
       <Menu.Portal>
         <Menu.Backdrop />
-        <Menu.Positioner>
+        <Menu.Positioner side={props.position ?? "bottom"}>
           <Menu.Popup className="p-2 bg-white border border-solid rounded-md border-primary">
             <Menu.Arrow className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
               <ArrowSvg/>

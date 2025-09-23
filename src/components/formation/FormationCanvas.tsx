@@ -70,7 +70,6 @@ export default function FormationCanvas(props: FormationCanvasProps) {
         Object.values(propPositions).flat(),
         props.topMargin,
         props.sideMargin);
-      console.log(propPaths);
       updateState({isLoading: false});
       updateAnimationContext({participantPaths: participantPaths, propPaths: propPaths, isAnimating: true});
     }

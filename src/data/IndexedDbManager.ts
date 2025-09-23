@@ -136,8 +136,6 @@ export class IndexedDBManager {
                 ).flatMap(x => x)
               ).flatMap(x => x); // flatten all the way
 
-              console.log(sections);
-    
             return this.upsertList("formationSection", sections);
           }
         })

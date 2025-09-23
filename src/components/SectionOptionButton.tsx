@@ -7,9 +7,9 @@ import { ICON } from "../data/consts.ts";
 
 export interface ListOptionButtonProps {
   text: string,
+  canEdit: boolean,
   disabled?: boolean,
   isSelected?: boolean,
-  isBottom?: boolean,
   onEditName?: (newName: string) => void,
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
   onCopyToCurrent?: () => void,
@@ -17,18 +17,17 @@ export interface ListOptionButtonProps {
   onDuplicate?: () => void,
   onResetPosition?: () => void,
   onDelete?: () => void,
-  showReset: boolean,
-  showDelete: boolean,
-  ref: React.Ref<HTMLDivElement>
+  showReset?: boolean,
+  showDelete?: boolean,
+  ref?: React.Ref<HTMLDivElement>
 }
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
   const [isEditing, setIsEditing] = React.useState(false);
 
-  const classes = className("grid grid-cols-[1fr,auto] gap-2 px-5 items-center", {
+  const classes = className("grid grid-cols-[1fr,auto] gap-2 px-5 items-center border-primary border-b-2 last-of-type:border-0", {
     "bg-primary text-white cursor-default": props.isSelected,
     "cursor-pointer": !props.isSelected && !props.disabled,
-    "border-b-2 border-primary": !props.isBottom,
   });
 
   function onClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -71,54 +70,63 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             text={props.text}
             placeholder="名前を入力"/>}
       </span>
-      {/* todo: add copy above> add rearranging?  */}
-      {!isEditing && <CustomMenu trigger={
-        <div className="flex justify-center">
-          <img
-            alt="Settings icon"
-            src={props.isSelected ? ICON.settingsWhite : ICON.settings}
-            className='size-4'/>
-        </div>}>
-        {
-          !props.isSelected &&
-          <>
-            <MenuItem label="選択項目にコピー" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}/>
-          </>
-        }
-        {
-          props.isSelected && 
-          <>
-            <MenuItem label="名前を編集" onClick={() => {setIsEditing(true)}} />
-            <MenuSeparator />
-            <MenuItem label="以降にコピー" onClick={copyToFuture} />
-            <MenuSeparator />
-            <MenuItem label="重複" onClick={onDuplicate} />
-            { props.showReset &&
-              <>
-                <MenuSeparator />
-                <MenuItem label="リセット" onClick={resetPosition} />
-              </>
-            }
-            { props.showDelete &&
-              <>
-                <MenuSeparator />
-                <MenuItem label="削除" onClick={deleteSection} />
-              </>
-            }
-          </>
-        }
-      </CustomMenu>}
-      { isEditing && 
-      <button 
-        button-name="Add sections"
-        onClick={() => {setIsEditing(false)}}>
-        <div className="flex justify-center col-start-2 row-start-1">
-          <img
-            alt="Confirm name"
-            src={ICON.checkWhite}
-            className='size-4'/>
-        </div>
-      </button>}
+      {
+        props.canEdit && 
+        <>
+          {
+            !isEditing && <CustomMenu trigger={
+              <div className="flex justify-center">
+                <img
+                  alt="Settings icon"
+                  src={props.isSelected ? ICON.settingsWhite : ICON.settings}
+                  className='size-4'/>
+              </div>}>
+              {
+                !props.isSelected &&
+                <>
+                  <MenuItem label="選択項目にコピー" onClick={(e) => { e.stopPropagation(); copyToCurrent(); }}/>
+                </>
+              }
+              {
+                props.isSelected && 
+                <>
+                  <MenuItem label="名前を編集" onClick={() => {setIsEditing(true)}} />
+                  <MenuSeparator />
+                  <MenuItem label="以降にコピー" onClick={copyToFuture} />
+                  <MenuSeparator />
+                  <MenuItem label="重複" onClick={onDuplicate} />
+                  { props.showReset &&
+                    <>
+                      <MenuSeparator />
+                      <MenuItem label="リセット" onClick={resetPosition} />
+                    </>
+                  }
+                  { props.showDelete &&
+                    <>
+                      <MenuSeparator />
+                      <MenuItem label="削除" onClick={deleteSection} />
+                    </>
+                  }
+                </>
+              }
+            </CustomMenu>
+          }
+          { 
+            isEditing && 
+            <button 
+              button-name="Add sections"
+              onClick={() => {setIsEditing(false)}}>
+              <div className="flex justify-center col-start-2 row-start-1">
+                <img
+                  alt="Confirm name"
+                  src={ICON.checkWhite}
+                  className='size-4'/>
+              </div>
+            </button>
+          }
+        </>
+      }
+      {/* todo: add copy above, rearranging?  */}
     </div>
   )
 }
