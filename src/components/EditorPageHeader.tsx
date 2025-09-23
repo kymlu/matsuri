@@ -53,24 +53,13 @@ export function EditorPageHeader() {
       </h1>
       }
       <div className="flex flex-row gap-2">
-        { appMode === "edit" && 
-          <button
-            onClick={() => {
-              updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
-              updateAppModeContext({appMode: "view"});
-            }}>
-            <img className='size-8 max-w-8 max-h-8' src={ICON.visibility}/>
-          </button>
-        }
-        { appMode === "view" &&
-          <button
-            onClick={() => {
-              updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
-              updateAppModeContext({appMode: "edit"});
-            }}>
-            <img className='size-8 max-w-8 max-h-8' src={ICON.edit}/>
-          </button>
-        }
+        <button
+          onClick={() => {
+            updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
+            updateAppModeContext({appMode: appMode === "edit" ? "view" : "edit"});
+          }}>
+          <img className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
+        </button>
         <CustomMenu trigger={
           <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
           }>

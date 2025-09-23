@@ -1,7 +1,7 @@
 import React from "react";
-import { ColorStyle, objectColorSettings } from "../../themes/colours.ts";
+import { ColorStyle, objectColorSettings } from "../../../themes/colours.ts";
 import ColorSwatch from "./ColorSwatch.tsx";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
 
 export interface ColorPickerProps {
   selectColor: (color: ColorStyle) => void,

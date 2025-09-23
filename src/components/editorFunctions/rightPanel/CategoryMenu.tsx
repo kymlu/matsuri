@@ -1,19 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import ExpandableSection from "../ExpandableSection.tsx";
+import ExpandableSection from "../../ExpandableSection.tsx";
 import { Radio, RadioGroup } from "@base-ui-components/react";
-import { ColorStyle } from "../../themes/colours.ts";
-import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
+import { ColorStyle } from "../../../themes/colours.ts";
+import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import ColorSwatch from "./ColorSwatch.tsx";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
-import { CategoryContext } from "../../contexts/CategoryContext.tsx";
-import { dbController } from "../../data/DBProvider.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../models/Position.ts";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
+import { dbController } from "../../../data/DBProvider.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import ColorPicker from "./ColorPicker.tsx";
-import CustomMenu from "../CustomMenu.tsx";
-import Button from "../Button.tsx";
-import { ICON } from "../../data/consts.ts";
+import CustomMenu from "../../CustomMenu.tsx";
+import Button from "../../Button.tsx";
+import { ICON } from "../../../data/consts.ts";
 
 export default function CategoryMenu() {
   const {selectedItems, updateState} = useContext(UserContext);

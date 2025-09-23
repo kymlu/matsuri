@@ -2,8 +2,6 @@ import React, { useContext } from "react";
 import { Rect, Text } from "react-konva";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { basePalette, ColorStyle } from "../../../themes/colours.ts";
-import { Shape, ShapeConfig } from "konva/lib/Shape";
-import { Stage } from "konva/lib/Stage";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 
 export interface PropObjectProps {
@@ -16,7 +14,6 @@ export interface PropObjectProps {
   onClick?: (isMoving?: boolean, multiSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
   draggable?: boolean,
-  onRotate?: (rotation: number, x: number, y: number) => void,
   rotation: number,
   ref?: React.Ref<any>,
   selected?: boolean,
@@ -24,13 +21,6 @@ export interface PropObjectProps {
 
 export default function PropObject(props: PropObjectProps) {
   const {gridSize} = useContext(VisualSettingsContext);
-
-  function onRotate(item: Shape<ShapeConfig> | Stage) {
-    if (props.onRotate) {
-      console.log("onRotate");
-      props.onRotate(item.attrs["rotation"], item.attrs["x"], item.attrs["y"]);
-    }
-  }
 
   return (
     <BaseFormationObject
@@ -41,14 +31,13 @@ export default function PropObject(props: PropObjectProps) {
       draggable={props.draggable}
       startX={props.startX}
       startY={props.startY}
-      onTransform={onRotate}
       ref={props.ref}>
       <Rect
         width={props.length * gridSize}
         height={gridSize}
         fill={props.colour.bgColour}
         stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
-        strokeWidth={props.selected ? gridSize/20 : gridSize/30} />
+        strokeWidth={props.selected ? gridSize/20 : gridSize/30}/>
       <Text
         y={gridSize/3}
         width={props.length * gridSize}

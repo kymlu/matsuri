@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import ExpandableSection from "../ExpandableSection.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
-import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../models/Position.ts";
-import { dbController } from "../../data/DBProvider.tsx";
-import { ICON } from "../../data/consts.ts";
+import ExpandableSection from "../../ExpandableSection.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
+import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../../models/Position.ts";
+import { dbController } from "../../../data/DBProvider.tsx";
+import { ICON } from "../../../data/consts.ts";
 
 export default function NameEditor() {
   const userContext = useContext(UserContext);

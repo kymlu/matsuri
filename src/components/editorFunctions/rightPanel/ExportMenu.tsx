@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import ExpandableSection from "../ExpandableSection.tsx";
-import Button from "../Button.tsx";
-import TextInput from "../TextInput.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { ICON } from "../../data/consts.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
+import ExpandableSection from "../../ExpandableSection.tsx";
+import Button from "../../Button.tsx";
+import TextInput from "../../TextInput.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { ICON } from "../../../data/consts.ts";
+import { FormationContext } from "../../../contexts/FormationContext.tsx";
 
 export type ExportMenuProps = {
   exportFunc?: (exportName: string) => void

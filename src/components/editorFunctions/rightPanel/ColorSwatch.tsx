@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
 
 export type ColorSwatchProps = {
   onClick: () => void,

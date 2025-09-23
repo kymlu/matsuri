@@ -1,14 +1,14 @@
 import React, { useContext } from "react";
-import ExpandableSection from "../ExpandableSection.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { dbController } from "../../data/DBProvider.tsx";
-import { NotePosition } from "../../models/Position.ts";
-import { notePresets } from "../../data/ImaHitotabi.ts";
-import ItemButton from "../ItemButton.tsx";
-import { Note } from "../../models/Note.ts";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { ICON } from "../../data/consts.ts";
-import { addItemToRecordArray } from "../../helpers/GroupingHelper.ts";
+import ExpandableSection from "../../ExpandableSection.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { dbController } from "../../../data/DBProvider.tsx";
+import { NotePosition } from "../../../models/Position.ts";
+import { notePresets } from "../../../data/ImaHitotabi.ts";
+import ItemButton from "../../ItemButton.tsx";
+import { Note } from "../../../models/Note.ts";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
+import { ICON } from "../../../data/consts.ts";
+import { addItemToRecordArray } from "../../../helpers/GroupingHelper.ts";
 
 export default function NotePicker (props: {margins: number[][]}) {
   const {selectedSection, updateState} = useContext(UserContext);

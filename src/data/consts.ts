@@ -40,6 +40,7 @@ export const ICON = {
   clear: "icons/clear.svg",
   colorsBlack: "icons/colors_black.svg",
   edit: "icons/edit.svg",
+  editDocument: "icons/edit_document.svg",
   expandLessBlack: "icons/expand_less_black.svg",
   expandMoreBlack: "icons/expand_more_black.svg",
   familiarFaceAndZoneBlack: "icons/familiar_face_and_zone_black.svg",

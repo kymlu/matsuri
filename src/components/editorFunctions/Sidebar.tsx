@@ -1,0 +1,55 @@
+import classNames from "classnames";
+import React, { useContext, useEffect } from "react";
+import { AppModeContext } from "../../contexts/AppModeContext.tsx";
+import { ICON } from "../../data/consts.ts";
+import Divider from "../Divider.tsx";
+
+export type SidebarProps = {
+  isLeft?: boolean,
+  children: React.ReactNode,
+}
+
+export function Sidebar(props: SidebarProps) {
+  const {appMode} = useContext(AppModeContext)
+  const [expanded, setExpanded] = React.useState(true);
+
+  useEffect(() => {
+    setExpanded(true);
+  }, [appMode]);
+
+  var classes = classNames("flex flex-col overflow-y-auto bg-white border-solid border-grey",
+    {
+      "p-5 w-80 max-w-80": expanded,
+      "border-r-2": props.isLeft,
+      "border-l-2": !props.isLeft,
+    }
+  );
+
+  var buttonClasses = classNames("pb-2",
+    {
+      "h-full p-5 items-center": !expanded,
+      "flex justify-end": props.isLeft,
+    }
+  );
+
+  return (
+    <div className={classes}>
+      <button
+        className={buttonClasses}
+        onClick={() => setExpanded(prev => !prev)}>
+        <img
+          className="size-6"
+          src={(expanded && props.isLeft || !expanded && !props.isLeft) ?
+            ICON.arrowMenuCloseBlack :
+            ICON.arrowMenuOpenBlack}/>
+      </button>
+      {
+        expanded && 
+        <>
+          <Divider/>
+          {props.children}
+        </>
+      }
+    </div>
+  )
+}

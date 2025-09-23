@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
-import { propsList } from "../../data/ImaHitotabi.ts";
-import ExpandableSection from "../ExpandableSection.tsx";
-import ItemButton from "../ItemButton.tsx";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { Prop } from "../../models/Prop.ts";
-import { PropPosition } from "../../models/Position.ts";
-import { objectColorSettings } from "../../themes/colours.ts";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
-import { dbController } from "../../data/DBProvider.tsx";
-import { ICON } from "../../data/consts.ts";
-import { addItemsToRecordByKey, addItemToRecord } from "../../helpers/GroupingHelper.ts";
+import { propsList } from "../../../data/ImaHitotabi.ts";
+import ExpandableSection from "../../ExpandableSection.tsx";
+import ItemButton from "../../ItemButton.tsx";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
+import { Prop } from "../../../models/Prop.ts";
+import { PropPosition } from "../../../models/Position.ts";
+import { objectColorSettings } from "../../../themes/colours.ts";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
+import { dbController } from "../../../data/DBProvider.tsx";
+import { ICON } from "../../../data/consts.ts";
+import { addItemsToRecordByKey, addItemToRecord } from "../../../helpers/GroupingHelper.ts";
 
 export default function PropPicker (props: {margins: number[][]}) {
   const {propPositions, updatePositionContextState} = useContext(PositionContext);

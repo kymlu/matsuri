@@ -169,7 +169,12 @@ export async function exportToPdf(
 
       if (i % 2 === width % 2) {
         pdf.setLineWidth(0.6);
-        pdf.setDrawColor(basePalette.grey[300])
+
+        if (i === width/2) {
+          pdf.setDrawColor(basePalette.primary.main);
+        } else {
+          pdf.setDrawColor(basePalette.grey[300])
+        }
         pdf.setLineDashPattern([1, 1], 0);
       } else {
         pdf.setLineDashPattern([4, 2], 0);
@@ -236,6 +241,7 @@ export async function exportToPdf(
     pdf.setFontSize(8)
     propPositions[section.id]?.forEach(p => {
       var prop = props[p.propId ?? ""]?.[0];
+      var prop = props[p.propId ?? ""];
       pdf.setDrawColor(prop?.color?.borderColour ?? basePalette.black);
       pdf.setFillColor(prop?.color?.bgColour ?? basePalette.white);
       pdf.rect((sideMargin + p.x) * grid, (p.y + topMargin) * grid, prop.length * grid, grid, "FD");
@@ -245,11 +251,11 @@ export async function exportToPdf(
     });
 
     participantPositions[section.id]?.forEach(p => {
-      var category = categories[p.categoryId ?? ""]?.[0];
+      var category = categories[p.categoryId ?? ""];
       pdf.setDrawColor(category?.color.borderColour ?? basePalette.black);
       pdf.setFillColor(category?.color.bgColour ?? basePalette.white);
       pdf.circle((sideMargin + p.x) * grid, (p.y + topMargin) * grid, grid * 0.4, "FD");
-      var participant = participants[p.participantId]?.[0];
+      var participant = participants[p.participantId];
       pdf.setTextColor(category?.color.textColour ?? basePalette.black);
       var textHeight = pdf.getTextDimensions(participant?.displayName ?? "", {maxWidth: grid}).h;
       pdf.text(participant?.displayName ?? "", (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});

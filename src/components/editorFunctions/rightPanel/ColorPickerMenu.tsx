@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import ExpandableSection from "../ExpandableSection.tsx";
+import ExpandableSection from "../../ExpandableSection.tsx";
 import ColorPicker from "./ColorPicker.tsx";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { ColorStyle, objectColorSettings } from "../../themes/colours.ts";
-import { dbController } from "../../data/DBProvider.tsx";
-import { Position, PositionType, splitPositionsByType } from "../../models/Position.ts";
-import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
-import CustomSwitch from "../CustomSwitch.tsx";
-import { ICON } from "../../data/consts.ts";
-import { replaceItemsFromDifferentSource, selectValuesByKeys } from "../../helpers/GroupingHelper.ts";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { ColorStyle, objectColorSettings } from "../../../themes/colours.ts";
+import { dbController } from "../../../data/DBProvider.tsx";
+import { Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
+import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
+import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
+import CustomSwitch from "../../CustomSwitch.tsx";
+import { ICON } from "../../../data/consts.ts";
+import { replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../helpers/GroupingHelper.ts";
 
 export type ColorPickerMenuProps = {
 }

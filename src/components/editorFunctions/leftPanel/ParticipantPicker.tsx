@@ -1,18 +1,18 @@
 import React, { useContext, useState } from "react";
-import { categoryList, teamMembers } from "../../data/ImaHitotabi.ts";
-import { Participant, ParticipantOption } from "../../models/Participant.ts";
-import ExpandableSection from "../ExpandableSection.tsx";
-import ItemButton from "../ItemButton.tsx";
-import { ParticipantPosition } from "../../models/Position.ts";
-import { UserContext } from "../../contexts/UserContext.tsx";
-import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../../helpers/GlobalHelper.ts";
-import { dbController } from "../../data/DBProvider.tsx";
-import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
-import TextInput from "../TextInput.tsx";
-import { ICON } from "../../data/consts.ts";
-import { FormationContext } from "../../contexts/FormationContext.tsx";
-import { addItemsToRecordByKey, addItemToRecord } from "../../helpers/GroupingHelper.ts";
+import { categoryList, teamMembers } from "../../../data/ImaHitotabi.ts";
+import { Participant, ParticipantOption } from "../../../models/Participant.ts";
+import ExpandableSection from "../../ExpandableSection.tsx";
+import ItemButton from "../../ItemButton.tsx";
+import { ParticipantPosition } from "../../../models/Position.ts";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { PositionContext } from "../../../contexts/PositionContext.tsx";
+import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../../../helpers/GlobalHelper.ts";
+import { dbController } from "../../../data/DBProvider.tsx";
+import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
+import TextInput from "../../TextInput.tsx";
+import { ICON } from "../../../data/consts.ts";
+import { FormationContext } from "../../../contexts/FormationContext.tsx";
+import { addItemsToRecordByKey, addItemToRecord } from "../../../helpers/GroupingHelper.ts";
 
 export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");

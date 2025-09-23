@@ -373,11 +373,11 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 
 	function updatePropRotation(id: string, angle: number, x: number, y: number) {
 		var prop = props.propPositions.find((x) => strEquals(x.id, id));
-		console.log("updatePropRotation")
 		if (prop) {
 			prop.angle = angle;
 			prop.x = x / gridSize - props.sideMargin;
 			prop.y = y / gridSize - props.topMargin;
+			console.log(prop.x, prop.y);
 			dbController.upsertItem("propPosition", prop);
 		}
 	}
@@ -479,9 +479,6 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					}
 					draggable={!isAnimating && appMode === "edit"}
 					rotation={placement.angle}
-					onRotate={(angle, x, y) =>
-						updatePropRotation(placement.id, angle, x, y)
-					}
 					ref={propRef.current[index]}
 					selected={selectedIds.has(placement.id)}
 				/>
@@ -537,6 +534,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				]}
 				rotationSnapTolerance={10}
 				onTransformEnd={(event) => {
+					console.log(event.target.attrs);
+
 					updatePropRotation(event.target.attrs.id,
 							event.target.attrs.rotation,
 							event.target.attrs.x,
