@@ -509,7 +509,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						points={arrow.points.map((x) => x * gridSize)}
 						tension={arrow.tension}
 						width={arrow.width * gridSize}
-						colour={objectColorSettings.blueLightest}
+						colour={arrow.color ?? objectColorSettings.indigoLight}
 						pointerAtBeginning={arrow.pointerAtBeginning}
 						pointerAtEnding={arrow.pointerAtEnding}
 						draggable

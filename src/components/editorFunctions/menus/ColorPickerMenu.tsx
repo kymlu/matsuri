@@ -58,32 +58,36 @@ export default function ColorPickerMenu() {
     updateEntitiesContext({propList: updatedProps});
     
     var noteIds = new Set(res.notes.map(x => x.id));
-    var updatedNotes = [...notePositions[selectedSection!.id]];
+    var updatedNotes = [...notePositions[selectedSection!.id] ?? []];
     noteIds.forEach(id => {
       var note = updatedNotes.find(x => strEquals(x.id, id));
       if (note) {
         note.color = color;
       }
     });
-    
-    updatePositionContextState({
-      notePositions: {
-        ...notePositions,
-        [selectedSection!.id]: updatedNotes,
-      }
-    });
+
+    var updatedNoteRecord = {
+      ...notePositions,
+      [selectedSection!.id]: updatedNotes,
+    };
 
     var arrowIds = new Set(res.arrows.map(x => x.id));
-    var updatedArrows = [...arrowPositions[selectedSection!.id]];
+    var updatedArrows = [...arrowPositions[selectedSection!.id] ?? []];
     arrowIds.forEach(id => {
-      updatedArrows[id].color = color;
+      var arrow = updatedArrows.find(x => strEquals(x.id, id));
+      if (arrow) {
+        arrow.color = color;
+      }
     });
     
+    var updatedArrowRecord = {
+      ...arrowPositions,
+      [selectedSection!.id]: updatedArrows,
+    };
+
     updatePositionContextState({
-      arrowPositions: {
-        ...arrowPositions,
-        [selectedSection!.id]: updatedArrows,
-      }
+      notePositions: updatedNoteRecord,
+      arrowPositions: updatedArrowRecord,
     });
 
     updateState({selectedItems: [
