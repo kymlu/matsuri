@@ -57,7 +57,6 @@ export default function FormationPage () {
 
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [exportProgress, setExportProgress] = useState<number>(0);
-  const [sections, setSections] = useState<FormationSection[]>([]);
   const [categories, setCategories] = useState<Record<string, ParticipantCategory>>({});
   const [marginPositions, setMarginPositions] = useState<MarginPositions>({participants: [], props: [], notes: []});
   const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition> | null>(null);
@@ -131,9 +130,6 @@ export default function FormationPage () {
             selectedSection: currentSections[0],
           });
 
-          setSections(currentSections);
-          
-          // setOrderedSectionIds(currentSections.map(x => x.id));
           setAnimationPaths(generateAnimationPaths(
             currentSections,
             Object.values(groupedParticipantPositions).flat(),
@@ -175,7 +171,7 @@ export default function FormationPage () {
     await exportToPdf(
       exportName,
       selectedFormation!,
-      sections.sort((a, b) => a.order - b.order),
+      userContext.currentSections.sort((a, b) => a.order - b.order),
       participantPositions,
       participantList,
       propPositions,

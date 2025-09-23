@@ -17,7 +17,7 @@ export default function NotePicker (props: {margins: number[][]}) {
   function selectPreset(selectedPreset: Note) {
     if(selectedSection === null) return;
 
-    var position = props.margins[Object.values(notePositions).flat().length % props.margins.length]
+    var position = props.margins[(notePositions[selectedSection.id]?.length ?? 0) % props.margins.length]
 
     var newNote = {
       id: crypto.randomUUID(),

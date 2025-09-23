@@ -17,7 +17,6 @@ export function EditorPageHeader() {
   const {selectedFormation, updateFormationContext} = useContext(FormationContext);
   const {appMode, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate()
-  const [showSiteInfo, setShowSiteInfo] = useState<boolean>(false);
   
   return (
     <>
