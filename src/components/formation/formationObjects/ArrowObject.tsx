@@ -19,6 +19,8 @@ export interface ArrowObjectProps {
   tension: number,
   pointerAtBeginning: boolean,
   pointerAtEnding: boolean,
+  pointerWidth: number,
+  pointerLength: number,
   width: number,
 }
 
@@ -43,8 +45,8 @@ export default function ArrowObject(props: ArrowObjectProps) {
         stroke={props.colour.bgColour}
         fill={props.colour.bgColour}
         hitStrokeWidth={Math.max(props.width, 10)}
-        pointerLength={props.width * 2}
-        pointerWidth={props.width * 3}
+        pointerLength={props.width * props.pointerLength}
+        pointerWidth={props.width * props.pointerWidth}
         />
       {
         props.isOnlyOneSelected && 
@@ -54,7 +56,8 @@ export default function ArrowObject(props: ArrowObjectProps) {
             y={props.points[1]}
             stroke={basePalette.primary.main}
             strokeWidth={gridSize * 0.1}
-            radius={gridSize * 0.25}
+            fill={basePalette.white}
+            radius={gridSize * 0.1}
             draggable
             onDragMove={
               () => {
@@ -69,7 +72,8 @@ export default function ArrowObject(props: ArrowObjectProps) {
             y={props.points[3]}
             stroke={basePalette.primary.main}
             strokeWidth={gridSize * 0.1}
-            radius={gridSize * 0.25}
+            fill={basePalette.white}
+            radius={gridSize * 0.1}
             draggable
             />
           {
@@ -79,7 +83,8 @@ export default function ArrowObject(props: ArrowObjectProps) {
               y={props.points[5]}
               stroke={basePalette.primary.main}
               strokeWidth={gridSize * 0.1}
-              radius={gridSize * 0.25}
+              fill={basePalette.white}
+              radius={gridSize * 0.1}
               draggable
               />
           }

@@ -62,6 +62,7 @@ export const ICON = {
   settingsWhite: "icons/settings_white.svg",
   settingsBlack: "icons/settings_black.svg",
   settings: "icons/settings.svg",
+  stylusNoteBlack: "icons/stylus_note_black.svg",
   switchAccessShortcut: "icons/switch_access_shortcut_black.svg",
   textFieldsAltBlack: "icons/text_fields_alt_black.svg",
   turnRightBlack: "icons/turn_right_black.svg",

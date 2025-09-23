@@ -36,6 +36,8 @@ export interface ArrowPosition extends BasePosition {
   pointerAtBeginning: boolean,
   pointerAtEnding: boolean,
   width: number,
+  pointerWidth: number,
+  pointerLength: number,
   color?: ColorStyle,
 }
 

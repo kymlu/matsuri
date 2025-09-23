@@ -503,6 +503,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					<ArrowObject
 						id={arrow.id}
 						key={arrow.id}
+						updatePosition={(x, y) => updateArrowPosition(arrow.id, x, y)}
 						startX={getPixel(gridSize, arrow.x, props.sideMargin)}
 						startY={getPixel(gridSize, arrow.y, props.topMargin)}
 						ref={arrowRef.current[index]}
@@ -515,6 +516,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						draggable
 						selected={selectedIds.has(arrow.id)}
 						isOnlyOneSelected={selectedIds.has(arrow.id) && isSingleArrowSelected}
+						pointerLength={arrow.pointerLength ?? 2}
+						pointerWidth={arrow.pointerWidth ?? 2}
 						onClick={(isMoving?: boolean, multiSelect?: boolean) => {
 							selectItem(arrow, PositionType.arrow, isMoving,multiSelect);
 						}}

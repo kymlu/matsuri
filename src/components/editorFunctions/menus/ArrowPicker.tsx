@@ -33,7 +33,9 @@ export default function ArrowPicker (props: {margins: number[][]}) {
       pointerAtEnding: arrow.pointerAtEnding,
       width: 0.1,
       color: objectColorSettings.purpleLight,
-      isSelected: false
+      isSelected: false,
+      pointerLength: 1,
+      pointerWidth: 1,
     } as ArrowPosition;
 
     var updatedPositions = addItemToRecordArray(arrowPositions, selectedSection!.id, newPosition);

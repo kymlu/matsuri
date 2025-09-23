@@ -10,6 +10,7 @@ import NoteEditor from "../menus/NoteEditor.tsx";
 import { PositionType } from "../../../models/Position.ts";
 import ExportMenu from "../menus/ExportMenu.tsx";
 import { Sidebar } from "./Sidebar.tsx";
+import ArrowEditor from "../menus/ArrowEditor.tsx";
 
 export type FormationRightPanelProps = {
   exportFunc?: (exportName: string) => void
@@ -59,6 +60,13 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
         selectedPositionTypes?.has(PositionType.participant)) &&
       <>
         <NameEditor/>
+        <Divider/>
+      </>
+    }
+    { selectedItems.length === 1 &&
+      selectedPositionTypes?.has(PositionType.arrow) &&
+      <>
+        <ArrowEditor/>
         <Divider/>
       </>
     }

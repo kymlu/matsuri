@@ -31,17 +31,13 @@ export default function NoteEditor() {
       setText(newValue);
     }
     
-    var updatedNotes = {...notePositions};
-    updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id))!.isSelected = false;
-
-    if (type === "text") {
-      updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id))!.text = newValue;
-    } else {
-      updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id))!.label = newValue;
-    }
+    var updatedRecord = {...notePositions};
+    var updatedNote = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, note!.id))!;
+    updatedNote.isSelected = false;
+    updatedNote[type] = newValue;
     
-    updatePositionContextState({notePositions: updatedNotes})
-    dbController.upsertItem("notePosition", updatedNotes[selectedSection!.id].find(x => strEquals(x.id, note?.id)));
+    updatePositionContextState({notePositions: updatedRecord})
+    dbController.upsertItem("notePosition", updatedNote);
   };
   
   return (
