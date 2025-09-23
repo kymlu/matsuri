@@ -44,7 +44,7 @@ export default function NameEditor() {
       
     } else if (isPropPosition(selectedItem)) {
       var updatedProps = {...propList};
-      updatedProps[selectedItem.propId] = newValue;
+      updatedProps[selectedItem.propId].name = newValue;
       updateEntitiesContext({propList: updatedProps});
       dbController.upsertItem("prop", updatedProps[selectedItem.propId]);
     }

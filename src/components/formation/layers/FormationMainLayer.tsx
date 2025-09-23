@@ -104,15 +104,17 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			updateSelectionRect();
 		},
 
-		onMouseUp: () => {
+		onMouseUp: (e) => {
 			oldPos.current = null;
 			selection.current.visible = false;
 			const { x1, x2, y1, y2 } = selection.current;
 			const moved = x1 !== x2 || y1 !== y2;
-			if (!moved || selectedIds.size > 0) {
+			// if not moved or moving while selecting a selected item
+			if (!moved || selectedIds.has(e.target?.parent?.attrs?.id)) {
 				updateSelectionRect();
 				return;
 			}
+
 			if (selectionRectRef.current) {
 				const selBox = selectionRectRef.current?.getClientRect();
 

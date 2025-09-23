@@ -39,8 +39,8 @@ export default function PropObject(props: PropObjectProps) {
         stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
         strokeWidth={props.selected ? gridSize/20 : gridSize/30}/>
       <Text
-        y={gridSize/3}
         width={props.length * gridSize}
+        height={gridSize}
         text={props.name}
         fontSize={gridSize/3}
         fontStyle="bold"

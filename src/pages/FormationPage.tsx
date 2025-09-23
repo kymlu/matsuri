@@ -22,8 +22,8 @@ import { FormationViewToolbar } from '../components/formation/toolbars/Formation
 import { FormationEditorToolbar } from '../components/formation/toolbars/FormationEditorToolbar.tsx';
 import { AppModeContext } from '../contexts/AppModeContext.tsx';
 import { FormationContext } from '../contexts/FormationContext.tsx';
-import FormationLeftPanel from '../components/editorFunctions/leftPanel/FormationLeftPanel.tsx';
-import FormationRightPanel from '../components/editorFunctions/rightPanel/FormationRightPanel.tsx';
+import FormationLeftPanel from '../components/editorFunctions/sidebars/FormationLeftPanel.tsx';
+import FormationRightPanel from '../components/editorFunctions/sidebars/FormationRightPanel.tsx';
 import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { FormationType } from '../models/Formation.ts';

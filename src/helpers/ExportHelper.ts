@@ -115,6 +115,9 @@ export async function exportToPdf(
     unit: "px",
     format: [width * grid, length * grid]});
 
+  var context = pdf.context2d;
+  context.font = "NotoSansJP";
+
   pdf.setLanguage("ja");
 
   const get_text_file = async (weight: "Regular" | "Bold") => {
@@ -240,14 +243,33 @@ export async function exportToPdf(
 
     pdf.setFontSize(8)
     propPositions[section.id]?.forEach(p => {
-      var prop = props[p.propId ?? ""]?.[0];
-      var prop = props[p.propId ?? ""];
-      pdf.setDrawColor(prop?.color?.borderColour ?? basePalette.black);
-      pdf.setFillColor(prop?.color?.bgColour ?? basePalette.white);
-      pdf.rect((sideMargin + p.x) * grid, (p.y + topMargin) * grid, prop.length * grid, grid, "FD");
-      pdf.setTextColor(prop?.color?.textColour ?? basePalette.black);
-      var textHeight = pdf.getTextDimensions(prop?.name ?? "", {maxWidth: grid * prop.length}).h;
-      pdf.text(prop?.name ?? "", (sideMargin + p.x + prop.length/2) * grid, (topMargin + p.y + 0.5) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid * prop.length});
+      var prop = props[p.propId];
+
+      context.save();
+      const propX = (sideMargin + p.x) * grid;
+      const propY = (topMargin + p.y) * grid;
+      const propHeight = grid;
+      const propWidth = grid * prop.length;
+
+      const centerX = propX + propWidth/2;
+      const centerY = propY + propHeight/2;
+      
+      context.translate(centerX, centerY);
+      context.rotate(p.angle * Math.PI/180);
+
+      context.fillStyle = prop?.color?.bgColour ?? basePalette.white;
+      context.fillRect(-propWidth/2, -propHeight/2, propWidth, propHeight);
+      context.strokeStyle = prop?.color?.borderColour ?? basePalette.black;
+      context.rect(-propWidth/2, -propHeight/2, propWidth, propHeight);
+
+      context.fillStyle = prop.color?.textColour ?? basePalette.black;
+      var textDimension = pdf.getTextDimensions(prop?.name ?? "", {maxWidth: propWidth});
+      context.fillText(prop?.name ?? "",
+        -propWidth/2 + ((grid * prop.length - textDimension.w)/2),
+        -propHeight/2 + 0.25 * grid + ((grid - textDimension.h)/2),
+        grid * prop.length);
+
+      context.restore();
     });
 
     participantPositions[section.id]?.forEach(p => {

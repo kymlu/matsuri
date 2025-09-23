@@ -105,7 +105,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
         width={canvasWidth}
         height={canvasHeight}
         onMouseDown={(e) => { editLayerRef.current?.onMouseDown(e) }}
-        onMouseUp={() => { editLayerRef.current?.onMouseUp() }}
+        onMouseUp={(e) => { editLayerRef.current?.onMouseUp(e) }}
         onMouseMove={(e) => { editLayerRef.current?.onMouseMove(e) }}
         onClick={(event) => {
           if (event.target === event.target.getStage()) {
