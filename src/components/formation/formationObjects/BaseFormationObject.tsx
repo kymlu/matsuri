@@ -49,7 +49,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
           e.target.stopDrag();
         }
       }}
-      onDragEnd={e => { // TODO: fix to always save position properly
+      onDragEnd={e => {
         if (appMode === "view") {
           return;
         }

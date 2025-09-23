@@ -15,6 +15,7 @@ export interface ArrowObjectProps {
   draggable?: boolean,
   ref?: React.Ref<any>,
   selected?: boolean,
+  isOnlyOneSelected?: boolean,
   tension: number,
   pointerAtBeginning: boolean,
   pointerAtEnding: boolean,
@@ -46,7 +47,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
         pointerWidth={props.width * 3}
         />
       {
-        props.selected && 
+        props.isOnlyOneSelected && 
         <>
           <Circle
             x={props.points[0]}
@@ -54,6 +55,14 @@ export default function ArrowObject(props: ArrowObjectProps) {
             stroke={basePalette.primary.main}
             strokeWidth={gridSize * 0.1}
             radius={gridSize * 0.25}
+            draggable
+            onDragMove={
+              () => {
+                // todo: update this item
+                // todo: update db
+                // todo: update context
+              }
+            }
             />
           <Circle
             x={props.points[2]}
@@ -61,6 +70,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
             stroke={basePalette.primary.main}
             strokeWidth={gridSize * 0.1}
             radius={gridSize * 0.25}
+            draggable
             />
           {
             props.points.length === 6 &&
@@ -70,6 +80,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
               stroke={basePalette.primary.main}
               strokeWidth={gridSize * 0.1}
               radius={gridSize * 0.25}
+              draggable
               />
           }
         </>
