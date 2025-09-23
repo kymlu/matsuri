@@ -30,18 +30,29 @@ export interface NotePosition extends BasePosition {
   showBackground?: boolean,
 }
 
+export interface ArrowPosition extends BasePosition {
+  points: number[]
+  tension: number,
+  pointerAtBeginning: boolean,
+  pointerAtEnding: boolean,
+  width: number,
+  color?: ColorStyle,
+}
+
 export enum PositionType {
   "participant" = "参加者",
   "prop" = "道具",
   "note" = "メモ",
+  "arrow" = "矢印",
 }
 
 export type Position =
 | { type: PositionType.participant; participant: ParticipantPosition }
 | { type: PositionType.prop; prop: PropPosition }
-| { type: PositionType.note; note: NotePosition };
+| { type: PositionType.note; note: NotePosition }
+| { type: PositionType.arrow; arrow: ArrowPosition };
 
-export function getFromPositionType(position: Position): ParticipantPosition | PropPosition | NotePosition {
+export function getFromPositionType(position: Position): ParticipantPosition | PropPosition | NotePosition | ArrowPosition {
   switch (position.type) {
     case PositionType.participant:
       return position.participant;
@@ -49,6 +60,8 @@ export function getFromPositionType(position: Position): ParticipantPosition | P
       return position.prop;
     case PositionType.note:
       return position.note;
+    case PositionType.arrow:
+      return position.arrow;
   }
 }
 
@@ -64,16 +77,21 @@ export function isNotePosition(item: any): item is NotePosition {
   return 'label' in item;
 }
 
+export function isArrowPosition(item: any): item is ArrowPosition {
+  return 'pointerAtBeginning' in item;
+}
+
 // Overloads for strong typing
 export function createPosition(item: ParticipantPosition): Position & { type: PositionType.participant };
 export function createPosition(item: PropPosition): Position & { type: PositionType.prop };
 export function createPosition(item: NotePosition): Position & { type: PositionType.note };
-export function createPosition(item: ParticipantPosition | PropPosition | NotePosition, type: PositionType): Position;
-export function createPosition(item: ParticipantPosition | PropPosition | NotePosition): Position;
+export function createPosition(item: ArrowPosition): Position & { type: PositionType.arrow };
+export function createPosition(item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition, type: PositionType): Position;
+export function createPosition(item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition): Position;
 
 // Implementation
 export function createPosition(
-  item: ParticipantPosition | PropPosition | NotePosition,
+  item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition,
   type?: PositionType
 ): Position {
   // Infer type if missing
@@ -84,6 +102,8 @@ export function createPosition(
       type = PositionType.prop;
     } else if (isNotePosition(item)) {
       type = PositionType.note;
+    } else if (isArrowPosition(item)) {
+      type = PositionType.arrow;
     } else {
       throw new Error("Unable to infer position type from item");
     }
@@ -97,6 +117,8 @@ export function createPosition(
       return { type, prop: item as PropPosition };
     case PositionType.note:
       return { type, note: item as NotePosition };
+    case PositionType.arrow:
+      return { type, arrow: item as ArrowPosition };
     default:
       throw new Error("Unknown position type");
   }
@@ -106,6 +128,7 @@ export function splitPositionsByType(positions: Position[]) {
   const participants: ParticipantPosition[] = [];
   const props: PropPosition[] = [];
   const notes: NotePosition[] = [];
+  const arrows: ArrowPosition[] = [];
 
   for (const pos of positions) {
     switch (pos.type) {
@@ -118,6 +141,9 @@ export function splitPositionsByType(positions: Position[]) {
       case PositionType.note:
         notes.push(pos.note);
         break;
+      case PositionType.arrow:
+        arrows.push(pos.arrow);
+        break;
     }
   }
 
@@ -125,6 +151,7 @@ export function splitPositionsByType(positions: Position[]) {
     participants,
     props,
     notes,
+    arrows,
   };
 }
 
@@ -140,6 +167,9 @@ export function getAllIds(positions: Position[]): string[] {
         break;
       case PositionType.note:
         ids.push(pos.note.id);
+        break;
+      case PositionType.arrow:
+        ids.push(pos.arrow.id);
         break;
     }
   }

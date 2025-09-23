@@ -2,7 +2,7 @@ import { indexByKey } from "../helpers/GroupingHelper.ts";
 import { FormationSection } from "../models/FormationSection.ts";
 import { Participant } from "../models/Participant.ts";
 import { ParticipantCategory } from "../models/ParticipantCategory.ts";
-import { NotePosition, ParticipantPosition, PropPosition } from "../models/Position";
+import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from "../models/Position";
 import { Prop } from "../models/Prop.ts";
 import { dbController } from "./DBProvider.tsx";
 
@@ -14,7 +14,8 @@ export async function GetAllForFormation(
     props: Prop[],
     participantPositions: ParticipantPosition[],
     propPositions: PropPosition[],
-    notePositions: NotePosition[]
+    notePositions: NotePosition[],
+    arrowPositions: ArrowPosition[],
   ) => void
 ): Promise<void> {
   const [
@@ -23,14 +24,16 @@ export async function GetAllForFormation(
     prop,
     participantPosition,
     propPosition,
-    notePosition
+    notePosition,
+    arrowPosition,
   ] = await Promise.all([
     dbController.getByFormationId("formationSection", formationId),
     dbController.getByFormationId("participant", formationId),
     dbController.getByFormationId("prop", formationId),
     dbController.getAll("participantPosition"),
     dbController.getAll("propPosition"),
-    dbController.getAll("notePosition")
+    dbController.getAll("notePosition"),
+    dbController.getAll("arrowPosition"),
   ]);
 
   const formationSections = formationSection as FormationSection[];
@@ -39,6 +42,7 @@ export async function GetAllForFormation(
   const participantPositions = participantPosition as ParticipantPosition[];
   const propPositions = propPosition as PropPosition[];
   const notePositions = notePosition as NotePosition[];
+  const arrowPositions = arrowPosition as ArrowPosition[];
 
   // Call the callback with all values
   thenFn(
@@ -47,7 +51,8 @@ export async function GetAllForFormation(
     props,
     participantPositions,
     propPositions,
-    notePositions
+    notePositions,
+    arrowPositions,
   );
 }
 

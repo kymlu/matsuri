@@ -61,8 +61,7 @@ export default function PropPicker (props: {margins: number[][]}) {
           .map(prop => 
             <ItemButton
               key={prop.id}
-              item={prop}
-              display={`${prop.name}(${prop.length}m)`}
+              text={`${prop.name}(${prop.length}m)`}
               onClick={() => selectProp(prop)}/>)} 
         </div>
       </ExpandableSection>

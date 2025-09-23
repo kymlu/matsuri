@@ -1,11 +1,13 @@
+import { ArrowPreset } from "../models/Arrow.ts";
 import { Festival } from "../models/Festival.ts";
 import { FormationType } from "../models/Formation.ts";
-import { Note } from "../models/Note.ts";
+import { NotePreset } from "../models/Note.ts";
 import { ParticipantOption } from "../models/Participant.ts";
 import { ParticipantCategory } from "../models/ParticipantCategory.ts";
 import { Prop } from "../models/Prop.ts";
 import { Song } from "../models/Song.ts";
 import { objectColorSettings } from "../themes/colours.ts";
+import { ICON } from "./consts.ts";
 
 export const festivalList: Array<Festival> = [
   {
@@ -253,7 +255,7 @@ export const categoryList: Array<ParticipantCategory> = [
   { id: "12", name: "後隊", color: objectColorSettings["blueLight"], order: 5, showInLegend: false, showInParadeGuide: true },
 ]
 
-export const notePresets: Array<Note> = [
+export const notePresets: Array<NotePreset> = [
   {
     label: "タイミング",
     length: 1.25,
@@ -298,4 +300,49 @@ export const notePresets: Array<Note> = [
     defaultContent: "これはメモです。",
     alwaysBold: false
   }
+]
+
+export const arrowPresets: Array<ArrowPreset> = [
+  {
+    iconFileName: ICON.horizontalRuleBlack,
+    tension: 0,
+    pointerAtBeginning: false,
+    pointerAtEnding: false,
+    points: [0, 4, 4, 0],
+  },
+  {
+    iconFileName: ICON.lineCurveBlack,
+    tension: 0.3,
+    pointerAtBeginning: false,
+    pointerAtEnding: false,
+    points: [0, 4, 1, 1, 4, 0],
+  },
+  {
+    iconFileName: ICON.turnRightBlack,
+    tension: 0,
+    pointerAtBeginning: false,
+    pointerAtEnding: true,
+    points: [0, 4, 0, 0, 4, 0],
+  },
+  {
+    iconFileName: ICON.arrowRightAltBlack,
+    tension: 0,
+    pointerAtBeginning: false,
+    pointerAtEnding: true,
+    points: [0, 4, 4, 0],
+  },
+  {
+    iconFileName: ICON.arrowRangeBlack,
+    tension: 0,
+    pointerAtBeginning: true,
+    pointerAtEnding: true,
+    points: [0, 4, 4, 0],
+  },
+  {
+    iconFileName: ICON.switchAccessShortcut,
+    tension: 0.3,
+    pointerAtBeginning: false,
+    pointerAtEnding: true,
+    points: [0, 4, 1, 1, 4, 0],
+  },
 ]

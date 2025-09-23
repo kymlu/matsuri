@@ -22,7 +22,7 @@ export default function ColorPickerMenu() {
   const userContext = useContext(UserContext);
   const {selectedItems, selectedSection, updateState} = useContext(UserContext);
   const {propList, updateEntitiesContext} = useContext(EntitiesContext);
-  const {notePositions, updatePositionContextState} = useContext(PositionContext);
+  const {notePositions, arrowPositions, updatePositionContextState} = useContext(PositionContext);
 
   const showBgSwitchRef = React.createRef<any>();
 
@@ -70,14 +70,29 @@ export default function ColorPickerMenu() {
       }
     });
 
+    var arrowIds = new Set(res.arrows.map(x => x.id));
+    var updatedArrows = [...arrowPositions[selectedSection!.id]];
+    arrowIds.forEach(id => {
+      updatedArrows[id].color = color;
+    });
+    
+    updatePositionContextState({
+      arrowPositions: {
+        ...arrowPositions,
+        [selectedSection!.id]: updatedArrows,
+      }
+    });
+
     updateState({selectedItems: [
       ...selectedItems.filter(x => x.type === PositionType.prop),
       ...updatedNotes.filter(x => noteIds.has(x.id)).map(x => ({note: x, type: PositionType.note} as Position)),
+      ...updatedArrows.filter(x => arrowIds.has(x.id)).map(x => ({arrow: x, type: PositionType.arrow} as Position)),
     ]});
 
     Promise.all([
       dbController.upsertList("prop", selectValuesByKeys(updatedProps, propIds)),
       dbController.upsertList("notePosition", updatedNotes),  
+      dbController.upsertList("arrowPosition", updatedArrows),  
     ]);
   }
 

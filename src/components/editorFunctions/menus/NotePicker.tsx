@@ -5,7 +5,7 @@ import { dbController } from "../../../data/DBProvider.tsx";
 import { NotePosition } from "../../../models/Position.ts";
 import { notePresets } from "../../../data/ImaHitotabi.ts";
 import ItemButton from "../../ItemButton.tsx";
-import { Note } from "../../../models/Note.ts";
+import { NotePreset } from "../../../models/Note.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../data/consts.ts";
 import { addItemToRecordArray } from "../../../helpers/GroupingHelper.ts";
@@ -14,7 +14,7 @@ export default function NotePicker (props: {margins: number[][]}) {
   const {selectedSection, updateState} = useContext(UserContext);
   const {notePositions, updatePositionContextState} = useContext(PositionContext);
   
-  function selectPreset(selectedPreset: Note) {
+  function addNote(selectedPreset: NotePreset) {
     if(selectedSection === null) return;
 
     var position = props.margins[(notePositions[selectedSection.id]?.length ?? 0) % props.margins.length]
@@ -52,9 +52,8 @@ export default function NotePicker (props: {margins: number[][]}) {
         { notePresets.map((preset, index) => (
           <ItemButton
             key={index}
-            onClick={() => selectPreset(preset)}
-            item={preset}
-            display={preset.label}/>
+            onClick={() => addNote(preset)}
+            text={preset.label}/>
         ))}
         </div>
       </ExpandableSection>

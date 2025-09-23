@@ -1,4 +1,4 @@
-export const LAST_UPDATED = "更新 9月23日 16:25"
+export const LAST_UPDATED = "更新 9月23日 22:45"
 
 export const MIN_GRID_SIZE = 20;
 export const MAX_GRID_SIZE = 80;
@@ -32,6 +32,7 @@ export const ICON = {
   arrowMenuCloseBlack: "icons/arrow_menu_close_black.svg",
   arrowMenuOpenBlack: "icons/arrow_menu_open_black.svg",
   arrowRangeBlack: "icons/arrow_range_black.svg",
+  arrowRightAltBlack: "icons/arrow_right_alt_black.svg",
   categoryBlack: "icons/category_black.svg",
   checkWhite: "icons/check_white.svg",
   chevronBackwardBlack: "icons/chevron_backward_black.svg",
@@ -49,13 +50,17 @@ export const ICON = {
   footprintBlack: "icons/footprint_black.svg",
   groups2Black: "icons/groups_2_black.svg",
   heightBlack: "icons/height_black.svg",
+  horizontalRuleBlack: "icons/horizontal_rule_black.svg",
   leftClickBlack: "icons/left_click_black.svg",
+  lineCurveBlack: "icons/line_curve_black.svg",
   listsBlack: "icons/lists_black.svg",
   noteStackBlack: "icons/note_stack_black.svg",
   settingsWhite: "icons/settings_white.svg",
   settingsBlack: "icons/settings_black.svg",
   settings: "icons/settings.svg",
+  switchAccessShortcut: "icons/switch_access_shortcut_black.svg",
   textFieldsAltBlack: "icons/text_fields_alt_black.svg",
+  turnRightBlack: "icons/turn_right_black.svg",
   visibility: "icons/visibility.svg",
   zoomInBlack: "icons/zoom_in_black.svg",
   zoomOutBlack: "icons/zoom_out_black.svg",

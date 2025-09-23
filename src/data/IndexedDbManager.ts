@@ -4,14 +4,14 @@ import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
 import { categoryList, festivalList, songList } from "./ImaHitotabi.ts";
 import { sampleFormation } from "./SampleFormation.ts";
 
-type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "formationSection";
+type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection";
 
 export class IndexedDBManager {
   db!: IDBDatabase;
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open(DB_NAME, 3);
+    const request = indexedDB.open(DB_NAME, 4);
     request.onupgradeneeded = async (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       const oldVersion = event.oldVersion;
@@ -65,6 +65,11 @@ export class IndexedDBManager {
         notePositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("notePosition").clear();
+      }
+
+      if (!db.objectStoreNames.contains("arrowPosition")) {
+        const notePositionStore = db.createObjectStore("arrowPosition", { keyPath: "id", autoIncrement: true });
+        notePositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       }
 
       if (!db.objectStoreNames.contains("formationSection")) {
@@ -254,7 +259,7 @@ export class IndexedDBManager {
     });
   }
 
-  async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition", formationSectionId: string) {
+  async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition" | "arrowPosition", formationSectionId: string) {
     console.log(`getByFormationSectionId ${storeName} called on ${formationSectionId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore(storeName, "readonly").index("formationSectionId");

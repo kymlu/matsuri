@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react';
-import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { useState } from 'react';
 
 export interface PositionContextState {
   participantPositions: Record<string, ParticipantPosition[]>,
   propPositions: Record<string, PropPosition[]>,
   notePositions: Record<string, NotePosition[]>,
+  arrowPositions: Record<string, ArrowPosition[]>,
   updatePositionContextState: (newState: Partial<PositionContextState>) => void
 }
 
@@ -15,6 +16,7 @@ const defaultState: PositionContextState = {
   participantPositions: {},
   propPositions: {},
   notePositions: {},
+  arrowPositions: {},
   updatePositionContextState: (newState: Partial<PositionContextState>) => {},
 }
 

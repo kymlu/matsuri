@@ -1,6 +1,6 @@
 import { ColorStyle } from "../themes/colours";
 
-export interface Note {
+export interface NotePreset {
   label: string;
   length: number;
   height: number;

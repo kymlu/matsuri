@@ -41,7 +41,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
   const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {enableAnimation} = useContext(SettingsContext);
-  const {participantPositions, propPositions, notePositions} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, arrowPositions} = useContext(PositionContext);
   const {participantList, propList} = useContext(EntitiesContext);
   const canvasHeight = (props.height + props.topMargin + props.bottomMargin) * gridSize;
   const canvasWidth = (props.width + props.sideMargin * 2) * gridSize;
@@ -151,6 +151,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             partPositions={participantPositions[selectedSection.id]}
             propPositions={propPositions[selectedSection.id]}
             notePositions={notePositions[selectedSection.id]}
+            arrowPositions={arrowPositions[selectedSection.id]}
             />
         }
         {

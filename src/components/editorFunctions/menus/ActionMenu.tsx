@@ -19,7 +19,7 @@ export default function ActionMenu() {
   const userContext = useContext(UserContext);
   const {categories} = useContext(CategoryContext);
   const {selectedItems, currentSections, selectedSection, updateState} = useContext(UserContext);
-  const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState} = useContext(PositionContext);
   
   const [selectedPositionType, setSelectedPositionType] = useState<PositionType | null>();
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
@@ -124,7 +124,7 @@ export default function ActionMenu() {
   function deleteObjects() { // todo: update transformer
     if (selectedItems.length === 0) return;
 
-    const {participants, props, notes} = splitPositionsByType(selectedItems);
+    const {participants, props, notes, arrows} = splitPositionsByType(selectedItems);
 
     var updatedPositions: Partial<PositionContextState> = {};
     var updatedEntities: Partial<EntitiesContextState> = {};
@@ -151,6 +151,12 @@ export default function ActionMenu() {
       var positionsToRemove = new Set(notes.map(x => x.id));
       updatedPositions.notePositions = removeItemsByCondition(notePositions, (item) => positionsToRemove.has(item.id));
       dbController.removeList("notePosition", [...positionsToRemove]);
+    }
+    
+    if (arrows.length > 0) {
+      var positionsToRemove = new Set(arrows.map(x => x.id));
+      updatedPositions.arrowPositions = removeItemsByCondition(arrowPositions, (item) => positionsToRemove.has(item.id));
+      dbController.removeList("arrowPosition", [...positionsToRemove]);
     }
     updateEntitiesContext(updatedEntities);
     updatePositionContextState(updatedPositions);

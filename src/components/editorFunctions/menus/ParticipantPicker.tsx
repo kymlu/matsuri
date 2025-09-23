@@ -89,16 +89,14 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
           .map(participant => 
             <ItemButton
             key={participant.id}
-            item={participant}
-            display={participant.name}
+            text={participant.name}
             //isDisabled={selectedParticipants.includes(participant.id)}
             onClick={() => addParticipant(participant)}/>)} 
         {
           !isNullOrUndefinedOrBlank(filterText) &&
           <>
             <ItemButton
-              item={{name: filterText} as ParticipantOption}
-              display={`NEW: "${filterText}"`}
+              text={`NEW: "${filterText}"`}
               //isDisabled={selectedParticipants.includes(participant.id)}
               onClick={() => addParticipant({name: filterText} as ParticipantOption)}/> 
           </>

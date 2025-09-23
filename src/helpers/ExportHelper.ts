@@ -7,7 +7,7 @@ import { FormationSection } from "../models/FormationSection.ts";
 import { ImportExportModel } from "../models/ImportExportModel.ts";
 import { Participant } from "../models/Participant.ts";
 import { ParticipantCategory } from "../models/ParticipantCategory.ts";
-import { ParticipantPosition, PropPosition, NotePosition } from "../models/Position.ts";
+import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition } from "../models/Position.ts";
 import { Prop } from "../models/Prop.ts";
 import { Song } from "../models/Song.ts";
 import { basePalette } from "../themes/colours.ts";
@@ -23,8 +23,9 @@ export function exportAllData() {
     dbController.getAll("prop"),
     dbController.getAll("propPosition"),
     dbController.getAll("notePosition"),
+    dbController.getAll("arrowPosition"),
     dbController.getAll("song"),
-  ]).then(([festivals, categories, formationSections, participants, participantPositions, props, propPositions, notePositions, songs]) => {
+  ]).then(([festivals, categories, formationSections, participants, participantPositions, props, propPositions, notePositions, arrowPositions, songs]) => {
     var toExport: ImportExportModel = {
       song: songs as Song[],
       festival: festivals as Festival[],
@@ -34,6 +35,7 @@ export function exportAllData() {
       participantPositions: participantPositions as ParticipantPosition[],
       props: props as Prop[],
       propPositions: propPositions as PropPosition[],
+      arrowPositions: arrowPositions as ArrowPosition[],
       notes: notePositions as NotePosition[],
     };
     downloadJson(JSON.stringify(toExport));
@@ -55,6 +57,7 @@ export async function exportFormationData(formationId: string) {
       var participantPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("participantPosition", id)))).flatMap(x => x);
       var propPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("propPosition", id)))).flatMap(x => x);
       var notePositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("notePosition", id)))).flatMap(x => x);
+      var arrowPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("arrowPosition", id)))).flatMap(x => x);
 
       var toExport: ImportExportModel = {
         song: songs as Song[],
@@ -65,6 +68,7 @@ export async function exportFormationData(formationId: string) {
         participantPositions: participantPositions as ParticipantPosition[],
         props: props as Prop[],
         propPositions: propPositions as PropPosition[],
+        arrowPositions: arrowPositions as ArrowPosition[],
         notes: notePositions as NotePosition[],
       };
       downloadJson(JSON.stringify(toExport));
@@ -98,7 +102,7 @@ export async function exportToPdf(
   sections: FormationSection[],
   participantPositions: Record<string, ParticipantPosition[]>,
   participants: Record<string, Participant>,
-  propPositions: Record<string, PropPosition[]>,
+  propPositions: Record<string, PropPosition[]>, // todo: add arrows
   props: Record<string, Prop>,
   notePositions: Record<string, NotePosition[]>,
   categories: Record<string, ParticipantCategory>,

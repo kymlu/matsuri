@@ -8,7 +8,7 @@ import SectionOptionButton from "../../SectionOptionButton.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { ParticipantPosition, PropPosition } from "../../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../../CustomMenu.tsx";
-import { propsList, songList } from "../../../data/ImaHitotabi.ts";
+import { arrowPresets, propsList, songList } from "../../../data/ImaHitotabi.ts";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
@@ -19,7 +19,7 @@ import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord, re
 export default function SectionPicker(props: {margins: MarginPositions}) {
 	const { currentSections, selectedSection, updateState, isLoading } =
 		useContext(UserContext);
-	const { participantPositions, propPositions, notePositions, updatePositionContextState } =
+	const { participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState } =
 		useContext(PositionContext);
 	const { participantList, propList } =
 		useContext(EntitiesContext);
@@ -266,17 +266,20 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 		const participantIdsToRemove = participantPositions[section.id].map(x => x.id);
 		const propIdsToRemove = propPositions[section.id].map(x => x.id);
 		const noteIdsToRemove = notePositions[section.id].map(x => x.id);
+		const arrowIdsToRemove = arrowPositions[section.id].map(x => x.id);
 
 		Promise.all([
 			dbController.removeList("participantPosition", participantIdsToRemove),
 			dbController.removeList("propPosition", propIdsToRemove),
 			dbController.removeList("notePosition", noteIdsToRemove),
+			dbController.removeList("arrowPosition", arrowIdsToRemove),
 			dbController.removeItem("formationSection", section.id),
 		]).then(()=>{
 			updatePositionContextState({
 				participantPositions: removeKeysFromRecord(participantPositions, new Set(section.id)),
 				propPositions: removeKeysFromRecord(propPositions, new Set(section.id)),
 				notePositions: removeKeysFromRecord(notePositions, new Set(section.id)),
+				arrowPositions: removeKeysFromRecord(arrowPositions, new Set(section.id)),
 			});
 			var newSections = currentSections.filter(x => !strEquals(x.id, section.id));
 			updateState({

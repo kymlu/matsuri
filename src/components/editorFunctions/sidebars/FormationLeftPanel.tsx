@@ -6,6 +6,7 @@ import Divider from "../../Divider.tsx";
 import NotePicker from "../menus/NotePicker.tsx";
 import { MarginPositions } from "../../../pages/FormationPage.tsx";
 import { Sidebar } from "./Sidebar.tsx";
+import ArrowPicker from "../menus/ArrowPicker.tsx";
 
 export default function FormationLeftPanel (props: {marginPositions: MarginPositions}) {
   return (
@@ -25,6 +26,8 @@ export function FormationEditorLeftContent (props: {marginPositions: MarginPosit
       <PropPicker margins={props.marginPositions.props}/>
       <Divider/>
       <NotePicker margins={props.marginPositions.notes}/>
+      <Divider/>
+      <ArrowPicker margins={props.marginPositions.notes}/>
     </>
   )
 }

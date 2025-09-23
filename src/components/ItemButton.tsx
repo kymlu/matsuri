@@ -1,12 +1,9 @@
 import React from "react";
 import className from "classnames";
-import { ParticipantOption } from "../models/Participant.ts";
-import { Prop } from "../models/Prop.ts";
-import { Note } from "../models/Note.ts";
 
 export interface ItemButtonProps {
-  item: ParticipantOption | Prop | Note,
-  display: string,
+  text?: string,
+  icon?: string,
   isDisabled?: boolean,
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
@@ -19,7 +16,8 @@ export default function ItemButton (props: ItemButtonProps) {
     <button
       className={classes}
       onClick={props.onClick}>
-      {props.display}
+      { props.icon && <img src={props.icon} className="size-6"/>}
+      { props.text && <span>{props.text}</span>}
     </button>
   )
 }

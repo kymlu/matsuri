@@ -5,8 +5,9 @@ import React, {
 	useRef,
 	useState,
 } from "react";
-import { Layer, Rect, Transformer } from "react-konva";
+import { Arrow, Layer, Rect, Transformer } from "react-konva";
 import {
+	ArrowPosition,
 	createPosition,
 	getAllIds,
 	getFromPositionType,
@@ -16,7 +17,7 @@ import {
 	PositionType,
 	PropPosition,
 } from "../../../models/Position.ts";
-import { objectColorSettings, basePalette } from "../../../themes/colours.ts";
+import { objectColorSettings, basePalette, objectPalette } from "../../../themes/colours.ts";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
 import { getPixel } from "../../../helpers/FormationHelper.ts";
 import NoteObject from "../formationObjects/NoteObject.tsx";
@@ -34,6 +35,7 @@ import { Participant } from "../../../models/Participant.ts";
 import { Prop } from "../../../models/Prop.ts";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
+import ArrowObject from "../formationObjects/ArrowObject.tsx";
 
 export type FormationMainLayerProps = {
 	topMargin: number;
@@ -46,6 +48,7 @@ export type FormationMainLayerProps = {
 	partPositions: ParticipantPosition[];
 	propPositions: PropPosition[];
 	notePositions: NotePosition[];
+	arrowPositions: ArrowPosition[];
 };
 
 export function FormationMainLayer(props: FormationMainLayerProps) {
@@ -60,6 +63,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const noteRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+	const arrowRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isSinglePropSelected, setIsSinglePropSelected] = useState<boolean>(false);
 
@@ -118,38 +122,51 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			if (selectionRectRef.current) {
 				const selBox = selectionRectRef.current?.getClientRect();
 
-				const selectedParticipantIds: Array<string> = [];
+				const selectedParticipantIds: Set<string> = new Set();
 				participantRef.current?.forEach((elementNode) => {
 					if (elementNode.current) {
 						var node = elementNode as React.RefObject<Group>;
 						const elBox = node.current.getClientRect();
 						if (Konva.Util.haveIntersection(selBox, elBox)) {
-							selectedParticipantIds.push(node.current.attrs.id);
+							selectedParticipantIds.add(node.current.attrs.id);
 						}
 					}
 				});
 
-				const selectedPropIds: Array<string> = [];
+				const selectedPropIds: Set<string> = new Set();
 				if (appMode === "edit") {
 					propRef.current?.forEach((elementNode) => {
 						if (elementNode.current) {
 							var node = elementNode as React.RefObject<Group>;
 							const elBox = node.current.getClientRect();
 							if (Konva.Util.haveIntersection(selBox, elBox)) {
-								selectedPropIds.push(node.current.attrs.id);
+								selectedPropIds.add(node.current.attrs.id);
 							}
 						}
 					});
 				}
 
-				const selectedNoteIds: Array<string> = [];
+				const selectedNoteIds: Set<string> = new Set();
 				if (appMode === "edit") {
 					noteRef.current?.forEach((elementNode) => {
 						if (elementNode.current) {
 							var node = elementNode as React.RefObject<Group>;
 							const elBox = node.current.getClientRect();
 							if (Konva.Util.haveIntersection(selBox, elBox)) {
-								selectedNoteIds.push(node.current.attrs.id);
+								selectedNoteIds.add(node.current.attrs.id);
+							}
+						}
+					});
+				}
+
+				const selectedArrowIds: Set<string> = new Set();
+				if (appMode === "edit") {
+					arrowRef.current?.forEach((elementNode) => {
+						if (elementNode.current) {
+							var node = elementNode as React.RefObject<Group>;
+							const elBox = node.current.getClientRect();
+							if (Konva.Util.haveIntersection(selBox, elBox)) {
+								selectedArrowIds.add(node.current.attrs.id);
 							}
 						}
 					});
@@ -158,20 +175,17 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				updateState({
 					selectedItems: [
 						...props.partPositions
-							?.filter((x) => selectedParticipantIds.includes(x.id))
-							.map(
-								(x) =>
-									({
-										type: PositionType.participant,
-										participant: x,
-									} as Position)
-							) ?? [],
+							?.filter((x) => selectedParticipantIds.has(x.id))
+							.map((x) =>({type: PositionType.participant, participant: x,} as Position)) ?? [],
 						...props.propPositions
-							?.filter((x) => selectedPropIds.includes(x.id))
+							?.filter((x) => selectedPropIds.has(x.id))
 							?.map((x) => ({ type: PositionType.prop, prop: x } as Position)) ?? [],
 						...props.notePositions
-							?.filter((x) => selectedNoteIds.includes(x.id))
+							?.filter((x) => selectedNoteIds.has(x.id))
 							?.map((x) => ({ type: PositionType.note, note: x } as Position)) ?? [],
+						...props.arrowPositions
+							?.filter((x) => selectedArrowIds.has(x.id))
+							?.map((x) => ({ type: PositionType.arrow, arrow: x } as Position)) ?? [],
 					],
 				});
 
@@ -179,11 +193,12 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					...selectedParticipantIds,
 					...selectedPropIds,
 					...selectedNoteIds,
+					...selectedArrowIds,
 				]);
-				
+
 				setSelectedIds(allSelectedIds);
 
-				setIsSinglePropSelected(allSelectedIds.size === 1 && selectedPropIds.length === 1);
+				setIsSinglePropSelected(allSelectedIds.size === 1 && selectedPropIds.size === 1);
 
 				updateSelectionRect();
 			}
@@ -253,6 +268,16 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					),
 				});
 				setSelectedIds(new Set(notes.map((x) => x.id)));
+				break;
+
+			case PositionType.arrow:
+				var arrows = positionContextRef.current.arrowPositions[userContext.selectedSection!.id];
+				updateState({
+					selectedItems: arrows.map(
+						(x) => ({ type: PositionType.arrow, arrow: x } as Position)
+					),
+				});
+				setSelectedIds(new Set(arrows.map((x) => x.id)));
 				break;
 
 			default:
@@ -346,6 +371,14 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
       );
 	}, [props.notePositions]);
 
+  useEffect(() => {
+		props.arrowPositions
+      ?.sort((a, b) => a.id.localeCompare(b.id))
+      ?.forEach(
+        (_, index) => (arrowRef.current[index] = React.createRef<Konva.Group>())
+      );
+	}, [props.arrowPositions]);
+
 	function updateParticipantPosition(id: string, x: number, y: number) {
 		var participant = props.partPositions.find((x) => strEquals(x.id, id));
 		if (participant) {
@@ -364,12 +397,22 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			dbController.upsertItem("propPosition", prop);
 		}
 	}
+
 	function updateNotePosition(id: string, x: number, y: number) {
 		var note = props.notePositions.find((x) => strEquals(x.id, id));
 		if (note) {
 			note.x = x / gridSize - props.sideMargin;
 			note.y = y / gridSize - props.topMargin; // todo: fix off by 2m
 			dbController.upsertItem("notePosition", note);
+		}
+	}
+
+	function updateArrowPosition(id: string, x: number, y: number) {
+		var arrow = props.arrowPositions.find((x) => strEquals(x.id, id));
+		if (arrow) {
+			arrow.x = x / gridSize - props.sideMargin;
+			arrow.y = y / gridSize - props.topMargin; // todo: fix off by 2m
+			dbController.upsertItem("arrowPosition", arrow);
 		}
 	}
 
@@ -384,7 +427,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	}
 
 	function selectItem(
-		item: ParticipantPosition | PropPosition | NotePosition | null,
+		item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | null,
 		type: PositionType,
 		isMoving?: boolean,
 		multiSelect?: boolean,
@@ -415,12 +458,14 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				selectedItems.length === 0 ||
 				!selectedItems.map((x) => getFromPositionType(x).id).includes(item.id)
 			) {
+				console.log("add", createPosition(item))
 				updateState({ selectedItems: [createPosition(item)] });
 				setSelectedIds(new Set([item.id]));
 				if (type === PositionType.prop) {
 					singlePropSelected = true;
 				}
 			} else if (!isMoving) {
+				console.log("remove")
 				updateState({ selectedItems: [] });
 				setSelectedIds(new Set());
 			}
@@ -431,7 +476,30 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 
 	return (
 		<Layer ref={layerRef}>
-			{userContext.showNotes &&
+			{
+				userContext.showNotes &&
+				props.arrowPositions?.map((arrow, index) => 
+					<ArrowObject
+						id={arrow.id}
+						key={arrow.id}
+						startX={getPixel(gridSize, arrow.x, props.sideMargin)}
+						startY={getPixel(gridSize, arrow.y, props.topMargin)}
+						ref={arrowRef.current[index]}
+						points={arrow.points.map((x) => x * gridSize)}
+						tension={arrow.tension}
+						width={arrow.width * gridSize}
+						colour={objectColorSettings.blueLightest}
+						pointerAtBeginning={arrow.pointerAtBeginning}
+						pointerAtEnding={arrow.pointerAtEnding}
+						draggable
+						onClick={(isMoving?: boolean, multiSelect?: boolean) => {
+							selectItem(arrow, PositionType.arrow, isMoving,multiSelect);
+						}}
+						/>
+				)
+			}
+			{
+				userContext.showNotes &&
 				props.notePositions?.map((note, index) => (
 					<NoteObject
 						id={note.id}
@@ -447,10 +515,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						fontSize={gridSize * note.fontGridRatio}
 						updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
 						onClick={(isMoving?: boolean, multiSelect?: boolean) =>
-							selectItem(note,
-								PositionType.note,
-								isMoving,
-								multiSelect)
+							selectItem(note, PositionType.note, isMoving, multiSelect)
 						}
 						alwaysBold={note.alwaysBold}
 						showBackground={note.showBackground}
@@ -473,10 +538,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					startY={getPixel(gridSize, placement.y, props.topMargin)}
 					updatePosition={(x, y) => updatePropPosition(placement.id, x, y)}
 					onClick={(isMoving?: boolean, multiSelect?: boolean) =>
-						selectItem(placement,
-							PositionType.prop,
-							isMoving,
-							multiSelect)
+						selectItem(placement, PositionType.prop, isMoving, multiSelect)
 					}
 					draggable={!isAnimating && appMode === "edit"}
 					rotation={placement.angle}
@@ -502,12 +564,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					}
 					onClick={(isMoving?: boolean, multiSelect?: boolean) => {
 						if (appMode === "edit") {
-							selectItem(
-								placement,
-								PositionType.participant,
-								isMoving,
-								multiSelect
-							);
+							selectItem(placement, PositionType.participant, isMoving, multiSelect);
 						} else {
 							updateVisualSettingsContext({
 								followingId: strEquals(followingId, placement.participantId) ? null : placement.participantId
@@ -536,9 +593,9 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				rotationSnapTolerance={10}
 				onTransformEnd={(event) => {
 					updatePropRotation(event.target.attrs.id,
-							event.target.attrs.rotation,
-							event.target.attrs.x,
-							event.target.attrs.y);
+						event.target.attrs.rotation,
+						event.target.attrs.x,
+						event.target.attrs.y);
 				}}
 			/>
 			<Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef} />

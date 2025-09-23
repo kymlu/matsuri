@@ -4,7 +4,7 @@ import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined, strEquals } from '../helpers/GlobalHelper.ts';
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, ICON } from '../data/consts.ts';
 import { PositionContext } from '../contexts/PositionContext.tsx';
-import { NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
 import { AnimationPath } from '../models/AnimationPath.ts';
@@ -104,7 +104,9 @@ export default function FormationPage () {
       propList: Prop[],
       participantPositions: ParticipantPosition[],
       propPositions: PropPosition[],
-      notePositions: NotePosition[]) => {
+      notePositions: NotePosition[],
+      arrowPositions: ArrowPosition[],
+    ) => {
         try {
           var groupedParticipantPositions = groupByKey(participantPositions, "formationSectionId")
           var groupedPropPositions = groupByKey(propPositions, "formationSectionId")
@@ -117,6 +119,7 @@ export default function FormationPage () {
             participantPositions: groupedParticipantPositions,
             propPositions: groupedPropPositions,
             notePositions: groupByKey(notePositions, "formationSectionId"),
+            arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
           });
 
           const currentSections = (formationSections as Array<FormationSection>)
