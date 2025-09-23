@@ -60,7 +60,10 @@ export default function ColorPickerMenu() {
     var noteIds = new Set(res.notes.map(x => x.id));
     var updatedNotes = [...notePositions[selectedSection!.id]];
     noteIds.forEach(id => {
-      updatedNotes[id].color = color;
+      var note = updatedNotes.find(x => strEquals(x.id, id));
+      if (note) {
+        note.color = color;
+      }
     });
     
     updatePositionContextState({
@@ -107,7 +110,7 @@ export default function ColorPickerMenu() {
       showBgSwitchRef.current?.changeChecked(showBackground);
     } else {
       setShowTransparentOption(false);
-      setIsBgShown(false);
+      setIsBgShown(true);
     }
   }, [userContext.selectedItems]);
 
