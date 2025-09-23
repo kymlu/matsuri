@@ -118,7 +118,7 @@ export default function ColorPickerMenu() {
       setSelectedColor(null);
     }
 
-    if (res.props.length && res.notes.length > 0) {
+    if (res.props.length === 0 && res.arrows.length === 0 && res.notes.length > 0) {
       setShowTransparentOption(true);
       var showBackground = [...new Set(res.notes.map(x => x.showBackground))].includes(true);
       setIsBgShown(showBackground);
