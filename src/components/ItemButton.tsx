@@ -16,7 +16,7 @@ export default function ItemButton (props: ItemButtonProps) {
     <button
       className={classes}
       onClick={props.onClick}>
-      { props.icon && <img src={props.icon} className="size-6"/>}
+      { props.icon && <img src={props.icon} className="size-10"/>}
       { props.text && <span>{props.text}</span>}
     </button>
   )

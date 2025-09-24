@@ -53,6 +53,7 @@ export default function PropPicker (props: {margins: number[][]}) {
   
   return (
     <ExpandableSection
+			canExpand
       title="大道具"
       titleIcon={ICON.flagBlack}>
         <div className="flex flex-row flex-wrap gap-2">

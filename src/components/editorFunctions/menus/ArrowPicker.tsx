@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
-import { arrowPresets, propsList } from "../../../data/ImaHitotabi.ts";
+import { arrowPresets } from "../../../data/ImaHitotabi.ts";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import ItemButton from "../../ItemButton.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
-import { Prop } from "../../../models/Prop.ts";
-import { ArrowPosition, PropPosition } from "../../../models/Position.ts";
-import { basePalette, objectColorSettings } from "../../../themes/colours.ts";
+import { ArrowPosition } from "../../../models/Position.ts";
+import { objectColorSettings } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { ICON } from "../../../data/consts.ts";
@@ -46,6 +45,7 @@ export default function ArrowPicker (props: {margins: number[][]}) {
   
   return (
     <ExpandableSection
+			canExpand
       title="線"
       titleIcon={ICON.arrowRightAltBlack}>
         <div className="flex flex-row flex-wrap gap-2">

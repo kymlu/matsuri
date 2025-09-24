@@ -181,7 +181,7 @@ export default function ActionMenu() {
                     {swappableParticipants[0].displayName}↔︎{swappableParticipants[1].displayName}位置交換
                   </span>
                   <img 
-                    className="text-center size-6" 
+                    className="text-center size-10" 
                     src={swapMenuExpanded ? ICON.expandLessBlack : ICON.expandMoreBlack}
                     alt={swapMenuExpanded ? "Collapse icon": "Expand icon"}
                   />

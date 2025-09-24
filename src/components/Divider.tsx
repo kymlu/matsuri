@@ -6,8 +6,8 @@ export type DividerProps = {
 }
 
 export default function Divider(props: DividerProps) {
-  var classes = classNames("bg-primary border-none", {
-    "my-3 h-1": !props.compact,
+  var classes = classNames("bg-primary border-none h-0.5", {
+    "my-3": !props.compact,
     "h-0.5": props.compact
   })
 

@@ -46,6 +46,7 @@ export default function NotePicker (props: {margins: number[][]}) {
 
   return (
     <ExpandableSection
+			canExpand
       title="メモ"
       titleIcon={ICON.noteStackBlack}>
         <div className="flex flex-row flex-wrap gap-2">

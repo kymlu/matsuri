@@ -27,7 +27,7 @@ export function CustomToolbar(props: CustomToolbarProps) {
 
   const verticalToolbar = isLandscape && height <= 768;
 
-  const classes = classNames("absolute flex max-w-[90svw] max-h-[calc(100svh-80px)] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
+  const classes = classNames("absolute flex gap-2 max-w-[90svw] max-h-[calc(100svh-80px)] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
     "right-3 flex-col overflow-y-auto overflow-x-hidden items-center": verticalToolbar,
     "left-1/2 translate-x-[-50%] overflow-x-auto overflow-y-hidden": !verticalToolbar,
   })
@@ -44,12 +44,12 @@ export function CustomToolbar(props: CustomToolbarProps) {
 export function CustomToolbarSeparator() {
   return <div className="flex w-full">
     <Toolbar.Separator
-      className="w-px h-6 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full m-1 bg-gray-300"/>
+      className="w-px h-10 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full m-1 bg-gray-300"/>
   </div>
 }
 
 export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnVertical?: boolean}) {
-  var classnames = classNames("flex flex-row items-center flex-shrink-0 gap-1 data-[orientation=vertical]:flex-col", {
+  var classnames = classNames("flex flex-row items-center flex-shrink-0 gap-2 data-[orientation=vertical]:flex-col", {
     "data-[orientation=vertical]:flex-col-reverse": props.reverseOnVertical
   })
   return (
@@ -72,7 +72,7 @@ export type CustomToolbarButtonProp = {
 }
 
 export function CustomToolbarButton(props: CustomToolbarButtonProp) {
-  var className = classNames("group flex items-center gap-1 h-8 px-1 rounded-md flex-shrink-0", {
+  var className = classNames("group flex items-center gap-1 h-10 px-1 rounded-md flex-shrink-0", {
     "flex-row": props.iconLeft ?? false,
     "flex-row-reverse": !props.iconLeft,
     "opacity-30 cursor-default": props.disabled,
@@ -87,8 +87,8 @@ export function CustomToolbarButton(props: CustomToolbarButtonProp) {
       ref={props.ref}
       className={className}
       onClick={() => {if(!props.disabled) props.onClick?.()}}>
-      {props.iconFileName && <img src={props.iconFileName} className="size-6"/>}
-      {props.text && <span className="text-nowrap group-data-[orientation=vertical]:hidden">{props.text}</span>}
+      {props.iconFileName && <img src={props.iconFileName} className="size-10"/>}
+      {/* {props.text && <span className="text-nowrap group-data-[orientation=vertical]:hidden">{props.text}</span>} */}
     </Toolbar.Button>
   )
 }

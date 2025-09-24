@@ -27,7 +27,7 @@ export default function CustomSelect(props: CustomSelectProps) {
       onValueChange={(newValue) => props.setValue?.(newValue)}>
       <Select.Trigger className="flex flex-row items-center justify-between w-full p-2 rounded-md outline outline-1 outline-grey-300">
         <Select.Value>
-          {props.isIcons ? <img className="size-6" src={value}/> : value}
+          {props.isIcons ? <img className="size-8" src={value}/> : value}
         </Select.Value>
         <Select.Icon className="flex align-middle">
           <img className="size-4" src={ICON.expandMoreBlack}/>
@@ -42,7 +42,7 @@ export default function CustomSelect(props: CustomSelectProps) {
                 value={value}
                 className="flex p-2 hover:bg-grey-200"
               >
-                {props.isIcons ? <img className="size-6" src={value}/> : value}
+                {props.isIcons ? <img className="size-8" src={value}/> : value}
               </Select.Item>
             ))}
           </Select.Popup>

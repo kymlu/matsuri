@@ -77,6 +77,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   
   return (
     <ExpandableSection
+			canExpand
       title="参加者"
       titleIcon={ICON.groups2Black}>
       <TextInput

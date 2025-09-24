@@ -20,15 +20,15 @@ export function Sidebar(props: SidebarProps) {
 
   var classes = classNames("flex flex-col overflow-y-auto bg-white border-solid border-grey",
     {
-      "p-5 w-80 max-w-80": expanded,
+      "w-80 max-w-80": expanded,
       "border-r-2": props.isLeft,
       "border-l-2": !props.isLeft,
     }
   );
 
-  var buttonClasses = classNames("pb-2",
+  var buttonClasses = classNames("pb-2 p-5",
     {
-      "h-full p-5 items-center": !expanded,
+      "h-full items-center": !expanded,
       "flex justify-end": props.isLeft,
     }
   );

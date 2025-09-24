@@ -314,8 +314,10 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 
 	return (
 		<ExpandableSection
+			canExpand
 			title="セクション"
-			defaultIsExpanded titleIcon={ICON.listsBlack}>
+			defaultIsExpanded
+			titleIcon={ICON.listsBlack}>
 			<div className="flex flex-col overflow-x-hidden overflow-y-auto max-h-28">
 				{currentSections
 					.sort((a, b) => a.order - b.order)
@@ -346,7 +348,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 						<div className="w-full lg:hover:bg-grey-200">
 							<img
 								alt="Add icon"
-								className="m-auto size-6"
+								className="m-auto size-10"
 								src={ICON.addBlack}/>
 						</div>}>
           {nextSection && (
