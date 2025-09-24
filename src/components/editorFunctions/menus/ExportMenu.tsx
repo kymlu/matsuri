@@ -23,7 +23,7 @@ export default function ExportMenu(props: ExportMenuProps) {
   return (
     <ExpandableSection
       title="エクスポート"
-      titleIcon={ICON.fileExportBlack}>
+      titleIcon={ICON.downloadBlack}>
       <div className="flex flex-row gap-2">
         <TextInput
           placeholder="ファイル名を入力"

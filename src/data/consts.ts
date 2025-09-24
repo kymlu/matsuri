@@ -1,4 +1,4 @@
-export const LAST_UPDATED = "更新 9月24日 23:50"
+export const LAST_UPDATED = "更新 9月25日 12:30"
 
 export const MIN_GRID_SIZE = 20;
 export const MAX_GRID_SIZE = 80;
@@ -42,6 +42,7 @@ export const ICON = {
   clearBlack: "icons/clear_black.svg",
   clear: "icons/clear.svg",
   colorsBlack: "icons/colors_black.svg",
+  downloadBlack: "icons/download_black.svg",
   edit: "icons/edit.svg",
   editDocument: "icons/edit_document.svg",
   expandLessBlack: "icons/expand_less_black.svg",

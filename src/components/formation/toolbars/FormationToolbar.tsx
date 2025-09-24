@@ -55,7 +55,7 @@ export function FormationToolbar(props: FormationToolbarProps) {
           <CustomToolbarGroup>
             <CustomToolbarButton
               text="エクスポート"
-              iconFileName={ICON.fileExportBlack}
+              iconFileName={ICON.downloadBlack}
               onClick={() => {
                 props.export?.();
               }}/>
