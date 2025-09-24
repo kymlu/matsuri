@@ -7,6 +7,7 @@ import { ICON } from "../../../data/consts.ts";
 import CustomSlider from "../../CustomSlider.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import CustomSelect from "../../CustomSelect.tsx";
 
 export default function ArrowEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -14,6 +15,8 @@ export default function ArrowEditor() {
   const [arrow, setArrow] = useState<ArrowPosition | null>(null);
   const widthSliderRef = React.createRef<any>();
   const tensionSliderRef = React.createRef<any>();
+  const pointerBeginningRef = React.createRef<any>();
+  const pointerEndingRef = React.createRef<any>();
   const pointerWidthRef = React.createRef<any>();
   const pointerLengthRef = React.createRef<any>();
 
@@ -26,14 +29,26 @@ export default function ArrowEditor() {
     setArrow(arrow);
     widthSliderRef?.current?.changeValue(arrow.width);
     tensionSliderRef?.current?.changeValue(arrow.tension);
+    pointerBeginningRef?.current?.changeValue(arrow.pointerAtBeginning.valueOf.toString());
+    pointerEndingRef?.current?.changeValue(arrow.pointerAtEnding.valueOf.toString());
   }, [selectedItems]);
 
-  const handleContentChange = (newValue: number, type: "width" | "tension" | "pointerWidth" | "pointerLength") => {
+  const handleNumericValueChange = (newValue: number, type: "width" | "tension" | "pointerWidth" | "pointerLength") => {
     var updatedRecord = {...arrowPositions};
     var updatedArrow = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, arrow!.id))!;
     updatedArrow.isSelected = false;
     updatedArrow[type] = newValue;
-    updatePositionContextState({arrowPositions: updatedRecord})
+    updatePositionContextState({arrowPositions: updatedRecord});
+    dbController.upsertItem("arrowPosition", updatedArrow);
+  };
+
+  const handleBooleanValueChange = (newValue: boolean, type: "pointerAtBeginning" | "pointerAtEnding") => {
+    console.log(newValue, type)
+    var updatedRecord = {...arrowPositions};
+    var updatedArrow = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, arrow!.id))!;
+    updatedArrow.isSelected = false;
+    updatedArrow[type] = newValue;
+    updatePositionContextState({arrowPositions: updatedRecord});
     dbController.upsertItem("arrowPosition", updatedArrow);
   };
   
@@ -57,7 +72,7 @@ export default function ArrowEditor() {
             step={0.05}
             defaultValue={arrow!.width}
             setValue={(newValue) => {
-              handleContentChange(newValue, "width")
+              handleNumericValueChange(newValue, "width")
             }}/>
           {
             arrow?.points.length === 6 && 
@@ -70,14 +85,32 @@ export default function ArrowEditor() {
                 step={0.1}
                 defaultValue={arrow!.tension}
                 setValue={(newValue) => {
-                  handleContentChange(newValue, "tension")
+                  handleNumericValueChange(newValue, "tension")
                 }}/>
             </>
           }
           <span>先端</span>
-          <div>
-            <span>to add start changer</span>
-            <span>to add end changer</span>
+          <div className="flex flex-row gap-3">
+            <CustomSelect
+              defaultValue={arrow.pointerAtBeginning.valueOf.toString()}
+              setValue={(newValue) => handleBooleanValueChange(strEquals(newValue, ICON.lineStartArrowNotchBlack), "pointerAtBeginning")}
+              isIcons
+              items={{
+                "true": ICON.lineStartArrowNotchBlack,
+                "false": ICON.lineStartBlack,
+                }}
+              ref={pointerBeginningRef}
+              />
+            <CustomSelect
+              defaultValue={arrow.pointerAtEnding.valueOf.toString()}
+              setValue={(newValue) => {handleBooleanValueChange(strEquals(newValue, ICON.lineEndArrowNotchBlack), "pointerAtEnding")}}
+              isIcons
+              items={{
+                "true": ICON.lineEndArrowNotchBlack,
+                "false": ICON.lineEndBlack,
+                }}
+              ref={pointerEndingRef}
+              />
           </div>
           {
             (arrow.pointerAtBeginning || arrow.pointerAtEnding) && 
@@ -90,7 +123,7 @@ export default function ArrowEditor() {
                 step={0.1}
                 defaultValue={arrow!.pointerWidth}
                 setValue={(newValue) => {
-                  handleContentChange(newValue, "pointerWidth")
+                  handleNumericValueChange(newValue, "pointerWidth")
                 }}/>
               <span>矢印の長さ</span>
               <CustomSlider
@@ -100,7 +133,7 @@ export default function ArrowEditor() {
                 step={0.1}
                 defaultValue={arrow!.pointerLength}
                 setValue={(newValue) => {
-                  handleContentChange(newValue, "pointerLength")
+                  handleNumericValueChange(newValue, "pointerLength")
                 }}/>
             </>
           }

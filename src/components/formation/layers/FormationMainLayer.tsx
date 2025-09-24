@@ -5,7 +5,7 @@ import React, {
 	useRef,
 	useState,
 } from "react";
-import { Arrow, Layer, Rect, Transformer } from "react-konva";
+import { Layer, Rect, Transformer } from "react-konva";
 import {
 	ArrowPosition,
 	createPosition,
@@ -18,7 +18,7 @@ import {
 	PropPosition,
 	splitPositionsByType,
 } from "../../../models/Position.ts";
-import { objectColorSettings, basePalette, objectPalette } from "../../../themes/colours.ts";
+import { objectColorSettings, basePalette } from "../../../themes/colours.ts";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
 import { getPixel } from "../../../helpers/FormationHelper.ts";
 import NoteObject from "../formationObjects/NoteObject.tsx";
