@@ -87,7 +87,7 @@ export function CustomToolbarButton(props: CustomToolbarButtonProp) {
       ref={props.ref}
       className={className}
       onClick={() => {if(!props.disabled) props.onClick?.()}}>
-      {props.iconFileName && <img src={props.iconFileName} className="size-10"/>}
+      {props.iconFileName && <img src={props.iconFileName} className="size-8"/>}
       {/* {props.text && <span className="text-nowrap group-data-[orientation=vertical]:hidden">{props.text}</span>} */}
     </Toolbar.Button>
   )

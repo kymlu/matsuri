@@ -348,7 +348,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 						<div className="w-full lg:hover:bg-grey-200">
 							<img
 								alt="Add icon"
-								className="m-auto size-10"
+								className="m-auto size-8"
 								src={ICON.addBlack}/>
 						</div>}>
           {nextSection && (

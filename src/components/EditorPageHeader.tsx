@@ -22,7 +22,7 @@ export function EditorPageHeader() {
     <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey'>
       <CustomMenu
         trigger={
-          <img alt="Matsuri logo" src="logo192.png" className='size-10 max-w-10 max-h-10'/>
+          <img alt="Matsuri logo" src="logo192.png" className='size-8 max-w-8 max-h-8'/>
         }>
         <>
           <MenuItem label="ホームに戻る" onClick={() => {
@@ -57,10 +57,10 @@ export function EditorPageHeader() {
             updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
             updateAppModeContext({appMode: appMode === "edit" ? "view" : "edit"});
           }}>
-          <img className='size-10 max-w-10 max-h-10' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
+          <img className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
         </button>
         <CustomMenu trigger={
-          <img alt="Extra settings" src={ICON.settings} className='size-10 max-w-10 max-h-10'/>
+          <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
           }>
           <>
             <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
