@@ -92,7 +92,7 @@ export default function ArrowEditor() {
           <span>先端</span>
           <div className="flex flex-row gap-3">
             <CustomSelect
-              defaultValue={arrow.pointerAtBeginning.valueOf.toString()}
+              defaultValue={arrow.pointerAtBeginning ? ICON.lineStartArrowNotchBlack : ICON.lineStartBlack}
               setValue={(newValue) => handleBooleanValueChange(strEquals(newValue, ICON.lineStartArrowNotchBlack), "pointerAtBeginning")}
               isIcons
               items={{
@@ -102,7 +102,7 @@ export default function ArrowEditor() {
               ref={pointerBeginningRef}
               />
             <CustomSelect
-              defaultValue={arrow.pointerAtEnding.valueOf.toString()}
+              defaultValue={arrow.pointerAtEnding ? ICON.lineStartArrowNotchBlack : ICON.lineStartBlack}
               setValue={(newValue) => {handleBooleanValueChange(strEquals(newValue, ICON.lineEndArrowNotchBlack), "pointerAtEnding")}}
               isIcons
               items={{
