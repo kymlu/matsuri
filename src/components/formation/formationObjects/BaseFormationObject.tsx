@@ -6,6 +6,7 @@ import { Stage } from "konva/lib/Stage";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
+import { DO_NOT_UPDATE_POSITION_ATTR } from "../../../data/consts.ts";
 
 export interface FormationObjectProps {
   id: string,
@@ -25,6 +26,7 @@ export default function BaseFormationObject(props: FormationObjectProps) {
   const {gridSize} = useContext(VisualSettingsContext);
   const snapSize = gridSize/2;
   const {enableGridSnap} = useContext(SettingsContext);
+
   function onClick(e?: MouseEvent) {
     if (!props.draggable) return;
 
@@ -50,10 +52,10 @@ export default function BaseFormationObject(props: FormationObjectProps) {
         }
       }}
       onDragEnd={e => {
-        if (appMode === "view") {
+        if (appMode === "view" || e.target.getAttr(DO_NOT_UPDATE_POSITION_ATTR) === true) {
           return;
         }
-
+        
         const node = e.target;
         
         var x = enableGridSnap ? Math.round(node.x() / snapSize) * snapSize : node.x();

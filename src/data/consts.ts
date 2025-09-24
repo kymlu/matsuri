@@ -12,6 +12,8 @@ export const DEFAULT_TOP_MARGIN = 2;
 export const DEFAULT_BOTTOM_MARGIN = 2;
 export const DEFAULT_SIDE_MARGIN = 6;
 
+export const DO_NOT_UPDATE_POSITION_ATTR = "doNotUpdatePosition";
+
 export enum CUSTOM_EVENT {
   "dbInitialized" = "dbInitialized",
   "selectAllFromCategory" = "selectAllFromCategory",

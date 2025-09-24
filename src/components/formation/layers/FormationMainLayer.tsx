@@ -64,7 +64,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const noteRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
-	const arrowRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+	const arrowGroupRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+	const arrowRef = useRef<React.RefObject<Konva.Arrow | null>[]>([]);
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isSinglePropSelected, setIsSinglePropSelected] = useState<boolean>(false);
 	const [isSingleArrowSelected, setIsSingleArrowSelected] = useState<boolean>(false);
@@ -163,7 +164,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 
 				const selectedArrowIds: Set<string> = new Set();
 				if (appMode === "edit") {
-					arrowRef.current?.forEach((elementNode) => {
+					arrowGroupRef.current?.forEach((elementNode) => {
 						if (elementNode.current) {
 							var node = elementNode as React.RefObject<Group>;
 							const elBox = node.current.getClientRect();
@@ -379,7 +380,10 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		props.arrowPositions
       ?.sort((a, b) => a.id.localeCompare(b.id))
       ?.forEach(
-        (_, index) => (arrowRef.current[index] = React.createRef<Konva.Group>())
+        (_, index) => {
+					arrowGroupRef.current[index] = React.createRef<Konva.Group>()
+					arrowRef.current[index] = React.createRef<Konva.Arrow>()
+				}
       );
 	}, [props.arrowPositions]);
 
@@ -417,6 +421,19 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			arrow.x = x / gridSize - props.sideMargin;
 			arrow.y = y / gridSize - props.topMargin; // todo: fix off by 2m
 			dbController.upsertItem("arrowPosition", arrow);
+		}
+	}
+
+	function updateArrowPoints(id: string, x: number, y: number, pointIndex: number, arrowIndex: number) {
+		var arrow = props.arrowPositions.find((x) => strEquals(x.id, id));
+		if (arrow) {
+			var newPoints = [...arrow.points];
+			newPoints[pointIndex] = x / gridSize - props.sideMargin - arrow.x;
+			newPoints[pointIndex + 1] = y / gridSize - props.topMargin - arrow.y;
+			arrow.points = newPoints;
+			if (arrowRef?.current?.[arrowIndex] !== null) {
+				arrowRef?.current?.[arrowIndex]?.current?.setAttr("points", newPoints.map(x => x * gridSize));
+			}
 		}
 	}
 
@@ -504,9 +521,12 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						id={arrow.id}
 						key={arrow.id}
 						updatePosition={(x, y) => updateArrowPosition(arrow.id, x, y)}
+						updatePoints={(x, y, pointIndex) => updateArrowPoints(arrow.id, x, y, pointIndex, index)}
+						savePoints={() => {dbController.upsertItem("arrowPosition", arrow)}}
 						startX={getPixel(gridSize, arrow.x, props.sideMargin)}
 						startY={getPixel(gridSize, arrow.y, props.topMargin)}
-						ref={arrowRef.current[index]}
+						ref={arrowGroupRef.current[index]}
+						arrowRef={arrowRef.current[index]}
 						points={arrow.points.map((x) => x * gridSize)}
 						tension={arrow.tension}
 						width={arrow.width * gridSize}
