@@ -85,7 +85,7 @@ export default function ArrowEditor() {
               <span>矢印の幅</span>
               <CustomSlider
                 ref={pointerWidthRef}
-                min={0.5}
+                min={1}
                 max={3}
                 step={0.1}
                 defaultValue={arrow!.pointerWidth}
@@ -95,8 +95,8 @@ export default function ArrowEditor() {
               <span>矢印の長さ</span>
               <CustomSlider
                 ref={pointerLengthRef}
-                min={0.2}
-                max={2}
+                min={1}
+                max={3}
                 step={0.1}
                 defaultValue={arrow!.pointerLength}
                 setValue={(newValue) => {
