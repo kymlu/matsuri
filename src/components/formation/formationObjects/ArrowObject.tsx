@@ -86,9 +86,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
             ref={circle1Ref}
             x={props.points[0]}
             y={props.points[1]}
-            stroke={basePalette.primary.main}
-            strokeWidth={gridSize * 0.1}
-            fill={basePalette.white}
+            fill={basePalette.primary.main}
             radius={gridSize * 0.1}
             draggable
             onDragMove={ e => updatePoints(e.currentTarget, 0)}
@@ -98,9 +96,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
             ref={circle2Ref}
             x={props.points[2]}
             y={props.points[3]}
-            stroke={basePalette.primary.main}
-            strokeWidth={gridSize * 0.1}
-            fill={basePalette.white}
+            fill={basePalette.primary.main}
             radius={gridSize * 0.1}
             onDragMove={ e => updatePoints(e.currentTarget, 2)}
             onDragEnd={e => props.savePoints?.()}
@@ -112,9 +108,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
               ref={circle3Ref}
               x={props.points[4]}
               y={props.points[5]}
-              stroke={basePalette.primary.main}
-              strokeWidth={gridSize * 0.1}
-              fill={basePalette.white}
+              fill={basePalette.primary.main}
               radius={gridSize * 0.1}
               onDragMove={ e => updatePoints(e.currentTarget, 4)}
               onDragEnd={e => props.savePoints?.()}
