@@ -1,31 +1,14 @@
 import { Toolbar } from "@base-ui-components/react";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useIsLandscape, useIsMobile } from "../helpers/GlobalHelper.ts";
 
 export type CustomToolbarProps = {
   children: React.ReactNode
 }
 
 export function CustomToolbar(props: CustomToolbarProps) {
-  const [isLandscape, setIsLandScape] = useState<boolean>(true);
-  const [height, setHeight] = useState<number>(window.innerHeight);
-
-  function handleWindowSizeChange() {
-    setHeight(window.innerHeight);
-  }
-
-  useEffect(() => {
-    window.matchMedia("(orientation: landscape)").addEventListener("change", e => {
-      setIsLandScape(e.matches);
-    });
-
-    window.addEventListener('resize', handleWindowSizeChange);
-    return () => {
-        window.removeEventListener('resize', handleWindowSizeChange);
-    }
-  }, []);
-
-  const verticalToolbar = isLandscape && height <= 768;
+  const verticalToolbar = useIsLandscape() && useIsMobile;
 
   const classes = classNames("absolute flex gap-2 max-w-[90svw] max-h-[calc(100svh-80px)] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
     "right-3 flex-col overflow-y-auto overflow-x-hidden items-center": verticalToolbar,
