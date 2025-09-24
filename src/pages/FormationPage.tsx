@@ -213,6 +213,10 @@ export default function FormationPage () {
     });
   }
 
+  function roundToTenth(value: number) {
+    return Math.round(10 * value)/10;
+  }
+
   return (
     <div className='h-full overflow-hidden'>
       <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 grid-rows-[60px_calc(100svh-60px)]'>
@@ -260,11 +264,13 @@ export default function FormationPage () {
                 <div className='flex flex-row gap-2'>
                   <div className='flex gap-1'>
                     <img src={ICON.heightBlack} className='size-6'/>
-                    <span>{`${selectedFormation.type === FormationType.parade ? selectedFormation.length - followingPositions[selectedSection.id]?.y : followingPositions[selectedSection.id]?.y}m`}</span>
+                    <span>{`${roundToTenth(selectedFormation.type === FormationType.parade ?
+                      selectedFormation.length - followingPositions[selectedSection.id]?.y :
+                      followingPositions[selectedSection.id]?.y)}m`}</span>
                   </div>
                   <div className='flex gap-1'>
                     <img src={ICON.arrowRangeBlack} className='size-6'/>
-                    <span>{`${Math.abs(selectedFormation.width/2 - followingPositions[selectedSection.id]?.x)}m`}</span>
+                    <span>{`${roundToTenth(Math.abs(selectedFormation.width/2 - followingPositions[selectedSection.id]?.x))}m`}</span>
                   </div>
                 </div>
               </div>
