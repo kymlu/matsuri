@@ -227,9 +227,9 @@ export async function exportToPdf(
     pdf.setDrawColor(objectPalette.purple.main);
     pdf.setFillColor(objectPalette.purple.main);
     pdf.setTextColor(basePalette.white);
-    var textDimension = pdf.getTextDimensions(section.displayName, {maxWidth: grid});
+    var textDimension = pdf.getTextDimensions(section.displayName, {maxWidth: grid * 4});
     pdf.roundedRect(grid/2, grid/4, grid * 4, grid, 5, 5, "FD");
-    pdf.text(section.displayName, grid/2 + grid * 2, 3 * grid/4 + textDimension.h/2 - 1, {align: "center"})
+    pdf.text(section.displayName, grid/2 + grid * 2, 0.75 * grid + textDimension.h/2 - 1, {maxWidth: grid * 4, align: "center"})
 
     notePositions[section.id]?.forEach(n => {
       pdf.setFontSize(grid * n.fontGridRatio)
@@ -303,13 +303,11 @@ export async function exportToPdf(
         pdf.setLineWidth(0.8);
         pdf.setDrawColor(basePalette.grey[800]);
         pdf.setFillColor(basePalette.grey[50]);
-        pdf.roundedRect(grid/2, (length - 1.75) * grid, grid * 4, grid * 1.5, 5, 5, "FD");
-        var nameDimensions = pdf.getTextDimensions(displayName, {maxWidth: grid * 3.5});
-        pdf.text(displayName, grid * 2.5, (length - 1) * grid - nameDimensions.h/2, {align: "center"});
-        var coordsText = `↕︎${roundToTenth(p.y)} ↔︎${roundToTenth(Math.abs(formation.width/2 - p.x))}`
-        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 3.5});
+        pdf.roundedRect((width - 4.5) * grid, grid/4, grid * 4, grid, 5, 5, "FD");
+        var coordsText = `${displayName} : ↕︎${roundToTenth(p.y)} ↔︎${roundToTenth(Math.abs(formation.width/2 - p.x))}`
+        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 4});
         var padding = pdf.getTextDimensions("000");
-        pdf.text(coordsText, grid * 2.5 + padding.w/2, (length - 0.55) * grid - coordsDimensions.h/2, {align: "center"});
+        pdf.text(coordsText, (width - 2.5) * grid + padding.w/2, grid * 0.75 + coordsDimensions.h/2 - 1, {maxWidth: grid * 4, align: "center"});
       }
     });
 
