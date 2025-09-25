@@ -568,6 +568,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						draggable={appMode === "edit"}
 						ref={noteRef.current[index]}
 						selected={selectedIds.has(note.id)}
+						hasBorder={true}
 					/>
 				))}
 			{props.propPositions?.map((placement, index) => (

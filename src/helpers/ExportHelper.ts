@@ -10,8 +10,9 @@ import { ParticipantCategory } from "../models/ParticipantCategory.ts";
 import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition } from "../models/Position.ts";
 import { Prop } from "../models/Prop.ts";
 import { Song } from "../models/Song.ts";
-import { basePalette } from "../themes/colours.ts";
+import { basePalette, objectPalette } from "../themes/colours.ts";
 import { formatExportDate } from "./DateHelper.ts";
+import { strEquals } from "./GlobalHelper.ts";
 
 export function exportAllData() {
   Promise.all([
@@ -107,6 +108,7 @@ export async function exportToPdf(
   notePositions: Record<string, NotePosition[]>,
   categories: Record<string, ParticipantCategory>,
   updateProgress: (progress: number) => void,
+  followingId?: string | null,
 ) {
   const grid : number = 20;
   const sideMargin = formation.sideMargin ?? DEFAULT_SIDE_MARGIN;
@@ -216,18 +218,18 @@ export async function exportToPdf(
         pdf.setFillColor(basePalette.primary.main);
         pdf.setDrawColor(basePalette.primary.main);
         pdf.setTextColor(basePalette.white);
-        pdf.circle(i * grid, grid * 1.3, grid * 0.25, "F");
-        pdf.text(Math.abs(Math.round(i - width/2)).toString(), i * grid, grid * 1.4, {align: "center"});
+        pdf.circle(i * grid, grid * 1.5, grid * 0.25, "F");
+        pdf.text(Math.abs(Math.round(i - width/2)).toString(), i * grid, grid * 1.6, {align: "center"});
       }
     });
 
     pdf.setLineWidth(0.8);
-    pdf.setDrawColor(basePalette.black);
-    pdf.setFillColor(basePalette.white);
-    pdf.setTextColor(basePalette.black);
-    var textWidth = pdf.getTextWidth(section.displayName);
-    pdf.rect((width/2) * grid - textWidth/2 - grid, grid/4, textWidth + grid * 2, grid/2, "FD");
-    pdf.text(section.displayName, (width/2) * grid, grid * 0.6, {align: "center"})
+    pdf.setDrawColor(objectPalette.purple.main);
+    pdf.setFillColor(objectPalette.purple.main);
+    pdf.setTextColor(basePalette.white);
+    var textDimension = pdf.getTextDimensions(section.displayName, {maxWidth: grid});
+    pdf.roundedRect(grid/2, grid/4, grid * 4, grid, 5, 5, "FD");
+    pdf.text(section.displayName, grid/2 + grid * 2, 3 * grid/4 + textDimension.h/2 - 1, {align: "center"})
 
     notePositions[section.id]?.forEach(n => {
       pdf.setFontSize(grid * n.fontGridRatio)
@@ -278,10 +280,19 @@ export async function exportToPdf(
 
     participantPositions[section.id]?.forEach(p => {
       var category = categories[p.categoryId ?? ""];
-      pdf.setDrawColor(category?.color.borderColour ?? basePalette.black);
+      var participant = participants[p.participantId];
+      
+      if (strEquals(followingId, participant.id)) {
+        pdf.setLineWidth(2);
+        pdf.setDrawColor(basePalette.primary.main);
+      } else {
+        pdf.setLineWidth(0.8);
+        pdf.setDrawColor(category?.color.borderColour ?? basePalette.black);
+      }
+
       pdf.setFillColor(category?.color.bgColour ?? basePalette.white);
       pdf.circle((sideMargin + p.x) * grid, (p.y + topMargin) * grid, grid * 0.4, "FD");
-      var participant = participants[p.participantId];
+
       pdf.setTextColor(category?.color.textColour ?? basePalette.black);
       var textHeight = pdf.getTextDimensions(participant?.displayName ?? "", {maxWidth: grid}).h;
       pdf.text(participant?.displayName ?? "", (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});

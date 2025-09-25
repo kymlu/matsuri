@@ -20,6 +20,7 @@ export interface NoteObjectProps {
   draggable?: boolean,
   fontSize?: number,
   alwaysBold?: boolean,
+  hasBorder: boolean,
   showBackground?: boolean,
   ref?: React.Ref<any>,
   selected?: boolean,
@@ -44,7 +45,7 @@ export default function NoteObject(props: NoteObjectProps) {
           height={props.height * gridSize}
           fill={props.showBackground ? props.colour.bgColour : undefined}
           stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
-          strokeWidth={props.selected ? gridSize/20 : gridSize/30}
+          strokeWidth={props.selected ? gridSize/20 : props.hasBorder ? gridSize/30 : 0}
           cornerRadius={props.borderRadius} />
       }
       {

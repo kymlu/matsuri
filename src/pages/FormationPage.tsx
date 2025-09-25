@@ -182,7 +182,8 @@ export default function FormationPage () {
       categories,
       (progress: number) => {
         setExportProgress(progress);
-      }
+      },
+      followingId,
     );
     
     setIsExporting(false);
