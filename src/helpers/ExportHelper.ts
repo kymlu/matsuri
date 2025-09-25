@@ -281,8 +281,9 @@ export async function exportToPdf(
     participantPositions[section.id]?.forEach(p => {
       var category = categories[p.categoryId ?? ""];
       var participant = participants[p.participantId];
+      const isFollowing = strEquals(followingId, participant.id);
       
-      if (strEquals(followingId, participant.id)) {
+      if (isFollowing) {
         pdf.setLineWidth(2);
         pdf.setDrawColor(basePalette.primary.main);
       } else {
@@ -294,8 +295,22 @@ export async function exportToPdf(
       pdf.circle((sideMargin + p.x) * grid, (p.y + topMargin) * grid, grid * 0.4, "FD");
 
       pdf.setTextColor(category?.color.textColour ?? basePalette.black);
-      var textHeight = pdf.getTextDimensions(participant?.displayName ?? "", {maxWidth: grid}).h;
-      pdf.text(participant?.displayName ?? "", (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});
+      var displayName = participant?.displayName ?? "";
+      var textHeight = pdf.getTextDimensions(displayName, {maxWidth: grid}).h;
+      pdf.text(displayName, (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});
+
+      if (isFollowing) {
+        pdf.setLineWidth(0.8);
+        pdf.setDrawColor(basePalette.grey[800]);
+        pdf.setFillColor(basePalette.grey[50]);
+        pdf.roundedRect(grid/2, (length - 1.75) * grid, grid * 4, grid * 1.5, 5, 5, "FD");
+        var nameDimensions = pdf.getTextDimensions(displayName, {maxWidth: grid * 3.5});
+        pdf.text(displayName, grid * 2.5, (length - 1) * grid - nameDimensions.h/2, {align: "center"});
+        var coordsText = `↕︎${p.y} ↔︎${p.x}`
+        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 3.5});
+        var padding = pdf.getTextDimensions("000");
+        pdf.text(coordsText, grid * 2.5 + padding.w/2, (length - 0.55) * grid - coordsDimensions.h/2, {align: "center"});
+      }
     });
 
     updateProgress(Math.round(((i + 1) / sections.length) * 100));
