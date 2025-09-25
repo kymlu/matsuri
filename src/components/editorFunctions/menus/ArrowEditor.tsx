@@ -56,11 +56,6 @@ export default function ArrowEditor() {
     <ExpandableSection
       title="線修正"
       titleIcon={ICON.stylusNoteBlack}>
-        {/**
-         * todo
-         * add color -> color menu
-         * edit points -> arrow object. only enable if one arrow is selected
-         */}
       {
         arrow &&
         <div className="grid grid-cols-[1fr,3fr] p-1 gap-3">
@@ -102,7 +97,7 @@ export default function ArrowEditor() {
               ref={pointerBeginningRef}
               />
             <CustomSelect
-              defaultValue={arrow.pointerAtEnding ? ICON.lineStartArrowNotchBlack : ICON.lineStartBlack}
+              defaultValue={arrow.pointerAtEnding ? ICON.lineEndArrowNotchBlack : ICON.lineEndBlack}
               setValue={(newValue) => {handleBooleanValueChange(strEquals(newValue, ICON.lineEndArrowNotchBlack), "pointerAtEnding")}}
               isIcons
               items={{
