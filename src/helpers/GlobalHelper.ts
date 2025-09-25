@@ -91,9 +91,3 @@ export const useIsLandscape = (): boolean => {
   
   return isLandscape;
 };
-
-export function useIsPortraitMobile() {
-  var isLandscape = useIsLandscape();
-  var isMobile = useIsMobile();
-  return !isLandscape && isMobile;
-}
