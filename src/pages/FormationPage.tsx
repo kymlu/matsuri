@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext.tsx';
 import { FormationSection } from '../models/FormationSection.ts';
-import { isNullOrUndefined, strEquals } from '../helpers/GlobalHelper.ts';
+import { isNullOrUndefined, roundToTenth, strEquals } from '../helpers/GlobalHelper.ts';
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, ICON } from '../data/consts.ts';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
@@ -212,10 +212,6 @@ export default function FormationPage () {
     updateState({
       selectedSection: nextSection
     });
-  }
-
-  function roundToTenth(value: number) {
-    return Math.round(10 * value)/10;
   }
 
   return (

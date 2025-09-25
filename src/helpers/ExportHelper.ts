@@ -12,7 +12,7 @@ import { Prop } from "../models/Prop.ts";
 import { Song } from "../models/Song.ts";
 import { basePalette, objectPalette } from "../themes/colours.ts";
 import { formatExportDate } from "./DateHelper.ts";
-import { strEquals } from "./GlobalHelper.ts";
+import { roundToTenth, strEquals } from "./GlobalHelper.ts";
 
 export function exportAllData() {
   Promise.all([
@@ -306,7 +306,7 @@ export async function exportToPdf(
         pdf.roundedRect(grid/2, (length - 1.75) * grid, grid * 4, grid * 1.5, 5, 5, "FD");
         var nameDimensions = pdf.getTextDimensions(displayName, {maxWidth: grid * 3.5});
         pdf.text(displayName, grid * 2.5, (length - 1) * grid - nameDimensions.h/2, {align: "center"});
-        var coordsText = `↕︎${p.y} ↔︎${p.x}`
+        var coordsText = `↕︎${roundToTenth(p.y)} ↔︎${roundToTenth(Math.abs(formation.width/2 - p.x))}`
         var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 3.5});
         var padding = pdf.getTextDimensions("000");
         pdf.text(coordsText, grid * 2.5 + padding.w/2, (length - 0.55) * grid - coordsDimensions.h/2, {align: "center"});

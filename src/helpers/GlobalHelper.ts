@@ -12,6 +12,10 @@ export function isNullOrUndefined(item: any) {
   return item === null || item === undefined;
 }
 
+export function roundToTenth(value: number) {
+  return Math.round(10 * value)/10;
+}
+
 export function debounce (func: Function, delay: number) {
   let timeout: ReturnType<typeof setTimeout>;
 
