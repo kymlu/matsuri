@@ -19,7 +19,7 @@ export function EditorPageHeader() {
   const navigate = useNavigate()
   
   return (
-    <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey'>
+    <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey-200'>
       <CustomMenu
         trigger={
           <img alt="Matsuri logo" src="logo192.png" className='size-8 max-w-8 max-h-8'/>

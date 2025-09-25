@@ -18,7 +18,7 @@ export function Sidebar(props: SidebarProps) {
     setExpanded(props.defaultExpanded);
   }, [appMode]);
 
-  var classes = classNames("flex flex-col overflow-y-auto bg-white border-solid border-grey py-5",
+  var classes = classNames("flex flex-col overflow-y-auto bg-white border-solid border-grey-200 py-5",
     {
       "w-80 max-w-80": expanded,
       "border-r-2": props.isLeft,

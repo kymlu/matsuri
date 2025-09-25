@@ -61,28 +61,39 @@ export const useIsMobile = (): boolean => {
 };
 
 export const useIsLandscape = (): boolean => {
-  const [isLandscape, setIsLandscape] = useState<boolean>(false);
+  const [isLandscape, setIsLandscape] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth > window.innerHeight;
+    }
+    return false;
+  });
 
   useEffect(() => {
     const checkOrientation = () => {
-      setIsLandscape(window.innerWidth > window.innerHeight);
+      const newIsLandscape = window.innerWidth > window.innerHeight;
+      setIsLandscape(newIsLandscape);
     };
 
     const throttledCheck = throttle(checkOrientation, 200);
 
-    // Run initially
-    checkOrientation();
-
-    // Add resize and orientation change listeners
+    // Set up listeners
     window.addEventListener('resize', throttledCheck);
     window.addEventListener('orientationchange', throttledCheck);
 
-    // Cleanup
+    // Also run once in case the screen rotated *before* listeners attached
+    checkOrientation();
+
     return () => {
       window.removeEventListener('resize', throttledCheck);
       window.removeEventListener('orientationchange', throttledCheck);
     };
   }, []);
-
+  
   return isLandscape;
 };
+
+export function useIsPortraitMobile() {
+  var isLandscape = useIsLandscape();
+  var isMobile = useIsMobile();
+  return !isLandscape && isMobile;
+}

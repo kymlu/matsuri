@@ -1,39 +1,36 @@
 import { Toolbar } from "@base-ui-components/react";
 import classNames from "classnames";
 import React from "react";
-import { useIsLandscape, useIsMobile } from "../helpers/GlobalHelper.ts";
+import { useIsLandscape } from "../helpers/GlobalHelper.ts";
 
 export type CustomToolbarProps = {
   children: React.ReactNode
 }
 
 export function CustomToolbar(props: CustomToolbarProps) {
-  const verticalToolbar = useIsLandscape() && useIsMobile;
-
-  const classes = classNames("absolute flex gap-2 max-w-[90svw] max-h-[calc(100svh-80px)] p-2 align-middle rounded-md bottom-3 outline outline-grey-800 bg-grey-50", {
-    "right-3 flex-col overflow-y-auto overflow-x-hidden items-center": verticalToolbar,
-    "left-1/2 translate-x-[-50%] overflow-x-auto overflow-y-hidden": !verticalToolbar,
-  })
-
+  const verticalToolbar = useIsLandscape();
+  
   return (
     <Toolbar.Root
       orientation={verticalToolbar ? "vertical" : "horizontal"}
-      className={classes}>
+      className="landscape:absolute portrait:justify-between flex gap-2 max-h-[calc(100svh-80px)] landscape:px-2 portrait:px-5 py-2 align-middle landscape:rounded-md landscape:bottom-3 outline landscape:border-grey-800 portrait:outline-grey-200 bg-grey-50 
+        landscape:right-3 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:items-center
+        portrait:overflow-x-auto portrait:overflow-y-hidden">
       {props.children}
     </Toolbar.Root> 
   )
 }
 
 export function CustomToolbarSeparator() {
-  return <div className="flex w-full">
+  return <div className="flex landscape:w-full">
     <Toolbar.Separator
-      className="w-px h-10 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full m-1 bg-gray-300"/>
+      className="w-px h-10 m-1 bg-gray-300 landscape:h-px landscape:w-full"/>
   </div>
 }
 
 export function CustomToolbarGroup(props: {children: React.ReactNode, reverseOnVertical?: boolean}) {
-  var classnames = classNames("flex flex-row items-center flex-shrink-0 gap-2 data-[orientation=vertical]:flex-col", {
-    "data-[orientation=vertical]:flex-col-reverse": props.reverseOnVertical
+  var classnames = classNames("flex flex-row items-center flex-shrink-0 gap-2 landscape:flex-col", {
+    "landscape:flex-col-reverse": props.reverseOnVertical
   })
   return (
     <Toolbar.Group className={classnames}>
