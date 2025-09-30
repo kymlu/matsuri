@@ -51,7 +51,7 @@ export default function FestivalManager () {
             onChange={(newValue) => updateAppModeContext({appMode: newValue as AppMode})}
             currentValue={appMode}/>
         </div>
-        <Divider/>
+        <Divider primary/>
         <div className='grid landscape:grid-cols-[auto,1fr] items-center gap-3'>
           {
             festivalList.map(festival =>
