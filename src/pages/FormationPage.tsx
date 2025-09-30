@@ -52,6 +52,7 @@ export default function FormationPage () {
 
   const formationEditorRef = React.createRef<any>();
   const [exportName, setExportName] = useState<string>("");
+  const [defaultExportName, setDefaultExportName] = useState<string>("");
   
   const navigate = useNavigate();
 
@@ -61,7 +62,7 @@ export default function FormationPage () {
   const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition> | null>(null);
 
   useEffect(() => {
-    setExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
+    setDefaultExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
   }, [selectedFormation]);
 
   useEffect(() => {
@@ -170,12 +171,19 @@ export default function FormationPage () {
     return (value ?? -1) >= 0 ? value! : defaultValue
   }
 
-  async function exportPdf() {
+  async function exportPdf(followingId: string | null = null) {
     setIsExporting(true);
     setExportProgress(0);
+    var fileName = defaultExportName;
+
+    if(followingId) {
+      fileName = fileName + ` - ${participantList[followingId].displayName}`;
+    }
+
+    setExportName(fileName);
 
     await exportToPdf(
-      exportName,
+      fileName,
       selectedFormation!,
       userContext.currentSections.sort((a, b) => a.order - b.order),
       participantPositions,
@@ -239,7 +247,7 @@ export default function FormationPage () {
                 categories={categories}/>
             </div>
             <FormationRightPanel exportFunc={(exportName: string) => {
-              setExportName(exportName);
+              setDefaultExportName(exportName);
               exportPdf();
             }}/>
           </div>
@@ -285,8 +293,8 @@ export default function FormationPage () {
           firstSectionId={firstSectionId}
           lastSectionId={lastSectionId}
           selectedSectionId={selectedSectionId}
-          export={() => {
-            exportPdf();
+          export={(followingId) => {
+            exportPdf(followingId);
           }}/>
       </div>
       <ExportProgressDialog

@@ -233,7 +233,6 @@ export async function exportToPdf(
     pdf.text(section.displayName, grid/2 + grid * 2, 0.75 * grid + textDimension.h/2 - 1, {maxWidth: grid * 4, align: "center"})
 
     arrowPositions[section.id]?.forEach(a => {
-      console.log(a)
       pdf.setLineWidth(a.width * grid);
       pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
       var arrowColor = a.color?.bgColour ?? basePalette.black;

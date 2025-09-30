@@ -7,13 +7,15 @@ import { FormationSection } from "../../../models/FormationSection.ts";
 import { ZoomToolbarGroup } from "./ZoomToolbarGroup.tsx";
 import { NavigateToolbarGroup } from "./NavigateToolbarGroup.tsx";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
+import { ExportFormDialog } from "../../dialogs/ExportFormDialog.tsx";
+import { Dialog } from "@base-ui-components/react";
 
 export type FormationToolbarProps = {
   firstSectionId?: string,
   lastSectionId?: string,
   selectedSectionId?: string,
   changeSection?: (sectionId?: FormationSection, isNext?: boolean) => void,
-  export?: () => void,
+  export?: (followingId?: string) => void,
   changeFollowing?: () => void,
 }
 
@@ -22,6 +24,7 @@ export function FormationToolbar(props: FormationToolbarProps) {
   const {appMode} = useContext(AppModeContext);
   const {updateState, currentSections} = useContext(UserContext);
   const [showPrevious, setShowPrevious] = useState<boolean>(false);
+  const [showExportDialog, setShowExportDialog] = useState<boolean>(false);
 
   return (
     <CustomToolbar>
@@ -53,12 +56,22 @@ export function FormationToolbar(props: FormationToolbarProps) {
           </CustomToolbarGroup>
           <CustomToolbarSeparator/>
           <CustomToolbarGroup>
-            <CustomToolbarButton
-              text="エクスポート"
-              iconFileName={ICON.downloadBlack}
-              onClick={() => {
-                props.export?.();
-              }}/>
+            <Dialog.Root modal>
+              <Dialog.Trigger>
+                <CustomToolbarButton
+                  text="エクスポート"
+                  isDiv
+                  iconFileName={ICON.downloadBlack}
+                  onClick={() => {
+                    setShowExportDialog(true);
+                  }}/>
+              </Dialog.Trigger>
+              <ExportFormDialog 
+                onConfirm={(followingId?: string) => {
+                  props.export?.(followingId);
+                  setShowExportDialog(false);
+                  }}/>
+            </Dialog.Root>
           </CustomToolbarGroup>
         </>
       }

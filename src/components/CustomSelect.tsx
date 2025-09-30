@@ -24,7 +24,10 @@ export default function CustomSelect(props: CustomSelectProps) {
     <Select.Root
       value={value}
       items={props.items}
-      onValueChange={(newValue) => props.setValue?.(newValue)}>
+      onValueChange={(newValue) => {
+        props.setValue?.(newValue);
+        setValue(newValue);
+      }}>
       <Select.Trigger className="flex flex-row items-center justify-between w-full p-2 rounded-md outline outline-1 outline-grey-300">
         <Select.Value>
           {props.isIcons ? <img className="size-8" src={value}/> : value}
