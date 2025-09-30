@@ -9,6 +9,7 @@ import { dbController } from "../../../data/DBProvider.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
 import CustomSelect from "../../CustomSelect.tsx";
 import CustomSwitch from "../../CustomSwitch.tsx";
+import ColorPalettePicker from "./ColorPalettePicker.tsx";
 
 export default function ArrowEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -45,6 +46,15 @@ export default function ArrowEditor() {
     updatePositionContextState({arrowPositions: updatedRecord});
     dbController.upsertItem("arrowPosition", updatedArrow);
   };
+  
+  const handleStringValueChange = (newValue: string, type: "color") => {
+    var updatedRecord = {...arrowPositions};
+    var updatedArrow = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, arrow!.id))!;
+    updatedArrow.isSelected = false;
+    updatedArrow[type] = newValue;
+    updatePositionContextState({arrowPositions: updatedRecord});
+    dbController.upsertItem("arrowPosition", updatedArrow);
+  };
 
   const handleBooleanValueChange = (newValue: boolean, type: "pointerAtBeginning" | "pointerAtEnding" | "isDotted") => {
     var updatedRecord = {...arrowPositions};
@@ -62,6 +72,10 @@ export default function ArrowEditor() {
       {
         arrow &&
         <div className="grid grid-cols-[2fr,3fr] p-1 gap-3 items-center">
+          <span>色</span>
+          <ColorPalettePicker
+            color={arrow.color ?? ""}
+            onChange={(color) => handleStringValueChange(color, "color")}/>
           <span>線の太さ</span>
           <CustomSlider
             ref={widthSliderRef}

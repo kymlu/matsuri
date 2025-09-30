@@ -18,7 +18,7 @@ import {
 	PropPosition,
 	splitPositionsByType,
 } from "../../../models/Position.ts";
-import { objectColorSettings, basePalette } from "../../../themes/colours.ts";
+import { objectColorSettings, basePalette, objectPalette } from "../../../themes/colours.ts";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
 import { getPixel } from "../../../helpers/FormationHelper.ts";
 import NoteObject from "../formationObjects/NoteObject.tsx";
@@ -530,7 +530,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						points={arrow.points.map((x) => x * gridSize)}
 						tension={arrow.tension}
 						width={arrow.width * gridSize}
-						colour={arrow.color ?? objectColorSettings.indigoLight}
+						colour={arrow.color ?? objectPalette.purple.light}
 						pointerAtBeginning={arrow.pointerAtBeginning}
 						pointerAtEnding={arrow.pointerAtEnding}
 						draggable
@@ -565,7 +565,6 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 							selectItem(note, PositionType.note, isMoving, multiSelect)
 						}
 						alwaysBold={note.alwaysBold}
-						showBackground={note.showBackground}
 						draggable={appMode === "edit"}
 						ref={noteRef.current[index]}
 						selected={selectedIds.has(note.id)}

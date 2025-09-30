@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Divider from "../../Divider.tsx";
 import CategoryMenu from "../menus/CategoryMenu.tsx";
 import GridSettingsMenu from "../menus/GridSettingsMenu.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import ColorPickerMenu from "../menus/ColorPickerMenu.tsx";
+import NoteColorPresetPickerMenu from "../menus/NoteColorPickerMenu.tsx";
 import ActionMenu from "../menus/ActionMenu.tsx";
 import NameEditor from "../menus/NameEditor.tsx";
 import NoteEditor from "../menus/NoteEditor.tsx";
@@ -29,9 +29,11 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
   const {selectedItems} = useContext(UserContext);
   const [selectedPositionTypes, setSelectedPositionTypes] = useState<Set<PositionType>>();
 
-  useEffect(() => {
-    setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
-  }, [userContext.selectedItems]);
+  const selectedTypes = new Set(selectedItems.map(x => x.type));
+  // console.log(selectedTypes);
+  // useEffect(() => {
+  //   setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
+  // }, [userContext.selectedItems]);
 
   return <>
     { selectedItems.length > 0 &&
@@ -41,7 +43,7 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       </>
     }
     { selectedItems.length > 0 &&
-      selectedPositionTypes?.size === 1 &&
+      selectedTypes?.size === 1 &&
       selectedItems[0].type === PositionType.participant && // Todo make sure nothing is selected if the selected items have different categories
       <>
         <CategoryMenu/>
@@ -49,9 +51,10 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       </>
     }
     { selectedItems.length > 0 &&
-      selectedItems[0].type !== PositionType.participant &&
+      selectedTypes?.size === 1 &&
+      selectedItems[0].type === PositionType.note &&
       <>
-        <ColorPickerMenu/>
+        <NoteColorPresetPickerMenu/>
         <Divider/>
       </>
     }
@@ -71,7 +74,7 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       </>
     }
     { selectedItems.length === 1 &&
-      selectedPositionTypes?.size === 1 &&
+      selectedTypes?.size === 1 &&
       selectedItems[0].type === PositionType.note &&
       <>
         <NoteEditor/>

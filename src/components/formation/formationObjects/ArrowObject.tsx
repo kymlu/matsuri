@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Arrow, Circle } from "react-konva";
 import BaseFormationObject from "./BaseFormationObject.tsx";
-import { basePalette, ColorStyle } from "../../../themes/colours.ts";
+import { basePalette } from "../../../themes/colours.ts";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 import { useEffect } from "react";
 import { DO_NOT_UPDATE_POSITION_ATTR } from "../../../data/consts.ts";
@@ -11,7 +11,7 @@ export interface ArrowObjectProps {
   id: string,
   startX: number,
   startY: number,
-  colour: ColorStyle,
+  colour: string,
   points: number[],
   onClick?: (isMoving?: boolean, multiSelect?: boolean) => void,
   updatePosition?: (x: number, y: number) => void,
@@ -74,8 +74,8 @@ export default function ArrowObject(props: ArrowObjectProps) {
         pointerAtBeginning={props.pointerAtBeginning}
         pointerAtEnding={props.pointerAtEnding}
         strokeWidth={props.width}
-        stroke={props.colour.bgColour}
-        fill={props.colour.bgColour}
+        stroke={props.colour}
+        fill={props.colour}
         hitStrokeWidth={Math.max(props.width, 10)}
         pointerLength={props.width * props.pointerLength}
         pointerWidth={props.width * props.pointerWidth}

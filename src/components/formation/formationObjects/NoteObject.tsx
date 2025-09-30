@@ -21,7 +21,6 @@ export interface NoteObjectProps {
   fontSize?: number,
   alwaysBold?: boolean,
   hasBorder: boolean,
-  showBackground?: boolean,
   ref?: React.Ref<any>,
   selected?: boolean,
 }
@@ -39,11 +38,11 @@ export default function NoteObject(props: NoteObjectProps) {
       startY={props.startY}
       draggable={props.draggable}>
       {
-        (props.showBackground || props.selected) &&
+        (props.colour.bgColour || props.selected) &&
         <Rect
           width={props.length * gridSize}
           height={props.height * gridSize}
-          fill={props.showBackground ? props.colour.bgColour : undefined}
+          fill={props.colour.bgColour}
           stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
           strokeWidth={props.selected ? gridSize/20 : props.hasBorder ? gridSize/30 : 0}
           cornerRadius={props.borderRadius} />
@@ -59,7 +58,7 @@ export default function NoteObject(props: NoteObjectProps) {
             fontSize={props.fontSize ?? DEFAULT_FONT_SIZE}
             fontStyle="bold"
             verticalAlign="middle"
-            fill={props.showBackground ? props.colour.textColour : basePalette.black}/>
+            fill={props.colour.textColour ?? basePalette.black}/>
           <Line
             points={[0, 0.5 * gridSize, props.length * gridSize, 0.5 * gridSize]}
             stroke={basePalette.black}
@@ -74,7 +73,7 @@ export default function NoteObject(props: NoteObjectProps) {
         padding={2}
         fontSize={props.fontSize ?? DEFAULT_FONT_SIZE}
         fontStyle={props.alwaysBold ? "bold" : "normal"}
-        fill={props.showBackground ? props.colour.textColour : basePalette.black}
+        fill={props.colour.textColour ?? basePalette.black}
         verticalAlign="middle"
         align="center" />
       

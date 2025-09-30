@@ -4,7 +4,7 @@ import ExpandableSection from "../../ExpandableSection.tsx";
 import ItemButton from "../../ItemButton.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ArrowPosition } from "../../../models/Position.ts";
-import { objectColorSettings } from "../../../themes/colours.ts";
+import { objectPalette } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { ICON } from "../../../data/consts.ts";
@@ -31,7 +31,7 @@ export default function ArrowPicker (props: {margins: number[][]}) {
       pointerAtBeginning: arrow.pointerAtBeginning,
       pointerAtEnding: arrow.pointerAtEnding,
       width: 0.1,
-      color: objectColorSettings.purpleLight,
+      color: objectPalette.purple.light,
       isSelected: false,
       pointerLength: 1,
       pointerWidth: 1,

@@ -10,7 +10,7 @@ import { dbController } from "../../../data/DBProvider.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
-import ColorPicker from "./ColorPicker.tsx";
+import ColorPresetPicker from "./ColorPresetPicker.tsx";
 import CustomMenu from "../../CustomMenu.tsx";
 import Button from "../../Button.tsx";
 import { ICON } from "../../../data/consts.ts";
@@ -143,9 +143,10 @@ export default function CategoryMenu() {
                   trigger={
                     <ColorSwatch
                       onClick={() => selectCategoryToEdit(category.id)}
-                      tailwindColorClassName={category?.color?.twColor}/>
+                      tailwindColorClassName={category?.color?.twColor}
+                      colorHexCode={category?.color?.bgColour!}/>
                   }>
-                    <ColorPicker
+                    <ColorPresetPicker
                       selectColor={(color) => {selectColor(color, category)}}
                       selectedColor={category?.color}/>
                 </CustomMenu>

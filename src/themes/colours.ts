@@ -26,64 +26,91 @@ export type BasePalette = typeof basePalette;
 
 export const objectPalette = {
   red: {
+    darkest: "#991f23",
+    darker: "#cc3b3f",
     main: "#FF595E",
-    light: "#FF7D81", 
+    light: "#FF7D81",
     lightest: "#FFB3B5",
   },
   orange: {
+    darkest: "#993c14",
+    darker: "#cc5f25",
     main: "#FF924C",
     light: "#FFAD75",
     lightest: "#FFD1AD",
   },
   amber: {
+    darkest: "#996400",
+    darker: "#cc9900",
     main: "#FFCA3A",
     light: "#FFD766",
     lightest: "#FFE8A3",
   },
   lime: {
+    darkest: "#666b0d",
+    darker: "#9ba312",
     main: "#C5CA30",
     light: "#D6DB5A",
     lightest: "#E9EE9B",
   },
   green: {
+    darkest: "#3c5a0c",
+    darker: "#629419",
     main: "#8AC926",
     light: "#A3D94F",
     lightest: "#C7EB94",
   },
   cyan: {
+    darkest: "#1d4d52",
+    darker: "#28787f",
     main: "#36949D",
     light: "#5AB0B9",
     lightest: "#9ED5DA",
   },
   blue: {
+    darkest: "#0b3d66",
+    darker: "#1168a1",
     main: "#1982C4",
     light: "#4D9ED1",
     lightest: "#95C6E3",
   },
   indigo: {
+    darkest: "#1f3360",
+    darker: "#324d89",
     main: "#4267AC",
     light: "#6887C1",
     lightest: "#A3B3D9",
   },
   violet: {
+    darkest: "#2b2e57",
+    darker: "#424684",
     main: "#565AA0",
     light: "#7A7EB7",
     lightest: "#B1B4D6",
   },
   purple: {
+    darkest: "#2e1d47",
+    darker: "#4c3270",
     main: "#6A4C93",
     light: "#8A71AC",
     lightest: "#B6A2CD",
   },
 };
 
+export const colorPickerSelection = [
+  ...Object.values(objectPalette).flatMap(Object.values),
+  ...Object.values(basePalette.grey),
+  basePalette.black,
+  basePalette.white,
+];
+
 export type ObjectPalette = typeof objectPalette;
 
 export type ColorStyle = {
-  bgColour: string;
+  bgColour?: string | undefined;
   twColor: string;
-  textColour: string;
-  borderColour: string;
+  textColour?: string | undefined;
+  borderColour?: string | undefined;
 };
 
 export type ColorNames = "redMain" | "redLight" | "redLightest" |

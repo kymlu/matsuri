@@ -2,7 +2,7 @@ import { Switch } from "@base-ui-components/react";
 import React, { useImperativeHandle } from "react";
 
 export interface CustomSwitchProps {
-  label: string
+  label?: string
   defaultChecked?: boolean,
   onChange?: (checked: boolean) => void,
   ref?: React.Ref<any>,
@@ -23,8 +23,8 @@ export default function CustomSwitch(props: CustomSwitchProps){
   }
 
   return (
-    <div className="grid grid-cols-[auto,1fr] gap-2 items-center my-2">
-      <label>{props.label}</label>
+    <div className={"grid gap-2 items-center my-2 " + (props.label ? "grid-cols-[auto,1fr]" : "")}>
+      {props.label && <label>{props.label}</label>}
       <Switch.Root
         checked={checked}
         defaultChecked={props.defaultChecked ?? false}

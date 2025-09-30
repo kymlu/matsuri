@@ -235,7 +235,7 @@ export async function exportToPdf(
     arrowPositions[section.id]?.forEach(a => {
       pdf.setLineWidth(a.width * grid);
       pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
-      var arrowColor = a.color?.bgColour ?? basePalette.black;
+      var arrowColor = a.color ?? basePalette.black;
       pdf.setDrawColor(arrowColor);
       // Todo: lines cannot control the tension so not allowing curves
       pdf.line((sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, (sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid);
@@ -257,7 +257,7 @@ export async function exportToPdf(
 
     notePositions[section.id]?.forEach(n => {
       pdf.setFontSize(grid * n.fontGridRatio)
-      if (n.showBackground) {
+      if (n.color?.bgColour) {
         pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
         pdf.setFillColor(n?.color?.bgColour ?? basePalette.white);
         pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, "FD");

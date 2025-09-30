@@ -27,7 +27,6 @@ export interface NotePosition extends BasePosition {
   borderRadius: number,
   fontGridRatio: number,
   alwaysBold?: boolean,
-  showBackground?: boolean,
 }
 
 export interface ArrowPosition extends BasePosition {
@@ -38,7 +37,7 @@ export interface ArrowPosition extends BasePosition {
   width: number,
   pointerWidth: number,
   pointerLength: number,
-  color?: ColorStyle,
+  color?: string,
   isDotted?: boolean,
 }
 
