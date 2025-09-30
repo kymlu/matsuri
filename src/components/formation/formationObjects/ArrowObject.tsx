@@ -70,7 +70,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
       <Arrow
         ref={props.arrowRef}
         points={props.points}
-        tension={props.tension}
+        // tension={props.tension} // Exports cannot handle tension so removing for the time being
         pointerAtBeginning={props.pointerAtBeginning}
         pointerAtEnding={props.pointerAtEnding}
         strokeWidth={props.width}

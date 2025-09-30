@@ -72,7 +72,7 @@ export default function ArrowEditor() {
             setValue={(newValue) => {
               handleNumericValueChange(newValue, "width")
             }}/>
-          {
+          {/* { // TODO: exports cannot handle tension so removing for now
             arrow?.points.length === 6 && 
             <>
               <span>角の丸さ</span>
@@ -86,7 +86,7 @@ export default function ArrowEditor() {
                   handleNumericValueChange(newValue, "tension")
                 }}/>
             </>
-          }
+          } */}
           <div className="col-span-2">
             <CustomSwitch
               ref={isDottedRef}

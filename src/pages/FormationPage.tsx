@@ -40,7 +40,7 @@ export default function FormationPage () {
   const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {appMode} = useContext(AppModeContext);
-  const {participantPositions, propPositions, notePositions, updatePositionContextState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState} = useContext(PositionContext);
   const {updateAnimationContext} = useContext(AnimationContext);
   const {updateEntitiesContext, participantList, propList} = useContext(EntitiesContext);
 
@@ -183,6 +183,7 @@ export default function FormationPage () {
       propPositions,
       propList,
       notePositions,
+      arrowPositions,
       categories,
       (progress: number) => {
         setExportProgress(progress);

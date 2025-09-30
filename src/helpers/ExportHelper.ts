@@ -106,6 +106,7 @@ export async function exportToPdf(
   propPositions: Record<string, PropPosition[]>, // todo: add arrows
   props: Record<string, Prop>,
   notePositions: Record<string, NotePosition[]>,
+  arrowPositions: Record<string, ArrowPosition[]>,
   categories: Record<string, ParticipantCategory>,
   updateProgress: (progress: number) => void,
   followingId?: string | null,
@@ -231,6 +232,30 @@ export async function exportToPdf(
     pdf.roundedRect(grid/2, grid/4, grid * 4, grid, 5, 5, "FD");
     pdf.text(section.displayName, grid/2 + grid * 2, 0.75 * grid + textDimension.h/2 - 1, {maxWidth: grid * 4, align: "center"})
 
+    arrowPositions[section.id]?.forEach(a => {
+      console.log(a)
+      pdf.setLineWidth(a.width * grid);
+      pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
+      var arrowColor = a.color?.borderColour ?? basePalette.black;
+      pdf.setDrawColor(arrowColor);
+      // Todo: lines cannot control the tension so not allowing curves
+      pdf.line((sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, (sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid);
+      if (a.points.length === 6) { 
+        pdf.line((sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid, (sideMargin + a.x + a.points[4]) * grid, (topMargin + a.y + a.points[5]) * grid);
+      }
+      // TODO: pointers are bugged so not exporting for now
+      // if (a.pointerAtBeginning) {
+      //   createArrow(pdf, (sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, a.pointerWidth * a.width * grid, a.pointerLength * a.width * grid, arrowColor);
+      // }
+      // if (a.pointerAtEnding) {
+      //   const endIndex = a.points.length === 6 ? 4 : 2;
+      //   createArrow(pdf, (sideMargin + a.x + a.points[endIndex]) * grid, (topMargin + a.y + a.points[endIndex + 1]) * grid, a.pointerWidth * a.width * grid, a.pointerLength * a.width * grid, arrowColor);
+      // }
+    });
+
+    pdf.setLineDashPattern([], 0);
+    pdf.setLineWidth(0.8);
+
     notePositions[section.id]?.forEach(n => {
       pdf.setFontSize(grid * n.fontGridRatio)
       if (n.showBackground) {
@@ -319,4 +344,15 @@ export async function exportToPdf(
   }
 
   pdf.save(fileName ?? `${formation.name}_formation.pdf`);
+}
+
+// https://stackoverflow.com/questions/77059237/jspdf-button-arrow
+// TODO: adapt this to draw arrows on a slant
+function createArrow(doc, x: number, y: number, width: number, length: number, color: string, stroke?: "S" | "F" | "FD") {
+  const coef = width * 0.175 / 0.5;
+  doc.setLineWidth(width);
+  doc.setDrawColor(color);
+  doc.setLineDashPattern([], 0);
+  doc.line(x - length, y - length, x + coef, y + coef, stroke);
+  doc.line(x + coef, y - coef, x - length, y + length, stroke);
 }

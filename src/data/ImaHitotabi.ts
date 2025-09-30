@@ -302,6 +302,7 @@ export const notePresets: Array<NotePreset> = [
   }
 ]
 
+// TODO: exports can't handle tension so removing curves for the time being
 export const arrowPresets: Array<ArrowPreset> = [
   {
     iconFileName: ICON.horizontalRuleBlack,
@@ -310,13 +311,13 @@ export const arrowPresets: Array<ArrowPreset> = [
     pointerAtEnding: false,
     points: [0, 4, 4, 0],
   },
-  {
-    iconFileName: ICON.lineCurveBlack,
-    tension: 0.3,
-    pointerAtBeginning: false,
-    pointerAtEnding: false,
-    points: [0, 4, 1, 1, 4, 0],
-  },
+  // {
+  //   iconFileName: ICON.lineCurveBlack,
+  //   tension: 0.3,
+  //   pointerAtBeginning: false,
+  //   pointerAtEnding: false,
+  //   points: [0, 4, 1, 1, 4, 0],
+  // },
   {
     iconFileName: ICON.turnRightBlack,
     tension: 0,
@@ -338,11 +339,11 @@ export const arrowPresets: Array<ArrowPreset> = [
     pointerAtEnding: true,
     points: [0, 4, 4, 0],
   },
-  {
-    iconFileName: ICON.switchAccessShortcut,
-    tension: 0.3,
-    pointerAtBeginning: false,
-    pointerAtEnding: true,
-    points: [0, 4, 1, 1, 4, 0],
-  },
+  // {
+  //   iconFileName: ICON.switchAccessShortcut,
+  //   tension: 0.3,
+  //   pointerAtBeginning: false,
+  //   pointerAtEnding: true,
+  //   points: [0, 4, 1, 1, 4, 0],
+  // },
 ]
