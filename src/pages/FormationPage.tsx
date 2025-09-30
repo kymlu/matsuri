@@ -220,7 +220,7 @@ export default function FormationPage () {
 
   return (
     <div className='h-full overflow-hidden'>
-      <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 portrait:grid-rows-[64px_calc(100svh-128px)_64px] landscape:grid-rows-[60px_calc(100svh-60px)]'>
+      <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 portrait:grid-rows-[64px_calc(100svh-136px)_72px] landscape:grid-rows-[60px_calc(100svh-60px)]'>
         <EditorPageHeader/>
         { 
           appMode === "edit" &&
