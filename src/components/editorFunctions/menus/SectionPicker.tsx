@@ -318,7 +318,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 			title="セクション"
 			defaultIsExpanded
 			titleIcon={ICON.listsBlack}>
-			<div className="flex flex-col overflow-x-hidden overflow-y-auto max-h-28">
+			<div className="flex flex-col overflow-x-hidden overflow-y-auto max-h-36">
 				{currentSections
 					.sort((a, b) => a.order - b.order)
 					.map((section, index, array) => (

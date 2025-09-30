@@ -82,18 +82,39 @@ function SectionPicker (props: {
   onChange?: (sectionId?: FormationSection, isNext?: boolean) => void,
 }) {
   const {currentSections, selectedSection} = useContext(UserContext);
+	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
+
+  useEffect(() => {
+    currentSections
+      .forEach((_, index) => 
+        sectionButtonRef.current[index] = React.createRef<HTMLDivElement>()
+      );
+  }, [currentSections]);
+
+  useEffect(() => {
+    const selectedIndex = currentSections.findIndex(section => strEquals(section.id, selectedSection?.id));
+    if (selectedIndex >= 0) {
+      sectionButtonRef.current[selectedIndex]?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }, [selectedSection]);
   return (
     <>
       {
-        currentSections.map((section) => 
-          <SectionOptionButton
-            key={section.id}
-            canEdit={false}
-            text={section.displayName}
-            isSelected={strEquals(selectedSection?.id, section.id)}
-            onClick={() => {
+        currentSections
+					.sort((a, b) => a.order - b.order)
+          .map((section, index) => 
+            <SectionOptionButton
+              key={section.id}
+              canEdit={false}
+              text={section.displayName}
+              isSelected={strEquals(selectedSection?.id, section.id)}
+              ref={sectionButtonRef.current[index]}
+              onClick={() => {
               props.onChange?.(section, undefined);
-            }}/>
+              }}/>
         )
       }
     </>

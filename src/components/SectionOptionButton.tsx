@@ -4,6 +4,7 @@ import CustomMenu from "./CustomMenu.tsx";
 import { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import TextInput from "./TextInput.tsx";
 import { ICON } from "../data/consts.ts";
+import { AppModeContext } from "../contexts/AppModeContext.tsx";
 
 export interface ListOptionButtonProps {
   text: string,
@@ -24,10 +25,12 @@ export interface ListOptionButtonProps {
 
 export default function SectionOptionButton (props: ListOptionButtonProps) {
   const [isEditing, setIsEditing] = React.useState(false);
+  const {appMode} = React.useContext(AppModeContext);
 
-  const classes = className("grid grid-cols-[1fr,auto] gap-2 px-5 items-center border-primary border-b-2 last-of-type:border-0", {
+  const classes = className("grid gap-2 px-5 py-1 items-center border-primary border-b-2 last-of-type:border-0", {
     "bg-primary text-white cursor-default": props.isSelected,
     "cursor-pointer": !props.isSelected && !props.disabled,
+    "grid-cols-[1fr,auto]": appMode === "edit",
   });
 
   function onClick(e: React.MouseEvent<HTMLDivElement>) {
