@@ -541,6 +541,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						onClick={(isMoving?: boolean, multiSelect?: boolean) => {
 							selectItem(arrow, PositionType.arrow, isMoving,multiSelect);
 						}}
+						isDotted={arrow.isDotted}
 						/>
 				)
 			}

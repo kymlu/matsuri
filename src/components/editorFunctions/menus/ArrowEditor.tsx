@@ -8,6 +8,7 @@ import CustomSlider from "../../CustomSlider.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
 import CustomSelect from "../../CustomSelect.tsx";
+import CustomSwitch from "../../CustomSwitch.tsx";
 
 export default function ArrowEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -19,6 +20,8 @@ export default function ArrowEditor() {
   const pointerEndingRef = React.createRef<any>();
   const pointerWidthRef = React.createRef<any>();
   const pointerLengthRef = React.createRef<any>();
+  const [isDotted, setIsDotted] = useState<boolean>(false);
+  const isDottedRef = React.createRef<any>();
 
   useContext(PositionContext);
 
@@ -31,6 +34,7 @@ export default function ArrowEditor() {
     tensionSliderRef?.current?.changeValue(arrow.tension);
     pointerBeginningRef?.current?.changeValue(arrow.pointerAtBeginning.valueOf.toString());
     pointerEndingRef?.current?.changeValue(arrow.pointerAtEnding.valueOf.toString());
+    setIsDotted(arrow?.isDotted || false);
   }, [selectedItems]);
 
   const handleNumericValueChange = (newValue: number, type: "width" | "tension" | "pointerWidth" | "pointerLength") => {
@@ -42,8 +46,7 @@ export default function ArrowEditor() {
     dbController.upsertItem("arrowPosition", updatedArrow);
   };
 
-  const handleBooleanValueChange = (newValue: boolean, type: "pointerAtBeginning" | "pointerAtEnding") => {
-    console.log(newValue, type)
+  const handleBooleanValueChange = (newValue: boolean, type: "pointerAtBeginning" | "pointerAtEnding" | "isDotted") => {
     var updatedRecord = {...arrowPositions};
     var updatedArrow = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, arrow!.id))!;
     updatedArrow.isSelected = false;
@@ -58,7 +61,7 @@ export default function ArrowEditor() {
       titleIcon={ICON.stylusNoteBlack}>
       {
         arrow &&
-        <div className="grid grid-cols-[1fr,3fr] p-1 gap-3">
+        <div className="grid grid-cols-[2fr,3fr] p-1 gap-3 items-center">
           <span>線の太さ</span>
           <CustomSlider
             ref={widthSliderRef}
@@ -84,6 +87,13 @@ export default function ArrowEditor() {
                 }}/>
             </>
           }
+          <div className="col-span-2">
+            <CustomSwitch
+              ref={isDottedRef}
+              label="点線"
+              onChange={e => handleBooleanValueChange(e, "isDotted")}
+              defaultChecked={isDotted}/>
+          </div>
           <span>先端</span>
           <div className="flex flex-row gap-3">
             <CustomSelect

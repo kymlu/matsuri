@@ -28,6 +28,7 @@ export interface ArrowObjectProps {
   pointerWidth: number,
   pointerLength: number,
   width: number,
+  isDotted?: boolean,
 }
 
 export default function ArrowObject(props: ArrowObjectProps) {
@@ -78,6 +79,7 @@ export default function ArrowObject(props: ArrowObjectProps) {
         hitStrokeWidth={Math.max(props.width, 10)}
         pointerLength={props.width * props.pointerLength}
         pointerWidth={props.width * props.pointerWidth}
+        dash={props.isDotted ? [gridSize / 5, gridSize / 10] : []}
         />
       {
         props.isOnlyOneSelected && 

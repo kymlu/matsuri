@@ -39,6 +39,7 @@ export interface ArrowPosition extends BasePosition {
   pointerWidth: number,
   pointerLength: number,
   color?: ColorStyle,
+  isDotted?: boolean,
 }
 
 export enum PositionType {

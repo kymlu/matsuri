@@ -31,7 +31,7 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
 
   useEffect(() => {
     setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
-  }, [userContext.selectedItems])
+  }, [userContext.selectedItems]);
 
   return <>
     { selectedItems.length > 0 &&
@@ -42,29 +42,29 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
     }
     { selectedItems.length > 0 &&
       selectedPositionTypes?.size === 1 &&
-      selectedPositionTypes.has(PositionType.participant) && // Todo make sure nothing is selected if the selected items have different categories
+      selectedItems[0].type === PositionType.participant && // Todo make sure nothing is selected if the selected items have different categories
       <>
         <CategoryMenu/>
         <Divider/>
       </>
     }
     { selectedItems.length > 0 &&
-      !selectedPositionTypes?.has(PositionType.participant) &&
+      selectedItems[0].type !== PositionType.participant &&
       <>
         <ColorPickerMenu/>
         <Divider/>
       </>
     }
     { selectedItems.length === 1 &&
-      (selectedPositionTypes?.has(PositionType.prop) ||
-        selectedPositionTypes?.has(PositionType.participant)) &&
+      (selectedItems[0].type === PositionType.prop ||
+        selectedItems[0].type === PositionType.participant) &&
       <>
         <NameEditor/>
         <Divider/>
       </>
     }
     { selectedItems.length === 1 &&
-      selectedPositionTypes?.has(PositionType.arrow) &&
+      selectedItems[0].type === PositionType.arrow &&
       <>
         <ArrowEditor/>
         <Divider/>
@@ -72,7 +72,7 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
     }
     { selectedItems.length === 1 &&
       selectedPositionTypes?.size === 1 &&
-      selectedPositionTypes.has(PositionType.note) &&
+      selectedItems[0].type === PositionType.note &&
       <>
         <NoteEditor/>
         <Divider/>
