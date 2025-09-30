@@ -236,7 +236,7 @@ export async function exportToPdf(
       console.log(a)
       pdf.setLineWidth(a.width * grid);
       pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
-      var arrowColor = a.color?.borderColour ?? basePalette.black;
+      var arrowColor = a.color?.bgColour ?? basePalette.black;
       pdf.setDrawColor(arrowColor);
       // Todo: lines cannot control the tension so not allowing curves
       pdf.line((sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, (sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid);
