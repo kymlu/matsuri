@@ -84,6 +84,10 @@ export default function FormationPage () {
         selectedFormation?.sideMargin));
     }
   }, [appMode, gridSize]);
+
+  useEffect(() => {
+    updateVisualSettingsContext({followingId: null});
+  }, [appMode]);
   
   useEffect(() => {
     if (isNullOrUndefined(selectedFormation)) {
