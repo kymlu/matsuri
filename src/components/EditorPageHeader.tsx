@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../data/consts.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { Dialog } from "@base-ui-components/react";
 
 export function EditorPageHeader() {
-  const {selectedFestival, updateState} = useContext(UserContext);
+  const {selectedFestival, selectedSection, updateState} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation, updateFormationContext} = useContext(FormationContext);
   const {appMode, updateAppModeContext} = useContext(AppModeContext);
@@ -46,10 +46,10 @@ export function EditorPageHeader() {
         </>
       </CustomMenu>
       {
-      selectedFormation && selectedFestival &&
-      <h1 className='px-2 font-bold text-center'>
-        {selectedFormation?.name}{appMode === "edit" && ` (${selectedFormation.width} x ${selectedFormation.length})`}・ {selectedFestival?.name}
-      </h1>
+      <HeaderNameSection
+        sectionTitle={selectedSection?.displayName}
+        festivalTitle={selectedFestival?.name}
+        formationTitle={selectedFormation?.name}/>
       }
       <div className="flex flex-row gap-2">
         <button
@@ -94,3 +94,30 @@ export function EditorPageHeader() {
     </header>
   )
 }
+
+export type HeaderNameSectionProps = {
+  festivalTitle?: string,
+  formationTitle?: string,
+  sectionTitle?: string,
+}
+
+export function HeaderNameSection (props: HeaderNameSectionProps) {
+  return (
+    <>
+      {/* Portrait layout */}
+      <div className="portrait:flex portrait:flex-col portrait:items-center landscape:hidden text-grey-700">
+        <span className="text-sm">{props.festivalTitle} › {props.formationTitle}</span>
+        <span className="text-base font-bold">{props.sectionTitle}</span>
+      </div>
+
+      {/* Landscape layout */}
+      <div className="items-center space-x-2 text-lg font-semibold text-grey-700 portrait:hidden landscape:flex">
+        <span>{props.festivalTitle}</span>
+        <span>›</span>
+        <span>{props.formationTitle}</span>
+        <span>›</span>
+        <span>{props.sectionTitle}</span>
+      </div>
+    </>
+  );
+};
