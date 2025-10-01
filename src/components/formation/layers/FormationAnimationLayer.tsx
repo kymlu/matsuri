@@ -64,6 +64,8 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
         const step = pathLen / steps;
         let pos = 0;
 
+        participantRef.current[index].current?.cache();
+
         // Wrap each animation in a Promise
         const animPromise = new Promise<void>((resolve) => {
           const anim = new Konva.Animation(() => {
@@ -98,6 +100,8 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
         const step = pathLen / steps;
         const anglePerStep = (pathData.toAngle! - pathData.fromAngle!)/steps;
         let pos = 0;
+
+        propRef.current[index].current?.cache();
 
         // Wrap each animation in a Promise
         const animPromise = new Promise<void>((resolve) => {
