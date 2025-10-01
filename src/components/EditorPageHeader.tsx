@@ -57,7 +57,7 @@ export function EditorPageHeader() {
             updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
             updateAppModeContext({appMode: appMode === "edit" ? "view" : "edit"});
           }}>
-          <img className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
+          <img alt={appMode === "edit" ? "Go to viewer" : "Go to editor"} className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
         </button>
         <CustomMenu trigger={
           <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
