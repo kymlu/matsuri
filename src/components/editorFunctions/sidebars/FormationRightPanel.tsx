@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Divider from "../../Divider.tsx";
 import CategoryMenu from "../menus/CategoryMenu.tsx";
 import GridSettingsMenu from "../menus/GridSettingsMenu.tsx";
@@ -29,11 +29,9 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
   const {selectedItems} = useContext(UserContext);
   const [selectedPositionTypes, setSelectedPositionTypes] = useState<Set<PositionType>>();
 
-  const selectedTypes = new Set(selectedItems.map(x => x.type));
-  // console.log(selectedTypes);
-  // useEffect(() => {
-  //   setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
-  // }, [userContext.selectedItems]);
+  useEffect(() => {
+    setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
+  }, [userContext.selectedItems]);
 
   return <>
     { selectedItems.length > 0 &&
@@ -43,7 +41,7 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       </>
     }
     { selectedItems.length > 0 &&
-      selectedTypes?.size === 1 &&
+      selectedPositionTypes?.size === 1 &&
       selectedItems[0].type === PositionType.participant && // Todo make sure nothing is selected if the selected items have different categories
       <>
         <CategoryMenu/>
@@ -51,7 +49,7 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       </>
     }
     { selectedItems.length > 0 &&
-      selectedTypes?.size === 1 &&
+      selectedPositionTypes?.size === 1 &&
       selectedItems[0].type === PositionType.note &&
       <>
         <NoteColorPresetPickerMenu/>
@@ -74,7 +72,6 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       </>
     }
     { selectedItems.length === 1 &&
-      selectedTypes?.size === 1 &&
       selectedItems[0].type === PositionType.note &&
       <>
         <NoteEditor/>

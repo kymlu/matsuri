@@ -12,9 +12,9 @@ import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { Dialog } from "@base-ui-components/react";
 
 export function EditorPageHeader() {
-  const {selectedFestival, selectedSection, updateState} = useContext(UserContext);
+  const {selectedFestival, selectedSection} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
-  const {selectedFormation, updateFormationContext} = useContext(FormationContext);
+  const {selectedFormation} = useContext(FormationContext);
   const {appMode, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate()
   
@@ -26,12 +26,6 @@ export function EditorPageHeader() {
         }>
         <>
           <MenuItem label="ホームに戻る" onClick={() => {
-            updateState({
-              selectedSection: null,
-              selectedFestival: null,
-              selectedItems: [],
-            });
-            updateFormationContext({selectedFormation: undefined});
             navigate("../");
           }} />
           <MenuSeparator/>
