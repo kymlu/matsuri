@@ -237,19 +237,19 @@ export async function exportToPdf(
       pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
       var arrowColor = a.color ?? basePalette.black;
       pdf.setDrawColor(arrowColor);
+      pdf.setFillColor(arrowColor);
       // Todo: lines cannot control the tension so not allowing curves
       pdf.line((sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, (sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid);
       if (a.points.length === 6) { 
         pdf.line((sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid, (sideMargin + a.x + a.points[4]) * grid, (topMargin + a.y + a.points[5]) * grid);
       }
-      // TODO: pointers are bugged so not exporting for now
-      // if (a.pointerAtBeginning) {
-      //   createArrow(pdf, (sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, a.pointerWidth * a.width * grid, a.pointerLength * a.width * grid, arrowColor);
-      // }
-      // if (a.pointerAtEnding) {
-      //   const endIndex = a.points.length === 6 ? 4 : 2;
-      //   createArrow(pdf, (sideMargin + a.x + a.points[endIndex]) * grid, (topMargin + a.y + a.points[endIndex + 1]) * grid, a.pointerWidth * a.width * grid, a.pointerLength * a.width * grid, arrowColor);
-      // }
+      if (a.pointerAtBeginning) {
+        drawTriangleAtPoint([a.points[0], a.points[1]], [a.points[2], a.points[3]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
+      }
+      if (a.pointerAtEnding) {
+        const endIndex = a.points.length === 6 ? 4 : 2;
+        drawTriangleAtPoint([a.points[endIndex], a.points[endIndex + 1]], [a.points[endIndex - 2], a.points[endIndex - 1]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
+      }
     });
 
     pdf.setLineDashPattern([], 0);
@@ -345,13 +345,53 @@ export async function exportToPdf(
   pdf.save(fileName ?? `${formation.name}_formation.pdf`);
 }
 
-// https://stackoverflow.com/questions/77059237/jspdf-button-arrow
-// TODO: adapt this to draw arrows on a slant
-function createArrow(doc, x: number, y: number, width: number, length: number, color: string, stroke?: "S" | "F" | "FD") {
-  const coef = width * 0.175 / 0.5;
-  doc.setLineWidth(width);
-  doc.setDrawColor(color);
-  doc.setLineDashPattern([], 0);
-  doc.line(x - length, y - length, x + coef, y + coef, stroke);
-  doc.line(x + coef, y - coef, x - length, y + length, stroke);
+type Point = [number, number];
+
+function drawTriangleAtPoint(
+  A: Point,
+  B: Point,
+  position: Point,
+  topMargin: number,
+  sideMargin: number,
+  grid: number,
+  width: number,
+  length: number,
+  pdf: jsPDF
+){
+  const [x1, y1] = A;
+  const [x2, y2] = B;
+
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const lineLen = Math.hypot(dx, dy);
+
+  if (lineLen === 0) {
+    throw new Error("Points A and B must not be the same");
+  }
+
+  // Normalize direction vector
+  let dirX = dx / lineLen;
+  let dirY = dy / lineLen;
+
+  // Perpendicular vector (90 degrees rotation)
+  const perpX = -dirY;
+  const perpY = dirX;
+
+  // Tip point (either A or B depending on direction)
+  const [tipX, tipY] = [x1, y1];
+
+  // Base center = tip + (direction * length)
+  const baseCenterX = tipX + dirX * length;
+  const baseCenterY = tipY + dirY * length;
+
+  const halfW = width / 2;
+  // Triangle points: tip, left of base, right of base
+  pdf.triangle(
+    (tipX + sideMargin + position[0]) * grid,
+    (tipY + topMargin + position[1]) * grid, 
+    (baseCenterX + perpX * halfW + sideMargin + position[0]) * grid,
+    (baseCenterY + perpY * halfW + topMargin + position[1]) * grid,
+    (baseCenterX - perpX * halfW + sideMargin + position[0]) * grid,
+    (baseCenterY - perpY * halfW + topMargin + position[1]) * grid,
+    "FD");
 }
