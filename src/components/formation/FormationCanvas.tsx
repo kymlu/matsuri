@@ -54,8 +54,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
   }, [currentSections])
 
   useEffect(() => {
-    if(isNullOrUndefined(selectedSection) || appMode === "view") return;
-    
+    if(isNullOrUndefined(userContext.selectedSection) || appMode === "view") return;
     if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
       updateState({isLoading: true});
       var participantPaths = getParticipantAnimationPaths(

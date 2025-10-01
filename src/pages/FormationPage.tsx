@@ -26,6 +26,7 @@ import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { FormationType } from '../models/Formation.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
+import { SettingsContext } from '../contexts/SettingsContext.tsx';
 
 export type MarginPositions = {
   participants: number[][],
@@ -39,6 +40,7 @@ export default function FormationPage () {
   const {categories, updateCategoryContext} = useContext(CategoryContext);
   const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
+  const {enableAnimation} = useContext(SettingsContext);
   const {appMode} = useContext(AppModeContext);
   const {participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState} = useContext(PositionContext);
   const {updateAnimationContext} = useContext(AnimationContext);
@@ -208,23 +210,33 @@ export default function FormationPage () {
     const nextSection = section ?? userContext.currentSections.sort((a, b) => a.order - b.order)[index + (isNext ? 1 : -1)];
     const from = selectedSectionId;
     const to = nextSection.id;
-    const paths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to));
-
-    if (paths) {
-      const participantPaths = paths?.participantPaths;
-      const propPaths = paths?.propPaths;
-      if (participantPaths || propPaths) {
-        updateAnimationContext({
-          participantPaths: participantPaths,
-          propPaths: propPaths,
-          isAnimating: true
-        });
+    
+    if (appMode === "edit") {
+      updateState({
+        isLoading: enableAnimation,
+        previousSectionId: from,
+        selectedSection: nextSection,
+        selectedItems: [],
+      });
+    } else {
+      const paths = animationPaths.find(x => strEquals(x.fromSectionId, from) && strEquals(x.toSectionId, to));
+  
+      if (paths) {
+        const participantPaths = paths?.participantPaths;
+        const propPaths = paths?.propPaths;
+        if (participantPaths || propPaths) {
+          updateAnimationContext({
+            participantPaths: participantPaths,
+            propPaths: propPaths,
+            isAnimating: true
+          });
+        }
       }
+  
+      updateState({
+        selectedSection: nextSection
+      });
     }
-
-    updateState({
-      selectedSection: nextSection
-    });
   }
 
   return (

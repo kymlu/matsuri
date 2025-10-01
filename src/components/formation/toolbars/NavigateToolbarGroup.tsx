@@ -11,7 +11,7 @@ export function NavigateToolbarGroup(props: {
   disablePrevious: boolean,
   disableList: boolean,
   disableNext: boolean,
-  onChange?: (sectionId?: FormationSection, isNext?: boolean) => void,
+  onChange?: (section?: FormationSection, isNext?: boolean) => void,
 }) {
 	const listButtonRef = useRef<HTMLButtonElement>(null);
   const [isHorizontal, setIsHorizontal] = useState(false);

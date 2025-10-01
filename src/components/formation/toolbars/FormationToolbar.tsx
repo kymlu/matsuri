@@ -14,7 +14,7 @@ export type FormationToolbarProps = {
   firstSectionId?: string,
   lastSectionId?: string,
   selectedSectionId?: string,
-  changeSection?: (sectionId?: FormationSection, isNext?: boolean) => void,
+  changeSection?: (section?: FormationSection, isNext?: boolean) => void,
   export?: (followingId?: string) => void,
   changeFollowing?: () => void,
 }
@@ -24,7 +24,6 @@ export function FormationToolbar(props: FormationToolbarProps) {
   const {appMode} = useContext(AppModeContext);
   const {updateState, currentSections} = useContext(UserContext);
   const [showPrevious, setShowPrevious] = useState<boolean>(false);
-  const [showExportDialog, setShowExportDialog] = useState<boolean>(false);
 
   return (
     <CustomToolbar>
@@ -61,16 +60,12 @@ export function FormationToolbar(props: FormationToolbarProps) {
                 <CustomToolbarButton
                   text="エクスポート"
                   isDiv
-                  iconFileName={ICON.downloadBlack}
-                  onClick={() => {
-                    setShowExportDialog(true);
-                  }}/>
+                  iconFileName={ICON.downloadBlack}/>
               </Dialog.Trigger>
               <ExportFormDialog 
                 onConfirm={(followingId?: string) => {
                   props.export?.(followingId);
-                  setShowExportDialog(false);
-                  }}/>
+                }}/>
             </Dialog.Root>
           </CustomToolbarGroup>
         </>
