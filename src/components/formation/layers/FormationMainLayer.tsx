@@ -68,6 +68,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const arrowRef = useRef<React.RefObject<Konva.Arrow | null>[]>([]);
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isSinglePropSelected, setIsSinglePropSelected] = useState<boolean>(false);
+	const [isSingleNoteSelected, setIsSingleNoteSelected] = useState<boolean>(false);
 	const [isSingleArrowSelected, setIsSingleArrowSelected] = useState<boolean>(false);
 
 	const positionContextRef = useRef(positionContext);
@@ -202,6 +203,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				setSelectedIds(allSelectedIds);
 
 				setIsSinglePropSelected(allSelectedIds.size === 1 && selectedPropIds.size === 1);
+				setIsSingleNoteSelected(allSelectedIds.size === 1 && selectedNoteIds.size === 1);
 				setIsSingleArrowSelected(allSelectedIds.size === 1 && selectedArrowIds.size === 1);
 
 				updateSelectionRect();
@@ -447,6 +449,16 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		}
 	}
 
+	function saveNoteSize(id: string, scaleX: number, scaleY: number) {
+		var note = props.notePositions.find((x) => strEquals(x.id, id));
+		if (note) {
+			note.width = note.width * scaleX;
+			note.height = note.height * scaleY;
+			dbController.upsertItem("notePosition", note);
+			updateState({selectedItems: [{type: PositionType.note, note: note}]});
+		}
+	}
+
 	function selectItem(
 		item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | null,
 		type: PositionType,
@@ -455,6 +467,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	) {
 		if (item === null || appMode === "view" || (isMoving && selectedIds.has(item.id))) return;
 		var singlePropSelected = false; // todo: set on multiselect
+		var singleNoteSelected = false; // todo: set on multiselect
 		var singleArrowSelected = false;
 
 		if (multiSelect) {
@@ -468,6 +481,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						singleArrowSelected = true;
 					} else if (type === PositionType.prop) {
 						singlePropSelected = true;
+					} else if (type === PositionType.note) {
+						singleNoteSelected = true;
 					}
 				}
 			} else {
@@ -483,10 +498,11 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						singleArrowSelected = true;
 					} else if (split.props.length === 1) {
 						singlePropSelected = true;
+					} else if (split.notes.length === 1) {
+						singleNoteSelected = true;
 					}
 				}
 			}
-			updateState({ selectedItems: newList });
 			updateState({ selectedItems: newList });
 			setSelectedIds(new Set(getAllIds(newList)));
 		} else {
@@ -501,6 +517,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					singlePropSelected = true;
 				} else if (type === PositionType.arrow) {
 					singleArrowSelected = true;
+				} else if (type === PositionType.note) {
+					singleNoteSelected = true;
 				}
 			} else if (!isMoving) {
 				updateState({ selectedItems: [] });
@@ -509,6 +527,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		}
 
 		setIsSinglePropSelected(singlePropSelected);
+		setIsSingleNoteSelected(singleNoteSelected);
 		setIsSingleArrowSelected(singleArrowSelected);
 	}
 
@@ -626,8 +645,10 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			))}
 			<Transformer
 				flipEnabled={false}
+				keepRatio={false}
 				ref={transformerRef}
-				resizeEnabled={false}
+				resizeEnabled={isSingleNoteSelected}
+				enabledAnchors={["bottom-center", "middle-right", "bottom-right"]}
 				rotateEnabled={isSinglePropSelected}
 				borderStrokeWidth={2}
 				borderStroke={basePalette.primary.main}
@@ -639,10 +660,22 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				]}
 				rotationSnapTolerance={10}
 				onTransformEnd={(event) => {
-					updatePropRotation(event.target.attrs.id,
-						event.target.attrs.rotation,
-						event.target.attrs.x,
-						event.target.attrs.y);
+					if(isSinglePropSelected) {
+						updatePropRotation(event.target.attrs.id,
+							event.target.attrs.rotation,
+							event.target.attrs.x,
+							event.target.attrs.y);
+					} else if (isSingleNoteSelected) {
+						const group = event.target as Konva.Group;
+						const scaleX = group.scaleX();
+						const scaleY = group.scaleY();
+						saveNoteSize(event.target.attrs.id, scaleX, scaleY);
+						
+						group.scale({ x: 1, y: 1 });
+						requestAnimationFrame(() => {
+							refreshTransformer();
+						});
+					}
 				}}
 			/>
 			<Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef} />
