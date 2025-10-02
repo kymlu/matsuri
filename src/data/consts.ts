@@ -36,6 +36,7 @@ export const ICON = {
   arrowRangeBlack: "icons/arrow_range_black.svg",
   arrowRightAltBlack: "icons/arrow_right_alt_black.svg",
   categoryBlack: "icons/category_black.svg",
+  checkBlack: "icons/check_black.svg",
   checkWhite: "icons/check_white.svg",
   chevronBackwardBlack: "icons/chevron_backward_black.svg",
   chevronForwardBlack: "icons/chevron_forward_black.svg",

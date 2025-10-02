@@ -1,17 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
-import { Radio, RadioGroup } from "@base-ui-components/react";
-import { ColorStyle } from "../../../themes/colours.ts";
+import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
-import ColorSwatch from "./ColorSwatch.tsx";
 import { strEquals } from "../../../helpers/GlobalHelper.ts";
 import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
-import ColorPresetPicker from "./ColorPresetPicker.tsx";
-import CustomMenu from "../../CustomMenu.tsx";
 import Button from "../../Button.tsx";
 import { ICON } from "../../../data/consts.ts";
 
@@ -99,8 +95,6 @@ export default function CategoryMenu() {
           updatedPositions.push(x);
         });
     });
-
-    
     
     dbController.upsertList("participantPosition", updatedPositions);
     updatePositionContextState({participantPositions: updatedRecord});
@@ -119,42 +113,28 @@ export default function CategoryMenu() {
       title="カテゴリー"
       titleIcon={ICON.categoryBlack}
       onToggle={() => scrollToCategory()}>
-      <RadioGroup
-        value={selectedCategory?.id ?? ""}
-        onValueChange={(value) => onChangeCategory(value as string)}>
-        <div className="flex flex-col overflow-x-hidden overflow-y-auto gap-x-6 max-h-32">
-          {
-            Object.values(categories)
-              .sort((a, b) => a.order - b.order)
-              .map((category, index) => 
-              <div
-                key={category.id}
-                ref={categoryOptionRef.current[index]}
-                className="flex flex-row items-center justify-between align-middle">
-                <div className="flex flex-row items-center gap-2 align-middle">
-                  <Radio.Root
-                    value={category.id}
-                    className="flex size-5 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 data-[checked]:bg-primary data-[unchecked]:border data-[unchecked]:border-gray-300">
-                    <Radio.Indicator className="flex before:size-2 before:rounded-full before:bg-gray-50 data-[unchecked]:hidden"/>
-                  </Radio.Root>
-                  {category.name}
-                </div>
-                <CustomMenu
-                  trigger={
-                    <ColorSwatch
-                      onClick={() => selectCategoryToEdit(category.id)}
-                      tailwindColorClassName={category?.color?.twColor}
-                      colorHexCode={category?.color?.bgColour!}/>
-                  }>
-                    <ColorPresetPicker
-                      selectColor={(color) => {selectColor(color, category)}}
-                      selectedColor={category?.color}/>
-                </CustomMenu>
-              </div>
-            )
-          }
-        </div>
-      </RadioGroup>
+      <div className="flex flex-row flex-wrap gap-2 overflow-x-hidden overflow-y-auto">
+        {
+          Object.values(categories)
+            .sort((a, b) => a.order - b.order)
+            .map((category) => 
+              <button
+                onClick={() => onChangeCategory(category.id)}
+                className="flex items-center justify-center h-8 p-2 mb-1 font-bold border-2 rounded-lg cursor-pointer"
+                style={{
+                  backgroundColor: category.color.bgColour,
+                  borderColor: category.color.borderColour ?? "",
+                  color: category.color.textColour ?? ""
+              }}>
+                {selectedCategory?.id === category.id &&
+                  <img src={strEquals(category.color.textColour, basePalette.white) ?
+                    ICON.checkWhite : ICON.checkBlack}
+                    className="size-6"/>}
+                {category.name}
+              </button>
+          )
+        }
+      </div>
       {selectedCategory && 
         <Button onClick={() => onSetAllToCategory()} full>
           すべてのセクションに適用
