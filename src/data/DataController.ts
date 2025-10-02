@@ -55,13 +55,3 @@ export async function GetAllForFormation(
     arrowPositions,
   );
 }
-
-export async function GetAllCategories(): Promise<Record<string, ParticipantCategory>> {
-  return dbController.getAll("category")
-    .then((categoryList) => {
-      return indexByKey(categoryList as ParticipantCategory[], "id");
-    }).catch(e => {
-      console.error('Error parsing user from localStorage:', e);
-      return {};
-    });
-}

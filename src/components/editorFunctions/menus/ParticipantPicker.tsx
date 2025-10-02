@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { categoryList, teamMembers } from "../../../data/ImaHitotabi.ts";
+import { songList, teamMembers } from "../../../data/ImaHitotabi.ts";
 import { Participant, ParticipantOption } from "../../../models/Participant.ts";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import ItemButton from "../../ItemButton.tsx";
@@ -25,8 +25,6 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     setFilterText(value);
   }
   
-  // const [selectedParticipants, setSelectedParticipants] = useState<Array<string>>([]);
-
   function addParticipant(selectedParticipant: ParticipantOption) {
     if(isNullOrUndefined(selectedFormation) || isNullOrUndefined(selectedSection) === null) return;
 
@@ -55,7 +53,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
           formationSectionId: section!.id,
           x: position[0],
           y: position[1],
-          categoryId: categoryList[0].id,
+          categoryId: songList[selectedFormation!.songId].categories[0].id,
           isSelected: false
         } as ParticipantPosition
       });

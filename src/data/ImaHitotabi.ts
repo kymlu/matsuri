@@ -84,10 +84,26 @@ export const festivalList: Array<Festival> = [
   }
 ]
 
-export const songList: Array<Song> = [
-  {
-    id: "1",
+export const songList: Record<string, Song> = {
+  "1": {
     name: "陽光へ",
+    categories: {
+      "0": { id: "0", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
+      "1": { id: "1", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
+      "2": { id: "2", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
+      "3": { id: "3", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
+      "4": { id: "4", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
+      "5": { id: "5", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
+      "6": { id: "6", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
+      "7": { id: "7", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
+      "8": { id: "8", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
+      "9": { id: "9", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
+      "10": { id: "10", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
+      "11": { id: "11", name: "前隊", color: objectColorSettings["orangeLightest"], order: 4, showInLegend: false, showInParadeGuide: true },
+      "12": { id: "12", name: "後隊", color: objectColorSettings["blueLightest"], order: 5, showInLegend: false, showInParadeGuide: true },
+      "13": { id: "13", name: "女隊", color: objectColorSettings["greenLightest"], order: 6, showInLegend: false, showInParadeGuide: false },
+      "14": { id: "14", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
+    },
     sections: [{
       id: "1",
       songId: "1",
@@ -161,7 +177,7 @@ export const songList: Array<Song> = [
       order: 12
     }]
   }
-]
+}
 
 export const teamMembers: Array<ParticipantOption> = [
   {id: "1", name: "ころな"},
@@ -236,25 +252,6 @@ export const propsList: Array<Prop> = [
   { name: "山幕", id: "4", length: 4.5, color: objectColorSettings.grey4 },
   { name: "デカ大旗", id: "5", length: 8, color: objectColorSettings.indigoMain },
   { name: "ご来光幕", id: "6", length: 3.5, color: objectColorSettings.indigoMain },
-]
-
-//奇、偶、座り、中、高、左隊、右隊、旗、山伏、前隊、後隊
-export const categoryList: Array<ParticipantCategory> = [
-  { id: "0", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
-  { id: "1", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
-  { id: "2", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
-  { id: "3", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
-  { id: "4", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
-  { id: "5", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
-  { id: "6", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
-  { id: "7", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
-  { id: "8", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
-  { id: "9", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
-  { id: "10", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
-  { id: "11", name: "前隊", color: objectColorSettings["orangeLightest"], order: 4, showInLegend: false, showInParadeGuide: true },
-  { id: "12", name: "後隊", color: objectColorSettings["blueLightest"], order: 5, showInLegend: false, showInParadeGuide: true },
-  { id: "13", name: "女隊", color: objectColorSettings["greenLightest"], order: 6, showInLegend: false, showInParadeGuide: false },
-  { id: "14", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
 ]
 
 export const notePresets: Array<NotePreset> = [

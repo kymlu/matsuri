@@ -8,25 +8,24 @@ import SectionOptionButton from "../../SectionOptionButton.tsx";
 import { dbController } from "../../../data/DBProvider.tsx";
 import { ParticipantPosition, PropPosition } from "../../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../../CustomMenu.tsx";
-import { arrowPresets, propsList, songList } from "../../../data/ImaHitotabi.ts";
+import { propsList, songList } from "../../../data/ImaHitotabi.ts";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
 import { ICON } from "../../../data/consts.ts";
 import { MarginPositions } from "../../../pages/FormationPage.tsx";
 import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../helpers/GroupingHelper.ts";
+import { FormationContext } from "../../../contexts/FormationContext.tsx";
 
 export default function SectionPicker(props: {margins: MarginPositions}) {
 	const { currentSections, selectedSection, updateState, isLoading } =
 		useContext(UserContext);
 	const { participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState } =
 		useContext(PositionContext);
-	const { participantList, propList } =
-		useContext(EntitiesContext);
-	const { isAnimating } =
-		useContext(AnimationContext);
-	const {enableAnimation} =
-		useContext(SettingsContext);
+	const { participantList, propList } = useContext(EntitiesContext);
+	const { isAnimating } = useContext(AnimationContext);
+	const {enableAnimation} = useContext(SettingsContext);
+	const {selectedFormation} = useContext(FormationContext);
 
 	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
 
@@ -173,7 +172,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 		var newSection = {
 			id: crypto.randomUUID(),
 			displayName:
-				songList[0].sections.find((x) => strEquals(x.id, nextSectionId))!.name +
+				songList[selectedFormation!.songId].sections.find((x) => strEquals(x.id, nextSectionId))!.name +
 				(countOfThisSection ? ` (${countOfThisSection})` : ""),
 			formationId: lastSection.formationId,
 			songSectionId: nextSectionId,
@@ -305,11 +304,11 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 	var lastSectionCount = currentSections.filter((x) =>
 		strEquals(x.songSectionId, lastSection?.songSectionId)
 	).length;
-	var lastSectionDetails = songList[0].sections.find((x) =>
+	var lastSectionDetails = songList[selectedFormation!.songId].sections.find((x) =>
 		strEquals(x.id, lastSection?.songSectionId)
 	);
 	var nextSection = lastSectionDetails
-		? songList[0].sections.find((x) => x.order === lastSectionDetails!.order + 1)
+		? songList[selectedFormation!.songId].sections.find((x) => x.order === lastSectionDetails!.order + 1)
 		: undefined;
 
 	return (

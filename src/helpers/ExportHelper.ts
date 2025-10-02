@@ -17,7 +17,6 @@ import { roundToTenth, strEquals } from "./GlobalHelper.ts";
 export function exportAllData() {
   Promise.all([
     dbController.getAll("festival"),
-    dbController.getAll("category"),
     dbController.getAll("formationSection"),
     dbController.getAll("participant"),
     dbController.getAll("participantPosition"),
@@ -25,14 +24,11 @@ export function exportAllData() {
     dbController.getAll("propPosition"),
     dbController.getAll("notePosition"),
     dbController.getAll("arrowPosition"),
-    dbController.getAll("song"),
-  ]).then(([festivals, categories, formationSections, participants, participantPositions, props, propPositions, notePositions, arrowPositions, songs]) => {
+  ]).then(([festivals, formationSections, participants, participantPositions, props, propPositions, notePositions, arrowPositions]) => {
     var toExport: ImportExportModel = {
-      song: songs as Song[],
       festival: festivals as Festival[],
       formationSections: formationSections as FormationSection[],
       participants: participants as Participant[],
-      categories: categories as ParticipantCategory[],
       participantPositions: participantPositions as ParticipantPosition[],
       props: props as Prop[],
       propPositions: propPositions as PropPosition[],
@@ -47,9 +43,7 @@ export async function exportFormationData(formationId: string) {
   Promise.all([
     dbController.getAll("festival"),
     dbController.getByFormationId("formationSection", formationId),
-    dbController.getAll("category"),
-    dbController.getAll("song"),
-  ]).then(async ([festivals, formationSections, categories, songs]) => {
+  ]).then(async ([festivals, formationSections]) => {
     Promise.all([
       dbController.getByFormationId("participant", formationId),
       dbController.getByFormationId("prop", formationId),
@@ -61,11 +55,9 @@ export async function exportFormationData(formationId: string) {
       var arrowPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("arrowPosition", id)))).flatMap(x => x);
 
       var toExport: ImportExportModel = {
-        song: songs as Song[],
         festival: (festivals as Festival[]).filter(x => x.formations.map(x => x.id).includes(formationId)),
         formationSections: formationSections as FormationSection[],
         participants: participants as Participant[],
-        categories: categories as ParticipantCategory[],
         participantPositions: participantPositions as ParticipantPosition[],
         props: props as Prop[],
         propPositions: propPositions as PropPosition[],

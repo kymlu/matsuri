@@ -12,7 +12,7 @@ import { generateAnimationPaths } from '../helpers/AnimationHelper.ts';
 import { AnimationContext } from '../contexts/AnimationContext.tsx';
 import FormationCanvas from '../components/formation/FormationCanvas.tsx';
 import { useNavigate } from 'react-router-dom';
-import { GetAllCategories, GetAllForFormation } from '../data/DataController.ts';
+import { GetAllForFormation } from '../data/DataController.ts';
 import { groupByKey, indexByKey } from '../helpers/GroupingHelper.ts';
 import { Participant } from '../models/Participant.ts';
 import { Prop } from '../models/Prop.ts';
@@ -27,6 +27,7 @@ import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { FormationType } from '../models/Formation.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { SettingsContext } from '../contexts/SettingsContext.tsx';
+import { songList } from '../data/ImaHitotabi.ts';
 
 export type MarginPositions = {
   participants: number[][],
@@ -101,10 +102,8 @@ export default function FormationPage () {
     updateVisualSettingsContext({followingId: null});
     setFollowingPositions(null);
 
-    GetAllCategories().then((categories) => {
-      updateCategoryContext({categories: categories});
-    });
-    
+    updateCategoryContext({categories: songList[selectedFormation!.songId].categories});
+
     GetAllForFormation(selectedFormation?.id!, (
       formationSections: FormationSection[],
       participants: Participant[],

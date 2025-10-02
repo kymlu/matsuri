@@ -1,86 +1,6 @@
 import { ImportExportModel } from "../models/ImportExportModel";
 
 export const sampleFormation = {
-  "song": [
-    {
-      "id": "1",
-      "name": "陽光へ",
-      "sections": [
-        {
-          "id": "1",
-          "songId": "1",
-          "name": "OP",
-          "order": 1
-        },
-        {
-          "id": "2",
-          "songId": "1",
-          "name": "サビ",
-          "order": 2
-        },
-        {
-          "id": "3",
-          "songId": "1",
-          "name": "入山",
-          "order": 3
-        },
-        {
-          "id": "4",
-          "songId": "1",
-          "name": "滝行",
-          "order": 4
-        },
-        {
-          "id": "5",
-          "songId": "1",
-          "name": "祭り",
-          "order": 5
-        },
-        {
-          "id": "6",
-          "songId": "1",
-          "name": "太陽踊り",
-          "order": 6
-        },
-        {
-          "id": "7",
-          "songId": "1",
-          "name": "迎光祭",
-          "order": 7
-        },
-        {
-          "id": "8",
-          "songId": "1",
-          "name": "ご来光",
-          "order": 8
-        },
-        {
-          "id": "9",
-          "songId": "1",
-          "name": "ラスト1",
-          "order": 9
-        },
-        {
-          "id": "10",
-          "songId": "1",
-          "name": "ラスト2",
-          "order": 10
-        },
-        {
-          "id": "11",
-          "songId": "1",
-          "name": "ラスト3",
-          "order": 11
-        },
-        {
-          "id": "12",
-          "songId": "1",
-          "name": "ラスト4",
-          "order": 12
-        }
-      ]
-    }
-  ],
   "festival": [
     {
       "id": "0",
@@ -267,177 +187,6 @@ export const sampleFormation = {
       "displayName": "ココッシュ",
       "formationId": "0",
       "memberId": "32"
-    }
-  ],
-  "categories": [
-    {
-      "id": "0",
-      "name": "一般",
-      "color": {
-        "bgColour": "#FFB3B5",
-        "twColor": "bg-red-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 0,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "1",
-      "name": "スタッフ",
-      "color": {
-        "bgColour": "#A3A3A3",
-        "twColor": "bg-grey-400",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "order": 1,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "10",
-      "name": "山伏",
-      "color": {
-        "bgColour": "#FFD766",
-        "twColor": "bg-amber-light",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 3,
-      "showInLegend": false,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "11",
-      "name": "前隊",
-      "color": {
-        "bgColour": "#FF7D81",
-        "twColor": "bg-red-light",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 4,
-      "showInLegend": false,
-      "showInParadeGuide": true
-    },
-    {
-      "id": "12",
-      "name": "後隊",
-      "color": {
-        "bgColour": "#4D9ED1",
-        "twColor": "bg-blue-light",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 5,
-      "showInLegend": false,
-      "showInParadeGuide": true
-    },
-    {
-      "id": "2",
-      "name": "奇",
-      "color": {
-        "bgColour": "#FFB3B5",
-        "twColor": "bg-red-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 8,
-      "showInLegend": false,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "3",
-      "name": "偶",
-      "color": {
-        "bgColour": "#95C6E3",
-        "twColor": "bg-blue-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 9,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "4",
-      "name": "座り",
-      "color": {
-        "bgColour": "#FFB3B5",
-        "twColor": "bg-red-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 10,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "5",
-      "name": "中",
-      "color": {
-        "bgColour": "#C7EB94",
-        "twColor": "bg-green-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 11,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "6",
-      "name": "高",
-      "color": {
-        "bgColour": "#5AB0B9",
-        "twColor": "bg-cyan-light",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 12,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "7",
-      "name": "左隊",
-      "color": {
-        "bgColour": "#FFD1AD",
-        "twColor": "bg-orange-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 6,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "8",
-      "name": "右隊",
-      "color": {
-        "bgColour": "#95C6E3",
-        "twColor": "bg-blue-lightest",
-        "textColour": "#000000",
-        "borderColour": "#000000"
-      },
-      "order": 7,
-      "showInLegend": true,
-      "showInParadeGuide": false
-    },
-    {
-      "id": "9",
-      "name": "旗",
-      "color": {
-        "bgColour": "#7A7EB7",
-        "twColor": "bg-violet-light",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "order": 2,
-      "showInLegend": false,
-      "showInParadeGuide": false
     }
   ],
   "participantPositions": [
@@ -1985,7 +1734,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "9792d81a-b919-4b1e-b23e-a5ded92a591e",
@@ -2006,7 +1754,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "a84249ec-b758-446b-9b9a-9628a3e5e231",
@@ -2027,7 +1774,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "0613ffd0-538b-4c2a-86cd-5e7aa77f3a56",
@@ -2048,7 +1794,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "6cff11ea-aa53-4b3b-ba66-1113bfee5f5f",
@@ -2069,7 +1814,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "6e1f08db-2b83-441e-b05c-4cb34041da60",
@@ -2090,7 +1834,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "9a0359bc-b64b-48a9-b940-6ccc87c10e13",
@@ -2111,7 +1854,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "09753e6a-36ff-49af-9565-a177f14e50c9",
@@ -2132,7 +1874,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "3289d344-95a0-42b2-b1aa-0487ee05217a",
@@ -2153,7 +1894,6 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     },
     {
       "id": "ea74c879-c7e8-430e-8da7-38a44b2d645f",
@@ -2174,7 +1914,7 @@ export const sampleFormation = {
       "borderRadius": 10,
       "fontGridRatio": 0.5,
       "alwaysBold": true,
-      "showBackground": true
     }
-  ]
-} as ImportExportModel
+  ],
+  arrowPositions: [],
+} as ImportExportModel;

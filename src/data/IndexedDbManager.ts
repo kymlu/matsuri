@@ -1,17 +1,17 @@
 import { isNullOrUndefined, isNullOrUndefinedOrBlank, strEquals } from "../helpers/GlobalHelper.ts";
 import { FormationSection } from "../models/FormationSection.ts";
 import { CUSTOM_EVENT, DB_NAME } from "./consts.ts";
-import { categoryList, festivalList, songList } from "./ImaHitotabi.ts";
+import { festivalList, songList } from "./ImaHitotabi.ts";
 import { sampleFormation } from "./SampleFormation.ts";
 
-type TableName = "festival" | "song" |  "category" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection";
+type TableName = "festival" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection";
 
 export class IndexedDBManager {
   db!: IDBDatabase;
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open(DB_NAME, 4);
+    const request = indexedDB.open(DB_NAME, 5);
     request.onupgradeneeded = async (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       const oldVersion = event.oldVersion;
@@ -20,14 +20,6 @@ export class IndexedDBManager {
       console.log(`Upgrading database from ${oldVersion} to ${newVersion}`);
       if (!db.objectStoreNames.contains("festival")) { // todo: additional indexes?
         db.createObjectStore("festival", { keyPath: "id", autoIncrement: true });
-      }
-
-      if (!db.objectStoreNames.contains("song")) { // todo: additional indexes?
-        db.createObjectStore("song", { keyPath: "id", autoIncrement: true });
-      }
-
-      if (!db.objectStoreNames.contains("category")) { // todo: additional indexes?
-        db.createObjectStore("category", { keyPath: "id", autoIncrement: true });
       }
 
       if (!db.objectStoreNames.contains("participant")) {
@@ -100,22 +92,6 @@ export class IndexedDBManager {
         })
       },
       {
-        name: "song",
-        promise: () => this.getAll("song").then(list => {
-          if ((list as Array<any>).length === 0) {
-            return this.upsertList("song", songList);
-          }
-        })
-      },
-      {
-        name: "category",
-        promise: () => this.getAll("category").then(list => {
-          if ((list as Array<any>).length === 0) {
-            return this.upsertList("category", categoryList);
-          }
-        })
-      },
-      {
         name: "formationSection",
         promise: () => this.getAll("formationSection").then(list => {
           if ((list as Array<any>).length === 0) {
@@ -126,7 +102,7 @@ export class IndexedDBManager {
                     if (strEquals(formation.id, "0")) {
                       return sampleFormation.formationSections
                     } else {
-                      return [songList.find(song => strEquals(song.id, formation.songId))
+                      return [songList[formation.songId]
                         ?.sections
                         ?.sort((a, b) => a.order - b.order)[0]]
                         ?.map(section => ({

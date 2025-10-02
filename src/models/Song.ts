@@ -1,7 +1,8 @@
+import { ParticipantCategory } from "./ParticipantCategory";
 import { SongSection } from "./SongSection";
 
 export interface Song {
-  id: string,
   name: string,
-  sections: Array<SongSection>
+  sections: Array<SongSection>,
+  categories: Record<string, ParticipantCategory>,
 }
