@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { basePalette, ColorStyle, objectColorSettings, objectPalette } from "../../../themes/colours.ts";
-import { dbController } from "../../../data/DBProvider.tsx";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import CustomSwitch from "../../CustomSwitch.tsx";
-import { ICON } from "../../../data/consts.ts";
-import { replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../helpers/GroupingHelper.ts";
+import { ICON } from "../../../lib/consts.ts";
+import { replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 import ColorPresetPicker from "./ColorPresetPicker.tsx";
 import ColorPalettePicker from "./ColorPalettePicker.tsx";
 

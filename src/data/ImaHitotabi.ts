@@ -1,13 +1,12 @@
-import { ArrowPreset } from "../models/Arrow.ts";
-import { Festival } from "../models/Festival.ts";
-import { FormationType } from "../models/Formation.ts";
-import { NotePreset } from "../models/Note.ts";
-import { ParticipantOption } from "../models/Participant.ts";
-import { ParticipantCategory } from "../models/ParticipantCategory.ts";
-import { Prop } from "../models/Prop.ts";
-import { Song } from "../models/Song.ts";
-import { objectColorSettings } from "../themes/colours.ts";
-import { ICON } from "./consts.ts";
+import { ICON } from "../lib/consts.ts"
+import { ArrowPreset } from "../models/Arrow.ts"
+import { Festival } from "../models/Festival.ts"
+import { FormationType } from "../models/Formation.ts"
+import { NotePreset } from "../models/Note.ts"
+import { ParticipantOption } from "../models/Participant.ts"
+import { Prop } from "../models/Prop.ts"
+import { Song } from "../models/Song.ts"
+import { objectColorSettings } from "../themes/colours.ts"
 
 export const festivalList: Array<Festival> = [
   {

@@ -3,7 +3,7 @@ import ExpandableSection from "../../ExpandableSection.tsx";
 import Button from "../../Button.tsx";
 import TextInput from "../../TextInput.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { ICON } from "../../../data/consts.ts";
+import { ICON } from "../../../lib/consts.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
 
 export type ExportMenuProps = {

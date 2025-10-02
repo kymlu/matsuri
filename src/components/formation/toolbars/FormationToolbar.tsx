@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { ICON } from "../../../data/consts.ts";
+import { ICON } from "../../../lib/consts.ts";
 import { CustomToolbar, CustomToolbarButton, CustomToolbarGroup, CustomToolbarSeparator } from "../../CustomToolbar.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { FormationSection } from "../../../models/FormationSection.ts";
 import { ZoomToolbarGroup } from "./ZoomToolbarGroup.tsx";
 import { NavigateToolbarGroup } from "./NavigateToolbarGroup.tsx";

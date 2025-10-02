@@ -4,8 +4,8 @@ import { Dialog } from "@base-ui-components/react";
 import CustomSelect from "../CustomSelect.tsx";
 import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { VisualSettingsContext } from "../../contexts/VisualSettingsContext.tsx";
-import { strEquals } from "../../helpers/GlobalHelper.ts";
-import { ICON } from "../../data/consts.ts";
+import { strEquals } from "../../lib/helpers/GlobalHelper.ts";
+import { ICON } from "../../lib/consts.ts";
 
 export type ExportFormDialogProps = {
   onConfirm?: (followingId?: string) => void

@@ -2,20 +2,20 @@ import React, { useContext, useRef } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { FormationSection } from "../../../models/FormationSection.ts";
-import { isNullOrUndefined, strEquals } from "../../../helpers/GlobalHelper.ts";
+import { isNullOrUndefined, strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import SectionOptionButton from "../../SectionOptionButton.tsx";
-import { dbController } from "../../../data/DBProvider.tsx";
 import { ParticipantPosition, PropPosition } from "../../../models/Position.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "../../CustomMenu.tsx";
 import { propsList, songList } from "../../../data/ImaHitotabi.ts";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
-import { ICON } from "../../../data/consts.ts";
+import { ICON } from "../../../lib/consts.ts";
 import { MarginPositions } from "../../../pages/FormationPage.tsx";
-import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../helpers/GroupingHelper.ts";
+import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export default function SectionPicker(props: {margins: MarginPositions}) {
 	const { currentSections, selectedSection, updateState, isLoading } =

@@ -1,21 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
-import { basePalette, ColorStyle } from "../../../themes/colours.ts";
+import { basePalette } from "../../../themes/colours.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
-import { dbController } from "../../../data/DBProvider.tsx";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import Button from "../../Button.tsx";
-import { ICON } from "../../../data/consts.ts";
+import { ICON } from "../../../lib/consts.ts";
 
 export default function CategoryMenu() {
   const {selectedItems, updateState, selectedSection} = useContext(UserContext);
   const userContext = useContext(UserContext);
-  const [editingId, setEditingId] = useState<string | undefined | null>(null);
-  const {categories, updateCategoryContext} = useContext(CategoryContext);
+  const {categories} = useContext(CategoryContext);
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
   const {participantPositions, updatePositionContextState} = useContext(PositionContext);
 

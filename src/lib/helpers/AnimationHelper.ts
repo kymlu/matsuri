@@ -1,7 +1,7 @@
-import { DEFAULT_TOP_MARGIN, DEFAULT_SIDE_MARGIN } from "../data/consts.ts";
-import { AnimationPath, Path } from "../models/AnimationPath.ts";
-import { FormationSection } from "../models/FormationSection.ts";
-import { ParticipantPosition, PropPosition } from "../models/Position.ts";
+import { AnimationPath, Path } from "../../models/AnimationPath.ts";
+import { FormationSection } from "../../models/FormationSection.ts";
+import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { DEFAULT_TOP_MARGIN, DEFAULT_SIDE_MARGIN } from "../consts.ts";
 
 export function generateAnimationPaths(
   sections: Array<FormationSection>,

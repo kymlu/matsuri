@@ -6,7 +6,6 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration.ts';
 import { UserContextProvider } from './contexts/UserContextProvider.tsx';
 import { CategoryContextProvider } from './contexts/CategoryContext.tsx';
 import { SectionContextProvider } from './contexts/SectionContext.tsx';
-import { DBProvider } from './data/DBProvider.tsx';
 import { AnimationContextProvider } from './contexts/AnimationContext.tsx';
 import { SettingsContextProvider } from './contexts/SettingsContext.tsx';
 import { AppModeContextProvider } from './contexts/AppModeContext.tsx';
@@ -14,6 +13,7 @@ import { FormationContextProvider } from './contexts/FormationContext.tsx';
 import { VisualSettingsContextProvider } from './contexts/VisualSettingsContext.tsx';
 import { PositionContextProvider } from './contexts/PositionContext.tsx';
 import { EntitiesContextProvider } from './contexts/EntitiesContext.tsx';
+import { DBProvider } from './lib/dataAccess/DBProvider.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

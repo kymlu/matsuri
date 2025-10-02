@@ -1,10 +1,8 @@
-import { indexByKey } from "../helpers/GroupingHelper.ts";
 import { FormationSection } from "../models/FormationSection.ts";
 import { Participant } from "../models/Participant.ts";
-import { ParticipantCategory } from "../models/ParticipantCategory.ts";
-import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from "../models/Position";
+import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition } from "../models/Position.ts";
 import { Prop } from "../models/Prop.ts";
-import { dbController } from "./DBProvider.tsx";
+import { dbController } from "./../lib/dataAccess/DBProvider.tsx";
 
 export async function GetAllForFormation(
   formationId: string,

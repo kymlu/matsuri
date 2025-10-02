@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { IndexedDBManager } from './IndexedDbManager.ts';
-import { CUSTOM_EVENT } from './consts.ts';
+import { CUSTOM_EVENT } from '../consts.ts';
 
 const DBContext = createContext({ dbReady: false });
 

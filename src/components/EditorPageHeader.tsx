@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../data/consts.ts";
+import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../lib/consts.ts";
 import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
-import { exportAllData, exportFormationData } from "../helpers/ExportHelper.ts";
-import { downloadLogs } from "../helpers/LogHelper.ts";
+import { exportAllData, exportFormationData } from "../lib/helpers/ExportHelper.ts";
+import { downloadLogs } from "../lib/helpers/LogHelper.ts";
 import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
 import { FormationContext } from "../contexts/FormationContext.tsx";

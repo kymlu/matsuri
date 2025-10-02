@@ -2,7 +2,7 @@ import React from "react";
 import { basePalette, colorPickerSelection } from "../../../themes/colours.ts";
 import CustomMenu from "../../CustomMenu.tsx";
 import ColorSwatch from "./ColorSwatch.tsx";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 
 export type ColorPalettePickerProps = {
   color: string,

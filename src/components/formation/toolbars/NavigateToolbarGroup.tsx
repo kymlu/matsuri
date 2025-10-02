@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useContext } from "react";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { ICON } from "../../../data/consts.ts";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { ICON } from "../../../lib/consts.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { FormationSection } from "../../../models/FormationSection.tsx";
 import CustomMenu from "../../CustomMenu.tsx";
 import { CustomToolbarGroup, CustomToolbarButton } from "../../CustomToolbar.tsx";

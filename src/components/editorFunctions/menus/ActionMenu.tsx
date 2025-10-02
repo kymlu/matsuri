@@ -2,17 +2,17 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Button from "../../Button.tsx";
-import { dbController } from "../../../data/DBProvider.tsx";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { EntitiesContext, EntitiesContextState } from "../../../contexts/EntitiesContext.tsx";
 import { PositionContext, PositionContextState } from "../../../contexts/PositionContext.tsx";
-import { CUSTOM_EVENT, ICON } from "../../../data/consts.ts";
+import { CUSTOM_EVENT, ICON } from "../../../lib/consts.ts";
 import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { Participant } from "../../../models/Participant.ts";
 import Divider from "../../Divider.tsx";
-import { removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../helpers/GroupingHelper.ts";
+import { removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 
 export default function ActionMenu() {
   const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);

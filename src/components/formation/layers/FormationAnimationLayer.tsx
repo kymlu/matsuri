@@ -10,7 +10,7 @@ import { ParticipantPosition, PropPosition } from "../../../models/Position.ts";
 import { Participant } from "../../../models/Participant.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { Prop } from "../../../models/Prop.ts";
 import PropObject from "../formationObjects/PropObject.tsx";
 

@@ -4,7 +4,7 @@ import BaseFormationObject from "./BaseFormationObject.tsx";
 import { basePalette } from "../../../themes/colours.ts";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 import { useEffect } from "react";
-import { DO_NOT_UPDATE_POSITION_ATTR } from "../../../data/consts.ts";
+import { DO_NOT_UPDATE_POSITION_ATTR } from "../../../lib/consts.ts";
 import Konva from "konva";
 
 export interface ArrowObjectProps {

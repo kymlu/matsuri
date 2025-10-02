@@ -6,12 +6,12 @@ import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ArrowPosition } from "../../../models/Position.ts";
 import { objectPalette } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { dbController } from "../../../data/DBProvider.tsx";
-import { ICON } from "../../../data/consts.ts";
-import { addItemToRecordArray } from "../../../helpers/GroupingHelper.ts";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { ICON } from "../../../lib/consts.ts";
+import { addItemToRecordArray } from "../../../lib/helpers/GroupingHelper.ts";
 import { ArrowPreset } from "../../../models/Arrow.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
-import { isNullOrUndefined } from "../../../helpers/GlobalHelper.ts";
+import { isNullOrUndefined } from "../../../lib/helpers/GlobalHelper.ts";
 
 export default function ArrowPicker (props: {margins: number[][]}) {
   const {arrowPositions, updatePositionContextState} = useContext(PositionContext);

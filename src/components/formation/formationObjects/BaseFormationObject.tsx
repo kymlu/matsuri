@@ -6,7 +6,7 @@ import { Stage } from "konva/lib/Stage";
 import { SettingsContext } from "../../../contexts/SettingsContext.tsx";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
-import { DO_NOT_UPDATE_POSITION_ATTR } from "../../../data/consts.ts";
+import { DO_NOT_UPDATE_POSITION_ATTR } from "../../../lib/consts.ts";
 
 export interface FormationObjectProps {
   id: string,

@@ -19,8 +19,8 @@ import {
 	splitPositionsByType,
 } from "../../../models/Position.ts";
 import { objectColorSettings, basePalette, objectPalette } from "../../../themes/colours.ts";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
-import { getPixel } from "../../../helpers/FormationHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
+import { getPixel } from "../../../lib/helpers/FormationHelper.ts";
 import NoteObject from "../formationObjects/NoteObject.tsx";
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
 import PropObject from "../formationObjects/PropObject.tsx";
@@ -28,15 +28,15 @@ import Konva from "konva";
 import { AnimationContext } from "../../../contexts/AnimationContext.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { dbController } from "../../../data/DBProvider.tsx";
 import { Group } from "konva/lib/Group";
-import { CUSTOM_EVENT } from "../../../data/consts.ts";
+import { CUSTOM_EVENT } from "../../../lib/consts.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { Participant } from "../../../models/Participant.ts";
 import { Prop } from "../../../models/Prop.ts";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 import ArrowObject from "../formationObjects/ArrowObject.tsx";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export type FormationMainLayerProps = {
 	topMargin: number;

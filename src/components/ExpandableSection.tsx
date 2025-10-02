@@ -1,5 +1,5 @@
 import React from "react";
-import { ICON } from "../data/consts.ts";
+import { ICON } from "../lib/consts.ts";
 
 export interface ExpandableSectionProps {
   children: React.ReactNode,

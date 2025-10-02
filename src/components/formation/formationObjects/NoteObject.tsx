@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Line, Rect, Text } from "react-konva";
-import { DEFAULT_FONT_SIZE } from "../../../data/consts.ts";
+import { DEFAULT_FONT_SIZE } from "../../../lib/consts.ts";
 import BaseFormationObject from "./BaseFormationObject.tsx";
 import { basePalette, ColorStyle } from "../../../themes/colours.ts";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";

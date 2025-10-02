@@ -1,7 +1,7 @@
 import React from "react";
-import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
+import { isNullOrUndefinedOrBlank } from "../lib/helpers/GlobalHelper.ts";
 import classNames from "classnames";
-import { ICON } from "../data/consts.ts";
+import { ICON } from "../lib/consts.ts";
 
 export type TextInputProps = {
   text?: string,

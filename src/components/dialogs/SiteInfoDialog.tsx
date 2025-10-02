@@ -1,6 +1,6 @@
 import React from "react";
 import CustomDialog from "./CustomDialog.tsx";
-import { LAST_UPDATED } from "../../data/consts.ts";
+import { LAST_UPDATED } from "../../lib/consts.ts";
 
 export function SiteInfoDialog() {
   return (

@@ -1,7 +1,7 @@
 import { Toolbar } from "@base-ui-components/react";
 import classNames from "classnames";
 import React from "react";
-import { useIsLandscape } from "../helpers/GlobalHelper.ts";
+import { useIsLandscape } from "../lib/helpers/GlobalHelper.ts";
 
 export type CustomToolbarProps = {
   children: React.ReactNode

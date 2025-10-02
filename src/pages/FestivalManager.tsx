@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Formation } from '../models/Formation.ts';
 import Divider from '../components/Divider.tsx';
 import CustomToggleGroup from '../components/CustomToggleGroup.tsx';
-import { DEFAULT_GRID_SIZE, LAST_UPDATED } from '../data/consts.ts';
+import { DEFAULT_GRID_SIZE, LAST_UPDATED } from '../lib/consts.ts';
 import { AppMode, AppModeContext } from '../contexts/AppModeContext.tsx';
 import { FormationContext } from '../contexts/FormationContext.tsx';
 import { VisualSettingsContext } from '../contexts/VisualSettingsContext.tsx';

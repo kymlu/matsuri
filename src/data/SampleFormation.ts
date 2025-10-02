@@ -1,4 +1,4 @@
-import { ImportExportModel } from "../models/ImportExportModel";
+import { ImportExportModel } from "../../models/ImportExportModel";
 
 export const sampleFormation = {
   "festival": [

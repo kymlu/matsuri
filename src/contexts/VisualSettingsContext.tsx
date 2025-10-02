@@ -1,5 +1,5 @@
 import React, { ReactNode, useState, createContext } from 'react';
-import { DEFAULT_GRID_SIZE } from '../data/consts.ts';
+import { DEFAULT_GRID_SIZE } from '../lib/consts.ts';
 
 export interface VisualSettingsContextState {
   gridSize: number;

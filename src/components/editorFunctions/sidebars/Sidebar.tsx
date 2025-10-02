@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React, { useContext, useEffect } from "react";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
-import { ICON } from "../../../data/consts.ts";
+import { ICON } from "../../../lib/consts.ts";
 import Divider from "../../Divider.tsx";
 
 export type SidebarProps = {

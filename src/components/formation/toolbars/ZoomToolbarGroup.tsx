@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
-import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../../../data/consts.ts";
+import { ICON, GRID_SIZE_INCREMENT, MIN_GRID_SIZE, MAX_GRID_SIZE } from "../../../lib/consts.ts";
 import { CustomToolbarGroup, CustomToolbarButton } from "../../CustomToolbar.tsx";
 
 export function ZoomToolbarGroup() {

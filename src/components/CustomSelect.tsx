@@ -1,7 +1,7 @@
 import { Select } from "@base-ui-components/react";
 import React, { useState } from "react";
 import { useImperativeHandle } from "react";
-import { ICON } from "../data/consts.ts";
+import { ICON } from "../lib/consts.ts";
 
 export type CustomSelectProps = {
   items: Record<string, string>,

@@ -3,8 +3,8 @@ import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { isParticipantPosition, isPropPosition, ParticipantPosition, Position, PositionType, PropPosition } from "../../../models/Position.ts";
-import { dbController } from "../../../data/DBProvider.tsx";
-import { ICON } from "../../../data/consts.ts";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { ICON } from "../../../lib/consts.ts";
 
 export default function NameEditor() {
   const userContext = useContext(UserContext);

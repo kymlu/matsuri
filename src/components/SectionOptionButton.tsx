@@ -3,7 +3,7 @@ import className from "classnames";
 import CustomMenu from "./CustomMenu.tsx";
 import { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import TextInput from "./TextInput.tsx";
-import { ICON } from "../data/consts.ts";
+import { ICON } from "../lib/consts.ts";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
 
 export interface ListOptionButtonProps {

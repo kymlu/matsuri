@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { dbController } from "../../../data/DBProvider.tsx";
 import { getFromPositionType, NotePosition } from "../../../models/Position.ts";
-import { strEquals } from "../../../helpers/GlobalHelper.ts";
+import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import TextInput from "../../TextInput.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
-import { ICON } from "../../../data/consts.ts";
+import { ICON } from "../../../lib/consts.ts";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export default function NoteEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
