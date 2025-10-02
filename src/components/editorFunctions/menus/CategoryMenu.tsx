@@ -44,21 +44,12 @@ export default function CategoryMenu() {
     }
   }, [userContext.selectedItems]);
 
-  // todo: doesn't scroll properly when selecting a different participant
   function scrollToCategory() {
     if (selectedCategory){
       categoryOptionRef.current?.[selectedCategory.order - 1]?.current?.scrollIntoView({
         behavior: "smooth",
         block: "center"
       });
-    }
-  }
-
-  function selectCategoryToEdit(id: string) {
-    if (strEquals(editingId, id)){
-      setEditingId(null);
-    } else {
-      setEditingId(id);
     }
   }
 
@@ -100,27 +91,19 @@ export default function CategoryMenu() {
     updatePositionContextState({participantPositions: updatedRecord});
   }
 
-  function selectColor(color: ColorStyle, category: ParticipantCategory) {
-    var updatedCategories = {...categories};
-    updatedCategories[category.id].color = color;
-    dbController.upsertItem("category", updatedCategories[category.id]);
-    updateCategoryContext({categories: updatedCategories})
-    setEditingId(null);
-  }
-
   return (
     <ExpandableSection
       title="カテゴリー"
       titleIcon={ICON.categoryBlack}
       onToggle={() => scrollToCategory()}>
-      <div className="flex flex-row flex-wrap gap-2 overflow-x-hidden overflow-y-auto">
+      <div className="flex flex-row mb-2 flex-wrap gap-1.5 overflow-x-hidden overflow-y-auto">
         {
           Object.values(categories)
             .sort((a, b) => a.order - b.order)
             .map((category) => 
               <button
                 onClick={() => onChangeCategory(category.id)}
-                className="flex items-center justify-center h-8 p-2 mb-1 font-bold border-2 rounded-lg cursor-pointer"
+                className="flex items-center justify-center h-8 p-2 font-bold border-2 rounded-lg cursor-pointer"
                 style={{
                   backgroundColor: category.color.bgColour ?? "",
                   borderColor: category.color.borderColour ?? "",

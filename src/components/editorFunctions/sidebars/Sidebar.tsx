@@ -20,7 +20,7 @@ export function Sidebar(props: SidebarProps) {
 
   var classes = classNames("flex flex-col overflow-y-auto bg-white border-solid border-grey-200 py-5",
     {
-      "w-80 max-w-80": expanded,
+      "min-w-[200px] w-[25svw]": expanded,
       "border-r-2": props.isLeft,
       "border-l-2": !props.isLeft,
     }
