@@ -241,12 +241,12 @@ export const propsList: Array<Prop> = [
 //奇、偶、座り、中、高、左隊、右隊、旗、山伏、前隊、後隊
 export const categoryList: Array<ParticipantCategory> = [
   { id: "0", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
-  { id: "1", name: "スタッフ", color: objectColorSettings["grey3"], order: 1, showInLegend: true, showInParadeGuide: false },
+  { id: "1", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
   { id: "2", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
   { id: "3", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
   { id: "4", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
   { id: "5", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
-  { id: "6", name: "高", color: objectColorSettings["redlightest"], order: 14, showInLegend: true, showInParadeGuide: false },
+  { id: "6", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
   { id: "7", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
   { id: "8", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
   { id: "9", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },

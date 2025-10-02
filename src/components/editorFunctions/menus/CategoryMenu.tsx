@@ -122,16 +122,21 @@ export default function CategoryMenu() {
                 onClick={() => onChangeCategory(category.id)}
                 className="flex items-center justify-center h-8 p-2 mb-1 font-bold border-2 rounded-lg cursor-pointer"
                 style={{
-                  backgroundColor: category.color.bgColour,
+                  backgroundColor: category.color.bgColour ?? "",
                   borderColor: category.color.borderColour ?? "",
                   color: category.color.textColour ?? ""
               }}>
-                {selectedCategory?.id === category.id &&
-                  <img src={strEquals(category.color.textColour, basePalette.white) ?
+              <div className="flex gap-1">
+                {
+                  selectedCategory?.id === category.id &&
+                  <img
+                  src={strEquals(category.color.textColour, basePalette.white) ?
                     ICON.checkWhite : ICON.checkBlack}
-                    className="size-6"/>}
-                {category.name}
-              </button>
+                    className="size-6"/>
+                }
+              {category.name}
+              </div>
+            </button>
           )
         }
       </div>
