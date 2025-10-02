@@ -452,8 +452,9 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	function saveNoteSize(id: string, scaleX: number, scaleY: number) {
 		var note = props.notePositions.find((x) => strEquals(x.id, id));
 		if (note) {
-			note.width = note.width * scaleX;
-			note.height = note.height * scaleY;
+			const snapSize = 0.25;
+			note.width = Math.round(note.width * scaleX / snapSize) * snapSize;
+			note.height = Math.round(note.height * scaleY / snapSize) * snapSize;
 			dbController.upsertItem("notePosition", note);
 			updateState({selectedItems: [{type: PositionType.note, note: note}]});
 		}
@@ -648,7 +649,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				keepRatio={false}
 				ref={transformerRef}
 				resizeEnabled={isSingleNoteSelected}
-				enabledAnchors={["bottom-center", "middle-right", "bottom-right"]}
+				enabledAnchors={["bottom-right"]}
 				rotateEnabled={isSinglePropSelected}
 				borderStrokeWidth={2}
 				borderStroke={basePalette.primary.main}
