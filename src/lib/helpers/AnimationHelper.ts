@@ -63,7 +63,6 @@ export function getParticipantAnimationPaths(
   topMargin: number,
   sideMargin: number,
 ): Record<string, Path> {
-  // todo: add props
   var participantList = participants
     .filter(x => sectionIds.includes(x.formationSectionId))
     .reduce((acc, item) => {
@@ -99,7 +98,6 @@ export function getPropAnimationPaths(
   topMargin: number,
   sideMargin: number,
 ): Record<string, Path> {
-  // todo: add props
   var propsList = propPositions
     .filter(x => sectionIds.includes(x.formationSectionId))
     .reduce((acc, item) => {

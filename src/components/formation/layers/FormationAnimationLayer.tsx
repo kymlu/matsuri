@@ -13,6 +13,7 @@ import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.t
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { Prop } from "../../../models/Prop.ts";
 import PropObject from "../formationObjects/PropObject.tsx";
+import { useMemo } from "react";
 
 export type FormationAnimationLayerProps = {
   topMargin: number,
@@ -41,7 +42,18 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
     .forEach((_, index) => 
       propRef.current[index] = React.createRef<Konva.Group>()
     );
-    
+
+  // Precompute paths and sort them
+  const sortedParticipantPaths = useMemo(
+    () => Object.entries(participantPaths).sort((a, b) => a[0].localeCompare(b[0])),
+    [participantPaths]
+  );
+
+  const sortedPropPaths = useMemo(
+    () => Object.entries(propPaths).sort((a, b) => a[0].localeCompare(b[0])),
+    [propPaths]
+  );
+
   useEffect(() => {
     if (!isAnimating) return;
 
@@ -51,13 +63,12 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
 
     const animationPromises: Promise<void>[] = [];
 
-    Object.entries(participantPaths)
-      .sort((a, b) => a[0].localeCompare(b[0]))
+    Object.entries(sortedParticipantPaths)
       .forEach(([, pathData], index) => {
         const path = new Konva.Path({
           x: 0,
           y: 0,
-          data: pathData.path,
+          data: pathData[1].path,
         });
 
         const pathLen = path.getLength();
@@ -87,18 +98,17 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
 
         animationPromises.push(animPromise);
       });
-    Object.entries(propPaths)
-      .sort((a, b) => a[0].localeCompare(b[0]))
+    Object.entries(sortedPropPaths)
       .forEach(([, pathData], index) => {
         const path = new Konva.Path({
           x: 0,
           y: 0,
-          data: pathData.path,
+          data: pathData[1].path,
         });
 
         const pathLen = path.getLength();
         const step = pathLen / steps;
-        const anglePerStep = (pathData.toAngle! - pathData.fromAngle!)/steps;
+        const anglePerStep = (pathData[1].toAngle! - pathData[1].fromAngle!)/steps;
         let pos = 0;
 
         propRef.current[index].current?.cache();
@@ -111,7 +121,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             const pt = path.getPointAtLength(pos * step);
             if (pt && propRef?.current[index]) {
               propRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
-              propRef.current[index]?.current?.rotation(pathData.fromAngle! + pos * anglePerStep);
+              propRef.current[index]?.current?.rotation(pathData[1].fromAngle! + pos * anglePerStep);
             }
 
             if (pos >= steps) {
