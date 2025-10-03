@@ -8,80 +8,80 @@ import { Prop } from "../models/Prop.ts"
 import { Song } from "../models/Song.ts"
 import { objectColorSettings } from "../themes/colours.ts"
 
-export const festivalList: Array<Festival> = [
-  {
-    id: "0",
-    name: "サンプル",
-    note: "",
-    formations: [{
-      id: "0",
-      name: "ステージ",
-      type: FormationType.stage,
-      songId: "1",
-      length: 5,
-      width: 10,
-      topMargin: 2,
-      bottomMargin: 4,
-      sideMargin: 6
-    }]
-  },
-  {
-    id: "1",
-    name: "どまつり",
-    startDate: new Date(2025, 8, 30),
-    endDate: new Date(2025, 8, 31),
-    note: "",
-    formations: [{
-      id: "1",
-      name: "パレード",
-      type: FormationType.parade,
-      songId: "1",
-      length: 80,
-      width: 10,
-    },
-    {
-      id: "2",
-      name: "ステージ",
-      type: FormationType.stage,
-      songId: "1",
-      length: 18,
-      width: 20,
-    },
-    {
-      id: "3",
-      name: "JRステージ",
-      type: FormationType.stage,
-      songId: "1",
-      length: 14,
-      width: 20,
-    }]
-  },
-  {
-    id: "2",
-    name: "こいやまつり",
-    startDate: new Date(2025, 9, 27),
-    endDate: new Date(2025, 9, 28),
-    note: "",
-    formations: [
-      {
-        id: "4",
-        name: "パレード",
-        type: FormationType.parade,
-        songId: "1",
-        length: 80,
-        width: 10,
-      },
-      {
-        id: "5",
-        name: "ステージ",
-        type: FormationType.stage,
-        songId: "1",
-        length: 18,
-        width: 20,
-      }
-    ]
-  }
-]
+// export const festivalList: Array<Festival> = [
+//   {
+//     id: "0",
+//     name: "サンプル",
+//     note: "",
+//     formations: [{
+//       id: "0",
+//       name: "ステージ",
+//       type: FormationType.stage,
+//       songId: "1",
+//       length: 5,
+//       width: 10,
+//       topMargin: 2,
+//       bottomMargin: 4,
+//       sideMargin: 6
+//     }]
+//   },
+//   {
+//     id: "1",
+//     name: "どまつり",
+//     startDate: new Date(2025, 8, 30),
+//     endDate: new Date(2025, 8, 31),
+//     note: "",
+//     formations: [{
+//       id: "1",
+//       name: "パレード",
+//       type: FormationType.parade,
+//       songId: "1",
+//       length: 80,
+//       width: 10,
+//     },
+//     {
+//       id: "2",
+//       name: "ステージ",
+//       type: FormationType.stage,
+//       songId: "1",
+//       length: 18,
+//       width: 20,
+//     },
+//     {
+//       id: "3",
+//       name: "JRステージ",
+//       type: FormationType.stage,
+//       songId: "1",
+//       length: 14,
+//       width: 20,
+//     }]
+//   },
+//   {
+//     id: "2",
+//     name: "こいやまつり",
+//     startDate: new Date(2025, 9, 27),
+//     endDate: new Date(2025, 9, 28),
+//     note: "",
+//     formations: [
+//       {
+//         id: "4",
+//         name: "パレード",
+//         type: FormationType.parade,
+//         songId: "1",
+//         length: 80,
+//         width: 10,
+//       },
+//       {
+//         id: "5",
+//         name: "ステージ",
+//         type: FormationType.stage,
+//         songId: "1",
+//         length: 18,
+//         width: 20,
+//       }
+//     ]
+//   }
+// ]
 
 export const songList: Record<string, Song> = {
   "1": {
@@ -213,7 +213,6 @@ export const teamMembers: Array<ParticipantOption> = [
   {id: "32", name: "ココッシュ"},
   {id: "33", name: "きこりん"},
   {id: "34", name: "みっふぃ"},
-  {id: "35", name: "まだ未定です"},
   {id: "36", name: "kubota"},
   {id: "37", name: "小籔"},
   {id: "38", name: "やのぴす"},
@@ -226,7 +225,6 @@ export const teamMembers: Array<ParticipantOption> = [
   {id: "45", name: "あつみあむもるつ"},
   {id: "46", name: "けんじろう"},
   {id: "47", name: "ちょま"},
-  {id: "48", name: "なし"},
   {id: "49", name: "さわやか"},
   {id: "50", name: "comeri"},
   {id: "51", name: "直太朗"},

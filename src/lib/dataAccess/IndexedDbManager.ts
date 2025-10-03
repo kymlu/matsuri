@@ -1,8 +1,5 @@
-import { FormationSection } from "../../models/FormationSection.ts";
-import { festivalList, songList } from "../../data/ImaHitotabi.ts";
-import { sampleFormation } from "../../data/SampleFormation.ts";
-import { strEquals, isNullOrUndefined, isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
-import { CUSTOM_EVENT, DB_NAME } from "../consts.ts";
+import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
+import { DB_NAME } from "../consts.ts";
 
 type TableName = "festival" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection";
 
@@ -73,111 +70,10 @@ export class IndexedDBManager {
   return new Promise<void>((resolve, reject) => {
     request.onsuccess = () => {
       this.db = request.result;
-      this.addData();
       resolve();
     };
     request.onerror = () => reject(request.error);
   });
-  }
-
-  async addData() {
-    console.log("Adding data");    
-    const tasks = [
-      {
-        name: "festival",
-        promise: () => this.getAll("festival").then(list => {
-          if ((list as Array<any>).length === 0) {
-            return this.upsertList("festival", festivalList);
-          }
-        })
-      },
-      {
-        name: "formationSection",
-        promise: () => this.getAll("formationSection").then(list => {
-          if ((list as Array<any>).length === 0) {
-            const sections = festivalList
-              .flatMap(festival => 
-                festival.formations.map(formation => 
-                  {
-                    if (strEquals(formation.id, "0")) {
-                      return sampleFormation.formationSections
-                    } else {
-                      return [songList[formation.songId]
-                        ?.sections
-                        ?.sort((a, b) => a.order - b.order)[0]]
-                        ?.map(section => ({
-                          id: crypto.randomUUID().toString(),
-                          displayName: section?.name,
-                          songSectionId: section!.id,
-                          formationId: formation.id,
-                          order: 1,
-                        } as FormationSection))
-                    }
-                  }
-                ).flatMap(x => x)
-              ).flatMap(x => x); // flatten all the way
-
-            return this.upsertList("formationSection", sections);
-          }
-        })
-      },
-      {
-        name: "participants",
-        promise: () => this.getAll("participant").then(list => {
-          if ((list as Array<any>).length === 0) {
-            this.upsertList("participant", sampleFormation.participants);
-          }
-        })
-      },
-      {
-        name: "props",
-        promise: () => this.getAll("prop").then(list => {
-          if ((list as Array<any>).length === 0) {
-            this.upsertList("prop", sampleFormation.props);
-          }
-        })
-      },
-      {
-        name: "participantPosition",
-        promise: () => this.getAll("participantPosition").then(list => {
-          if ((list as Array<any>).length === 0) {
-            this.upsertList("participantPosition", sampleFormation.participantPositions);
-          }
-        })
-      },
-      {
-        name: "propPosition",
-        promise: () => this.getAll("propPosition").then(list => {
-          if ((list as Array<any>).length === 0) {
-            this.upsertList("propPosition", sampleFormation.propPositions);
-          }
-        })
-      },
-      {
-        name: "notePositions",
-        promise: () => this.getAll("notePosition").then(list => {
-          if ((list as Array<any>).length === 0) {
-            this.upsertList("notePosition", sampleFormation.notes);
-          }
-        })
-      },
-    ];    
-
-    // Handle each as it resolves
-    const runningTasks = tasks.map(({name, promise}) => {
-      return promise()
-        .then(result => {
-          if (!isNullOrUndefined(result)) console.log(`Insert ${name} succeeded:`, result);
-        })
-        .catch(error => {
-          console.error(`Insert ${name} failed:`, error);
-        });
-    });
-
-    await Promise.allSettled(runningTasks).then(() => {
-      var dbInitialized = new CustomEvent(CUSTOM_EVENT.dbInitialized);
-      window.dispatchEvent(dbInitialized);
-    });
   }
 
   _getTransaction(storeName: TableName, mode: IDBTransactionMode = "readwrite") {

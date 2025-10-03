@@ -1,20 +1,25 @@
 import React, { ReactNode, useState, createContext } from 'react';
 
 export type AppMode = "view" | "edit";
+export type UserType = "general" | "admin";
 
 export interface AppModeContextState {
   appMode: AppMode;
+  userType: UserType;
   updateAppModeContext: (newState: Partial<AppModeContextData>) => void;
 }
 
 type AppModeContextData = {
   appMode: AppMode;
+  userType: UserType;
 };
 
 const defaultAppMode: AppMode = 'view';
+const defaultUserType: UserType = 'general';
 
 const defaultAppModeState: AppModeContextState = {
   appMode: defaultAppMode,
+  userType: defaultUserType,
   updateAppModeContext: () => {},
 };
 
@@ -27,6 +32,7 @@ interface Props {
 export const AppModeContextProvider: React.FC<Props> = ({ children }) => {
   const [state, setState] = useState<AppModeContextData>({
     appMode: defaultAppMode,
+    userType: defaultUserType,
   });
 
   const updateAppModeContext = (newState: Partial<AppModeContextData>) => {

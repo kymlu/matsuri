@@ -10,12 +10,13 @@ import { AppModeContext } from "../contexts/AppModeContext.tsx";
 import { FormationContext } from "../contexts/FormationContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { Dialog } from "@base-ui-components/react";
+import { GeneralSiteInfoDialog } from "./dialogs/GeneralSiteInfoDialog.tsx";
 
 export function EditorPageHeader() {
   const {selectedFestival, selectedSection} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
-  const {appMode, updateAppModeContext} = useContext(AppModeContext);
+  const {appMode, userType, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate()
   
   return (
@@ -28,15 +29,6 @@ export function EditorPageHeader() {
           <MenuItem label="ホームに戻る" onClick={() => {
             navigate("../");
           }} />
-          <MenuSeparator/>
-          <div className="flex justify-center p-1">
-            <Dialog.Root>
-              <Dialog.Trigger>
-                  サイト情報
-              </Dialog.Trigger>
-              <SiteInfoDialog/>
-            </Dialog.Root>
-          </div>
         </>
       </CustomMenu>
       {
@@ -45,46 +37,67 @@ export function EditorPageHeader() {
         festivalTitle={selectedFestival?.name}
         formationTitle={selectedFormation?.name}/>
       }
-      <div className="flex flex-row gap-2">
-        <button
-          onClick={() => {
-            updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
-            updateAppModeContext({appMode: appMode === "edit" ? "view" : "edit"});
-          }}>
-          <img alt={appMode === "edit" ? "Go to viewer" : "Go to editor"} className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
-        </button>
-        <CustomMenu trigger={
-          <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
-          }>
-          <>
-            <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
-            <MenuSeparator />
-            {
-              selectedFormation && 
-              <>
-                <MenuItem label="当隊列のデータダウンロード" onClick={() => { exportFormationData(selectedFormation!.id) }} /> {/** add function to download for formation/festival only? */}
-                <MenuSeparator />
-              </>
-            }
-            <MenuItem label="ログダウンロード" onClick={() => { downloadLogs(); }} />
-            <MenuSeparator />
-            <MenuItem label="Clear Cache" onClick={() => {
-              Object.values(CONTEXT_NAMES).forEach((context) => {
-                localStorage.removeItem(context);
-              });
-              window.location.reload();
-            }} />
-            <MenuSeparator />
-            <MenuItem label="Clear DB and Cache" onClick={() => {
-              Object.values(CONTEXT_NAMES).forEach((context) => {
-                localStorage.removeItem(context);
-              });
-              indexedDB.deleteDatabase(DB_NAME);
-              window.location.reload();
-            }} />
-          </>
-        </CustomMenu>
-      </div>
+      {
+        userType === "general" && 
+        <Dialog.Root>
+          <Dialog.Trigger>
+              <img alt="Site information" src={ICON.help} className='size-8 max-w-8 max-h-8'/>
+          </Dialog.Trigger>
+          <GeneralSiteInfoDialog/>
+        </Dialog.Root>
+      }
+      {
+        userType === "admin" &&
+        <div className="flex flex-row gap-2">
+          <button
+            onClick={() => {
+              updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
+              updateAppModeContext({appMode: appMode === "edit" ? "view" : "edit"});
+            }}>
+            <img alt={appMode === "edit" ? "Go to viewer" : "Go to editor"} className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
+          </button>
+          <CustomMenu trigger={
+            <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
+            }>
+            <>
+              <div className="flex justify-center p-1">
+                <Dialog.Root>
+                  <Dialog.Trigger>
+                      サイト情報
+                  </Dialog.Trigger>
+                  <SiteInfoDialog/>
+                </Dialog.Root>
+              </div>
+              <MenuSeparator/>
+              <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
+              <MenuSeparator />
+              {
+                selectedFormation && 
+                <>
+                  <MenuItem label="当隊列のデータダウンロード" onClick={() => { exportFormationData(selectedFormation!.id) }} /> {/** add function to download for formation/festival only? */}
+                  <MenuSeparator />
+                </>
+              }
+              <MenuItem label="ログダウンロード" onClick={() => { downloadLogs(); }} />
+              <MenuSeparator />
+              <MenuItem label="Clear Cache" onClick={() => {
+                Object.values(CONTEXT_NAMES).forEach((context) => {
+                  localStorage.removeItem(context);
+                });
+                window.location.reload();
+              }} />
+              <MenuSeparator />
+              <MenuItem label="Clear DB and Cache" onClick={() => {
+                Object.values(CONTEXT_NAMES).forEach((context) => {
+                  localStorage.removeItem(context);
+                });
+                indexedDB.deleteDatabase(DB_NAME);
+                window.location.reload();
+              }} />
+            </>
+          </CustomMenu>
+        </div>
+      }
     </header>
   )
 }

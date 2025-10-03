@@ -1,24 +1,15 @@
-import { ImportExportModel } from "../../models/ImportExportModel";
-
-export const sampleFormation = {
-  "festival": [
-    {
-      "id": "0",
-      "name": "サンプル",
-      "note": "",
-      "formations": [
-        {
-          "id": "0",
-          "name": "ステージ",
-          "type": 1,
-          "songId": "1",
-          "length": 10,
-          "width": 10
-        }
-      ]
-    }
-  ],
-  "formationSections": [
+{
+  "formation": {
+    "name": "ステージ",
+    "type": 1,
+    "songId": "1",
+    "length": 5,
+    "width": 10,
+    "topMargin": 2,
+    "bottomMargin": 4,
+    "sideMargin": 6
+  },
+  "sections": [
     {
       "id": "1b0e7aa2-3d07-42d0-8266-8306b2e975f4",
       "displayName": "祭り",
@@ -111,85 +102,210 @@ export const sampleFormation = {
       "order": 3
     }
   ],
-  "participants": [
+  "notes": [
     {
-      "id": "0e8070f6-d12b-4420-9e0b-c28960457ecc",
-      "displayName": "ピノ",
-      "formationId": "0",
-      "memberId": "19"
+      "id": "4dcdc6d7-fd10-4b0c-a6bb-c820cb5230ce",
+      "formationSectionId": "431c007f-76a5-4c03-b654-230b38f003aa",
+      "x": 0,
+      "y": 4,
+      "label": "",
+      "text": "5",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "180c2f07-a5c8-41f8-bb90-672f64cff8ec",
-      "displayName": "まりあ",
-      "formationId": "0",
-      "memberId": "16"
+      "id": "9792d81a-b919-4b1e-b23e-a5ded92a591e",
+      "formationSectionId": "431c007f-76a5-4c03-b654-230b38f003aa",
+      "x": 6,
+      "y": 4,
+      "label": "",
+      "text": "7",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "35d20650-27bb-4bcd-8dd5-291343a56469",
-      "displayName": "かずま",
-      "formationId": "0",
-      "memberId": "23"
+      "id": "a84249ec-b758-446b-9b9a-9628a3e5e231",
+      "formationSectionId": "431c007f-76a5-4c03-b654-230b38f003aa",
+      "x": 2.5,
+      "y": 4,
+      "label": "",
+      "text": "6",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "6db964f2-d79e-430d-bce0-f337a38c7f5d",
-      "displayName": "クリーム",
-      "formationId": "0",
-      "memberId": "2"
+      "id": "0613ffd0-538b-4c2a-86cd-5e7aa77f3a56",
+      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
+      "x": -0.5,
+      "y": 3,
+      "label": "",
+      "text": "5",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "75f96745-3448-455e-9a87-2084411dfb7f",
-      "displayName": "小雪",
-      "formationId": "0"
+      "id": "6cff11ea-aa53-4b3b-ba66-1113bfee5f5f",
+      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
+      "x": -2,
+      "y": 2,
+      "label": "",
+      "text": "2",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "9d6ad3c0-d6d6-479e-861b-ae8706322500",
-      "displayName": "直太朗",
-      "formationId": "0",
-      "memberId": "51"
+      "id": "6e1f08db-2b83-441e-b05c-4cb34041da60",
+      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
+      "x": -2,
+      "y": 3,
+      "label": "",
+      "text": "4",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "a3c16920-8e9c-4bc9-bb22-94a8bb07893a",
-      "displayName": "kubota",
-      "formationId": "0",
-      "memberId": "36"
+      "id": "9a0359bc-b64b-48a9-b940-6ccc87c10e13",
+      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
+      "x": -0.5,
+      "y": 2,
+      "label": "",
+      "text": "7",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "aa972587-7ea5-4a85-a733-1766fc2de217",
-      "displayName": "ラフレシア",
-      "formationId": "0",
-      "memberId": "22"
+      "id": "09753e6a-36ff-49af-9565-a177f14e50c9",
+      "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
+      "x": -0.5,
+      "y": 1.5,
+      "label": "",
+      "text": "5-6",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "d407c480-dd38-456a-b8ed-eab1156c63a3",
-      "displayName": "ケイティー",
-      "formationId": "0",
-      "memberId": "61"
+      "id": "3289d344-95a0-42b2-b1aa-0487ee05217a",
+      "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
+      "x": -0.5,
+      "y": 0.5,
+      "label": "",
+      "text": "3-4",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     },
     {
-      "id": "d6a45c24-e9cf-465b-834e-dabff96f7d0e",
-      "displayName": "どん",
-      "formationId": "0"
-    },
-    {
-      "id": "daecbe4a-71b3-4906-8888-53c0d0511038",
-      "displayName": "犬",
-      "formationId": "0",
-      "memberId": "21"
-    },
-    {
-      "id": "fd2774b6-0be4-419f-bce3-f9186cdb204a",
-      "displayName": "しまさん",
-      "formationId": "0",
-      "memberId": "17"
-    },
-    {
-      "id": "ff715745-8d86-42a9-9968-c4725a360be7",
-      "displayName": "ココッシュ",
-      "formationId": "0",
-      "memberId": "32"
+      "id": "ea74c879-c7e8-430e-8da7-38a44b2d645f",
+      "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
+      "x": -0.5,
+      "y": 2.5,
+      "label": "",
+      "text": "7-8",
+      "color": {
+        "bgColour": "#6B7280",
+        "twColor": "bg-grey-500",
+        "textColour": "#FFFFFF",
+        "borderColour": "#000000"
+      },
+      "width": 1.25,
+      "height": 0.75,
+      "isSelected": false,
+      "borderRadius": 10,
+      "fontGridRatio": 0.5,
+      "alwaysBold": true
     }
   ],
-  "participantPositions": [
+  "arrows": [],
+  "participants": [
     {
       "id": "1d12bd21-f2d1-4588-89c8-43b5380fd5f2",
       "participantId": "a3c16920-8e9c-4bc9-bb22-94a8bb07893a",
@@ -1607,7 +1723,7 @@ export const sampleFormation = {
       "id": "0a094b7f-c49e-44ec-8ef4-6c37731ba6d7",
       "participantId": "75f96745-3448-455e-9a87-2084411dfb7f",
       "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": 8.5,
+      "x": 8,
       "y": 2,
       "categoryId": "0",
       "isSelected": false
@@ -1661,7 +1777,7 @@ export const sampleFormation = {
       "id": "a6700438-7022-4a23-bd81-d095465ea056",
       "participantId": "35d20650-27bb-4bcd-8dd5-291343a56469",
       "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": 8,
+      "x": 7.5,
       "y": 1,
       "categoryId": "0",
       "isSelected": false
@@ -1706,215 +1822,11 @@ export const sampleFormation = {
       "id": "f8a1614e-4c0d-4a84-80cc-0280be54f181",
       "participantId": "0e8070f6-d12b-4420-9e0b-c28960457ecc",
       "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": 7.5,
+      "x": 7,
       "y": 2,
       "categoryId": "0",
       "isSelected": false
     }
   ],
-  "props": [],
-  "propPositions": [],
-  "notes": [
-    {
-      "id": "4dcdc6d7-fd10-4b0c-a6bb-c820cb5230ce",
-      "formationSectionId": "431c007f-76a5-4c03-b654-230b38f003aa",
-      "x": 0,
-      "y": 4,
-      "label": "",
-      "text": "5",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "9792d81a-b919-4b1e-b23e-a5ded92a591e",
-      "formationSectionId": "431c007f-76a5-4c03-b654-230b38f003aa",
-      "x": 6,
-      "y": 4,
-      "label": "",
-      "text": "7",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "a84249ec-b758-446b-9b9a-9628a3e5e231",
-      "formationSectionId": "431c007f-76a5-4c03-b654-230b38f003aa",
-      "x": 2.5,
-      "y": 4,
-      "label": "",
-      "text": "6",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "0613ffd0-538b-4c2a-86cd-5e7aa77f3a56",
-      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
-      "x": -0.5,
-      "y": 3,
-      "label": "",
-      "text": "5",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "6cff11ea-aa53-4b3b-ba66-1113bfee5f5f",
-      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
-      "x": -2,
-      "y": 2,
-      "label": "",
-      "text": "2",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "6e1f08db-2b83-441e-b05c-4cb34041da60",
-      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
-      "x": -2,
-      "y": 3,
-      "label": "",
-      "text": "4",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "9a0359bc-b64b-48a9-b940-6ccc87c10e13",
-      "formationSectionId": "63400943-7e1f-4824-9060-8290aa33f859",
-      "x": -0.5,
-      "y": 2,
-      "label": "",
-      "text": "7",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "09753e6a-36ff-49af-9565-a177f14e50c9",
-      "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": -0.5,
-      "y": 1.5,
-      "label": "",
-      "text": "5-6",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "3289d344-95a0-42b2-b1aa-0487ee05217a",
-      "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": -0.5,
-      "y": 0.5,
-      "label": "",
-      "text": "3-4",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    },
-    {
-      "id": "ea74c879-c7e8-430e-8da7-38a44b2d645f",
-      "formationSectionId": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
-      "x": -0.5,
-      "y": 2.5,
-      "label": "",
-      "text": "7-8",
-      "color": {
-        "bgColour": "#6B7280",
-        "twColor": "bg-grey-500",
-        "textColour": "#FFFFFF",
-        "borderColour": "#000000"
-      },
-      "width": 1.25,
-      "height": 0.75,
-      "isSelected": false,
-      "borderRadius": 10,
-      "fontGridRatio": 0.5,
-      "alwaysBold": true,
-    }
-  ],
-  arrowPositions: [],
-} as ImportExportModel;
+  "props": []
+}

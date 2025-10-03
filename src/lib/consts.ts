@@ -54,6 +54,8 @@ export const ICON = {
   footprintBlack: "icons/footprint_black.svg",
   groups2Black: "icons/groups_2_black.svg",
   heightBlack: "icons/height_black.svg",
+  help: "icons/help.svg",
+  helpBlack: "icons/help_black.svg",
   horizontalRuleBlack: "icons/horizontal_rule_black.svg",
   leftClickBlack: "icons/left_click_black.svg",
   lineCurveBlack: "icons/line_curve_black.svg",

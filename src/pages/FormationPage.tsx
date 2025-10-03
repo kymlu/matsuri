@@ -27,7 +27,6 @@ import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { FormationType } from '../models/Formation.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { SettingsContext } from '../contexts/SettingsContext.tsx';
-import { songList } from '../data/ImaHitotabi.ts';
 
 export type MarginPositions = {
   participants: number[][],
@@ -37,15 +36,15 @@ export type MarginPositions = {
 
 export default function FormationPage () {
   const userContext = useContext(UserContext);
-  const {updateState, selectedSection} = useContext(UserContext);
-  const {categories, updateCategoryContext} = useContext(CategoryContext);
+  const {updateState, currentSections, selectedSection} = useContext(UserContext);
+  const {categories} = useContext(CategoryContext);
   const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {enableAnimation} = useContext(SettingsContext);
   const {appMode} = useContext(AppModeContext);
-  const {participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, arrowPositions} = useContext(PositionContext);
   const {updateAnimationContext} = useContext(AnimationContext);
-  const {updateEntitiesContext, participantList, propList} = useContext(EntitiesContext);
+  const {participantList, propList} = useContext(EntitiesContext);
 
   const [selectedSectionId, setSelectedSectionId] = useState<string>("");
   const [firstSectionId, setFirstSectionId] = useState<string>("");
@@ -102,70 +101,78 @@ export default function FormationPage () {
     updateVisualSettingsContext({followingId: null});
     setFollowingPositions(null);
 
-    updateCategoryContext({categories: songList[selectedFormation!.songId].categories});
+    setAnimationPaths(generateAnimationPaths(
+      currentSections,
+      Object.values(participantPositions).flat(),
+      Object.values(propPositions).flat(),
+      gridSize,
+      selectedFormation?.topMargin,
+      selectedFormation?.sideMargin));
 
-    GetAllForFormation(selectedFormation?.id!, (
-      formationSections: FormationSection[],
-      participants: Participant[],
-      propList: Prop[],
-      participantPositions: ParticipantPosition[],
-      propPositions: PropPosition[],
-      notePositions: NotePosition[],
-      arrowPositions: ArrowPosition[],
-    ) => {
-        try {
-          var groupedParticipantPositions = groupByKey(participantPositions, "formationSectionId")
-          var groupedPropPositions = groupByKey(propPositions, "formationSectionId")
-          updateEntitiesContext({
-            participantList: indexByKey(participants, "id"),
-            propList: indexByKey(propList, "id")
-          });
+    // updateCategoryContext({categories: songList[selectedFormation!.songId].categories});
 
-          updatePositionContextState({
-            participantPositions: groupedParticipantPositions,
-            propPositions: groupedPropPositions,
-            notePositions: groupByKey(notePositions, "formationSectionId"),
-            arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
-          });
+    // GetAllForFormation(selectedFormation?.id!, (
+    //   formationSections: FormationSection[],
+    //   participants: Participant[],
+    //   propList: Prop[],
+    //   participantPositions: ParticipantPosition[],
+    //   propPositions: PropPosition[],
+    //   notePositions: NotePosition[],
+    //   arrowPositions: ArrowPosition[],
+    // ) => {
+    //     try {
+    //       var groupedParticipantPositions = groupByKey(participantPositions, "formationSectionId")
+    //       var groupedPropPositions = groupByKey(propPositions, "formationSectionId")
+    //       updateEntitiesContext({
+    //         participantList: indexByKey(participants, "id"),
+    //         propList: indexByKey(propList, "id")
+    //       });
 
-          const currentSections = (formationSections as Array<FormationSection>)
-            .sort((a,b) => a.order - b.order);
+    //       updatePositionContextState({
+    //         participantPositions: groupedParticipantPositions,
+    //         propPositions: groupedPropPositions,
+    //         notePositions: groupByKey(notePositions, "formationSectionId"),
+    //         arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
+    //       });
 
-          updateState({
-            isLoading: false,
-            previousSectionId: null,
-            currentSections: currentSections,
-            selectedSection: currentSections[0],
-          });
+    //       const currentSections = (formationSections as Array<FormationSection>)
+    //         .sort((a,b) => a.order - b.order);
 
-          setAnimationPaths(generateAnimationPaths(
-            currentSections,
-            Object.values(groupedParticipantPositions).flat(),
-            Object.values(groupedPropPositions).flat(),
-            gridSize,
-            selectedFormation?.topMargin,
-            selectedFormation?.sideMargin));
+    //       updateState({
+    //         isLoading: false,
+    //         previousSectionId: null,
+    //         currentSections: currentSections,
+    //         selectedSection: currentSections[0],
+    //       });
 
-          const leftPositions = Array.from({ length: (selectedFormation!.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
-            .map((_, col) => [-2, col]);
+    //       setAnimationPaths(generateAnimationPaths(
+    //         currentSections,
+    //         Object.values(groupedParticipantPositions).flat(),
+    //         Object.values(groupedPropPositions).flat(),
+    //         gridSize,
+    //         selectedFormation?.topMargin,
+    //         selectedFormation?.sideMargin));
+
+    //       const leftPositions = Array.from({ length: (selectedFormation!.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
+    //         .map((_, col) => [-2, col]);
           
-          const rightPositions = Array.from({ length: (selectedFormation?.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
-            .map((_, col) => [ selectedFormation!.width, col]);
+    //       const rightPositions = Array.from({ length: (selectedFormation?.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
+    //         .map((_, col) => [ selectedFormation!.width, col]);
       
-          const topPositions = Array.from({ length: (selectedFormation?.width ?? DEFAULT_WIDTH) + (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN) })
-            .flatMap((_, row) =>
-              Array.from({ length: 2 }).map((_, col) => [ row - (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)/2, col])
-            )
+    //       const topPositions = Array.from({ length: (selectedFormation?.width ?? DEFAULT_WIDTH) + (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN) })
+    //         .flatMap((_, row) =>
+    //           Array.from({ length: 2 }).map((_, col) => [ row - (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)/2, col])
+    //         )
       
-          setMarginPositions({
-            participants: topPositions,
-            props: rightPositions,
-            notes: leftPositions
-          });
-        } catch (e) {
-          console.error('Error getting data:', e);
-        }
-      });
+    //       setMarginPositions({
+    //         participants: topPositions,
+    //         props: rightPositions,
+    //         notes: leftPositions
+    //       });
+    //     } catch (e) {
+    //       console.error('Error getting data:', e);
+    //     }
+    //   });
   }, []);
 
   function setValueOrDefault(defaultValue: number, value?: number) : number {
