@@ -453,8 +453,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		var note = props.notePositions.find((x) => strEquals(x.id, id));
 		if (note) {
 			const snapSize = 0.25;
-			note.width = Math.round(note.width * scaleX / snapSize) * snapSize;
-			note.height = Math.round(note.height * scaleY / snapSize) * snapSize;
+			note.width = Math.max(Math.round(note.width * scaleX / snapSize) * snapSize, 0.75);
+			note.height = Math.max(Math.round(note.height * scaleY / snapSize) * snapSize, 0.75);
 			dbController.upsertItem("notePosition", note);
 			updateState({selectedItems: [{type: PositionType.note, note: note}]});
 		}
