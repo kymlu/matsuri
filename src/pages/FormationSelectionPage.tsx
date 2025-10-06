@@ -18,7 +18,7 @@ import { UserContext } from "../contexts/UserContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { songList } from "../data/ImaHitotabi.ts";
 import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
-import { readFormationFromFiles } from "../lib/helpers/JsonReaderHelper.ts";
+import { readResourcesAndFormation } from "../lib/helpers/JsonReaderHelper.ts";
 import { strEquals } from "../lib/helpers/GlobalHelper.ts";
 import { Formation } from "../models/Formation.ts";
 
@@ -41,7 +41,7 @@ export default function FormationSelectionPage() {
   }, []);
 
   async function selectFormation(festival: Festival, formation: Formation) {
-    readFormationFromFiles(
+    readResourcesAndFormation(
       festival,
       formation.id,
       (msg => {

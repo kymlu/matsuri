@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CustomDialog from "./CustomDialog.tsx";
 import TextInput from "../TextInput.tsx";
 import { Festival } from "../../models/Festival.ts";
@@ -7,23 +7,38 @@ import Button from "../Button.tsx";
 import { isNullOrUndefinedOrBlank } from "../../lib/helpers/GlobalHelper.ts";
 import { ICON } from "../../lib/consts.ts";
 import CustomMenu, { MenuItem } from "../CustomMenu.tsx";
+import Divider from "../Divider.tsx";
+import { FestivalResources } from "../../models/ImportExportModel.ts";
+import CustomSelect from "../CustomSelect.tsx";
+import { songList } from "../../data/ImaHitotabi.ts";
+import { FormationType } from "../../models/Formation.ts";
+import NumberTextField from "../NumberTextField.tsx";
 
 export type EditFestivalDialogProps = {
   festival: Festival | null,
+  resources: FestivalResources | null,
   onSave?: (festival: Festival) => void
 }
 
 export function EditFestivalDialog(props: EditFestivalDialogProps) {
-  const defaultFestival: Festival = {
+  const defaultFestival: Festival & FestivalResources = {
     id: props.festival?.id || "",
     name: props.festival?.name || "",
     startDate: props.festival?.startDate || "",
     endDate: props.festival?.endDate || "",
     note: props.festival?.note || "",
-    formations: props.festival?.formations || []
+    formations: props.festival?.formations || [],
+    participants: props.resources?.participants || [],
+    props: props.resources?.props || [],
   };
 
-  const [formData, setFormData] = useState<Festival>(defaultFestival);
+  const songs = useMemo(
+    () => Object.fromEntries(Object.entries(songList).map(([key, obj]) => [key, obj.name])),
+    []
+  );
+  const formationTypes = {"1": "ステージ", "0": "パレード"};
+
+  const [formData, setFormData] = useState<Festival & FestivalResources>(defaultFestival);
   const [endDateError, setEndDateError] = useState(false);
   const [editFormationNameIndex, setEditFormationNameIndex] = useState<number>(-1);
   const [newFormationName, setNewFormationName] = useState<string>("");
@@ -87,35 +102,38 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   };
 
   return (
-    <CustomDialog hasX title="祭り情報編集">
-      <form className="gap-6 landscape:grid landscape:w-[50svw] landscape:grid-cols-2">
-        <div>
-          <label>
-            ID
-            <TextInput
-              name="id"
-              disabled
-              default={formData.id}
-              placeholder="IDを入力"
-              required
-              onContentChange={(val) => onFieldChange("id", val)}
-            />
-          </label>
-          <label>
-            祭り名
-            <TextInput
-              name="name"
-              default={formData.name}
-              placeholder="祭りの名前を入力"
-              required
-              onContentChange={(val) => onFieldChange("name", val)}
-              showLength
-            />
-          </label>
+    <CustomDialog full hasX title="祭り情報編集">
+      <form>
+        <label>
+          ID
+          <TextInput
+            name="id"
+            disabled
+            tall
+            default={formData.id}
+            placeholder="IDを入力"
+            required
+            onContentChange={(val) => onFieldChange("id", val)}
+          />
+        </label>
+        <label>
+          祭り名
+          <TextInput
+            tall
+            name="name"
+            default={formData.name}
+            placeholder="祭りの名前を入力"
+            required
+            onContentChange={(val) => onFieldChange("name", val)}
+            showLength
+          />
+        </label>
+        <div className="flex flex-row portrait:flex-col gap-x-3">
           <label>
             開始日
             <DateInput
               required
+              tall
               name="startDate"
               default={formData.startDate}
               onDateChange={(date) => onFieldChange("startDate", date)}
@@ -125,91 +143,81 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
             終了日（任意）
             <DateInput
               name="endDate"
+              tall
               default={formData.endDate}
               onDateChange={(date) => onFieldChange("endDate", date)}
               hasError={endDateError}
             />
           </label>
-          <label>
-            メモ（任意）
-            <TextInput
-              name="note"
-              default={formData.note}
-              placeholder="メモを入力"
-              onContentChange={(val) => onFieldChange("note", val)}
-              maxLength={100}
-              showLength
-            />
-          </label>
         </div>
+        <label>
+          メモ（任意）
+          <TextInput
+            tall
+            name="note"
+            default={formData.note}
+            placeholder="メモを入力"
+            onContentChange={(val) => onFieldChange("note", val)}
+            maxLength={100}
+            showLength
+          />
+        </label>
 
+        <Divider/>
+
+        <div className="flex flex-row items-center justify-between mb-3">
+          <label>隊列</label>
+          <button
+            type="button"
+            // onClick={addFormation}
+          >
+            <img src={ICON.addBlack} className="size-6" alt="Add formation" />
+          </button>
+        </div>
+        <div className="grid grid-cols-[3fr,2fr,2fr,1fr,1fr,auto] items-center gap-2">
+          <div className="font-bold">隊列名</div>
+          <div className="font-bold">曲名</div>
+          <div className="font-bold">タイプ</div>
+          <div className="font-bold">縦(m)</div>
+          <div className="font-bold">幅(m)</div>
+          <div></div>
+          {formData.formations.map((formation, index) => (
+            <React.Fragment key={index}>
+              <TextInput
+                tall
+                compact
+                default={formation.id}
+                onContentChange={(val) =>{ setNewFormationName(val)}}
+                required
+              />
+              <CustomSelect defaultValue={songList[formation.songId].name} items={songs}/>
+              <CustomSelect defaultValue={formation.type === FormationType.parade ? "パレード" : "ステージ"} items={formationTypes}/>
+              <NumberTextField default={formation.length}/>
+              <NumberTextField default={formation.width}/>
+              <CustomMenu
+                trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete formation" />}>
+                <MenuItem label="削除" onClick={() => deleteFormation(index)} />
+              </CustomMenu>
+            </React.Fragment>
+          ))}
+        </div>
+        <Divider/>
         <div>
-          <div className="flex flex-row items-center justify-between mb-3">
-            <label>隊列</label>
-            <button
-              type="button"
-              // onClick={addFormation}
-            >
-              <img src={ICON.addBlack} className="size-6" alt="Add formation" />
-            </button>
-          </div>
-          <div className="pl-2 grid grid-cols-[1fr,auto,auto] gap-y-3 gap-x-1">
-            {formData.formations.map((formation, index) => (
-              <React.Fragment key={index}>
-                {
-                  editFormationNameIndex === index ? (
-                    <TextInput
-                      default={formation.id}
-                      onContentChange={(val) =>{ setNewFormationName(val)}}
-                      required
-                      compact
-                    />
-                  ) : (
-                    <span onClick={() => setEditFormationNameIndex(index)} className="cursor-pointer">
-                      {formation.id}
-                    </span>
-                  )
-                }
-                {
-                  editFormationNameIndex === index ? 
-                  <>
-                    <button
-                      className="disabled:opacity-50"
-                      disabled={isNullOrUndefinedOrBlank(newFormationName)}
-                      type="button"
-                      onClick={() => {
-                        setEditFormationNameIndex(-1);
-                        editFormationName(index, newFormationName);
-                      }}>
-                      <img src={ICON.checkBlack} className="size-6" alt="Confirm formation name" />
-                    </button> 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditFormationNameIndex(-1);
-                      }}>
-                      <img src={ICON.clearBlack} className="size-6" alt="Close formation name editor" />
-                    </button> 
-                  </>
-                  :
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditFormationNameIndex(index);
-                        setNewFormationName(formation.id);
-                      }}>
-                      <img src={ICON.editBlack} className="size-6" alt="Edit formation name" />
-                    </button>
-                    <CustomMenu
-                      trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete formation" />}>
-                      <MenuItem label="削除" onClick={() => deleteFormation(index)} />
-                    </CustomMenu>
-                  </>
-                }
-              </React.Fragment>
-            ))}
-          </div>
+          <label>参加者</label>
+          {
+            formData.participants.map((p, i) => (
+              <div key={i}>{p.displayName}</div>
+            ))
+          }
+        </div>
+        <Divider/>
+        <div>
+          <label>大道具</label>
+          {
+            formData.props.map((p, i) => (
+              <div key={i}>{p.name}</div>
+            ))
+          }
         </div>
       </form>
 

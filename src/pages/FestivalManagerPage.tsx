@@ -17,7 +17,7 @@ import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/EditFestivalDialog.tsx';
 import ExpandableSection from '../components/ExpandableSection.tsx';
-import { readFormationFromFiles } from '../lib/helpers/JsonReaderHelper.ts';
+import { getResourceFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
 import { FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
@@ -39,6 +39,7 @@ export default function FestivalManagerPage () {
   const [hasError, setHasError] = React.useState<boolean>(false);
   const [editingFestival, setEditingFestival] = React.useState<boolean>(false);
   const [selectedFestival, setSelectedFestival] = React.useState<Festival | null>(null);
+  const [selectedFestivalResources, setSelectedFestivalResources] = React.useState<FestivalResources | null>(null);
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -46,12 +47,18 @@ export default function FestivalManagerPage () {
   }, []);
 
   function editFestival(festival: Festival) {
-    setEditingFestival(true);
-    setSelectedFestival(festival);
+    getResourceFile(festival, (msg) => {
+      setErrorMessage(`${festival.id}のリソースの取得に失敗しました。\n ${msg}`);
+      setHasError(true);
+    }, async (resources) => {
+      setSelectedFestivalResources(resources);
+      setSelectedFestival(festival);
+      setEditingFestival(true);
+    });
   }
 
   function goToEditor(festival: Festival, formation: Formation) {
-    readFormationFromFiles(
+    readResourcesAndFormation(
       festival,
       formation.id, 
       (msg) => {
@@ -204,11 +211,11 @@ export default function FestivalManagerPage () {
           if (!hasError){
             setSelectedFestival(null);
             setEditingFestival(false);
+            setSelectedFestivalResources(null);
           }}}>
         {
           editingFestival &&
-          <EditFestivalDialog
-             festival={selectedFestival}/>
+          <EditFestivalDialog festival={selectedFestival} resources={selectedFestivalResources}/>
         }
       </Dialog.Root>
       

@@ -10,6 +10,8 @@ export type TextInputProps = {
   placeholder?: string,
   clearable?: boolean,
   compact?: boolean,
+  tall?: boolean,
+  short?: boolean,
   centered?: boolean,
   required?: boolean,
   disabled?: boolean,
@@ -37,9 +39,10 @@ export default function TextInput(props: TextInputProps) {
   }
 
   var inputClasses = classNames(
-    "w-full col-start-1 row-start-1 pl-2 pr-6 text-black border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none",
+    "w-full col-start-1 row-start-1 pl-2 pr-6 text-black border border-grey-300 rounded-md focus-within:border-primary focus:outline-none",
     {
-      "h-6": props.compact,
+      "h-10": props.tall,
+      "h-6": props.short,
       "text-center": props.centered,
       "bg-grey-200": props.disabled,
       "border-primary bg-primary-lighter placeholder:text-primary-darker": props.required && isNullOrUndefinedOrBlank(value),
@@ -48,7 +51,6 @@ export default function TextInput(props: TextInputProps) {
   var wrapperClasses = classNames(
     "grid items-center w-full grid-cols-1",
     {
-      "h-6": props.compact,
       "mb-2": !props.compact,
     },)
 
