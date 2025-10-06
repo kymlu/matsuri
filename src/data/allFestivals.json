@@ -5,7 +5,16 @@
       "name": "青梅華月祭2025",
       "startDate": "2025-09-15",
       "note": "近所の祭り",
-      "formations": ["ステージ"]
+      "formations": [{
+        "id": "ステージ",
+        "type": 1,
+        "songId": "1",
+        "length": 5,
+        "width": 10,
+        "topMargin": 2,
+        "bottomMargin": 4,
+        "sideMargin": 6
+      }]
     },
     {
       "id": "20250927Koiya",
@@ -13,7 +22,58 @@
       "startDate": "2025-09-27",
       "endDate": "2025-09-28",
       "note": "初参加で頑張ろうぜー",
-      "formations": ["ステージ", "パレード", "京橋", "末広", "梅田"]
+      "formations": [
+        {
+          "id": "ステージ",
+          "type": 1,
+          "songId": "1",
+          "length": 5,
+          "width": 10,
+          "topMargin": 2,
+          "bottomMargin": 4,
+          "sideMargin": 6
+        },
+        {
+          "id": "パレード",
+          "type": 1,
+          "songId": "1",
+          "length": 5,
+          "width": 10,
+          "topMargin": 2,
+          "bottomMargin": 4,
+          "sideMargin": 6
+        },
+        {
+          "id": "京橋",
+          "type": 1,
+          "songId": "1",
+          "length": 5,
+          "width": 10,
+          "topMargin": 2,
+          "bottomMargin": 4,
+          "sideMargin": 6
+        },
+        {
+          "id": "末広",
+          "type": 1,
+          "songId": "1",
+          "length": 5,
+          "width": 10,
+          "topMargin": 2,
+          "bottomMargin": 4,
+          "sideMargin": 6
+        },
+        {
+          "id": "梅田",
+          "type": 1,
+          "songId": "1",
+          "length": 5,
+          "width": 10,
+          "topMargin": 2,
+          "bottomMargin": 4,
+          "sideMargin": 6
+        }
+      ]
     },
     {
       "id": "20250830Doma",
@@ -21,7 +81,36 @@
       "startDate": "2025-08-30",
       "endDate": "2025-08-31",
       "note": "絶対勝つ！",
-      "formations": ["ステージ", "パレード","JRタワーズガーデン"]
+      "formations": [{
+        "id": "ステージ",
+        "type": 1,
+        "songId": "1",
+        "length": 5,
+        "width": 10,
+        "topMargin": 2,
+        "bottomMargin": 4,
+        "sideMargin": 6
+      },
+      {
+        "id": "パレード",
+        "type": 1,
+        "songId": "1",
+        "length": 5,
+        "width": 10,
+        "topMargin": 2,
+        "bottomMargin": 4,
+        "sideMargin": 6
+      },
+      {
+        "id": "JRタワーズガーデン",
+        "type": 1,
+        "songId": "1",
+        "length": 5,
+        "width": 10,
+        "topMargin": 2,
+        "bottomMargin": 4,
+        "sideMargin": 6
+      }]
     }
   ]
 }

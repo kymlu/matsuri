@@ -1,14 +1,4 @@
 {
-  "formation": {
-    "name": "ステージ",
-    "type": 1,
-    "songId": "1",
-    "length": 5,
-    "width": 10,
-    "topMargin": 2,
-    "bottomMargin": 4,
-    "sideMargin": 6
-  },
   "sections": [
     {
       "id": "1b0e7aa2-3d07-42d0-8266-8306b2e975f4",

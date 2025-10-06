@@ -50,16 +50,16 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     [formData.startDate, formData.endDate]
   );
 
-  const addFormation = () => {
-    setFormData((prev) => ({
-      ...prev,
-      formations: [...prev.formations, "隊列名未設定"]
-    }));
-  };
+  // const addFormation = () => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     formations: [...prev.formations, "隊列名未設定"]
+  //   }));
+  // };
 
   const editFormationName = (index: number, newName: string) => {
     const updatedFormations = [...formData.formations];
-    updatedFormations[index] = newName;
+    // updatedFormations[index] = newName;
     setFormData({ ...formData, formations: updatedFormations });
   };
 
@@ -146,7 +146,10 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
         <div>
           <div className="flex flex-row items-center justify-between mb-3">
             <label>隊列</label>
-            <button type="button" onClick={addFormation}>
+            <button
+              type="button"
+              // onClick={addFormation}
+            >
               <img src={ICON.addBlack} className="size-6" alt="Add formation" />
             </button>
           </div>
@@ -156,14 +159,14 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
                 {
                   editFormationNameIndex === index ? (
                     <TextInput
-                      default={formation}
+                      default={formation.id}
                       onContentChange={(val) =>{ setNewFormationName(val)}}
                       required
                       compact
                     />
                   ) : (
                     <span onClick={() => setEditFormationNameIndex(index)} className="cursor-pointer">
-                      {formation}
+                      {formation.id}
                     </span>
                   )
                 }
@@ -194,7 +197,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
                       type="button"
                       onClick={() => {
                         setEditFormationNameIndex(index);
-                        setNewFormationName(formation);
+                        setNewFormationName(formation.id);
                       }}>
                       <img src={ICON.editBlack} className="size-6" alt="Edit formation name" />
                     </button>

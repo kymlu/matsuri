@@ -22,7 +22,6 @@ export type FestivalResources = {
 }
 
 export type FormationDetails = {
-  formation: Formation,
   sections: FormationSection[],
   participants: ParticipantPosition[],
   props: PropPosition[],

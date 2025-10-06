@@ -19,6 +19,8 @@ import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { songList } from "../data/ImaHitotabi.ts";
 import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
 import { readFormationFromFiles } from "../lib/helpers/JsonReaderHelper.ts";
+import { strEquals } from "../lib/helpers/GlobalHelper.ts";
+import { Formation } from "../models/Formation.ts";
 
 export default function FormationSelectionPage() {
   const {updateAppModeContext} = useContext(AppModeContext);
@@ -38,26 +40,26 @@ export default function FormationSelectionPage() {
     updateAppModeContext({userType: "general", appMode: "view"});
   }, []);
 
-  async function selectFormation(festival: Festival, formationName: string) {
+  async function selectFormation(festival: Festival, formation: Formation) {
     readFormationFromFiles(
       festival,
-      formationName,
+      formation.id,
       (msg => {
-        setErrorMessage(`${formationName}の隊列データの取得に失敗しました。\n ${msg}`);
+        setErrorMessage(`${formation.id}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       }),
-      (festival, resources, formation) => {
-        setDataBeforeNavigation(festival, resources, formation);
+      (festival, resources, formationDetails) => {
+        setDataBeforeNavigation(festival, formation, resources, formationDetails);
         navigate("/formation");
       });
   }
 
-  function setDataBeforeNavigation(festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) {
+  function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {
     updateVisualSettingsContext({followingId: null});
 
-    updateFormationContext({selectedFormation: formationDetails.formation});
+    updateFormationContext({selectedFormation: formation ?? undefined});
 
-    updateCategoryContext({categories: songList[formationDetails.formation.songId].categories});
+    updateCategoryContext({categories: songList[formation!.songId].categories});
 
     var groupedParticipantPositions = groupByKey(formationDetails.participants, "formationSectionId")
     var groupedPropPositions = groupByKey(formationDetails.props, "formationSectionId")
@@ -114,11 +116,11 @@ export default function FormationSelectionPage() {
                     .map(formation => 
                       <Button 
                         label={`Select ${formation}`}
-                        key={formation}
+                        key={formation.id}
                         onClick={() => {
                           selectFormation(festival, formation)}
                         }>
-                        {formation}
+                        {formation.id}
                       </Button>
                   )}
                 </div>

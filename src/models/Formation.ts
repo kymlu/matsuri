@@ -1,6 +1,5 @@
 export interface Formation {
   id: string, 
-  name: string,
   songId: string,
   type: FormationType,
   length: number,

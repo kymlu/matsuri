@@ -24,6 +24,7 @@ import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
+import { strEquals } from '../lib/helpers/GlobalHelper.ts';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);
@@ -49,26 +50,26 @@ export default function FestivalManagerPage () {
     setSelectedFestival(festival);
   }
 
-  function goToEditor(festival: Festival, formationName: string) {
+  function goToEditor(festival: Festival, formation: Formation) {
     readFormationFromFiles(
       festival,
-      formationName, 
+      formation.id, 
       (msg) => {
-        setErrorMessage(`${formationName}の隊列データの取得に失敗しました。\n ${msg}`);
+        setErrorMessage(`${formation.id}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       },
-      (festival, resources, formation) => {
-        setDataBeforeNavigation(festival, resources, formation);
+      (festival, resources, formationDetails) => {
+        setDataBeforeNavigation(festival, formation, resources, formationDetails);
         navigate("/formation");
       });
   }
 
-  function setDataBeforeNavigation(festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) {
+  function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {
     updateVisualSettingsContext({followingId: null, gridSize: DEFAULT_GRID_SIZE});
 
-    updateFormationContext({selectedFormation: formationDetails.formation});
+    updateFormationContext({selectedFormation: formation});
 
-    updateCategoryContext({categories: songList[formationDetails.formation.songId].categories});
+    updateCategoryContext({categories: songList[formation!.songId].categories});
 
     var groupedParticipantPositions = groupByKey(formationDetails.participants, "formationSectionId")
     var groupedPropPositions = groupByKey(formationDetails.props, "formationSectionId")
@@ -166,11 +167,11 @@ export default function FestivalManagerPage () {
                   <div className='mt-2'>
                     {festival.formations
                       .map((formation) => 
-                        <div key={formation} className='hover:bg-grey-100'>
+                        <div key={formation.id} className='hover:bg-grey-100'>
                           <Divider compact/>
                           <div className='flex flex-row items-center justify-between px-5 py-2'>
                             <span>
-                              {formation}
+                              {formation.id}
                             </span>
                             <div className='flex flex-row gap-2'>
                               <button onClick={() => goToEditor(festival, formation)}>
