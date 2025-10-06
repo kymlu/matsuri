@@ -54,7 +54,7 @@ export async function exportFormationData(formationId: string) {
       var arrowPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("arrowPosition", id)))).flatMap(x => x);
 
       var toExport: ImportExportModel = {
-        festival: (festivals as Festival[]).filter(x => x.formations.map(x => x.id).includes(formationId)),
+        festival: (festivals as Festival[]).filter(x => x.formations.includes(formationId)),
         formationSections: formationSections as FormationSection[],
         participants: participants as Participant[],
         participantPositions: participantPositions as ParticipantPosition[],

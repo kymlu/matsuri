@@ -27,7 +27,7 @@ export default function ExportMenu(props: ExportMenuProps) {
       <div className="flex flex-row gap-2">
         <TextInput
           placeholder="ファイル名を入力"
-          text={exportName}
+          default={exportName}
           onContentChange={(newName) => setExportName(newName)}/>
         <span>.pdf</span>
       </div>

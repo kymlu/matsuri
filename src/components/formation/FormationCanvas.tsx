@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Stage } from "react-konva";
 import { UserContext } from "../../contexts/UserContext.tsx";
 import FormationGridLayer from "./layers/FormationGridLayer.tsx";
@@ -18,6 +18,7 @@ import { VisualSettingsContext } from "../../contexts/VisualSettingsContext.tsx"
 import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
 import { ParticipantPosition } from "../../models/Position.ts";
+import { convertToNestedRecord } from "../../lib/helpers/GroupingHelper.ts";
 
 export interface FormationCanvasProps {
   height: number,
@@ -96,6 +97,10 @@ export default function FormationCanvas(props: FormationCanvasProps) {
     }
   }, [userContext.compareMode, userContext.selectedSection, userContext.compareMode]);
 
+  const participantPositionsGrouped = useMemo(() => {
+    return convertToNestedRecord(participantPositions, "participantId");
+  }, [participantPositions]);
+
   return (
     <div className="m-auto">
       <Stage
@@ -161,6 +166,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             sideMargin={props.sideMargin}
             participants={participantList}
             participantPositions={participantPositions[selectedSection.id]}
+            previousParticipantPositions={participantPositionsGrouped[userContext.previousSectionId ?? ""] ?? {}}
             props={propList}
             propPositions={propPositions[selectedSection.id]}
             categories={props.categories}/>

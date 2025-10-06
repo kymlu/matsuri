@@ -70,7 +70,7 @@ export default function SectionOptionButton (props: ListOptionButtonProps) {
             compact
             centered
             onContentChange={(newValue) => {props.onEditName?.(newValue)}}
-            text={props.text}
+            default={props.text}
             placeholder="名前を入力"/>}
       </span>
       {

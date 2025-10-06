@@ -1,20 +1,35 @@
-import React from "react";
+import React, { useImperativeHandle } from "react";
 import { isNullOrUndefinedOrBlank } from "../lib/helpers/GlobalHelper.ts";
 import classNames from "classnames";
 import { ICON } from "../lib/consts.ts";
 
 export type TextInputProps = {
-  text?: string,
+  name?: string,
+  default?: string,
   onContentChange: (newContent: string) => void,
   placeholder?: string,
   clearable?: boolean,
   compact?: boolean,
   centered?: boolean,
+  required?: boolean,
+  disabled?: boolean,
+  ref?: React.Ref<any>,
+  maxLength?: number,
+  showLength?: boolean,
 }
 
 export default function TextInput(props: TextInputProps) {
-  function handleChange(event: any) {
-    props.onContentChange(event?.target?.value);
+  const [value, setValue] = React.useState<string>(props.default ?? "");
+
+  useImperativeHandle(props.ref, () => ({
+    changeValue: (newValue: string) => {
+      setValue(newValue);
+    }
+  }));
+
+  function handleChange(newValue: string) {
+    setValue(newValue);
+    props.onContentChange(newValue);
   }
 
   function onClear() {
@@ -26,10 +41,12 @@ export default function TextInput(props: TextInputProps) {
     {
       "h-6": props.compact,
       "text-center": props.centered,
+      "bg-grey-200": props.disabled,
+      "border-primary bg-primary-lighter placeholder:text-primary-darker": props.required && isNullOrUndefinedOrBlank(value),
     },)
 
   var wrapperClasses = classNames(
-    "grid items-center w-full h-8 grid-cols-1",
+    "grid items-center w-full grid-cols-1",
     {
       "h-6": props.compact,
       "mb-2": !props.compact,
@@ -38,19 +55,29 @@ export default function TextInput(props: TextInputProps) {
   return (
     <div className={wrapperClasses}>
       <input
-        maxLength={20}
+        disabled={props.disabled}
+        type="text"
+        name={props.name}
+        maxLength={props.maxLength ?? 20}
         placeholder={props.placeholder ?? ""}
-        value={props.text ?? ""}
-        onInput={(event) => handleChange(event)}
+        value={value ?? ""}
+        onInput={(event) => handleChange(event.currentTarget.value)}
         className={inputClasses}/>
 
-    { props.clearable && !isNullOrUndefinedOrBlank(props.text) && 
-      <button className="col-start-1 row-start-1 pr-2 ml-auto text-end" onClick={() => {onClear()}}>
+      {
+        props.clearable && !isNullOrUndefinedOrBlank(value) && 
+        <button className="col-start-1 row-start-1 pr-2 ml-auto text-end" onClick={() => {onClear()}}>
           <img
             className="size-4"
             src={ICON.clear}
             alt="Clear text"/>
-      </button>}
+        </button>
+      }
+
+      {
+        props.showLength &&
+        <span className="text-sm text-end">{`${value.length}/${props.maxLength ?? 20}`}</span>
+      }
     </div>
   )
 }

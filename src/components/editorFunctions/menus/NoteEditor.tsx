@@ -49,7 +49,7 @@ export default function NoteEditor() {
       </label>
       <TextInput
         clearable
-        text={label}
+        default={label}
         placeholder="タイトルを入力"
         onContentChange={(event) => handleContentChange(event, "label")}/>
         

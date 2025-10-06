@@ -23,6 +23,7 @@ export type FormationAnimationLayerProps = {
   props: Record<string, Prop>,
   categories: Record<string, ParticipantCategory>,
   participantPositions: ParticipantPosition[],
+  previousParticipantPositions: Record<string, ParticipantPosition>,
   propPositions: PropPosition[],
 }
 
@@ -66,8 +67,8 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
     Object.entries(sortedParticipantPaths)
       .forEach(([, pathData], index) => {
         const path = new Konva.Path({
-          x: 0,
-          y: 0,
+          x: props.previousParticipantPositions[pathData[0]]?.x ?? 0,
+          y: props.previousParticipantPositions[pathData[0]]?.y ?? 0,
           data: pathData[1].path,
         });
 
@@ -174,8 +175,8 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             key={placement.id}
             name={participant.displayName!} 
             colour={placement.categoryId ? props.categories[placement.categoryId]?.color || objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
-            startX={0} 
-            startY={0}
+            startX={props.previousParticipantPositions[placement.participantId]?.x ?? 0} 
+            startY={props.previousParticipantPositions[placement.participantId]?.y ?? 0}
             ref={participantRef.current[index]}
             following={strEquals(followingId, placement.participantId)}
           />;

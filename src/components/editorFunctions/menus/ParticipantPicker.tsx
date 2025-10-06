@@ -80,7 +80,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
       titleIcon={ICON.groups2Black}>
       <TextInput
         clearable
-        text={filterText}
+        default={filterText}
         placeholder="探す"
         onContentChange={(newValue) => setFilterTextWrapper(newValue ?? "")}/>
       <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-x-hidden overflow-y-scroll max-h-32">

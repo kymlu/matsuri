@@ -8,14 +8,19 @@ type ButtonProps = {
   primary?: boolean,
   disabled?: boolean,
   full?: boolean,
+  compact ?: boolean,
   label?: string,
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 export default function Button(props: ButtonProps) {
-  const classes = className("px-3 py-1.5 border rounded-xl lg:hover:bg-grey-100", {
+  const classes = className("px-3 py-1.5 border rounded-xl", {
     "w-full": props.full,
-    "bg-primary text-white lg:hover:bg-primary-light font-bold": props.primary,
+    "py-0.5 px-1": props.compact,
+    "lg:hover:bg-grey-100": !props.disabled,
+    "bg-primary text-white font-bold": props.primary,
+    "lg:hover:bg-primary-light": props.primary && !props.disabled,
+    "opacity-50 cursor-not-allowed": props.disabled
   });
 
   return <button 

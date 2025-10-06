@@ -23,6 +23,24 @@ export function indexByKey<T extends Record<string, any>, K extends keyof T>(
   }, {} as Record<string, T>);
 }
 
+export function convertToNestedRecord<T extends Record<string, any>, K extends keyof T> (
+  input: Record<string, T[]>,
+  keyName: K
+): Record<string, Record<string, T>> {
+  const result: Record<string, Record<string, T>> = {};
+
+  for (const key in input) {
+    const positionsArray = input[key];
+    result[key] = {};
+
+    for (const position of positionsArray) {
+      result[key][position[keyName]] = position;
+    }
+  }
+
+  return result;
+};
+
 export function selectValuesByKeys<T>(
   record: Record<string, T>,
   keys: string[]

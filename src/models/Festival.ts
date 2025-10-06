@@ -1,8 +1,8 @@
 export interface Festival {
   id: string,
   name: string,
-  startDate?: Date,
-  endDate?: Date,
+  startDate?: string,
+  endDate?: string,
   note?: string,
   formations: Array<string>
 }

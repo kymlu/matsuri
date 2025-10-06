@@ -3,7 +3,7 @@ import { ICON } from "../lib/consts.ts";
 
 export interface ExpandableSectionProps {
   children: React.ReactNode,
-  title: string,
+  title: React.ReactNode,
   titleIcon?: string,
   defaultIsExpanded?: boolean,
   canExpand?: boolean,

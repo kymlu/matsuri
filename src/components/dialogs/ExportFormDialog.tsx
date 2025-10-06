@@ -49,13 +49,9 @@ export function ExportFormDialog(props: ExportFormDialogProps) {
 
   return (
     <CustomDialog
+      hasX
       title="PDF出力設定">
       <div className="flex flex-col gap-2">
-        <Dialog.Close>
-          <div className="absolute cursor-pointer top-3 right-3 lg:hover:opacity-70" >
-            <img className="size-8" src={ICON.clear} alt="Close" />
-          </div>
-        </Dialog.Close>
         <div>
           <label>参加者追従</label>
           <CustomSelect

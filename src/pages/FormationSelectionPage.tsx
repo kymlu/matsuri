@@ -18,6 +18,7 @@ import { UserContext } from "../contexts/UserContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { songList } from "../data/ImaHitotabi.ts";
 import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
+import { readFormationFromFiles } from "../lib/helpers/JsonReaderHelper.ts";
 
 export default function FormationSelectionPage() {
   const {updateAppModeContext} = useContext(AppModeContext);
@@ -38,44 +39,17 @@ export default function FormationSelectionPage() {
   }, []);
 
   async function selectFormation(festival: Festival, formationName: string) {
-    var resourceFileName = `${process.env.PUBLIC_URL}/data/festivals/${festival.id}/resources.json`;
-    var formationFileName = `${process.env.PUBLIC_URL}/data/festivals/${festival.id}/${formationName}.json`;
-    try {
-      const resourceResponse = await fetch(resourceFileName);
-      if (!resourceResponse.ok) {
-        throw new Error(`Resource fetch failed with status: ${resourceResponse.status}`);
-      }
-      const data = (await resourceResponse.json() as FestivalResources);
-      console.log(`Successfully fetched resources for ${festival.name}`);
-      if (data.participants.length === 0) {
-        throw new Error('参加者データが空です。');
-      }
-      
-      try {
-        const formationResponse = await fetch(formationFileName);
-        if (!formationResponse.ok) {
-          throw new Error(`Formation fetch failed with status: ${formationResponse.status}`);
-        }
-        
-        const formation = (await formationResponse.json() as FormationDetails);
-        console.log(`Successfully fetched formation ${formationName}`);
-        if (formation.sections.length === 0) {
-          throw new Error('隊列セクションデータが空です。');
-        }
-
-        setDataBeforeNavigation(festival, data, formation);
-        
-        navigate("/formation");
-      } catch (formationErr) {
-        setErrorMessage(`${formationName}の隊列データの取得に失敗しました。\n ${formationErr}`);
+    readFormationFromFiles(
+      festival,
+      formationName,
+      (msg => {
+        setErrorMessage(`${formationName}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
-        console.error('Formation fetch error:', formationErr);
-      }
-    } catch (resourceErr) {
-      setErrorMessage(`${festival.name}のリソースの取得に失敗しました。\n ${resourceErr}`);
-      setHasError(true);
-      console.error('Resource fetch error:', resourceErr);
-    }
+      }),
+      (festival, resources, formation) => {
+        setDataBeforeNavigation(festival, resources, formation);
+        navigate("/formation");
+      });
   }
 
   function setDataBeforeNavigation(festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) {
@@ -113,7 +87,7 @@ export default function FormationSelectionPage() {
   }
 
   return (
-    <div className='flex flex-col w-full gap-2 mt-10 portrait:my-10 landscape:max-w-[50svw] landscape:mx-auto'>
+    <div className='flex flex-col w-full gap-2 mt-10 portrait:my-10 landscape:max-w-[65svw] landscape:mx-auto'>
       <div className='flex items-center justify-between mx-4'>
         <h1 className='text-2xl font-bold'>祭り</h1>
         <button
@@ -142,11 +116,7 @@ export default function FormationSelectionPage() {
                         label={`Select ${formation}`}
                         key={formation}
                         onClick={() => {
-                          selectFormation({
-                            ...festival,
-                            startDate: new Date(festival.startDate),
-                            endDate: festival.endDate ? new Date(festival.endDate) : undefined
-                          } as Festival, formation)}
+                          selectFormation(festival, formation)}
                         }>
                         {formation}
                       </Button>
@@ -159,12 +129,12 @@ export default function FormationSelectionPage() {
       </div>
       <span className='fixed opacity-50 bottom-2 left-2'>{LAST_UPDATED}</span>
       <Dialog.Root dismissible open={hasError} onOpenChange={() => setHasError(false)} onOpenChangeComplete={() => (!hasError) && setErrorMessage(null)}>
-        <CustomDialog title="エラー">
+        {errorMessage && <CustomDialog title="エラー">
           {errorMessage}
           <div className='flex justify-end mt-4'>
             <Button label="閉じる" onClick={() => setHasError(false)}>閉じる</Button>
           </div>
-        </CustomDialog>
+        </CustomDialog>}
       </Dialog.Root>
     </div>
   )
