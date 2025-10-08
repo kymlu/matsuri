@@ -7,16 +7,17 @@ export type CustomMenuProps = {
   position?: 'top' | 'bottom' | 'left' | 'right' | 'inline-end' | 'inline-start';
   full?: boolean;
   children: React.ReactNode;
+  disabled?: boolean
 }
 
 export default function CustomMenu (props: CustomMenuProps) {
   const triggerClassNames = classNames("lg:hover:opacity-80", {
-    "w-full": props.full,
+    "w-full h-full": props.full,
   });
 
   return (
     <Menu.Root>
-      <Menu.Trigger className={triggerClassNames} onClick={(e) => {e.stopPropagation()}}>
+      <Menu.Trigger disabled={props.disabled} className={triggerClassNames} onClick={(e) => {e.stopPropagation()}}>
         {props.trigger}
         </Menu.Trigger>
       <Menu.Portal>

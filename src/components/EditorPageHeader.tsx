@@ -27,7 +27,11 @@ export function EditorPageHeader() {
         }>
         <>
           <MenuItem label="ホームに戻る" onClick={() => {
-            navigate("../");
+            if(appMode === "edit") {
+              navigate("/manager");
+            } else {
+              navigate("../");
+            }
           }} />
         </>
       </CustomMenu>
@@ -35,7 +39,7 @@ export function EditorPageHeader() {
       <HeaderNameSection
         sectionTitle={selectedSection?.displayName}
         festivalTitle={selectedFestival?.name}
-        formationTitle={selectedFormation?.name}/>
+        formationTitle={selectedFormation?.id}/>
       }
       {
         userType === "general" && 

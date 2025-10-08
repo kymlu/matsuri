@@ -61,7 +61,8 @@ export function FormationGhostLayer(props: FormationGhostLayerProps) {
                 colour={placement.categoryId ? props.categories[placement.categoryId]?.color ?? objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
                 startX={getPixel(gridSize, placement.x, props.sideMargin)} 
                 startY={getPixel(gridSize, placement.y, props.topMargin)}
-            />
+					      isPlaceholder={props.participants[placement.participantId]?.isPlaceholder}
+              />
             }
         )
       }

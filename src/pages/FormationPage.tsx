@@ -109,6 +109,25 @@ export default function FormationPage () {
       selectedFormation?.topMargin,
       selectedFormation?.sideMargin));
 
+    if (appMode === "edit") {
+      const leftPositions = Array.from({ length: (selectedFormation!.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
+        .map((_, col) => [-2, col]);
+      
+      const rightPositions = Array.from({ length: (selectedFormation?.length ?? 10) + (selectedFormation?.bottomMargin ?? DEFAULT_BOTTOM_MARGIN)/2 })
+        .map((_, col) => [ selectedFormation!.width, col]);
+  
+      const topPositions = Array.from({ length: (selectedFormation?.width ?? DEFAULT_WIDTH) + (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN) })
+        .flatMap((_, row) =>
+          Array.from({ length: 2 }).map((_, col) => [ row - (selectedFormation?.sideMargin ?? DEFAULT_SIDE_MARGIN)/2, col])
+        )
+  
+      setMarginPositions({
+        participants: topPositions,
+        props: rightPositions,
+        notes: leftPositions
+      });
+    }
+
     // updateCategoryContext({categories: songList[selectedFormation!.songId].categories});
 
     // GetAllForFormation(selectedFormation?.id!, (

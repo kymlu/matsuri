@@ -6,5 +6,5 @@ export interface Prop {
   count?: number,
   length: number
   color?: ColorStyle,
-  formationId?: string,
+  festivalId?: string,
 }

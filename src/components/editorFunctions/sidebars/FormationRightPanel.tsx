@@ -56,14 +56,14 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
         <Divider/>
       </>
     }
-    { selectedItems.length === 1 &&
+    {/* { selectedItems.length === 1 &&
       (selectedItems[0].type === PositionType.prop ||
         selectedItems[0].type === PositionType.participant) &&
       <>
         <NameEditor/>
         <Divider/>
       </>
-    }
+    } */}
     { selectedItems.length === 1 &&
       selectedItems[0].type === PositionType.arrow &&
       <>

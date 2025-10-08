@@ -7,6 +7,8 @@ export interface ParticipantOption {
 export interface Participant {
   id: string,
   displayName: string,
-  formationId: string,
+  festivalId: string,
   memberId?: string,
+  isPlaceholder: boolean,
+  placeholderNumber: number,
 }

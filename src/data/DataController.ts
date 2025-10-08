@@ -5,6 +5,7 @@ import { Prop } from "../models/Prop.ts";
 import { dbController } from "./../lib/dataAccess/DBProvider.tsx";
 
 export async function GetAllForFormation(
+  festivalId: string,
   formationId: string,
   thenFn: (
     formationSections: FormationSection[],
@@ -26,8 +27,8 @@ export async function GetAllForFormation(
     arrowPosition,
   ] = await Promise.all([
     dbController.getByFormationId("formationSection", formationId),
-    dbController.getByFormationId("participant", formationId),
-    dbController.getByFormationId("prop", formationId),
+    dbController.getByFestivalId("participant", festivalId),
+    dbController.getByFestivalId("prop", festivalId),
     dbController.getAll("participantPosition"),
     dbController.getAll("propPosition"),
     dbController.getAll("notePosition"),

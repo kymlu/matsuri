@@ -10,9 +10,14 @@ import CustomMenu, { MenuItem } from "../CustomMenu.tsx";
 import Divider from "../Divider.tsx";
 import { FestivalResources } from "../../models/ImportExportModel.ts";
 import CustomSelect from "../CustomSelect.tsx";
-import { songList } from "../../data/ImaHitotabi.ts";
-import { FormationType } from "../../models/Formation.ts";
+import { propsList, songList, teamMembers } from "../../data/ImaHitotabi.ts";
+import { Formation, FormationType } from "../../models/Formation.ts";
 import NumberTextField from "../NumberTextField.tsx";
+import ColorPalettePicker from "../editorFunctions/menus/ColorPalettePicker.tsx";
+import ColorPresetPicker from "../editorFunctions/menus/ColorPresetPicker.tsx";
+import { Prop } from "../../models/Prop.ts";
+import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
+import ColorSwatch from "../editorFunctions/menus/ColorSwatch.tsx";
 
 export type EditFestivalDialogProps = {
   festival: Festival | null,
@@ -27,9 +32,9 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     startDate: props.festival?.startDate || "",
     endDate: props.festival?.endDate || "",
     note: props.festival?.note || "",
-    formations: props.festival?.formations || [],
-    participants: props.resources?.participants || [],
-    props: props.resources?.props || [],
+    formations: [...props.festival?.formations || []],
+    participants: [...props.resources?.participants || []],
+    props: [...props.resources?.props || []],
   };
 
   const songs = useMemo(
@@ -38,14 +43,33 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   );
   const formationTypes = {"1": "ステージ", "0": "パレード"};
 
-  const [formData, setFormData] = useState<Festival & FestivalResources>(defaultFestival);
+  const [formData, setFormData] = useState<Festival & FestivalResources>({...defaultFestival});
   const [endDateError, setEndDateError] = useState(false);
   const [editFormationNameIndex, setEditFormationNameIndex] = useState<number>(-1);
   const [newFormationName, setNewFormationName] = useState<string>("");
 
+  const [formationNames, setFormationNames] = useState<Record<string, number>>({});
+  const [propNames, setPropNames] = useState<Record<string, number>>({});
+
   useEffect(() => {
+    updateFormationNames(formData.formations);
+    updatePropNames(formData.props);
     setFormData(defaultFestival);
   }, [props.festival]);
+
+  function updateFormationNames(formations: Formation[]) {
+    setFormationNames(formations.reduce((acc, f) => {
+      acc[f.id] = (acc[f.id] || 0) + 1;
+      return acc;
+    }, {}));
+  }
+
+  function updatePropNames(props: Prop[]) {
+    setPropNames(props.reduce((acc, p) => {
+      acc[p.name] = (acc[p.name] || 0) + 1;
+      return acc;
+    }, {}));
+  }
 
   const onFieldChange = useCallback(
     (field: keyof Festival, value: any) => {
@@ -65,32 +89,80 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     [formData.startDate, formData.endDate]
   );
 
-  // const addFormation = () => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     formations: [...prev.formations, "隊列名未設定"]
-  //   }));
-  // };
+  const addFormation = () => {
+    const updatedFormations = [
+      ...formData.formations, {
+        id: "",
+        type: FormationType.stage,
+        songId: Object.keys(songList)[0],
+        length: 10,
+        width: 20,
+        topMargin: 5,
+        sideMargin: 5,
+        bottomMargin: 5
+      } as Formation
+    ];
+    setFormData((prev) => ({
+      ...prev,
+      formations: updatedFormations
+    }));
+    updateFormationNames(updatedFormations);
+  };
+
+  const addProp = (preset?: Prop) => {
+    const updatedProps = [
+      ...formData.props,
+      {
+        id: crypto.randomUUID(),
+        name: preset?.name || "",
+        length: 1,
+        color: preset?.color || objectColorSettings.grey3
+      }
+    ];
+    setFormData((prev) => ({
+      ...prev,
+      props: updatedProps
+    }));
+    updatePropNames(updatedProps);
+  };
 
   const editFormationName = (index: number, newName: string) => {
     const updatedFormations = [...formData.formations];
-    // updatedFormations[index] = newName;
+    updatedFormations[index].id = newName;
     setFormData({ ...formData, formations: updatedFormations });
+    updateFormationNames(updatedFormations);
+  };
+
+  const editPropName = (index: number, newName: string) => {
+    const updatedProps = [...formData.props];
+    updatedProps[index].name = newName;
+    setFormData({ ...formData, props: updatedProps });
+    updatePropNames(updatedProps);
   };
 
   const deleteFormation = (index: number) => {
     const updatedFormations = [...formData.formations];
     updatedFormations.splice(index, 1);
     setFormData({ ...formData, formations: updatedFormations });
+    updateFormationNames(updatedFormations);
   };
+
+  const deleteProp = (index: number) => {
+    const updatedProps = [...formData.props];
+    updatedProps.splice(index, 1);
+    setFormData({ ...formData, props: updatedProps });
+    updatePropNames(updatedProps);
+  }
 
   const reset = () => {
     setFormData(defaultFestival);
+    updateFormationNames(defaultFestival.formations || []);
+    updatePropNames(defaultFestival.props || []);
     setEndDateError(false);
   };
 
   const save = () => {
-    if (isNullOrUndefinedOrBlank(formData.name) || isNullOrUndefinedOrBlank(formData.startDate)) {
+    if (isNullOrUndefinedOrBlank(formData.startDate) || isNullOrUndefinedOrBlank(formData.startDate)) {
       alert("祭り名と開始日は必須です。");
       return;
     }
@@ -169,33 +241,37 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
           <label>隊列</label>
           <button
             type="button"
-            // onClick={addFormation}
+            onClick={addFormation}
           >
             <img src={ICON.addBlack} className="size-6" alt="Add formation" />
           </button>
         </div>
-        <div className="grid grid-cols-[3fr,2fr,2fr,1fr,1fr,auto] items-center gap-2">
+        <div className="grid grid-cols-[3fr,2fr,2fr,1fr,1fr,auto] items-center gap-x-2">
           <div className="font-bold">隊列名</div>
           <div className="font-bold">曲名</div>
           <div className="font-bold">タイプ</div>
           <div className="font-bold">縦(m)</div>
           <div className="font-bold">幅(m)</div>
           <div></div>
-          {formData.formations.map((formation, index) => (
+          { formData.formations.map((formation, index) => (
             <React.Fragment key={index}>
               <TextInput
                 tall
                 compact
                 default={formation.id}
-                onContentChange={(val) =>{ setNewFormationName(val)}}
+                onContentChange={(val) =>{ 
+                  editFormationName(index, val);
+                }}
                 required
+                hasError={formationNames[formation.id] > 1 || formation.id.match(`[~"#%&*:<>?/\\{|}]+`) !== null}
               />
               <CustomSelect defaultValue={songList[formation.songId].name} items={songs}/>
               <CustomSelect defaultValue={formation.type === FormationType.parade ? "パレード" : "ステージ"} items={formationTypes}/>
-              <NumberTextField default={formation.length}/>
-              <NumberTextField default={formation.width}/>
+              <NumberTextField default={formation.length} min={5} max={300}/>
+              <NumberTextField default={formation.width} min={5} max={50}/>
               <CustomMenu
-                trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete formation" />}>
+                disabled={formData.formations.length === 1}
+                trigger={<img src={ICON.deleteBlack} className={"size-6" + (formData.formations.length === 1 ? " opacity-50 cursor-not-allowed" : "")} alt="Delete formation" />}>
                 <MenuItem label="削除" onClick={() => deleteFormation(index)} />
               </CustomMenu>
             </React.Fragment>
@@ -203,21 +279,79 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
         </div>
         <Divider/>
         <div>
-          <label>参加者</label>
-          {
-            formData.participants.map((p, i) => (
-              <div key={i}>{p.displayName}</div>
-            ))
-          }
+          <div className="flex flex-row items-center justify-between mb-3">
+            <label>参加者</label>
+            <button
+              type="button"
+              // onClick={addFormation}
+            >
+              <img src={ICON.addBlack} className="size-6" alt="Add participant" />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-row flex-wrap gap-2 overflow-auto h-28">
+              {teamMembers.sort((a, b) => a.name.localeCompare(b.name)).map((p) => <span>{p.name}</span>)}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {
+                formData.participants.map((p, i) => (
+                  <div key={i}>{p.displayName}</div>
+                ))
+              }
+            </div>
+          </div>
         </div>
         <Divider/>
         <div>
-          <label>大道具</label>
-          {
-            formData.props.map((p, i) => (
-              <div key={i}>{p.name}</div>
-            ))
-          }
+          <div className="flex flex-row items-center justify-between mb-3">
+            <label>大道具</label>
+            <button
+              type="button"
+              onClick={() => addProp()}
+            >
+              <img src={ICON.addBlack} className="size-6" alt="Add participant" />
+            </button>
+          </div>
+          <div className="grid grid-cols-[5fr,2fr,1fr,auto] items-center gap-x-2">
+            <div className="font-bold">ラベル</div>
+            <div className="font-bold">長さ(m)</div>
+            <div className="font-bold">色</div>
+            <div></div>
+            { formData.props.length === 0 && <span className="w-full col-span-4 mt-2 text-center">大道具はありません</span>}
+            {
+              formData.props.map((p, i) => 
+                <React.Fragment key={i}>
+                  <TextInput 
+                    tall
+                    compact
+                    default={p.name}
+                    onContentChange={(val) =>{ 
+                      editPropName(i, val);
+                    }}
+                    required
+                    hasError={propNames[p.name] > 1}
+                    />
+                  <NumberTextField default={p.length}/>
+                  <CustomMenu trigger={
+                    <ColorSwatch 
+                      full
+                      key={p.color!.twColor} 
+                      colorHexCode={p.color!.bgColour!} 
+                      borderHexCode={p.color!.borderColour}
+                      textHexCode={p.color!.textColour}
+                      onClick={() => {}}
+                      />
+                  }>
+                    <ColorPresetPicker selectColor={()=>{}} selectedColor={p.color}/>
+                  </CustomMenu>
+                  <CustomMenu
+                    trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete prop" />}>
+                    <MenuItem label="削除" onClick={() => deleteProp(i)} />
+                  </CustomMenu>
+                </React.Fragment>
+              )
+            }
+          </div>
         </div>
       </form>
 
@@ -228,7 +362,11 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
             isNullOrUndefinedOrBlank(formData.name) ||
             isNullOrUndefinedOrBlank(formData.startDate) ||
             endDateError || 
-            (editFormationNameIndex !== -1)
+            (editFormationNameIndex !== -1) ||
+            Object.keys(formationNames).some(key => isNullOrUndefinedOrBlank(key) || key.match(`[~"#%&*:<>?/\\{|}]+`)) ||
+            Object.values(formationNames).some(count => count > 1) ||
+            Object.keys(propNames).some(key => isNullOrUndefinedOrBlank(key)) ||
+            Object.values(propNames).some(count => count > 1)
           }
           primary
           onClick={save}

@@ -21,14 +21,14 @@ export class IndexedDBManager {
 
       if (!db.objectStoreNames.contains("participant")) {
         const participantStore = db.createObjectStore("participant", { keyPath: "id", autoIncrement: true });
-        participantStore.createIndex("formationId", "formationId", { unique: false });
+        participantStore.createIndex("festivalId", "festivalId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participant").clear();
       }
 
       if (!db.objectStoreNames.contains("prop")) {
         const propStore = db.createObjectStore("prop", { keyPath: "id", autoIncrement: true });
-        propStore.createIndex("formationId", "formationId", { unique: false });
+        propStore.createIndex("festivalId", "festivalId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("prop").clear();
       }
@@ -99,7 +99,7 @@ export class IndexedDBManager {
     });
   }
 
-  async getByFormationId(storeName: "participant" | "prop" | "formationSection", formationId: string) {
+  async getByFormationId(storeName: "formationSection", formationId: string) {
     console.log(`getByFormationId ${storeName} called on ${formationId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore(storeName, "readonly").index("formationId");
@@ -110,6 +110,22 @@ export class IndexedDBManager {
       };
       request.onerror = () => {
         console.error(`error on getByFormationId ${storeName}: ${request.error}`);
+        reject(request.error);
+      };
+    });
+  }
+
+  async getByFestivalId(storeName: "participant" | "prop", festivalId: string) {
+    console.log(`getByFestivalId ${storeName} called on ${festivalId}`);
+    return new Promise((resolve, reject) => {
+      const index = this._getStore(storeName, "readonly").index("festivalId");
+      const request = index.getAll(festivalId);
+      request.onsuccess = () => {
+        console.log(`resolved getByFestivalId ${storeName}: ${request.result.length}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on getByFestivalId ${storeName}: ${request.error}`);
         reject(request.error);
       };
     });

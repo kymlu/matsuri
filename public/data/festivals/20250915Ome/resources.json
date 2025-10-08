@@ -3,78 +3,106 @@
     {
       "id": "0e8070f6-d12b-4420-9e0b-c28960457ecc",
       "displayName": "ピノ",
-      "formationId": "0",
-      "memberId": "19"
+      "festivalId": "20250915Ome",
+      "memberId": "19",
+      "isPlaceholder": false,
+      "placeholderNumber": 0
     },
     {
       "id": "180c2f07-a5c8-41f8-bb90-672f64cff8ec",
       "displayName": "まりあ",
-      "formationId": "0",
-      "memberId": "16"
+      "festivalId": "20250915Ome",
+      "memberId": "16",
+      "isPlaceholder": false,
+      "placeholderNumber": 1
     },
     {
       "id": "35d20650-27bb-4bcd-8dd5-291343a56469",
       "displayName": "かずま",
-      "formationId": "0",
-      "memberId": "23"
+      "festivalId": "20250915Ome",
+      "memberId": "23",
+      "isPlaceholder": false,
+      "placeholderNumber": 2
     },
     {
       "id": "6db964f2-d79e-430d-bce0-f337a38c7f5d",
       "displayName": "クリーム",
-      "formationId": "0",
-      "memberId": "2"
+      "festivalId": "20250915Ome",
+      "memberId": "2",
+      "isPlaceholder": false,
+      "placeholderNumber": 3
     },
     {
       "id": "75f96745-3448-455e-9a87-2084411dfb7f",
       "displayName": "小雪",
-      "formationId": "0"
+      "festivalId": "20250915Ome",
+      "memberId": "63",
+      "isPlaceholder": false,
+      "placeholderNumber": 4
     },
     {
       "id": "9d6ad3c0-d6d6-479e-861b-ae8706322500",
       "displayName": "直太朗",
-      "formationId": "0",
-      "memberId": "51"
+      "festivalId": "20250915Ome",
+      "memberId": "51",
+      "isPlaceholder": false,
+      "placeholderNumber": 5
     },
     {
       "id": "a3c16920-8e9c-4bc9-bb22-94a8bb07893a",
       "displayName": "kubota",
-      "formationId": "0",
-      "memberId": "36"
+      "festivalId": "20250915Ome",
+      "memberId": "36",
+      "isPlaceholder": false,
+      "placeholderNumber": 6
     },
     {
       "id": "aa972587-7ea5-4a85-a733-1766fc2de217",
       "displayName": "ラフレシア",
-      "formationId": "0",
-      "memberId": "22"
+      "festivalId": "20250915Ome",
+      "memberId": "22",
+      "isPlaceholder": false,
+      "placeholderNumber": 7
     },
     {
       "id": "d407c480-dd38-456a-b8ed-eab1156c63a3",
       "displayName": "ケイティー",
-      "formationId": "0",
-      "memberId": "61"
+      "festivalId": "20250915Ome",
+      "memberId": "61",
+      "isPlaceholder": false,
+      "placeholderNumber": 8
     },
     {
       "id": "d6a45c24-e9cf-465b-834e-dabff96f7d0e",
       "displayName": "どん",
-      "formationId": "0"
+      "festivalId": "20250915Ome",
+      "memberId": "62",
+      "isPlaceholder": false,
+      "placeholderNumber": 9
     },
     {
       "id": "daecbe4a-71b3-4906-8888-53c0d0511038",
       "displayName": "犬",
-      "formationId": "0",
-      "memberId": "21"
+      "festivalId": "20250915Ome",
+      "memberId": "21",
+      "isPlaceholder": false,
+      "placeholderNumber": 10
     },
     {
       "id": "fd2774b6-0be4-419f-bce3-f9186cdb204a",
       "displayName": "しまさん",
-      "formationId": "0",
-      "memberId": "17"
+      "festivalId": "20250915Ome",
+      "memberId": "17",
+      "isPlaceholder": false,
+      "placeholderNumber": 11
     },
     {
       "id": "ff715745-8d86-42a9-9968-c4725a360be7",
       "displayName": "ココッシュ",
-      "formationId": "0",
-      "memberId": "32"
+      "festivalId": "20250915Ome",
+      "memberId": "32",
+      "isPlaceholder": false,
+      "placeholderNumber": 12
     }
   ],
   "props": []

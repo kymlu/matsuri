@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { propsList } from "../../../data/ImaHitotabi.ts";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import ItemButton from "../../ItemButton.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
@@ -14,7 +13,7 @@ import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export default function PropPicker (props: {margins: number[][]}) {
   const {propPositions, updatePositionContextState} = useContext(PositionContext);
-  const {currentSections, selectedSection} = useContext(UserContext);
+  const {currentSections, selectedFestival, selectedSection} = useContext(UserContext);
   const {propList, updateEntitiesContext} = useContext(EntitiesContext);
 
   function selectProp(selectedProp: Prop) {
@@ -24,7 +23,7 @@ export default function PropPicker (props: {margins: number[][]}) {
       ...selectedProp,
       id: crypto.randomUUID(),
       color: selectedProp.color ?? objectColorSettings.grey3,
-      formationId: selectedSection.formationId
+      festivalId: selectedFestival!.id
     } as Prop;
 
     var position = props.margins[Object.values(propList).length % props.margins.length]
@@ -57,7 +56,7 @@ export default function PropPicker (props: {margins: number[][]}) {
       title="大道具"
       titleIcon={ICON.flagBlack}>
         <div className="flex flex-row flex-wrap gap-2">
-        {propsList
+        {Object.values(propList)
           .sort((a, b) => a.name.localeCompare(b.name))
           .map(prop => 
             <ItemButton

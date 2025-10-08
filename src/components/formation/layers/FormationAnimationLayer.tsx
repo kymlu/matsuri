@@ -14,6 +14,8 @@ import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { Prop } from "../../../models/Prop.ts";
 import PropObject from "../formationObjects/PropObject.tsx";
 import { useMemo } from "react";
+import { Path } from "../../../models/AnimationPath.ts";
+import { Group } from "konva/lib/Group";
 
 export type FormationAnimationLayerProps = {
   topMargin: number,
@@ -34,15 +36,18 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
   const animationLayerRef = useRef<Konva.Layer>(null);
   const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
   const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+
+  useEffect(() => {
+    Object.keys(props.participants)
+      .forEach((_, index) => 
+        participantRef.current[index] = React.createRef<Konva.Group>()
+      );
+    Object.keys(props.props)
+      .forEach((_, index) => 
+        propRef.current[index] = React.createRef<Konva.Group>()
+      );
+  }, [props.participantPositions, props.propPositions]);
   
-  Object.keys(props.participants)
-    .forEach((_, index) => 
-      participantRef.current[index] = React.createRef<Konva.Group>()
-    );
-  Object.keys(props.props)
-    .forEach((_, index) => 
-      propRef.current[index] = React.createRef<Konva.Group>()
-    );
 
   // Precompute paths and sort them
   const sortedParticipantPaths = useMemo(
@@ -60,87 +65,65 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
 
     updateState({isLoading: false});
 
-    const steps = 30;
-
     const animationPromises: Promise<void>[] = [];
 
-    Object.entries(sortedParticipantPaths)
-      .forEach(([, pathData], index) => {
-        const path = new Konva.Path({
-          x: props.previousParticipantPositions[pathData[0]]?.x ?? 0,
-          y: props.previousParticipantPositions[pathData[0]]?.y ?? 0,
-          data: pathData[1].path,
-        });
-
-        const pathLen = path.getLength();
-        const step = pathLen / steps;
-        let pos = 0;
-
-        participantRef.current[index].current?.cache();
-
-        // Wrap each animation in a Promise
-        const animPromise = new Promise<void>((resolve) => {
-          const anim = new Konva.Animation(() => {
-            pos++;
-
-            const pt = path.getPointAtLength(pos * step);
-            if (pt && participantRef?.current[index]) {
-              participantRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
-            }
-
-            if (pos >= steps) {
-              anim.stop();
-              resolve();
-            }
-          });
-
-          anim.start();
-        });
-
-        animationPromises.push(animPromise);
-      });
-    Object.entries(sortedPropPaths)
-      .forEach(([, pathData], index) => {
-        const path = new Konva.Path({
-          x: 0,
-          y: 0,
-          data: pathData[1].path,
-        });
-
-        const pathLen = path.getLength();
-        const step = pathLen / steps;
-        const anglePerStep = (pathData[1].toAngle! - pathData[1].fromAngle!)/steps;
-        let pos = 0;
-
-        propRef.current[index].current?.cache();
-
-        // Wrap each animation in a Promise
-        const animPromise = new Promise<void>((resolve) => {
-          const anim = new Konva.Animation(() => {
-            pos++;
-
-            const pt = path.getPointAtLength(pos * step);
-            if (pt && propRef?.current[index]) {
-              propRef.current[index]?.current?.position({ x: pt.x, y: pt.y });
-              propRef.current[index]?.current?.rotation(pathData[1].fromAngle! + pos * anglePerStep);
-            }
-
-            if (pos >= steps) {
-              anim.stop();
-              resolve();
-            }
-          });
-
-          anim.start();
-        });
-
-        animationPromises.push(animPromise);
-      });
+    createAnimations(animationPromises, sortedParticipantPaths, participantRef, false, props.previousParticipantPositions);
+    createAnimations(animationPromises, sortedPropPaths, propRef, true);
 
     Promise.all(animationPromises).then(() => {
       updateAnimationContext({isAnimating: false});
     });
   }, [isAnimating]);
+
+  function createAnimations(
+    promiseArray: Promise<void>[],
+    paths: [string, Path][],
+    refs: React.RefObject<React.RefObject<Group | null>[]>,
+    hasRotation: boolean,
+    previousPositions?: Record<string, ParticipantPosition>,
+  ) {
+    const steps = 30;
+
+    Object.entries(paths)
+      .forEach(([, pathData], index) => {
+        const path = new Konva.Path({
+          x: previousPositions ? previousPositions[pathData[0]]?.x ?? 0 : 0,
+          y: previousPositions ? previousPositions[pathData[0]]?.y ?? 0 : 0,
+          data: pathData[1].path,
+        });
+
+        const pathLen = path.getLength();
+        const step = pathLen / steps;
+        const anglePerStep = hasRotation ? (pathData[1].toAngle! - pathData[1].fromAngle!)/steps : 0;
+        let pos = 0;
+
+        refs.current[index].current?.cache();
+
+        // Wrap each animation in a Promise
+        const animPromise = new Promise<void>((resolve) => {
+          const anim = new Konva.Animation(() => {
+            pos++;
+
+            const pt = path.getPointAtLength(pos * step);
+            if (pt && refs?.current[index]) {
+              refs.current[index]?.current?.position({ x: pt.x, y: pt.y });
+              if (hasRotation) {
+                refs.current[index]?.current?.rotation(pathData[1].fromAngle! + pos * anglePerStep);
+              }
+            }
+
+            if (pos >= steps) {
+              anim.stop();
+              resolve();
+            }
+          });
+
+          anim.start();
+        });
+
+        promiseArray.push(animPromise);
+      });
+  }
   
   return (
     <Layer
@@ -179,6 +162,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             startY={props.previousParticipantPositions[placement.participantId]?.y ?? 0}
             ref={participantRef.current[index]}
             following={strEquals(followingId, placement.participantId)}
+					  isPlaceholder={props.participants[placement.participantId]?.isPlaceholder}
           />;
         }
         )

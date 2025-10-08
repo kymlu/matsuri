@@ -17,6 +17,7 @@ export interface ParticipantObjectProps {
   ref?: React.Ref<Konva.Group>,
   selected?: boolean,
   following?: boolean,
+  isPlaceholder?: boolean
 }
 
 // Todo: show position if selected in view mode
@@ -36,6 +37,8 @@ export default function ParticipantObject(props: ParticipantObjectProps) {
       <Circle
         radius={(gridSize/2) * 0.9}
         fill={props.colour.bgColour}
+        dashEnabled={props.isPlaceholder}
+        dash={[gridSize/5, gridSize/7]}
         stroke={(props.selected || props.following) ? basePalette.primary.main : props.colour.borderColour}
         strokeWidth={props.following ? gridSize/10 : props.selected ? gridSize/20 : gridSize/30} />
       <Text

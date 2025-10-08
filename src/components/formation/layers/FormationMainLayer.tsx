@@ -642,6 +642,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					ref={participantRef.current[index]}
 					selected={appMode === "edit" && selectedIds.has(placement.id)}
 					following={strEquals(placement.participantId, followingId)}
+					isPlaceholder={props.participants[placement.participantId]?.isPlaceholder}
 				/>
 			))}
 			<Transformer

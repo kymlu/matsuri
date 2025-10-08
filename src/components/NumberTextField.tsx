@@ -26,7 +26,7 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       max={props?.max ?? 1000}
       step={1}
       >
-      <div className="flex flex-row items-center justify-between w-full gap-2 my-2">
+      <div className="flex flex-row items-center justify-between w-full my-2">
         <NumberField.ScrubArea className="cursor-ew-resize">
           { props.label && <label
             htmlFor={id}
@@ -38,12 +38,12 @@ export default function NumberTextField (props: NumberTextFieldProps) {
           </NumberField.ScrubAreaCursor>
         </NumberField.ScrubArea>
 
-        <NumberField.Group className="flex bg-white border rounded-md border-grey-300 focus-within:border-primary">
-          <NumberField.Decrement className="flex items-center justify-center w-4 h-10 text-gray-900 select-none bg-clip-padding lg:hover:bg-gray-100 active:bg-gray-100">
+        <NumberField.Group className="grid grid-cols-[1fr,2fr,1fr] w-full bg-white border rounded-md border-grey-300 focus-within:border-primary">
+          <NumberField.Decrement className={"flex items-center justify-center h-10 select-none rounded-l-md min-w-4 bg-clip-padding" + ((value ?? 1) > (props.min ?? 0) ? " lg:hover:bg-gray-100 active:bg-gray-100 text-gray-900": " text-gray-400")}>
             <MinusIcon />
           </NumberField.Decrement>
-          <NumberField.Input className="w-10 h-10 text-base text-center text-gray-900 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
-          <NumberField.Increment className="flex items-center justify-center w-4 select-none tex0-gray-900 h-19 bg-clip-padding lg:hover:bg-gray-100 active:bg-gray-100">
+          <NumberField.Input className="h-10 text-base text-center text-gray-900 min-w-10 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
+          <NumberField.Increment className={"flex items-center justify-center select-none rounded-r-md min-w-4 tex0-gray-900 h-19 bg-clip-padding" + ((value ?? 0) < (props.max ?? 100000000) ? " lg:hover:bg-gray-100 active:bg-gray-100 text-gray-900": " text-gray-400")}>
             <PlusIcon />
           </NumberField.Increment>
         </NumberField.Group>

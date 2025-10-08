@@ -40,12 +40,12 @@ export function exportAllData() {
 
 export async function exportFormationData(formationId: string) {
   Promise.all([
-    dbController.getAll("festival"),
+    dbController.getAll("festival"), // todo: fix
     dbController.getByFormationId("formationSection", formationId),
   ]).then(async ([festivals, formationSections]) => {
     Promise.all([
-      dbController.getByFormationId("participant", formationId),
-      dbController.getByFormationId("prop", formationId),
+      dbController.getByFestivalId("participant", festivals![0].id),
+      dbController.getByFestivalId("prop", festivals![0].id),
     ]).then(async ([participants, props]) => {
       var sectionIds = (formationSections as FormationSection[]).map(x => x.id);
       var participantPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("participantPosition", id)))).flatMap(x => x);

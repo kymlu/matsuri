@@ -14,10 +14,11 @@ export type ColorSwatchProps = {
 export default function ColorSwatch(props: ColorSwatchProps) {
   var c = classNames("rounded-md flex items-center justify-center cursor-pointer", 
     {
-      "w-full": props.full,
+      "w-full h-full": props.full,
       "w-4": !props.full,
-      "h-8 font-bold": props.textHexCode,
-      "h-4": props.textHexCode === undefined,
+      "h-8": props.textHexCode && !props.full,
+      "h-4": props.textHexCode === undefined && !props.full,
+      "font-bold": props.textHexCode,
       "border-grey-500 border-2 border-solid": props.borderHexCode !== undefined,
       "border-2 border-primary": props.isSelected
     });

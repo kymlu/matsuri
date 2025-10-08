@@ -238,8 +238,8 @@ export const teamMembers: Array<ParticipantOption> = [
   {id: "59", name: "いちご大福の首領"},
   {id: "60", name: "タイガ"},
   {id: "61", name: "ケイティー"},
-  {id: "-1", name: "踊り子", isPlaceholder: true},
-  {id: "-2", name: "スタッフ", isPlaceholder: true},
+  {id: "62", name: "どん"},
+  {id: "63", name: "小雪"},
 ]
 
 export const propsList: Array<Prop> = [
