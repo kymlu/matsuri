@@ -10,14 +10,14 @@ import CustomMenu, { MenuItem } from "../CustomMenu.tsx";
 import Divider from "../Divider.tsx";
 import { FestivalResources } from "../../models/ImportExportModel.ts";
 import CustomSelect from "../CustomSelect.tsx";
-import { propsList, songList, teamMembers } from "../../data/ImaHitotabi.ts";
+import { songList, teamMembers } from "../../data/ImaHitotabi.ts";
 import { Formation, FormationType } from "../../models/Formation.ts";
 import NumberTextField from "../NumberTextField.tsx";
-import ColorPalettePicker from "../editorFunctions/menus/ColorPalettePicker.tsx";
 import ColorPresetPicker from "../editorFunctions/menus/ColorPresetPicker.tsx";
 import { Prop } from "../../models/Prop.ts";
-import { objectColorSettings, objectPalette } from "../../themes/colours.ts";
+import { objectColorSettings } from "../../themes/colours.ts";
 import ColorSwatch from "../editorFunctions/menus/ColorSwatch.tsx";
+import { Participant } from "../../models/Participant.ts";
 
 export type EditFestivalDialogProps = {
   festival: Festival | null,
@@ -49,11 +49,13 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   const [newFormationName, setNewFormationName] = useState<string>("");
 
   const [formationNames, setFormationNames] = useState<Record<string, number>>({});
+  const [participantNames, setParticipantNames] = useState<Record<string, number>>({});
   const [propNames, setPropNames] = useState<Record<string, number>>({});
 
   useEffect(() => {
     updateFormationNames(formData.formations);
     updatePropNames(formData.props);
+    updateParticipantNames(formData.participants);
     setFormData(defaultFestival);
   }, [props.festival]);
 
@@ -67,6 +69,13 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   function updatePropNames(props: Prop[]) {
     setPropNames(props.reduce((acc, p) => {
       acc[p.name] = (acc[p.name] || 0) + 1;
+      return acc;
+    }, {}));
+  }
+
+  function updateParticipantNames(participants: Participant[]) {
+    setPropNames(participants.reduce((acc, p) => {
+      acc[p.displayName] = (acc[p.displayName] || 0) + 1;
       return acc;
     }, {}));
   }
@@ -126,6 +135,21 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     updatePropNames(updatedProps);
   };
 
+  const addParticipant = (preset?: Participant) => {
+    const updatedParticipants = [
+      ...formData.participants,
+      {
+        id: crypto.randomUUID(),
+        displayName: preset?.displayName || "",
+      } as Participant
+    ];
+    setFormData((prev) => ({
+      ...prev,
+      participants: updatedParticipants
+    }));
+    updateParticipantNames(updatedParticipants);
+  };
+
   const editFormationName = (index: number, newName: string) => {
     const updatedFormations = [...formData.formations];
     updatedFormations[index].id = newName;
@@ -138,6 +162,13 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     updatedProps[index].name = newName;
     setFormData({ ...formData, props: updatedProps });
     updatePropNames(updatedProps);
+  };
+
+  const editParticipantName = (index: number, newName: string) => {
+    const updatedParticipants = [...formData.participants];
+    updatedParticipants[index].displayName = newName;
+    setFormData({ ...formData, participants: updatedParticipants });
+    updateParticipantNames(updatedParticipants);
   };
 
   const deleteFormation = (index: number) => {
@@ -158,6 +189,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     setFormData(defaultFestival);
     updateFormationNames(defaultFestival.formations || []);
     updatePropNames(defaultFestival.props || []);
+    updateParticipantNames(defaultFestival.participants || []);
     setEndDateError(false);
   };
 
@@ -252,7 +284,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
           <div className="font-bold">タイプ</div>
           <div className="font-bold">縦(m)</div>
           <div className="font-bold">幅(m)</div>
-          <div></div>
+          <div className="size-6"></div>
           { formData.formations.map((formation, index) => (
             <React.Fragment key={index}>
               <TextInput
@@ -316,7 +348,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
             <div className="font-bold">ラベル</div>
             <div className="font-bold">長さ(m)</div>
             <div className="font-bold">色</div>
-            <div></div>
+            <div className="size-6"></div>
             { formData.props.length === 0 && <span className="w-full col-span-4 mt-2 text-center">大道具はありません</span>}
             {
               formData.props.map((p, i) => 
@@ -331,11 +363,10 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
                     required
                     hasError={propNames[p.name] > 1}
                     />
-                  <NumberTextField default={p.length}/>
+                  <NumberTextField default={p.length} step={0.1}/>
                   <CustomMenu trigger={
                     <ColorSwatch 
                       full
-                      key={p.color!.twColor} 
                       colorHexCode={p.color!.bgColour!} 
                       borderHexCode={p.color!.borderColour}
                       textHexCode={p.color!.textColour}
@@ -366,7 +397,9 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
             Object.keys(formationNames).some(key => isNullOrUndefinedOrBlank(key) || key.match(`[~"#%&*:<>?/\\{|}]+`)) ||
             Object.values(formationNames).some(count => count > 1) ||
             Object.keys(propNames).some(key => isNullOrUndefinedOrBlank(key)) ||
-            Object.values(propNames).some(count => count > 1)
+            Object.values(propNames).some(count => count > 1) ||
+            Object.keys(participantNames).some(key => isNullOrUndefinedOrBlank(key)) ||
+            Object.values(participantNames).some(count => count > 1)
           }
           primary
           onClick={save}

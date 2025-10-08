@@ -6,6 +6,7 @@ export interface NumberTextFieldProps {
   default: number,
   min?: number,
   max?: number,
+  step?: number,
   onChange?: (newValue: number | null) => void,
 }
 
@@ -17,14 +18,15 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       id={id}
       value={value}
       onValueChange={(newValue) => {
-        setValue(newValue);
-        props.onChange?.(newValue);
+        const rounded = newValue ? Math.round(newValue/(props.step ?? 1)) * (props.step ?? 1) : props.min ?? 0
+        setValue(rounded);
+        props.onChange?.(rounded);
       }}
       defaultValue={props.default}
       className="flex flex-col items-start gap-1"
       min={props?.min ?? 0}
       max={props?.max ?? 1000}
-      step={1}
+      step={props?.step ?? 1}
       >
       <div className="flex flex-row items-center justify-between w-full my-2">
         <NumberField.ScrubArea className="cursor-ew-resize">
