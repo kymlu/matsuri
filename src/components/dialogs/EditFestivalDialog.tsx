@@ -10,15 +10,16 @@ import CustomMenu, { MenuItem } from "../CustomMenu.tsx";
 import Divider from "../Divider.tsx";
 import { FestivalResources } from "../../models/ImportExportModel.ts";
 import CustomSelect from "../CustomSelect.tsx";
-import { songList, teamMembers } from "../../data/ImaHitotabi.ts";
+import { propsList, songList, teamMembers } from "../../data/ImaHitotabi.ts";
 import { Formation, FormationType } from "../../models/Formation.ts";
 import NumberTextField from "../NumberTextField.tsx";
 import ColorPresetPicker from "../editorFunctions/menus/ColorPresetPicker.tsx";
 import { Prop } from "../../models/Prop.ts";
-import { objectColorSettings } from "../../themes/colours.ts";
+import { ColorStyle, objectColorSettings } from "../../themes/colours.ts";
 import ColorSwatch from "../editorFunctions/menus/ColorSwatch.tsx";
 import { Participant, ParticipantOption } from "../../models/Participant.ts";
 import { CustomAutocomplete } from "../CustomAutocomplete.tsx";
+import ItemButton from "../ItemButton.tsx";
 
 export type EditFestivalDialogProps = {
   festival: Festival | null,
@@ -47,6 +48,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   const [formData, setFormData] = useState<Festival & FestivalResources>({...defaultFestival});
   const [endDateError, setEndDateError] = useState(false);
   const [editParticipantNameIndex, setEditParticipantNameIndex] = useState<number>(-1);
+  const [editingParticipants, setEditingParticipants] = useState<boolean>(false);
 
   const [formationNames, setFormationNames] = useState<Record<string, number>>({});
   const [participantNames, setParticipantNames] = useState<Record<string, number>>({});
@@ -130,7 +132,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
       {
         id: crypto.randomUUID(),
         name: preset?.name || "",
-        length: 1,
+        length: preset?.length || 1,
         color: preset?.color || objectColorSettings.grey3
       }
     ];
@@ -170,6 +172,13 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   const editPropName = (index: number, newName: string) => {
     const updatedProps = [...formData.props];
     updatedProps[index].name = newName;
+    setFormData({ ...formData, props: updatedProps });
+    updatePropNames(updatedProps);
+  };
+
+  const editPropColour = (index: number, newColour: ColorStyle) => {
+    const updatedProps = [...formData.props];
+    updatedProps[index].color = newColour;
     setFormData({ ...formData, props: updatedProps });
     updatePropNames(updatedProps);
   };
@@ -337,16 +346,30 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
         <div>
           <div className="flex flex-row items-center justify-between mb-3">
             <label>参加者</label>
-            <button
-              disabled={teamMembers.length === 0 || editParticipantNameIndex !== -1}
-              className={teamMembers.length === 0 || editParticipantNameIndex !== -1 ? "opacity-50" : ""}
-              type="button"
-              onClick={sortParticipants}
-            >
-              <img src={ICON.sortByAlphaBlack} className="size-6" alt="Sort" />
-            </button>
+            <div className="flex flex-row gap-2">
+              <button
+                disabled={teamMembers.length === 0 || editParticipantNameIndex !== -1}
+                className={teamMembers.length === 0 || editParticipantNameIndex !== -1 ? "opacity-50" : ""}
+                type="button"
+                onClick={sortParticipants}
+              >
+                <img src={ICON.sortByAlphaBlack} className="size-6" alt="Sort" />
+              </button>
+              <button
+                disabled={teamMembers.length === 0}
+                className={teamMembers.length === 0 ? "opacity-50" : ""}
+                type="button"
+                onClick={() => {
+                  setEditingParticipants(prev => !prev);
+                  setEditParticipantNameIndex(-1);
+                }}
+              >
+                <img src={editingParticipants ? ICON.editOffBlack : ICON.editBlack} className="size-6" alt="Toggle edit" />
+              </button>
+            </div>
           </div>
           <CustomAutocomplete
+            tall
             placeholder="参加者の名前を入力する"
             items={filteredTeam}
             filter={(item: ParticipantOption, query: string) => item.name.includes(query)}
@@ -362,7 +385,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
                 return <React.Fragment key={i}>
                   <div
                     className={
-                      "flex flex-row gap-2 border border-primary px-2 rounded-lg " +
+                      "flex flex-row gap-2 border-2 border-primary px-2 rounded-lg " +
                       (hasError ? "bg-primary-lighter placeholder:text-primary-darker" : "bg-white")
                     }>
                     { editParticipantNameIndex === i ?
@@ -378,19 +401,24 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
                         /> : p.displayName
                     }
                     {
-                      editParticipantNameIndex === i ?
-                      <button
-                        disabled={hasError}
-                        className={hasError ? "opacity-50" : ""}
-                        onClick={() => {setEditParticipantNameIndex(-1)}}>
-                        <img className="size-6" src={ICON.checkBlack}/>
-                      </button> :
-                      <button onClick={() => {setEditParticipantNameIndex(i)}}><img className="size-6" src={ICON.editBlack}/></button>
+                      editingParticipants && 
+                      <>
+                        {
+                          editingParticipants && editParticipantNameIndex === i ?
+                          <button
+                            disabled={hasError}
+                            className={hasError ? "opacity-50" : ""}
+                            onClick={() => {setEditParticipantNameIndex(-1)}}>
+                            <img className="size-6" src={ICON.checkBlack}/>
+                          </button> :
+                          <button onClick={() => {setEditParticipantNameIndex(i)}}><img className="size-6" src={ICON.editBlack}/></button>
+                        }
+                        <CustomMenu
+                          trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete participant"/>}>
+                          <MenuItem label="削除" onClick={() => deleteParticipant(i)} />
+                        </CustomMenu>
+                      </>
                     }
-                    <CustomMenu
-                      trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete participant"/>}>
-                      <MenuItem label="削除" onClick={() => deleteParticipant(i)} />
-                    </CustomMenu>
                   </div>
                 </React.Fragment>
               })
@@ -408,44 +436,49 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
               <img src={ICON.addBlack} className="size-6" alt="Add participant" />
             </button>
           </div>
-          <div className="grid grid-cols-[5fr,1fr,1fr,auto] items-center gap-x-2">
-            <div className="font-bold">ラベル</div>
-            <div className="font-bold">長さ(m)</div>
-            <div className="font-bold">色</div>
-            <div className="size-6"></div>
-            { formData.props.length === 0 && <span className="w-full col-span-4 mt-2 text-center">大道具はありません</span>}
-            {
-              formData.props.map((p, i) => 
-                <React.Fragment key={i}>
-                  <TextInput 
-                    tall
-                    compact
-                    default={p.name}
-                    onContentChange={(val) =>{ 
-                      editPropName(i, val);
-                    }}
-                    required
-                    hasError={propNames[p.name] > 1}
-                    />
-                  <NumberTextField default={p.length} step={0.1}/>
-                  <CustomMenu trigger={
-                    <ColorSwatch 
-                      full
-                      colorHexCode={p.color!.bgColour!} 
-                      borderHexCode={p.color!.borderColour}
-                      textHexCode={p.color!.textColour}
-                      onClick={() => {}}
+          <div className="grid grid-cols-[1fr,4fr] items-start gap-4">
+            <div className="flex flex-col gap-2 max-h-[20svh] overflow-y-auto border-2 border-primary rounded-lg p-2">
+              {propsList.map(x => <ItemButton key={x.id} text={`${x.name} (${x.length}m)`} onClick={() => addProp(x)}/>)}
+            </div>
+            <div className="grid grid-cols-[5fr,1fr,1fr,auto] items-center gap-x-2">
+              <div className="font-bold">ラベル</div>
+              <div className="font-bold">長さ(m)</div>
+              <div className="font-bold">色</div>
+              <div className="size-6"></div>
+              { formData.props.length === 0 && <span className="w-full col-span-4 mt-2 text-center">大道具はありません</span>}
+              {
+                formData.props.map((p, i) => 
+                  <React.Fragment key={i}>
+                    <TextInput 
+                      tall
+                      compact
+                      default={p.name}
+                      onContentChange={(val) =>{ 
+                        editPropName(i, val);
+                      }}
+                      required
+                      hasError={propNames[p.name] > 1}
                       />
-                  }>
-                    <ColorPresetPicker selectColor={()=>{}} selectedColor={p.color}/>
-                  </CustomMenu>
-                  <CustomMenu
-                    trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete prop" />}>
-                    <MenuItem label="削除" onClick={() => deleteProp(i)} />
-                  </CustomMenu>
-                </React.Fragment>
-              )
-            }
+                    <NumberTextField default={p.length} step={0.1}/>
+                    <CustomMenu trigger={
+                      <ColorSwatch 
+                        full
+                        colorHexCode={p.color!.bgColour!} 
+                        borderHexCode={p.color!.borderColour}
+                        textHexCode={p.color!.textColour}
+                        onClick={() => {}}
+                        />
+                    }>
+                      <ColorPresetPicker selectColor={(newColour)=>{editPropColour(i, newColour)}} selectedColor={p.color}/>
+                    </CustomMenu>
+                    <CustomMenu
+                      trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete prop" />}>
+                      <MenuItem label="削除" onClick={() => deleteProp(i)} />
+                    </CustomMenu>
+                  </React.Fragment>
+                )
+              }
+            </div>
           </div>
         </div>
       </form>

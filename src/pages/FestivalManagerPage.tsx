@@ -204,7 +204,6 @@ export default function FestivalManagerPage () {
       </div>
       <span className='fixed opacity-50 bottom-2 left-2'>{LAST_UPDATED}</span>
       <Dialog.Root
-        dismissible
         open={editingFestival}
         onOpenChange={() => setEditingFestival(false)}
         onOpenChangeComplete={() => () => {

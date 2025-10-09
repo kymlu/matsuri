@@ -47,6 +47,7 @@ export const ICON = {
   downloadBlack: "icons/download_black.svg",
   edit: "icons/edit.svg",
   editBlack: "icons/edit_black.svg",
+  editOffBlack: "icons/edit_off_black.svg",
   editDocument: "icons/edit_document.svg",
   expandLessBlack: "icons/expand_less_black.svg",
   expandMoreBlack: "icons/expand_more_black.svg",

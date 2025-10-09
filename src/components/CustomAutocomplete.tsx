@@ -42,6 +42,8 @@ export function CustomAutocomplete(props: CustomAutocompleteProps) {
     });
 
   return <Autocomplete.Root
+    alwaysSubmitOnEnter
+    autoHighlight
     items={props.items}
     itemToStringValue={props.getLabel}
     value={searchValue}
@@ -69,7 +71,7 @@ export function CustomAutocomplete(props: CustomAutocompleteProps) {
               (item) => (
                 <Autocomplete.Item
                   key={item.id}
-                  className="flex py-2 pl-4 pr-8 text-base leading-4 rounded outline-none cursor-pointer select-none hover:text-white hover:bg-primary"
+                  className="flex py-2 pl-4 pr-8 text-base leading-4 rounded outline-none cursor-pointer select-none data-[highlighted]:text-white data-[highlighted]:bg-primary"
                   value={item}
                 >
                   {props.getLabel(item)}
@@ -80,7 +82,8 @@ export function CustomAutocomplete(props: CustomAutocompleteProps) {
           {
             props.canAddUndefined && !props.items.some(x => strEquals(props.getLabel(x), searchValue)) &&
             <Autocomplete.Item
-              className="flex items-center py-2 pl-4 pr-8 text-base leading-4 outline-none cursor-pointer select-none hover:text-white hover:rounded hover:bg-primary"
+              value={searchValue}
+              className="flex items-center py-2 pl-4 pr-8 text-base leading-4 outline-none cursor-pointer select-none data-[highlighted]:text-white data-[highlighted]:rounded data-[highlighted]:bg-primary"
               >
               <img className="size-4" src={ICON.addBlack}/> {searchValue}
             </Autocomplete.Item>
