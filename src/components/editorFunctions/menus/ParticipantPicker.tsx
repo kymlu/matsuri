@@ -81,7 +81,6 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   }
 
   const participantListDisplay = useMemo(() => {
-    console.log("!")
     return Object.values(participantList)
       .filter(x => !participantsInFormation.includes(x.id) && x.displayName.toLowerCase().includes(filterText?.toLowerCase()))
       .sort((a, b) => a.displayName.localeCompare(b.displayName));

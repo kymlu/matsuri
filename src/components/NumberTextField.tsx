@@ -29,17 +29,6 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       step={props?.step ?? 1}
       >
       <div className="flex flex-row items-center justify-between w-full my-2">
-        <NumberField.ScrubArea className="cursor-ew-resize">
-          { props.label && <label
-            htmlFor={id}
-            className="text-sm font-medium text-gray-900 cursor-ew-resize">
-            {props.label}
-          </label> }
-          <NumberField.ScrubAreaCursor className="drop-shadow-[0_1px_1px_#0008] filter">
-            <CursorGrowIcon />
-          </NumberField.ScrubAreaCursor>
-        </NumberField.ScrubArea>
-
         <NumberField.Group className="grid grid-cols-[1fr,2fr,1fr] w-full bg-white border rounded-md border-grey-300 focus-within:border-primary">
           <NumberField.Decrement className={"flex items-center justify-center h-10 select-none rounded-l-md min-w-4 bg-clip-padding" + ((value ?? 1) > (props.min ?? 0) ? " lg:hover:bg-gray-100 active:bg-gray-100 text-gray-900": " text-gray-400")}>
             <MinusIcon />

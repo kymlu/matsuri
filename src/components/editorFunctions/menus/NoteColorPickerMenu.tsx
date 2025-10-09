@@ -105,7 +105,6 @@ export default function NoteColorPickerMenu() {
       var color = bgColors.values().next().value;
       setSelectedBgColor(color);
       hasBgSwitchRef.current?.changeChecked(color !== undefined);
-      console.log(color)
     } else {
       setSelectedBgColor(null);
       hasBgSwitchRef.current?.changeChecked(false);

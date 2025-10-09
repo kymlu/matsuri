@@ -20,6 +20,7 @@ export type TextInputProps = {
   ref?: React.Ref<any>,
   maxLength?: number,
   showLength?: boolean,
+  hasOutline?: boolean
 }
 
 export default function TextInput(props: TextInputProps) {
@@ -41,8 +42,9 @@ export default function TextInput(props: TextInputProps) {
   }
 
   var inputClasses = classNames(
-    "w-full col-start-1 row-start-1 pl-2 text-black border border-grey-300 rounded-md focus-within:border-primary focus:outline-none",
+    "w-full col-start-1 row-start-1 pl-2 text-black border-grey-300 rounded-md focus-within:border-primary focus:outline-none",
     {
+      "border": props.hasOutline !== false,
       "pr-6": props.clearable,
       "pr-2": !props.clearable,
       "h-10": props.tall,
@@ -50,13 +52,13 @@ export default function TextInput(props: TextInputProps) {
       "text-center": props.centered,
       "bg-grey-200": props.disabled,
       "border-primary bg-primary-lighter placeholder:text-primary-darker": props.required && isNullOrUndefinedOrBlank(value) || props.hasError,
-    },)
+    },);
 
   var wrapperClasses = classNames(
     "grid items-center w-full grid-cols-1",
     {
       "mb-2": !props.compact,
-    },)
+    },);
 
   return (
     <div className={wrapperClasses}>

@@ -17,7 +17,8 @@ import ColorPresetPicker from "../editorFunctions/menus/ColorPresetPicker.tsx";
 import { Prop } from "../../models/Prop.ts";
 import { objectColorSettings } from "../../themes/colours.ts";
 import ColorSwatch from "../editorFunctions/menus/ColorSwatch.tsx";
-import { Participant } from "../../models/Participant.ts";
+import { Participant, ParticipantOption } from "../../models/Participant.ts";
+import { CustomAutocomplete } from "../CustomAutocomplete.tsx";
 
 export type EditFestivalDialogProps = {
   festival: Festival | null,
@@ -45,12 +46,17 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
 
   const [formData, setFormData] = useState<Festival & FestivalResources>({...defaultFestival});
   const [endDateError, setEndDateError] = useState(false);
-  const [editFormationNameIndex, setEditFormationNameIndex] = useState<number>(-1);
-  const [newFormationName, setNewFormationName] = useState<string>("");
+  const [editParticipantNameIndex, setEditParticipantNameIndex] = useState<number>(-1);
 
   const [formationNames, setFormationNames] = useState<Record<string, number>>({});
   const [participantNames, setParticipantNames] = useState<Record<string, number>>({});
   const [propNames, setPropNames] = useState<Record<string, number>>({});
+
+  const filteredTeam = useMemo(() =>
+    teamMembers
+      .filter(x => !Object.keys(participantNames).includes(x.name))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  , [participantNames]);
 
   useEffect(() => {
     updateFormationNames(formData.formations);
@@ -74,7 +80,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   }
 
   function updateParticipantNames(participants: Participant[]) {
-    setPropNames(participants.reduce((acc, p) => {
+    setParticipantNames(participants.reduce((acc, p) => {
       acc[p.displayName] = (acc[p.displayName] || 0) + 1;
       return acc;
     }, {}));
@@ -135,12 +141,16 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     updatePropNames(updatedProps);
   };
 
-  const addParticipant = (preset?: Participant) => {
+  const addParticipant = (preset?: ParticipantOption) => {
     const updatedParticipants = [
       ...formData.participants,
       {
         id: crypto.randomUUID(),
-        displayName: preset?.displayName || "",
+        displayName: preset?.name || "",
+        festivalId: formData.id,
+        memberId: preset?.id,
+        isPlaceholder: false,
+        placeholderNumber: Math.max(...formData.participants.map(x => x.placeholderNumber)) + 1,
       } as Participant
     ];
     setFormData((prev) => ({
@@ -171,6 +181,12 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     updateParticipantNames(updatedParticipants);
   };
 
+  const sortParticipants = () => {
+    const updatedParticipants = [...formData.participants].sort((a, b) => a.displayName.localeCompare(b.displayName));
+    setFormData({ ...formData, participants: updatedParticipants });
+    updateParticipantNames(updatedParticipants);
+  }
+
   const deleteFormation = (index: number) => {
     const updatedFormations = [...formData.formations];
     updatedFormations.splice(index, 1);
@@ -183,6 +199,14 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     updatedProps.splice(index, 1);
     setFormData({ ...formData, props: updatedProps });
     updatePropNames(updatedProps);
+  }
+
+  const deleteParticipant = (index: number) => {
+    setEditParticipantNameIndex(-1);
+    const updatedParticipants = [...formData.participants];
+    updatedParticipants.splice(index, 1);
+    setFormData({ ...formData, participants: updatedParticipants });
+    updateParticipantNames(updatedParticipants);
   }
 
   const reset = () => {
@@ -314,23 +338,63 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
           <div className="flex flex-row items-center justify-between mb-3">
             <label>参加者</label>
             <button
+              disabled={teamMembers.length === 0 || editParticipantNameIndex !== -1}
+              className={teamMembers.length === 0 || editParticipantNameIndex !== -1 ? "opacity-50" : ""}
               type="button"
-              // onClick={addFormation}
+              onClick={sortParticipants}
             >
-              <img src={ICON.addBlack} className="size-6" alt="Add participant" />
+              <img src={ICON.sortByAlphaBlack} className="size-6" alt="Sort" />
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-row flex-wrap gap-2 overflow-auto h-28">
-              {teamMembers.sort((a, b) => a.name.localeCompare(b.name)).map((p) => <span>{p.name}</span>)}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {
-                formData.participants.map((p, i) => (
-                  <div key={i}>{p.displayName}</div>
-                ))
-              }
-            </div>
+          <CustomAutocomplete
+            placeholder="参加者の名前を入力する"
+            items={filteredTeam}
+            filter={(item: ParticipantOption, query: string) => item.name.includes(query)}
+            getLabel={(item: ParticipantOption) => item.name}
+            canAddUndefined
+            selectItem={(item: ParticipantOption | string) => addParticipant(typeof item === "string" ? {
+              name: item
+              } as ParticipantOption : item)}/>
+          <div className="flex flex-row items-center gap-2 flex-wrap overflow-auto max-h-[50svh]">
+            {
+              formData.participants.map((p, i) => {
+                const hasError = participantNames[p.displayName] > 1 || isNullOrUndefinedOrBlank(p.displayName);
+                return <React.Fragment key={i}>
+                  <div
+                    className={
+                      "flex flex-row gap-2 border border-primary px-2 rounded-lg " +
+                      (hasError ? "bg-primary-lighter placeholder:text-primary-darker" : "bg-white")
+                    }>
+                    { editParticipantNameIndex === i ?
+                      <TextInput
+                        compact
+                        hasOutline={false}
+                        default={p.displayName}
+                        onContentChange={(val) =>{ 
+                          editParticipantName(i, val);
+                        }}
+                        required
+                        hasError={hasError}
+                        /> : p.displayName
+                    }
+                    {
+                      editParticipantNameIndex === i ?
+                      <button
+                        disabled={hasError}
+                        className={hasError ? "opacity-50" : ""}
+                        onClick={() => {setEditParticipantNameIndex(-1)}}>
+                        <img className="size-6" src={ICON.checkBlack}/>
+                      </button> :
+                      <button onClick={() => {setEditParticipantNameIndex(i)}}><img className="size-6" src={ICON.editBlack}/></button>
+                    }
+                    <CustomMenu
+                      trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete participant"/>}>
+                      <MenuItem label="削除" onClick={() => deleteParticipant(i)} />
+                    </CustomMenu>
+                  </div>
+                </React.Fragment>
+              })
+            }
           </div>
         </div>
         <Divider/>
@@ -344,7 +408,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
               <img src={ICON.addBlack} className="size-6" alt="Add participant" />
             </button>
           </div>
-          <div className="grid grid-cols-[5fr,2fr,1fr,auto] items-center gap-x-2">
+          <div className="grid grid-cols-[5fr,1fr,1fr,auto] items-center gap-x-2">
             <div className="font-bold">ラベル</div>
             <div className="font-bold">長さ(m)</div>
             <div className="font-bold">色</div>
@@ -393,7 +457,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
             isNullOrUndefinedOrBlank(formData.name) ||
             isNullOrUndefinedOrBlank(formData.startDate) ||
             endDateError || 
-            (editFormationNameIndex !== -1) ||
+            (editParticipantNameIndex !== -1) ||
             Object.keys(formationNames).some(key => isNullOrUndefinedOrBlank(key) || key.match(`[~"#%&*:<>?/\\{|}]+`)) ||
             Object.values(formationNames).some(count => count > 1) ||
             Object.keys(propNames).some(key => isNullOrUndefinedOrBlank(key)) ||
