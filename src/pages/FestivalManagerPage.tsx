@@ -15,7 +15,7 @@ import allFestivals from "../data/allFestivals.json"
 import { formatJapaneseDateRange } from '../lib/helpers/DateHelper.ts';
 import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
-import { EditFestivalDialog } from '../components/dialogs/EditFestivalDialog.tsx';
+import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
 import ExpandableSection from '../components/ExpandableSection.tsx';
 import { getResourceFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
 import { FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
@@ -24,7 +24,6 @@ import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
-import { strEquals } from '../lib/helpers/GlobalHelper.ts';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);

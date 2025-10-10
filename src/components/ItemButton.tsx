@@ -14,6 +14,7 @@ export default function ItemButton (props: ItemButtonProps) {
   });
   return (
     <button
+      type="button"
       className={classes}
       onClick={props.onClick}>
       { props.icon && <img src={props.icon} className="size-8"/>}
