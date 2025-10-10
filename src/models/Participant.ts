@@ -1,6 +1,7 @@
 export interface ParticipantOption {
   id: string,
   name: string,
+  kana?: string,
   isPlaceholder?: boolean
 }
 

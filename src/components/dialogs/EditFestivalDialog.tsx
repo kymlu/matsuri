@@ -370,9 +370,9 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
           </div>
           <CustomAutocomplete
             tall
-            placeholder="参加者の名前を入力する"
+            placeholder="参加者の名前、かなを入力する"
             items={filteredTeam}
-            filter={(item: ParticipantOption, query: string) => item.name.includes(query)}
+            filter={(item: ParticipantOption, query: string) => item.name.includes(query) || (item.kana?.includes(query) ?? false)}
             getLabel={(item: ParticipantOption) => item.name}
             canAddUndefined
             selectItem={(item: ParticipantOption | string) => addParticipant(typeof item === "string" ? {
