@@ -7,6 +7,7 @@ export type CustomSelectProps = {
   items: Record<string, string>,
   isIcons?: boolean,
   defaultValue: string,
+  disabled?: boolean,
   setValue?: (newValue: string) => void,
   ref?: React.Ref<any>,
 }
@@ -28,7 +29,7 @@ export default function CustomSelect(props: CustomSelectProps) {
         props.setValue?.(newValue);
         setValue(newValue);
       }}>
-      <Select.Trigger className="flex flex-row items-center justify-between w-full p-2 bg-white rounded-md cursor-pointer outline outline-1 outline-grey-300">
+      <Select.Trigger disabled={props.disabled} className={"flex flex-row items-center justify-between w-full p-2 rounded-md outline outline-1 outline-grey-300 " + (props.disabled ? "bg-grey-200 cursor-default" : "bg-white cursor-pointer")}>
         <Select.Value>
           {props.isIcons ? <img className="size-8" src={value}/> : value}
         </Select.Value>

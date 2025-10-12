@@ -67,6 +67,7 @@ export const ICON = {
   lineStartArrowNotchBlack: "icons/line_start_arrow_notch_black.svg",
   lineStartBlack: "icons/line_start_black.svg",
   listsBlack: "icons/lists_black.svg",
+  musicNoteBlack: "icons/music_note_black.svg",
   noteStackBlack: "icons/note_stack_black.svg",
   settingsWhite: "icons/settings_white.svg",
   settingsBlack: "icons/settings_black.svg",

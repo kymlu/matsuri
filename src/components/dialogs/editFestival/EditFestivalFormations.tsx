@@ -6,7 +6,7 @@ import CustomMenu, { MenuItem } from "../../CustomMenu.tsx";
 import CustomSelect from "../../CustomSelect.tsx";
 import NumberTextField from "../../NumberTextField.tsx";
 import TextInput from "../../TextInput.tsx";
-import { isNullOrUndefinedOrBlank } from "../../../lib/helpers/GlobalHelper.ts";
+import { isNullOrUndefinedOrBlank, strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 
 export type EditFestivalFormationsProps = {
   formations: Formation[],
@@ -15,14 +15,14 @@ export type EditFestivalFormationsProps = {
 }
 
 export function EditFestivalFormations(props: EditFestivalFormationsProps) {
-  const [formations, setFormations] = useState<Formation[]>([...props.formations]);
+  const [formations, setFormations] = useState<(Formation & {isNew: boolean})[]>([...props.formations.map(x => ({...x, isNew: false}))]);
   const formationTypes = useMemo(() => ({"1": "ステージ", "0": "パレード"}), []);
   const [formationNames, setFormationNames] = useState<Record<string, number>>({});
 
   useImperativeHandle(props.ref, () => ({
     getData: () => {return formations;},
     resetData: () => {
-      setFormations([...props.formations]);
+      setFormations([...props.formations.map(x => ({...x, isNew: false}))]);
       updateFormationNames(props.formations); // todo: update all the fields
     }
   }));
@@ -54,8 +54,9 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
         width: 20,
         topMargin: 5,
         sideMargin: 5,
-        bottomMargin: 5
-      } as Formation
+        bottomMargin: 5,
+        isNew: true,
+      }
     ];
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
@@ -67,6 +68,26 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
   };
+
+  const editFormationSong = (index: number, newSong: string) => { // todo: fix (passed by reference??)
+    const updatedFormations = [...formations];
+    updatedFormations[index].songId = Object.entries(songs).find(([key, name]) => strEquals(name, newSong))![0];
+    setFormations(updatedFormations);
+    updateFormationNames(updatedFormations);
+  };
+  const editFormationType = (index: number, newType: string) => { // todo: fix (passed by reference??)
+    const updatedFormations = [...formations];
+    console.log(newType)
+    updatedFormations[index].type = +Object.entries(formationTypes).find(([key, name]) => strEquals(name, newType))![0];
+    setFormations(updatedFormations);
+    updateFormationNames(updatedFormations);
+  };
+
+  const editFormationSize = (index: number, field: "length" | "width", newValue: number) => {
+    const updatedFormations = [...formations];
+    updatedFormations[index][field] = newValue;
+    setFormations(updatedFormations);
+  }
 
   const deleteFormation = (index: number) => {
     const updatedFormations = [...formations];
@@ -86,16 +107,17 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
       </button>
     </div>
     <div className="grid grid-cols-[3fr,2fr,2fr,1fr,1fr,auto] items-center gap-x-2">
-      <div className="font-bold">隊列名</div>
-      <div className="font-bold">曲名</div>
-      <div className="font-bold">タイプ</div>
-      <div className="font-bold">縦(m)</div>
-      <div className="font-bold">幅(m)</div>
+      <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.textFieldsAltBlack}/>隊列名</div>
+      <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.musicNoteBlack}/>曲名</div>
+      <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.categoryBlack}/>タイプ</div>
+      <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.heightBlack}/>縦(m)</div>
+      <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.arrowRangeBlack}/>幅(m)</div>
       <div className="size-6"></div>
       { formations.map((formation, index) => (
         <React.Fragment key={index}>
           <TextInput
             tall
+            disabled={!formation.isNew}
             compact
             default={formation.id}
             onContentChange={(val) =>{ 
@@ -105,19 +127,21 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
             hasError={formationNames[formation.id] > 1 || formation.id.match(`[~"#%&*:<>?/\\{|}]+`) !== null}
           />
           <CustomSelect
-            setValue={(newValue) => {}}
+            disabled={!formation.isNew}
+            setValue={(newValue) => {editFormationSong(index, newValue)}}
             defaultValue={songList[formation.songId].name}
             items={songs}/>
           <CustomSelect
-            setValue={(newValue) => {}}
+            disabled={!formation.isNew}
+            setValue={(newValue) => {editFormationType(index, newValue)}}
             defaultValue={formation.type === FormationType.parade ? "パレード" : "ステージ"}
             items={formationTypes}/>
           <NumberTextField
-            onChange={() => {}}
+            onChange={(newValue) => {if (newValue) editFormationSize(index, "length", newValue)}}
             default={formation.length}
             min={5} max={300}/>
           <NumberTextField
-            onChange={() => {}}
+            onChange={(newValue) => {if (newValue) editFormationSize(index, "width", newValue)}}
             default={formation.width}
             min={5} max={50}/>
           <CustomMenu

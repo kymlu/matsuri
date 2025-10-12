@@ -37,10 +37,6 @@ export default function TextInput(props: TextInputProps) {
     props.onContentChange(newValue);
   }
 
-  function onClear() {
-    props.onContentChange("");
-  }
-
   var inputClasses = classNames(
     "w-full col-start-1 row-start-1 pl-2 text-black border-grey-300 rounded-md focus-within:border-primary focus:outline-none",
     {
@@ -74,7 +70,7 @@ export default function TextInput(props: TextInputProps) {
 
       {
         props.clearable && !isNullOrUndefinedOrBlank(value) && 
-        <button className="col-start-1 row-start-1 pr-2 ml-auto text-end" onClick={() => {onClear()}}>
+        <button className="col-start-1 row-start-1 pr-2 ml-auto text-end" onClick={() => {handleChange("")}}>
           <img
             className="size-4"
             src={ICON.clear}
