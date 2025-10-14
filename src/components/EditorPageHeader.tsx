@@ -33,15 +33,6 @@ export function EditorPageHeader() {
               navigate("../");
             }
           }} />
-          <MenuSeparator/>
-          <div className="flex justify-center">
-            <Dialog.Root>
-              <Dialog.Trigger className="flex-1 p-1 rounded-md hover:bg-grey-200">
-                  サイト情報
-              </Dialog.Trigger>
-              <SiteInfoDialog/>
-            </Dialog.Root>
-          </div>
         </>
       </CustomMenu>
       {
@@ -51,7 +42,7 @@ export function EditorPageHeader() {
         formationTitle={selectedFormation?.id}/>
       }
       {
-        userType === "general" && 
+        userType === "general" &&
         <Dialog.Root>
           <Dialog.Trigger>
               <img alt="Site information" src={ICON.help} className='size-8 max-w-8 max-h-8'/>
@@ -62,6 +53,12 @@ export function EditorPageHeader() {
       {
         userType === "admin" &&
         <div className="flex flex-row gap-2">
+          <Dialog.Root>
+            <Dialog.Trigger>
+                <img alt="Site information" src={ICON.help} className='size-8 max-w-8 max-h-8'/>
+            </Dialog.Trigger>
+            <SiteInfoDialog/>
+          </Dialog.Root>
           <button
             onClick={() => {
               updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
