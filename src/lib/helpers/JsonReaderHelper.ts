@@ -1,5 +1,5 @@
 import { Festival } from "../../models/Festival";
-import { FestivalMeta, FestivalResources, FormationDetails } from "../../models/ImportExportModel";
+import { FestivalMeta, FestivalResources, FormationDetails } from "../../models/ImportExportModel.ts";
 
 export async function getFestivalMetaFile(
   festival: FestivalMeta,

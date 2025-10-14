@@ -16,8 +16,8 @@ import { formatJapaneseDateRange } from '../lib/helpers/DateHelper.ts';
 import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
-import { getFestivalMetaFile, getResourceFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
-import { FestivalMeta, FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
+import { getFestivalMetaFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
+import { FestivalMeta, FestivalResources, FormationDetails, ImportExportModel } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
@@ -40,6 +40,7 @@ export default function FestivalManagerPage () {
   const [selectedFestivalResources, setSelectedFestivalResources] = useState<FestivalResources | null>(null);
   const [festivalData, setFestivalData] = useState<Festival[]>([]);
   let navigate = useNavigate();
+  const uploadFileElement = document.getElementById("uploadFileInput");
 
   useEffect(() => {
     updateAppModeContext({userType: "admin"});
@@ -67,6 +68,10 @@ export default function FestivalManagerPage () {
         setDataBeforeNavigation(festival, formation, resources, formationDetails);
         navigate("/formation");
       });
+  }
+
+  function onFileLoad(fileContents: ImportExportModel) {
+
   }
 
   function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {
@@ -144,8 +149,9 @@ export default function FestivalManagerPage () {
           </Button>
           <Button 
             onClick={() => {
-              setSelectedFestival(null);
-              setEditingFestival(true);
+              if(uploadFileElement){
+                uploadFileElement.click();
+              }
             }}>
             <div className='flex flex-row items-center justify-center gap-2 p-1'>
               隊列をアップロード
@@ -155,6 +161,28 @@ export default function FestivalManagerPage () {
                 alt="Upload a file"/>
             </div>
           </Button>
+          <input className='hidden' type="file" id="uploadFileInput" //accept=".mtr"
+            onChange={(event) => {
+              console.log(event.target.files);
+              if (event.target.files) {
+                var file = event.target.files?.[0];
+                const reader = new FileReader();
+    
+                reader.addEventListener(
+                  "load",
+                  (event) => {
+                    if (event.target?.result) {
+                      const uploadResult = JSON.parse(event.target.result.toString());
+                      console.log(uploadResult);
+                    }
+                  },
+                  false,
+                );
+          
+                reader.readAsText(file);
+              }
+              }
+            }/>
         {
           festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
             .map((festival) =>
@@ -167,7 +195,7 @@ export default function FestivalManagerPage () {
                 <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
                 <div className='font-normal'>{festival.note}</div>
               </div>
-              <img src={ICON.chevronForwardBlack}/>
+              <img className='size-8' src={ICON.chevronForwardBlack}/>
             </button>
           )
         }

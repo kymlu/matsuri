@@ -67,7 +67,6 @@ export default function ActionMenu() {
       case "currentOnwards":
         sectionIds = currentSections.filter(x => x.order >= selectedSection.order).map(x => x.id);
         break;
-      
       case "all":
         sectionIds = currentSections.map(x => x.id);
         break;
@@ -175,7 +174,7 @@ export default function ActionMenu() {
               className="px-3 py-1.5 border rounded-xl flex flex-col gap-1 w-full">
                 <button 
                   button-name="Swap participants"
-                  className="flex flex-row justify-between w-full m-auto border-0"
+                  className="flex flex-row items-center justify-between w-full m-auto border-0"
                   onClick={() => {setSwapMenuExpanded(prev => !prev)}}>
                   <span>
                     {swappableParticipants[0].displayName}↔︎{swappableParticipants[1].displayName}位置交換

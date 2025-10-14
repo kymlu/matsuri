@@ -1,5 +1,4 @@
 import { Festival } from "./Festival.ts"
-import { Formation } from "./Formation.ts"
 import { FormationSection } from "./FormationSection.ts"
 import { Participant } from "./Participant.ts"
 import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from "./Position.ts"

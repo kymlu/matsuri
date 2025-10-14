@@ -51,7 +51,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
   const [ghostSectionId, setGhostSectionId] = useState<string | null>(null);
 
   useEffect(() => {
-    setOrderedSectionIds(currentSections.map(x => x.id));
+    setOrderedSectionIds(currentSections.sort((a, b) => a.order - b.order).map(x => x.id));
   }, [currentSections])
 
   useEffect(() => {

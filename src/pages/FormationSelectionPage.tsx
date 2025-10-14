@@ -43,8 +43,9 @@ export default function FormationSelectionPage() {
   }, []);
 
   async function getFestivalData() {
-    Promise.all((
-      allFestivals.festivals as FestivalMeta[])
+    Promise.all(
+      (allFestivals.festivals as FestivalMeta[])
+        .filter(x => x.isVisible)
         .map((x => getFestivalMetaFile(x, () => {}, async () => {})
     ))).then((festivals: (Festival | undefined)[]) => {
       setFestivalData(festivals.filter(x => x !== undefined));
