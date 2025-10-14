@@ -11,7 +11,7 @@ export type CompareMode = "previous" | "none" | "next";
 export type SettingsContextData = Omit<SettingsContextState, 'updateState'>;
 
 export const defaultState: SettingsContextState = {
-  enableAnimation: true,
+  enableAnimation: false,
   enableGridSnap: true,
   updateSettingsContext: (newState: Partial<SettingsContextState>) => {},
 }
