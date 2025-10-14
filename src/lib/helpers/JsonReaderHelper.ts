@@ -1,12 +1,31 @@
 import { Festival } from "../../models/Festival";
-import { FestivalResources, FormationDetails } from "../../models/ImportExportModel";
+import { FestivalMeta, FestivalResources, FormationDetails } from "../../models/ImportExportModel";
+
+export async function getFestivalMetaFile(
+  festival: FestivalMeta,
+  onError: (msg: string) => void,
+  onComplete: (data: Festival) => Promise<void>): Promise<Festival | undefined> {
+  try {
+    var resourceFileName = `${process.env.PUBLIC_URL}/data/festivals/${festival.id}/festival.json`;
+    const resourceResponse = await fetch(resourceFileName);
+    if (!resourceResponse.ok) {
+      throw new Error(`Resource fetch failed with status: ${resourceResponse.status}`);
+    }
+    const data = (await resourceResponse.json() as Festival);
+    onComplete(data);
+    return data;
+  } catch (err) {
+    onError(`${festival.id}のリソースの取得に失敗しました。\n ${err}`);
+    console.error('Resource fetch error:', err);
+  }
+}
 
 export async function getResourceFile(
-  festival: Festival,
+  festivalId: string,
   onError: (msg: string) => void,
   onComplete: (resources: FestivalResources) => Promise<void>) {
   try {
-    var resourceFileName = `${process.env.PUBLIC_URL}/data/festivals/${festival.id}/resources.json`;
+    var resourceFileName = `${process.env.PUBLIC_URL}/data/festivals/${festivalId}/resources.json`;
     const resourceResponse = await fetch(resourceFileName);
     if (!resourceResponse.ok) {
       throw new Error(`Resource fetch failed with status: ${resourceResponse.status}`);
@@ -14,19 +33,19 @@ export async function getResourceFile(
     const data = (await resourceResponse.json() as FestivalResources);
     onComplete(data);
   } catch (err) {
-    onError(`${festival.name}のリソースの取得に失敗しました。\n ${err}`);
+    onError(`${festivalId}のリソースの取得に失敗しました。\n ${err}`);
     console.error('Resource fetch error:', err);
   }
 }
 
 export async function getFormationFile(
-  festival: Festival,
+  festivalId: string,
   formationName: string,
   onError: (msg: string) => void,
   onComplete: (formation: FormationDetails) => Promise<void>) 
 {
   try {
-    var formationFileName = `${process.env.PUBLIC_URL}/data/festivals/${festival.id}/${formationName}.json`;
+    var formationFileName = `${process.env.PUBLIC_URL}/data/festivals/${festivalId}/${formationName}.json`;
     const formationResponse = await fetch(formationFileName);
     if (!formationResponse.ok) {
       throw new Error(`Formation fetch failed with status: ${formationResponse.status}`);
@@ -40,14 +59,14 @@ export async function getFormationFile(
 }
 
 export async function readResourcesAndFormation(
-  festival: Festival,
+  festivalId: string,
   formationName: string,
   onError: (msg: string) => void,
-  onComplete: (festival: Festival, resources: FestivalResources, formation: FormationDetails) => void) 
+  onComplete: (resources: FestivalResources, formation: FormationDetails) => void) 
 {
-  await getResourceFile(festival, onError, async (resources) => {
-    await getFormationFile(festival, formationName, onError, async (formation) => {
-      onComplete(festival, resources, formation);
+  await getResourceFile(festivalId, onError, async (resources) => {
+    await getFormationFile(festivalId, formationName, onError, async (formation) => {
+      onComplete(resources, formation);
     });
   });
-}  
+}

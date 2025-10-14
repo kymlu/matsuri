@@ -33,7 +33,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
         button-name={`Toggle the ${props.title} section`}
         className={"flex flex-row justify-between w-full font-bold items-center " + (props.canExpand ? "" : "cursor-default")}
         onClick={() => toggle()}>
-        <div className="flex flex-row gap-3">
+        <div className="flex flex-row items-center gap-3">
           {
             props.titleIcon &&
             <img className="size-8" src={props.titleIcon} alt={props.title + " icon"}/>

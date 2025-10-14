@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import '../index.css';
 import Button from '../components/Button.tsx';
@@ -16,8 +16,8 @@ import { formatJapaneseDateRange } from '../lib/helpers/DateHelper.ts';
 import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
-import { getResourceFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
-import { FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
+import { getFestivalMetaFile, getResourceFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
+import { FestivalMeta, FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
@@ -33,37 +33,37 @@ export default function FestivalManagerPage () {
   const {updateEntitiesContext} = useContext(EntitiesContext);
 
   const {appMode, updateAppModeContext} = useContext(AppModeContext);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [hasError, setHasError] = React.useState<boolean>(false);
-  const [editingFestival, setEditingFestival] = React.useState<boolean>(false);
-  const [selectedFestival, setSelectedFestival] = React.useState<Festival | null>(null);
-  const [selectedFestivalResources, setSelectedFestivalResources] = React.useState<FestivalResources | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [editingFestival, setEditingFestival] = useState<boolean>(false);
+  const [selectedFestival, setSelectedFestival] = useState<Festival | null>(null);
+  const [selectedFestivalResources, setSelectedFestivalResources] = useState<FestivalResources | null>(null);
+  const [festivalData, setFestivalData] = useState<Festival[]>([]);
   let navigate = useNavigate();
 
   useEffect(() => {
     updateAppModeContext({userType: "admin"});
+    getFestivalData();
   }, []);
 
-  function editFestival(festival: Festival) {
-    getResourceFile(festival, (msg) => {
-      setErrorMessage(`${festival.id}のリソースの取得に失敗しました。\n ${msg}`);
-      setHasError(true);
-    }, async (resources) => {
-      setSelectedFestivalResources(resources);
-      setSelectedFestival(festival);
-      setEditingFestival(true);
+  async function getFestivalData() {
+    Promise.all((
+      allFestivals.festivals as FestivalMeta[])
+        .map((x => getFestivalMetaFile(x, () => {}, async () => {})
+    ))).then((festivals: (Festival | undefined)[]) => {
+      setFestivalData(festivals.filter(x => x !== undefined));
     });
   }
 
   function goToEditor(festival: Festival, formation: Formation) {
     readResourcesAndFormation(
-      festival,
-      formation.id, 
+      festival.id,
+      formation.id,
       (msg) => {
         setErrorMessage(`${formation.id}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       },
-      (festival, resources, formationDetails) => {
+      (resources, formationDetails) => {
         setDataBeforeNavigation(festival, formation, resources, formationDetails);
         navigate("/formation");
       });
@@ -156,8 +156,8 @@ export default function FestivalManagerPage () {
             </div>
           </Button>
         {
-          allFestivals.festivals.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-            .map((festival, index) =>
+          festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+            .map((festival) =>
             <button
               key={festival.id}
               className='flex flex-row items-center justify-between p-5 border-2 rounded-lg lg:hover:bg-grey-100 border-primary'

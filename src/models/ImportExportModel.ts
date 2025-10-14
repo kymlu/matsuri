@@ -16,6 +16,12 @@ export type ImportExportModel = {
   notes: NotePosition[],
 }
 
+export type FestivalMeta = {
+  id: string,
+  version: number,
+  isVisible: boolean,
+}
+
 export type FestivalResources = {
   participants: Participant[],
   props: Prop[],

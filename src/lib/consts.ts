@@ -53,7 +53,7 @@ export const ICON = {
   expandLessBlack: "icons/expand_less_black.svg",
   expandMoreBlack: "icons/expand_more_black.svg",
   familiarFaceAndZoneBlack: "icons/familiar_face_and_zone_black.svg",
-  festivalBlack: "icon/festival_black.svg",
+  festivalBlack: "icons/festival_black.svg",
   flagBlack: "icons/flag_black.svg",
   fileExportBlack: "icons/file_export_black.svg",
   footprintBlack: "icons/footprint_black.svg",

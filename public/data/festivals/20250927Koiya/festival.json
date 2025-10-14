@@ -1,0 +1,59 @@
+{
+  "id": "20250927Koiya",
+  "name": "こいや祭り2025",
+  "startDate": "2025-09-27",
+  "endDate": "2025-09-28",
+  "note": "初参加で頑張ろうぜー",
+  "formations": [
+    {
+      "id": "ステージ",
+      "type": 1,
+      "songId": "1",
+      "length": 5,
+      "width": 10,
+      "topMargin": 2,
+      "bottomMargin": 4,
+      "sideMargin": 6
+    },
+    {
+      "id": "パレード",
+      "type": 0,
+      "songId": "1",
+      "length": 5,
+      "width": 10,
+      "topMargin": 2,
+      "bottomMargin": 4,
+      "sideMargin": 6
+    },
+    {
+      "id": "京橋",
+      "type": 1,
+      "songId": "1",
+      "length": 5,
+      "width": 10,
+      "topMargin": 2,
+      "bottomMargin": 4,
+      "sideMargin": 6
+    },
+    {
+      "id": "末広",
+      "type": 1,
+      "songId": "1",
+      "length": 5,
+      "width": 10,
+      "topMargin": 2,
+      "bottomMargin": 4,
+      "sideMargin": 6
+    },
+    {
+      "id": "梅田",
+      "type": 1,
+      "songId": "1",
+      "length": 5,
+      "width": 10,
+      "topMargin": 2,
+      "bottomMargin": 4,
+      "sideMargin": 6
+    }
+  ]
+}

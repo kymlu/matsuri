@@ -1,0 +1,16 @@
+{
+  "id": "20250915Ome",
+  "name": "青梅華月祭2025",
+  "startDate": "2025-09-15",
+  "note": "近所の祭り",
+  "formations": [{
+    "id": "ステージ",
+    "type": 1,
+    "songId": "1",
+    "length": 5,
+    "width": 10,
+    "topMargin": 2,
+    "bottomMargin": 4,
+    "sideMargin": 6
+  }]
+}

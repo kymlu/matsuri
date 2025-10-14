@@ -58,7 +58,7 @@ export default function FestivalActionMenu(props: FestivalActionMenuProps) {
             <button
               disabled={strEquals(selectedFormation?.id, selectedNewFormation)}
               onClick={() => {changeFormation()}}
-              className="p-2 rounded-lg bg-primary disabled:opacity-50">
+              className="p-2 rounded-lg bg-grey-300 disabled:opacity-50">
               <img className="size-6" src={ICON.arrowRightAltBlack}/>
             </button>
           </div>
