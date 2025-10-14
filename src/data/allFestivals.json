@@ -35,7 +35,7 @@
         },
         {
           "id": "パレード",
-          "type": 1,
+          "type": 0,
           "songId": "1",
           "length": 5,
           "width": 10,
@@ -83,7 +83,7 @@
       "note": "絶対勝つ！",
       "formations": [{
         "id": "ステージ",
-        "type": 1,
+        "type": 0,
         "songId": "1",
         "length": 5,
         "width": 10,
@@ -93,7 +93,7 @@
       },
       {
         "id": "パレード",
-        "type": 1,
+        "type": 0,
         "songId": "1",
         "length": 5,
         "width": 10,
