@@ -16,7 +16,6 @@ import { formatJapaneseDateRange } from '../lib/helpers/DateHelper.ts';
 import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
-import ExpandableSection from '../components/ExpandableSection.tsx';
 import { getResourceFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
 import { FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
@@ -121,7 +120,7 @@ export default function FestivalManagerPage () {
   return (
     <div className='flex flex-col w-full gap-2 mt-10 portrait:my-10 landscape:max-w-[65svw] landscape:mx-auto'>
       <div className='flex items-center justify-between mx-4'>
-        <h1 className='text-2xl font-bold'>祭り</h1>
+        <h1 className='text-2xl font-bold'>隊列編集</h1>
         <button
           className='p-2 text-sm rounded-md text-grey-400 hover:bg-grey-100'
           onClick={() => navigate("..")}>
@@ -129,75 +128,47 @@ export default function FestivalManagerPage () {
         </button>
       </div>
       <Divider primary/>
-      <div className='flex justify-end'>
+      <div className='grid grid-cols-2 gap-4 mx-5'>
         <Button 
-          onClick={() => {
-            setSelectedFestival(null);
-            setEditingFestival(true);
-          }}>
-          <div className='flex flex-row items-center gap-2'>
-            祭りを追加
-            <img
-              src={ICON.addBlack}
-              className="size-6"
-              alt="Add new festival"/>
-          </div>
-        </Button>
-      </div>
-      <div className='flex flex-col gap-4 mx-5'>
+            onClick={() => {
+              setSelectedFestival(null);
+              setEditingFestival(true);
+            }}>
+            <div className='flex flex-row items-center justify-center gap-2'>
+              祭りを追加
+              <img
+                src={ICON.addBlack}
+                className="size-6"
+                alt="Add new festival"/>
+            </div>
+          </Button>
+          <Button 
+            onClick={() => {
+              setSelectedFestival(null);
+              setEditingFestival(true);
+            }}>
+            <div className='flex flex-row items-center justify-center gap-2 p-1'>
+              隊列をアップロード
+              <img
+                src={ICON.uploadBlack}
+                className="size-6"
+                alt="Upload a file"/>
+            </div>
+          </Button>
         {
           allFestivals.festivals.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
             .map((festival, index) =>
-            <div key={festival.id}>
-              <ExpandableSection
-                defaultIsExpanded={false}
-                canExpand={true}
-                title={
-                  <div className='flex flex-row items-end justify-between'>
-                    <div>
-                      <h2 className='text-xl font-bold text-primary'>{festival.name}</h2>
-                      <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
-                      <div className='font-normal'>{festival.note}</div>
-                    </div>
-                  </div>
-                }>
-                <div className='flex'>
-                  <button onClick={() => {
-                    editFestival(festival);
-                    }}>
-                    <img src={ICON.edit} className="size-6 max-w-6 max-h-6" alt="Edit festival details"/>
-                  </button>
-                </div>
-                {
-                  festival.formations && festival.formations.length > 0 && 
-                  <div className='mt-2'>
-                    {festival.formations
-                      .map((formation) => 
-                        <div key={formation.id} className='hover:bg-grey-100'>
-                          <Divider compact/>
-                          <div className='flex flex-row items-center justify-between px-5 py-2'>
-                            <span>
-                              {formation.id}
-                            </span>
-                            <div className='flex flex-row gap-2'>
-                              <button onClick={() => goToEditor(festival, formation)}>
-                                <img src={ICON.editDocument} className="size-6 max-w-6 max-h-6" alt="Edit formation"/>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                    )}
-                  </div>
-                }
-              </ExpandableSection>
-              {
-                index !== allFestivals.festivals.length - 1 && 
-                <>
-                  <br/>
-                  <Divider primary compact/>
-                </> 
-              }
-            </div>
+            <button
+              key={festival.id}
+              className='flex flex-row items-center justify-between p-5 border-2 rounded-lg lg:hover:bg-grey-100 border-primary'
+              onClick={() => goToEditor(festival, festival.formations[0])}>
+              <div className='text-start'>
+                <h2 className='text-xl font-bold text-primary'>{festival.name}</h2>
+                <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
+                <div className='font-normal'>{festival.note}</div>
+              </div>
+              <img src={ICON.chevronForwardBlack}/>
+            </button>
           )
         }
       </div>

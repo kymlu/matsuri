@@ -1,4 +1,5 @@
 import { NumberField } from "@base-ui-components/react";
+import classNames from "classnames";
 import React from "react";
 
 export interface NumberTextFieldProps {
@@ -8,11 +9,19 @@ export interface NumberTextFieldProps {
   max?: number,
   step?: number,
   onChange?: (newValue: number | null) => void,
+  disabled?: boolean,
+  compact?: boolean,
 }
 
 export default function NumberTextField (props: NumberTextFieldProps) {
   const [value, setValue] = React.useState<number | null>(props.default ?? 0);
   const id = React.useId();
+
+  const wrapperClasses = classNames("flex flex-row items-center justify-between w-full",
+    {
+      "mb-2": props.compact,
+    })
+  
   return (
     <NumberField.Root
       id={id}
@@ -27,14 +36,15 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       min={props?.min ?? 0}
       max={props?.max ?? 1000}
       step={props?.step ?? 1}
+      disabled={props.disabled}
       >
-      <div className="flex flex-row items-center justify-between w-full my-2">
-        <NumberField.Group className="grid grid-cols-[1fr,2fr,1fr] w-full bg-white border rounded-md border-grey-300 focus-within:border-primary">
-          <NumberField.Decrement className={"flex items-center justify-center h-10 select-none rounded-l-md min-w-4 bg-clip-padding" + ((value ?? 1) > (props.min ?? 0) ? " lg:hover:bg-gray-100 active:bg-gray-100 text-gray-900": " text-gray-400")}>
+      <div className={wrapperClasses}>
+        <NumberField.Group className="grid grid-cols-[1fr,2fr,1fr] w-full bg-white data-[disabled]:bg-grey-200 border rounded-md border-grey-300 focus-within:border-primary">
+          <NumberField.Decrement className={"flex items-center justify-center h-10 select-none rounded-l-md min-w-4 bg-clip-padding" + ((value ?? 1) > (props.min ?? 0) ? " [&:not([data-disabled])]:lg:hover:bg-gray-100 [&:not([data-disabled])]:active:bg-gray-100 text-gray-900": " text-gray-400")}>
             <MinusIcon />
           </NumberField.Decrement>
           <NumberField.Input className="h-10 text-base text-center text-gray-900 min-w-10 tabular-nums focus:z-1 focus:outline-none focus:outline-2 focus:-outline-offset-1" />
-          <NumberField.Increment className={"flex items-center justify-center select-none rounded-r-md min-w-4 tex0-gray-900 h-19 bg-clip-padding" + ((value ?? 0) < (props.max ?? 100000000) ? " lg:hover:bg-gray-100 active:bg-gray-100 text-gray-900": " text-gray-400")}>
+          <NumberField.Increment className={"flex items-center justify-center select-none rounded-r-md min-w-4 tex0-gray-900 h-19 bg-clip-padding" + ((value ?? 0) < (props.max ?? 100000000) ? " [&:not([data-disabled])]:lg:hover:bg-gray-100 [&:not([data-disabled])]:active:bg-gray-100 text-gray-900": " text-gray-400")}>
             <PlusIcon />
           </NumberField.Increment>
         </NumberField.Group>

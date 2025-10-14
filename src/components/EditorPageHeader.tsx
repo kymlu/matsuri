@@ -33,6 +33,15 @@ export function EditorPageHeader() {
               navigate("../");
             }
           }} />
+          <MenuSeparator/>
+          <div className="flex justify-center">
+            <Dialog.Root>
+              <Dialog.Trigger className="flex-1 p-1 rounded-md hover:bg-grey-200">
+                  サイト情報
+              </Dialog.Trigger>
+              <SiteInfoDialog/>
+            </Dialog.Root>
+          </div>
         </>
       </CustomMenu>
       {
@@ -64,15 +73,6 @@ export function EditorPageHeader() {
             <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
             }>
             <>
-              <div className="flex justify-center p-1">
-                <Dialog.Root>
-                  <Dialog.Trigger>
-                      サイト情報
-                  </Dialog.Trigger>
-                  <SiteInfoDialog/>
-                </Dialog.Root>
-              </div>
-              <MenuSeparator/>
               <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
               <MenuSeparator />
               {

@@ -8,7 +8,6 @@ import { Formation } from "../../../models/Formation.ts";
 import { Prop } from "../../../models/Prop.ts";
 import { Participant } from "../../../models/Participant.ts";
 import { EditFestivalGeneral } from "./EditFestivalGeneral.tsx";
-import { EditFestivalFormations } from "./EditFestivalFormations.tsx";
 import { EditFestivalParticipants } from "./EditFestivalParticipants.tsx";
 import { EditFestivalProps } from "./EditFestivalProps.tsx";
 
@@ -83,14 +82,6 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
           note={defaultFestival.note}
           ref={generalRef}
           setError={(hasError) => {handleValidationChange("general", hasError)}}
-          />
-
-        <Divider/>
-        
-        <EditFestivalFormations
-          formations={defaultFestival.formations}
-          ref={formationsRef}
-          setError={(hasError) => {handleValidationChange("formations", hasError)}}
           />
 
         <Divider/>

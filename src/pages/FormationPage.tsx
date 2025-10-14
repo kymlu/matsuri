@@ -4,7 +4,7 @@ import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined, roundToTenth, strEquals } from '../lib/helpers/GlobalHelper.ts';
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, ICON } from '../lib/consts.ts';
 import { PositionContext } from '../contexts/PositionContext.tsx';
-import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { ParticipantPosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
 import { AnimationPath } from '../models/AnimationPath.ts';
@@ -12,10 +12,6 @@ import { generateAnimationPaths } from '../lib/helpers/AnimationHelper.ts';
 import { AnimationContext } from '../contexts/AnimationContext.tsx';
 import FormationCanvas from '../components/formation/FormationCanvas.tsx';
 import { useNavigate } from 'react-router-dom';
-import { GetAllForFormation } from '../data/DataController.ts';
-import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
-import { Participant } from '../models/Participant.ts';
-import { Prop } from '../models/Prop.ts';
 import { exportToPdf } from '../lib/helpers/ExportHelper.ts';
 import { FormationToolbar } from '../components/formation/toolbars/FormationToolbar.tsx';
 import { AppModeContext } from '../contexts/AppModeContext.tsx';
@@ -271,7 +267,9 @@ export default function FormationPage () {
         { 
           appMode === "edit" &&
           <div className='flex flex-row gap-0'>
-            <FormationLeftPanel marginPositions={marginPositions}/>
+            <FormationLeftPanel
+              formation={selectedFormation!}
+              marginPositions={marginPositions}/>
             <div className='flex flex-1 h-full min-h-0 overflow-auto'>
               <FormationCanvas
                 ref={formationEditorRef}
