@@ -51,6 +51,18 @@ export default function FormationDetailsEditor(props: FormationDetailsEditorProp
       canExpand
       defaultIsExpanded={false}>
       <div className="flex flex-col gap-2">
+        <div>
+          <Button full onClick={() => setIsLocked(prev => !prev)}>
+            <div className="flex flex-row justify-center gap-2">
+            {
+              isLocked ? "アンロック" : "ロック"
+            }
+            {
+              <img className="size-6" src={isLocked ? ICON.lockOpenBlack : ICON.lockBlack}/>
+            }
+            </div>
+          </Button>
+        </div>
         <label>
           曲
           <CustomSelect
@@ -84,15 +96,8 @@ export default function FormationDetailsEditor(props: FormationDetailsEditorProp
             min={5} max={50}/>
         </label>
         <div>
-          <Button onClick={() => setIsLocked(prev => !prev)}>
-            <div className="flex flex-row gap-2">
-            {
-              isLocked ? "アンロック" : "ロック"
-            }
-            {
-              <img className="size-6" src={isLocked ? ICON.lockOpenBlack : ICON.lockBlack}/>
-            }
-            </div>
+          <Button full disabled={isLocked} onClick={() => {}}>
+            適応
           </Button>
         </div>
       </div>
