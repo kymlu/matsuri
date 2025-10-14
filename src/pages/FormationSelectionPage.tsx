@@ -9,7 +9,7 @@ import { formatJapaneseDateRange } from "../lib/helpers/DateHelper.ts";
 import { Festival } from "../models/Festival";
 import allFestivals from "../data/allFestivals.json"
 import { useNavigate } from 'react-router-dom';
-import { FestivalResources, FormationDetails } from "../models/ImportExportModel.ts";
+import { FestivalMeta, FestivalResources, FormationDetails } from "../models/ImportExportModel.ts";
 import { CategoryContext } from "../contexts/CategoryContext.tsx";
 import { EntitiesContext } from "../contexts/EntitiesContext.tsx";
 import { FormationContext } from "../contexts/FormationContext.tsx";
@@ -18,9 +18,9 @@ import { UserContext } from "../contexts/UserContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { songList } from "../data/ImaHitotabi.ts";
 import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
-import { readResourcesAndFormation } from "../lib/helpers/JsonReaderHelper.ts";
-import { strEquals } from "../lib/helpers/GlobalHelper.ts";
+import { getFestivalMetaFile, readResourcesAndFormation } from "../lib/helpers/JsonReaderHelper.ts";
 import { Formation } from "../models/Formation.ts";
+import { useState } from "react";
 
 export default function FormationSelectionPage() {
   const {updateAppModeContext} = useContext(AppModeContext);
@@ -32,23 +32,34 @@ export default function FormationSelectionPage() {
   const {updatePositionContextState} = useContext(PositionContext);
   const {updateEntitiesContext} = useContext(EntitiesContext);
 
+  const [festivalData, setFestivalData] = useState<Festival[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [hasError, setHasError] = React.useState<boolean>(false);
   let navigate = useNavigate();
   
   useEffect(() => {
     updateAppModeContext({userType: "general", appMode: "view"});
+    getFestivalData();
   }, []);
+
+  async function getFestivalData() {
+    Promise.all((
+      allFestivals.festivals as FestivalMeta[])
+        .map((x => getFestivalMetaFile(x, () => {}, async () => {})
+    ))).then((festivals: (Festival | undefined)[]) => {
+      setFestivalData(festivals.filter(x => x !== undefined));
+    });
+  }
 
   async function selectFormation(festival: Festival, formation: Formation) {
     readResourcesAndFormation(
-      festival,
+      festival.id,
       formation.id,
       (msg => {
         setErrorMessage(`${formation.id}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       }),
-      (festival, resources, formationDetails) => {
+      (resources, formationDetails) => {
         setDataBeforeNavigation(festival, formation, resources, formationDetails);
         navigate("/formation");
       });
@@ -101,7 +112,7 @@ export default function FormationSelectionPage() {
       <Divider primary/>
       <div className='flex flex-col gap-4 mx-5'>
         {
-          allFestivals.festivals.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+          festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
             .map((festival) =>
             <div key={festival.id}>
               <div className='flex flex-row items-end gap-2'>
