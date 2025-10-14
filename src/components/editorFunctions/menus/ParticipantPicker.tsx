@@ -47,7 +47,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
       selectedParticipant.placeholderNumber = Math.max(...Object.values(participantList).map(x => x.placeholderNumber)) + 1;
     }
 
-    setParticipantsInFormation(prev => [...prev, selectedParticipant.id]);
+    setParticipantsInFormation(prev => prev ? [...prev, selectedParticipant.id] : [selectedParticipant.id]);
     
     var flattenedParticipants = Object.values(participantList);
 
@@ -74,6 +74,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     updateEntitiesContext({participantList: updatedParticipants});
     
     var updatedPositions = addItemsToRecordByKey(participantPositions, newPositions, (item) => item.formationSectionId);
+    console.log("updatedPositions", updatedPositions);
     updatePositionContextState({participantPositions: updatedPositions});
     
     dbController.upsertItem("participant", selectedParticipant);

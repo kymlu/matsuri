@@ -3,13 +3,9 @@ import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
-import { songList } from "../../../data/ImaHitotabi.ts";
-import { Formation, FormationType } from "../../../models/Formation.ts";
 import CustomSelect from "../../CustomSelect.tsx";
-import NumberTextField from "../../NumberTextField.tsx";
 import { useMemo } from "react";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
-import Button from "../../Button.tsx";
 import { Dialog } from "@base-ui-components/react";
 import { EditFestivalDialog } from "../../dialogs/editFestival/EditFestivalDialog.tsx";
 
@@ -58,7 +54,7 @@ export default function FestivalActionMenu(props: FestivalActionMenuProps) {
             <button
               disabled={strEquals(selectedFormation?.id, selectedNewFormation)}
               onClick={() => {changeFormation()}}
-              className="p-2 rounded-lg bg-grey-300 disabled:opacity-50">
+              className="p-2 border-2 rounded-lg border-primary disabled:border-grey-400 disabled:bg-grey-300 disabled:opacity-50">
               <img className="size-6" src={ICON.arrowRightAltBlack}/>
             </button>
           </div>

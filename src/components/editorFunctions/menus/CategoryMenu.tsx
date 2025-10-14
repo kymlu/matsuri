@@ -101,6 +101,7 @@ export default function CategoryMenu() {
             .sort((a, b) => a.order - b.order)
             .map((category) => 
               <button
+                key={category.id}
                 onClick={() => onChangeCategory(category.id)}
                 className="flex items-center justify-center h-8 p-2 font-bold border-2 rounded-lg cursor-pointer"
                 style={{
