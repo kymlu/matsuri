@@ -15,7 +15,7 @@ export type EditFestivalParticipantsProps = {
 }
 
 export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
-  const [participants, setParticipants] = useState<Participant[]>([...props.participants]);
+  const [participants, setParticipants] = useState<Participant[]>([...props.participants.map(x => ({...x}))]);
   const [participantNames, setParticipantNames] = useState<Record<string, number>>({});
   const [editParticipantNameIndex, setEditParticipantNameIndex] = useState<number>(-1);
   const [editingParticipants, setEditingParticipants] = useState<boolean>(false);
@@ -23,7 +23,7 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
   useImperativeHandle(props.ref, () => ({
     getData: () => {return participants;},
     resetData: () => {
-      setParticipants([...props.participants]);
+      setParticipants([...props.participants.map(x => ({...x}))]);
       updateParticipantNames(props.participants)
     }
   }));

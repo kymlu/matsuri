@@ -18,13 +18,13 @@ export type EditFestivalPropsProps = {
 }
 
 export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
-  const [props, setProps] = useState<Prop[]>([...sectProps.props]);
+  const [props, setProps] = useState<Prop[]>([...sectProps.props.map(x => ({...x}))]);
   const [propNames, setPropNames] = useState<Record<string, number>>({});
 
   useImperativeHandle(sectProps.ref, () => ({
     getData: () => {return props;},
     resetData: () => {
-      setProps([...sectProps.props]);
+      setProps([...sectProps.props.map(x => ({...x}))]);
       updatePropNames(sectProps.props)
     }
   }));

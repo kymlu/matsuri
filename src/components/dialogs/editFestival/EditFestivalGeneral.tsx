@@ -15,10 +15,10 @@ export type EditFestivalGeneralProps = {
 
 export function EditFestivalGeneral(props: EditFestivalGeneralProps) {
   const [id, setId] = useState(props.id ?? "");
-  const [name, setName] = useState(props.name ?? "");
-  const [startDate, setStartDate] = useState(props.startDate ?? "");
-  const [endDate, setEndDate] = useState(props.endDate ?? "");
-  const [note, setNote] = useState(props.note ?? "");
+  const [name, setName] = useState(props.name?.toString() ?? "");
+  const [startDate, setStartDate] = useState(props.startDate?.toString() ?? "");
+  const [endDate, setEndDate] = useState(props.endDate?.toString() ?? "");
+  const [note, setNote] = useState(props.note?.toString() ?? "");
   const [endDateError, setEndDateError] = useState(false);
 
   const idRef = React.createRef<any>();
@@ -31,15 +31,15 @@ export function EditFestivalGeneral(props: EditFestivalGeneralProps) {
     getData: () => {return {id, name, startDate, endDate};},
     resetData: () => {
       setId(props.id ?? "");
-      idRef.current?.changeValue(props.id ?? "");
+      idRef.current?.changeValue(props.id?.toString() ?? "");
       setName(props.name ?? "");
-      nameRef.current?.changeValue(props.name ?? "");
+      nameRef.current?.changeValue(props.name?.toString() ?? "");
       setStartDate(props.startDate ?? "");
-      startDateRef.current?.changeValue(props.startDate ?? "");
+      startDateRef.current?.changeValue(props.startDate?.toString() ?? "");
       setEndDate(props.endDate ?? "");
-      endDateRef.current?.changeValue(props.endDate ?? "");
+      endDateRef.current?.changeValue(props.endDate?.toString() ?? "");
       setNote(props.note ?? "");
-      noteRef.current?.changeValue(props.note ?? "");
+      noteRef.current?.changeValue(props.note?.toString() ?? "");
     },
   }));
 

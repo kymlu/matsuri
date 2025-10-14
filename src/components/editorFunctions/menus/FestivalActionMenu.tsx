@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { Dialog } from "@base-ui-components/react";
 import { EditFestivalDialog } from "../../dialogs/editFestival/EditFestivalDialog.tsx";
+import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 
 export type FestivalActionMenuProps = {
 }
@@ -15,6 +16,7 @@ export type FestivalActionMenuProps = {
 export default function FestivalActionMenu(props: FestivalActionMenuProps) {
   const { selectedFestival } = useContext(UserContext);
   const {selectedFormation, updateFormationContext} = useContext(FormationContext);
+  const {participantList, propList} = useContext(EntitiesContext);
   
   const [selectedNewFormation, setSelectedNewFormation] = React.useState<string | undefined>(selectedFormation?.id);
 
@@ -42,7 +44,10 @@ export default function FestivalActionMenu(props: FestivalActionMenuProps) {
               祭り詳細編集
             </div>
           </Dialog.Trigger>
-          <EditFestivalDialog festival={selectedFestival} resources={{participants: [], props: []}}/>
+          <EditFestivalDialog
+            festival={selectedFestival}
+            resources={{participants: Object.values(participantList),
+            props: Object.values(propList)}}/>
         </Dialog.Root>
         <label>
           別の隊列を編集
