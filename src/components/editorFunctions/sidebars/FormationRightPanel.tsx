@@ -25,61 +25,72 @@ export default function FormationRightPanel (props: FormationRightPanelProps) {
 }
 
 export function FormationEditorRightContent (props: FormationRightPanelProps) {
-  const userContext = useContext(UserContext);
   const {selectedItems} = useContext(UserContext);
-  const [selectedPositionTypes, setSelectedPositionTypes] = useState<Set<PositionType>>();
 
-  useEffect(() => {
-    setSelectedPositionTypes(new Set(selectedItems.map(x => x.type)));
-  }, [userContext.selectedItems]);
+  if (!selectedItems || selectedItems.length === 0) {
+    return (
+      <>
+        <GridSettingsMenu />
+        <Divider />
+        <ExportMenu exportFunc={props.exportFunc} />
+      </>
+    );
+  }
+  
+  const firstItem = selectedItems[0];
+  const isSingleSelection = selectedItems.length === 1;
+  const allSameType = selectedItems.every(item => item.type === firstItem.type);
 
-  return <>
-    { selectedItems.length > 0 &&
-      <>
-        <ActionMenu/>
-        <Divider/>
-      </>
-    }
-    { selectedItems.length > 0 &&
-      selectedPositionTypes?.size === 1 &&
-      selectedItems[0].type === PositionType.participant && // Todo make sure nothing is selected if the selected items have different categories
-      <>
-        <CategoryMenu/>
-        <Divider/>
-      </>
-    }
-    { selectedItems.length > 0 &&
-      selectedPositionTypes?.size === 1 &&
-      selectedItems[0].type === PositionType.note &&
-      <>
-        <NoteColorPresetPickerMenu/>
-        <Divider/>
-      </>
-    }
-    {/* { selectedItems.length === 1 &&
-      (selectedItems[0].type === PositionType.prop ||
-        selectedItems[0].type === PositionType.participant) &&
-      <>
-        <NameEditor/>
-        <Divider/>
-      </>
-    } */}
-    { selectedItems.length === 1 &&
-      selectedItems[0].type === PositionType.arrow &&
-      <>
-        <ArrowEditor/>
-        <Divider/>
-      </>
-    }
-    { selectedItems.length === 1 &&
-      selectedItems[0].type === PositionType.note &&
-      <>
-        <NoteEditor/>
-        <Divider/>
-      </>
-    }
-    <GridSettingsMenu/>
-    <Divider/>
-    <ExportMenu exportFunc={props.exportFunc}/>
-  </>
+  const participantAndPlaceholder = new Set([
+    PositionType.participant,
+    PositionType.placeholder,
+  ]);
+
+  const onlyParticipantOrPlaceholderSelected =
+    selectedItems.length > 0 &&
+    selectedItems.every(item => participantAndPlaceholder.has(item.type));
+  
+  const onlyNotesSelected =
+    selectedItems.length > 0 &&
+    allSameType &&
+    firstItem.type === PositionType.note;
+
+  return (
+    <>
+      <ActionMenu />
+      <Divider />
+
+      {onlyParticipantOrPlaceholderSelected && (
+        <>
+          <CategoryMenu />
+          <Divider />
+        </>
+      )}
+
+      {onlyNotesSelected && (
+        <>
+          <NoteColorPresetPickerMenu />
+          <Divider />
+        </>
+      )}
+
+      {isSingleSelection && firstItem.type === PositionType.arrow && (
+        <>
+          <ArrowEditor />
+          <Divider />
+        </>
+      )}
+
+      {isSingleSelection && firstItem.type === PositionType.note && (
+        <>
+          <NoteEditor />
+          <Divider />
+        </>
+      )}
+
+      <GridSettingsMenu />
+      <Divider />
+      <ExportMenu exportFunc={props.exportFunc} />
+    </>
+  );
 }
