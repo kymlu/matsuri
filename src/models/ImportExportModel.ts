@@ -13,6 +13,8 @@ export type ImportExportModel = {
   propPositions: PropPosition[],
   arrowPositions: ArrowPosition[],
   notes: NotePosition[],
+  placeholders: ParticipantPlaceholder[],
+  placeholderPositions: PlaceholderPosition[],
 }
 
 export type FestivalMeta = {
@@ -32,4 +34,6 @@ export type FormationDetails = {
   props: PropPosition[],
   arrows: ArrowPosition[],
   notes: NotePosition[],
+  placeholders: Placeholder[],
+  placeholderPositions: PlaceholderPosition[],
 }
