@@ -62,6 +62,8 @@ export async function exportFormationData(formationId: string) {
         propPositions: propPositions as PropPosition[],
         arrowPositions: arrowPositions as ArrowPosition[],
         notes: notePositions as NotePosition[],
+        placeholders: [],
+        placeholderPositions: [],
       };
       downloadJson(JSON.stringify(toExport));
     })
