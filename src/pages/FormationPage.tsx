@@ -268,7 +268,6 @@ export default function FormationPage () {
           appMode === "edit" &&
           <div className='flex flex-row gap-0'>
             <FormationLeftPanel
-              formation={selectedFormation!}
               marginPositions={marginPositions}/>
             <div className='flex flex-1 h-full min-h-0 overflow-auto'>
               <FormationCanvas
