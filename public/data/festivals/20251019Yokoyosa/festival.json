@@ -4,7 +4,8 @@
   "startDate": "2025-10-19",
   "note": "",
   "formations": [{
-    "id": "ステージ",
+    "id": "yokoyosastage",
+    "name": "ステージ",
     "type": 1,
     "songId": "1",
     "length": 5,
