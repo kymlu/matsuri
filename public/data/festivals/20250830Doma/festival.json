@@ -5,7 +5,8 @@
   "endDate": "2025-08-31",
   "note": "絶対勝つ！",
   "formations": [{
-    "id": "ステージ",
+    "id": "domastage",
+    "name": "ステージ",
     "type": 0,
     "songId": "1",
     "length": 5,
@@ -15,7 +16,8 @@
     "sideMargin": 6
   },
   {
-    "id": "パレード",
+    "id": "domaparade",
+    "name": "パレード",
     "type": 0,
     "songId": "1",
     "length": 5,
@@ -25,7 +27,8 @@
     "sideMargin": 6
   },
   {
-    "id": "JRタワーズガーデン",
+    "id": "domajrtowergarden",
+    "name": "JRタワーズガーデン",
     "type": 1,
     "songId": "1",
     "length": 5,
