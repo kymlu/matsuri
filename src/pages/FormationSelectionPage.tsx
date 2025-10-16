@@ -55,9 +55,9 @@ export default function FormationSelectionPage() {
   async function selectFormation(festival: Festival, formation: Formation) {
     readResourcesAndFormation(
       festival.id,
-      formation.id,
+      formation.name,
       (msg => {
-        setErrorMessage(`${formation.id}の隊列データの取得に失敗しました。\n ${msg}`);
+        setErrorMessage(`${formation.name}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       }),
       (resources, formationDetails) => {
@@ -132,7 +132,7 @@ export default function FormationSelectionPage() {
                         onClick={() => {
                           selectFormation(festival, formation)}
                         }>
-                        {formation.id}
+                        {formation.name}
                       </Button>
                   )}
                 </div>
