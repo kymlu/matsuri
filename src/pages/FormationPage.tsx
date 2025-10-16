@@ -60,7 +60,7 @@ export default function FormationPage () {
   const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition> | null>(null);
 
   useEffect(() => {
-    setDefaultExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.id}` : ''));
+    setDefaultExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
   }, [selectedFormation]);
 
   useEffect(() => {
