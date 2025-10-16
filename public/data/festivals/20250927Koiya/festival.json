@@ -6,7 +6,8 @@
   "note": "初参加で頑張ろうぜー",
   "formations": [
     {
-      "id": "ステージ",
+      "id": "koiyastage",
+      "name": "ステージ",
       "type": 1,
       "songId": "1",
       "length": 5,
@@ -16,7 +17,8 @@
       "sideMargin": 6
     },
     {
-      "id": "パレード",
+      "id": "koiyaparade",
+      "name": "パレード",
       "type": 0,
       "songId": "1",
       "length": 5,
@@ -26,7 +28,8 @@
       "sideMargin": 6
     },
     {
-      "id": "京橋",
+      "id": "koiyakyobashi",
+      "name": "京橋",
       "type": 1,
       "songId": "1",
       "length": 5,
@@ -36,7 +39,8 @@
       "sideMargin": 6
     },
     {
-      "id": "末広",
+      "id": "koiyasuehiro",
+      "name": "末広",
       "type": 1,
       "songId": "1",
       "length": 5,
@@ -46,7 +50,8 @@
       "sideMargin": 6
     },
     {
-      "id": "梅田",
+      "id": "koiyaumeda",
+      "name": "梅田",
       "type": 1,
       "songId": "1",
       "length": 5,
