@@ -29,7 +29,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
 
   const updateFormationNames = (formations: Formation[]) => {
     const updated: Record<string, number> = formations.reduce((acc, f) => {
-      acc[f.id] = (acc[f.id] || 0) + 1;
+      acc[f.name] = (acc[f.name] || 0) + 1;
       return acc;
     }, {});
     setFormationNames(updated);
@@ -47,7 +47,8 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
   const addFormation = () => {
     const updatedFormations = [
       ...formations, {
-        id: "",
+        id: crypto.randomUUID(),
+        name: "",
         type: FormationType.stage,
         songId: Object.keys(songList)[0],
         length: 10,
@@ -62,22 +63,21 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     updateFormationNames(updatedFormations);
   };
 
-  const editFormationName = (index: number, newName: string) => { // todo: fix (passed by reference??)
+  const editFormationName = (index: number, newName: string) => {
     const updatedFormations = [...formations];
-    updatedFormations[index].id = newName;
+    updatedFormations[index].name = newName;
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
   };
 
-  const editFormationSong = (index: number, newSong: string) => { // todo: fix (passed by reference??)
+  const editFormationSong = (index: number, newSong: string) => {
     const updatedFormations = [...formations];
     updatedFormations[index].songId = Object.entries(songs).find(([key, name]) => strEquals(name, newSong))![0];
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
   };
-  const editFormationType = (index: number, newType: string) => { // todo: fix (passed by reference??)
+  const editFormationType = (index: number, newType: string) => {
     const updatedFormations = [...formations];
-    console.log(newType)
     updatedFormations[index].type = +Object.entries(formationTypes).find(([key, name]) => strEquals(name, newType))![0];
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
@@ -119,12 +119,12 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
             tall
             disabled={!formation.isNew}
             compact
-            default={formation.id}
+            default={formation.name}
             onContentChange={(val) =>{ 
               editFormationName(index, val);
             }}
             required
-            hasError={formationNames[formation.id] > 1 || formation.id.match(`[~"#%&*:<>?/\\{|}]+`) !== null}
+            hasError={formationNames[formation.name] > 1 || formation.name.match(`[~"#%&*:<>?/\\{|}]+`) !== null}
           />
           <CustomSelect
             disabled={!formation.isNew}
