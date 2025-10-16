@@ -13,6 +13,11 @@ export interface ParticipantPosition extends BasePosition {
   categoryId?: string,
 }
 
+export interface PlaceholderPosition extends BasePosition {
+  placeholderId: string,
+  categoryId?: string,
+}
+
 export interface PropPosition extends BasePosition {
   propId: string,
   angle: number
@@ -46,15 +51,17 @@ export enum PositionType {
   "prop" = "道具",
   "note" = "メモ",
   "arrow" = "矢印",
+  "placeholder" = "代役",
 }
 
 export type Position =
 | { type: PositionType.participant; participant: ParticipantPosition }
 | { type: PositionType.prop; prop: PropPosition }
 | { type: PositionType.note; note: NotePosition }
-| { type: PositionType.arrow; arrow: ArrowPosition };
+| { type: PositionType.arrow; arrow: ArrowPosition }
+| { type: PositionType.placeholder; placeholder: PlaceholderPosition };
 
-export function getFromPositionType(position: Position): ParticipantPosition | PropPosition | NotePosition | ArrowPosition {
+export function getFromPositionType(position: Position): ParticipantPosition | PropPosition | NotePosition | ArrowPosition | PlaceholderPosition {
   switch (position.type) {
     case PositionType.participant:
       return position.participant;
@@ -64,6 +71,8 @@ export function getFromPositionType(position: Position): ParticipantPosition | P
       return position.note;
     case PositionType.arrow:
       return position.arrow;
+    case PositionType.placeholder:
+      return position.placeholder;
   }
 }
 
@@ -83,17 +92,22 @@ export function isArrowPosition(item: any): item is ArrowPosition {
   return 'pointerAtBeginning' in item;
 }
 
+export function isPlaceholderPosition(item: any): item is PlaceholderPosition {
+  return 'placeholderId' in item;
+}
+
 // Overloads for strong typing
 export function createPosition(item: ParticipantPosition): Position & { type: PositionType.participant };
 export function createPosition(item: PropPosition): Position & { type: PositionType.prop };
 export function createPosition(item: NotePosition): Position & { type: PositionType.note };
 export function createPosition(item: ArrowPosition): Position & { type: PositionType.arrow };
-export function createPosition(item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition, type: PositionType): Position;
-export function createPosition(item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition): Position;
+export function createPosition(item: PlaceholderPosition): Position & { type: PositionType.placeholder };
+export function createPosition(item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | PlaceholderPosition, type: PositionType): Position;
+export function createPosition(item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | PlaceholderPosition): Position;
 
 // Implementation
 export function createPosition(
-  item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition,
+  item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | PlaceholderPosition,
   type?: PositionType
 ): Position {
   // Infer type if missing
@@ -106,6 +120,8 @@ export function createPosition(
       type = PositionType.note;
     } else if (isArrowPosition(item)) {
       type = PositionType.arrow;
+    } else if (isPlaceholderPosition(item)) {
+      type = PositionType.placeholder;
     } else {
       throw new Error("Unable to infer position type from item");
     }
@@ -121,6 +137,8 @@ export function createPosition(
       return { type, note: item as NotePosition };
     case PositionType.arrow:
       return { type, arrow: item as ArrowPosition };
+    case PositionType.placeholder:
+      return { type, placeholder: item as PlaceholderPosition };
     default:
       throw new Error("Unknown position type");
   }
@@ -131,6 +149,7 @@ export function splitPositionsByType(positions: Position[]) {
   const props: PropPosition[] = [];
   const notes: NotePosition[] = [];
   const arrows: ArrowPosition[] = [];
+  const placeholders: PlaceholderPosition[] = [];
 
   for (const pos of positions) {
     switch (pos.type) {
@@ -145,6 +164,8 @@ export function splitPositionsByType(positions: Position[]) {
         break;
       case PositionType.arrow:
         arrows.push(pos.arrow);
+      case PositionType.placeholder:
+        placeholders.push(pos.placeholder);
         break;
     }
   }
@@ -154,6 +175,7 @@ export function splitPositionsByType(positions: Position[]) {
     props,
     notes,
     arrows,
+    placeholders,
   };
 }
 
@@ -172,6 +194,9 @@ export function getAllIds(positions: Position[]): string[] {
         break;
       case PositionType.arrow:
         ids.push(pos.arrow.id);
+        break;
+      case PositionType.placeholder:
+        ids.push(pos.placeholder.id);
         break;
     }
   }
