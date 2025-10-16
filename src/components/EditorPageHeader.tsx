@@ -39,7 +39,7 @@ export function EditorPageHeader() {
       <HeaderNameSection
         sectionTitle={selectedSection?.displayName}
         festivalTitle={selectedFestival?.name}
-        formationTitle={selectedFormation?.id}/>
+        formationTitle={selectedFormation?.name}/>
       }
       {
         userType === "general" &&
