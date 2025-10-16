@@ -3,28 +3,28 @@
     {
       "id": "1b0e7aa2-3d07-42d0-8266-8306b2e975f4",
       "displayName": "祭り",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "5",
       "order": 5
     },
     {
       "id": "29f468fe-cd00-41dc-89e9-c1b003149945",
       "displayName": "サビ",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "2",
       "order": 2
     },
     {
       "id": "431c007f-76a5-4c03-b654-230b38f003aa",
       "displayName": "太陽踊り",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "6",
       "order": 6
     },
     {
       "id": "5cd58ab0-7931-40b8-a5e5-3ee958331cc0",
       "displayName": "滝行",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "4",
       "order": 4
     },
@@ -32,62 +32,62 @@
       "id": "63400943-7e1f-4824-9060-8290aa33f859",
       "displayName": "OP",
       "songSectionId": "1",
-      "formationId": "0",
+      "formationId": "omestage",
       "order": 1
     },
     {
       "id": "68c4a2e2-ad4d-4c5f-8fc4-3081729e5c28",
       "displayName": "ラスト1",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "8",
       "order": 10
     },
     {
       "id": "7dfd445d-b6f5-41b3-99bf-cb2277612921",
       "displayName": "迎光祭",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "7",
       "order": 7
     },
     {
       "id": "9203b0c2-f974-446d-8ae1-eab169448e24",
       "displayName": "迎光祭 (1)",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "7",
       "order": 8
     },
     {
       "id": "9f9557ea-3e6c-420c-9ebc-f020b2467027",
       "displayName": "ラスト3",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "10",
       "order": 12
     },
     {
       "id": "b15ed61d-b62d-43c7-ac80-507c0f1085e0",
       "displayName": "ラスト4",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "12",
       "order": 14
     },
     {
       "id": "b94d433c-ca84-442a-99df-3e496e73a042",
       "displayName": "ご来光",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "7",
       "order": 9
     },
     {
       "id": "da8605ec-de37-488a-a2e8-b9d3e6e10788",
       "displayName": "ラスト2",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "9",
       "order": 11
     },
     {
       "id": "dd6af09e-0cfd-4e1f-bd77-d6ac6df1cf90",
       "displayName": "入山",
-      "formationId": "0",
+      "formationId": "omestage",
       "songSectionId": "3",
       "order": 3
     }
