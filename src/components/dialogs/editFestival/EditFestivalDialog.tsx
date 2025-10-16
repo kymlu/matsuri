@@ -86,6 +86,14 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
 
         <Divider/>
 
+        <EditFestivalFormations
+          formations={defaultFestival.formations}
+          ref={formationsRef}
+          setError={(hasError) => {handleValidationChange("formations", hasError)}}
+          />
+
+        <Divider/>
+
         <EditFestivalParticipants
           festivalId={defaultFestival.id}
           participants={defaultFestival.participants}
