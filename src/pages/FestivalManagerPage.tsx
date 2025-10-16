@@ -59,9 +59,9 @@ export default function FestivalManagerPage () {
   function goToEditor(festival: Festival, formation: Formation) {
     readResourcesAndFormation(
       festival.id,
-      formation.id,
+      formation.name,
       (msg) => {
-        setErrorMessage(`${formation.id}の隊列データの取得に失敗しました。\n ${msg}`);
+        setErrorMessage(`${formation.name}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       },
       (resources, formationDetails) => {
