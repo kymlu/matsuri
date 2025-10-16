@@ -7,29 +7,19 @@ import NotePicker from "../menus/NotePicker.tsx";
 import { MarginPositions } from "../../../pages/FormationPage.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import ArrowPicker from "../menus/ArrowPicker.tsx";
-import FormationDetailsEditor from "../menus/FormationDetailsEditor.tsx";
 import { Formation } from "../../../models/Formation.ts";
-import FestivalActionMenu from "../menus/FestivalActionMenu.tsx";
 
-export default function FormationLeftPanel (props: {formation: Formation, marginPositions: MarginPositions}) {
+export default function FormationLeftPanel (props: {marginPositions: MarginPositions}) {
   return (
     <Sidebar defaultExpanded isLeft>
-      <FormationEditorLeftContent formation={props.formation} marginPositions={props.marginPositions}/>
+      <FormationEditorLeftContent marginPositions={props.marginPositions}/>
     </Sidebar>
   )
 }
 
-export function FormationEditorLeftContent (props: { formation: Formation, marginPositions: MarginPositions}) {
+export function FormationEditorLeftContent (props: { marginPositions: MarginPositions}) {
   return (
     <>
-      <FestivalActionMenu/>
-      <Divider/>
-      <FormationDetailsEditor
-        formation={props.formation}
-        updateSize={() => {console.log("implement update size");}}
-        updateType={() => {console.log("implement update type");}}
-        updateSong={() => {console.log("implement update song");}}/>
-      <Divider/>
       <SectionPicker margins={props.marginPositions}/>
       <Divider/>
       <ParticipantPicker margins={props.marginPositions.participants}/>
