@@ -17,24 +17,46 @@ export function EditorPageHeader() {
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {appMode, userType, updateAppModeContext} = useContext(AppModeContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    if (userType === "admin") {
+      navigate("/manager");
+    } else {
+      navigate("../");
+    }
+  };
   
   return (
     <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey-200'>
-      <CustomMenu
-        trigger={
-          <img alt="Matsuri logo" src="logo192.png" className='size-8 max-w-8 max-h-8'/>
-        }>
-        <>
-          <MenuItem label="ホームに戻る" onClick={() => {
-            if(appMode === "edit") {
-              navigate("/manager");
-            } else {
-              navigate("../");
-            }
-          }} />
-        </>
-      </CustomMenu>
+      <div className='flex flex-row items-center gap-2'>
+        <CustomMenu
+          trigger={
+            <img alt="Matsuri logo" src="logo192.png" className='size-8 max-w-8 max-h-8'/>
+          }>
+          <MenuItem label="ホームに戻る" onClick={() => handleHomeClick()} />
+        </CustomMenu>
+        {
+          userType === "admin" &&
+          <CustomMenu
+            trigger={
+              <img alt="Festival edit" src={ICON.festivalBlack} className='size-8 max-w-8 max-h-8'/>
+            }>
+            <MenuItem label="祭り編集" onClick={() => {
+              console.log("Todo: implement festival edit");
+            }} />
+            <MenuItem label="別の隊列を編集" onClick={() => {
+              console.log("Todo: implement formation switch");
+            }} />
+            <MenuItem label="隊列比較" onClick={() => {
+              console.log("Todo: implement formation compare");
+            }} />
+            <MenuItem label="別の隊列で上書き" onClick={() => {
+              console.log("Todo: overwrite formation");
+            }} />
+          </CustomMenu>
+        }
+      </div>
       {
       <HeaderNameSection
         sectionTitle={selectedSection?.displayName}
@@ -64,7 +86,10 @@ export function EditorPageHeader() {
               updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
               updateAppModeContext({appMode: appMode === "edit" ? "view" : "edit"});
             }}>
-            <img alt={appMode === "edit" ? "Go to viewer" : "Go to editor"} className='size-8 max-w-8 max-h-8' src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
+            <img
+              alt={appMode === "edit" ? "Go to viewer" : "Go to editor"}
+              className='size-8 max-w-8 max-h-8'
+              src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
           </button>
           <CustomMenu trigger={
             <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
