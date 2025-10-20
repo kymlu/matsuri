@@ -6,8 +6,8 @@ import { objectColorSettings } from "../../../themes/colours.ts";
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx";
 import { useRef } from "react";
 import Konva from "konva";
-import { ParticipantPosition, PropPosition } from "../../../models/Position.ts";
-import { Participant } from "../../../models/Participant.ts";
+import { ParticipantPosition, PlaceholderPosition, PropPosition } from "../../../models/Position.ts";
+import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
@@ -23,19 +23,22 @@ export type FormationAnimationLayerProps = {
   sideMargin: number,
   participants: Record<string, Participant>,
   props: Record<string, Prop>,
+  placeholders: Record<string, ParticipantPlaceholder>,
   categories: Record<string, ParticipantCategory>,
   participantPositions: ParticipantPosition[],
   previousParticipantPositions: Record<string, ParticipantPosition>,
   propPositions: PropPosition[],
+	placePositions: PlaceholderPosition[],
 }
 
 export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
-  const {participantPaths, propPaths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
+  const {participantPaths, propPaths, placeholderPaths, isAnimating, updateAnimationContext} = useContext(AnimationContext);
   const {updateState} = useContext(UserContext);
   const {followingId} = useContext(VisualSettingsContext);
   const animationLayerRef = useRef<Konva.Layer>(null);
   const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
   const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+  const placeholderRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 
   useEffect(() => {
     Object.keys(props.participants)
@@ -46,7 +49,11 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
       .forEach((_, index) => 
         propRef.current[index] = React.createRef<Konva.Group>()
       );
-  }, [props.participantPositions, props.propPositions]);
+    Object.keys(props.placeholders)
+      .forEach((_, index) => 
+        placeholderRef.current[index] = React.createRef<Konva.Group>()
+      );
+  }, [props.participantPositions, props.propPositions, props.placePositions]);
   
 
   // Precompute paths and sort them
@@ -60,6 +67,11 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
     [propPaths]
   );
 
+  const sortedPlacePaths = useMemo(
+    () => Object.entries(placeholderPaths).sort((a, b) => a[0].localeCompare(b[0])),
+    [placeholderPaths]
+  );
+
   useEffect(() => {
     if (!isAnimating) return;
 
@@ -69,6 +81,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
 
     createAnimations(animationPromises, sortedParticipantPaths, participantRef, false, props.previousParticipantPositions);
     createAnimations(animationPromises, sortedPropPaths, propRef, true);
+    createAnimations(animationPromises, sortedPlacePaths, placeholderRef, true);
 
     Promise.all(animationPromises).then(() => {
       updateAnimationContext({isAnimating: false});
@@ -162,7 +175,26 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
             startY={props.previousParticipantPositions[placement.participantId]?.y ?? 0}
             ref={participantRef.current[index]}
             following={strEquals(followingId, placement.participantId)}
-					  isPlaceholder={props.participants[placement.participantId]?.isPlaceholder}
+            isPlaceholder={false}
+          />;
+        }
+        )
+      }
+      {props.placePositions
+        ?.sort((a, b) => a.placeholderId.localeCompare(b.placeholderId))
+        .map((placement, index) => {
+          const participant = props.participants[placement.placeholderId];
+          if (!participant) return <></>;
+          return <ParticipantObject 
+            id={"animate" + placement.id}
+            key={placement.id}
+            name={participant.displayName!} 
+            colour={placement.categoryId ? props.categories[placement.categoryId]?.color || objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
+            startX={props.previousParticipantPositions[placement.placeholderId]?.x ?? 0} 
+            startY={props.previousParticipantPositions[placement.placeholderId]?.y ?? 0}
+            ref={participantRef.current[index]}
+            following={strEquals(followingId, placement.placeholderId)}
+            isPlaceholder={true}
           />;
         }
         )

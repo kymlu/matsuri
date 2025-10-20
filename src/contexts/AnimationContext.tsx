@@ -6,6 +6,7 @@ import { Path } from '../models/AnimationPath.ts';
 export interface AnimationContextState {
   participantPaths: Record<string, Path>,
   propPaths: Record<string, Path>
+  placeholderPaths: Record<string, Path>
   isAnimating: boolean,
   updateAnimationContext: (newState: Partial<AnimationContextState>) => void
 }
@@ -15,6 +16,7 @@ export type AnimationContextData = Omit<AnimationContextState, 'updateAnimationC
 export const defaultAnimationContext: AnimationContextState = {
   participantPaths: {},
   propPaths: {},
+  placeholderPaths: {},
   isAnimating: false,
   updateAnimationContext: (newState: Partial<AnimationContextState>) => {},
 }

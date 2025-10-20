@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Participant } from '../models/Participant.ts';
+import { Participant, ParticipantPlaceholder } from '../models/Participant.ts';
 import { Prop } from '../models/Prop.ts';
 import { ReactNode } from 'react';
 
 export interface EntitiesContextState {
   participantList: Record<string, Participant>,
   propList: Record<string, Prop>,
+  placeholderList: Record<string, ParticipantPlaceholder>,
   updateEntitiesContext: (newState: Partial<EntitiesContextState>) => void
 }
 
@@ -14,6 +15,7 @@ export type EntitiesContextData = Omit<EntitiesContextState, 'updateEntitiesCont
 export const defaultEntitiesContext: EntitiesContextState = {
   participantList: {},
   propList: {},
+  placeholderList: {},
   updateEntitiesContext: (newState: Partial<EntitiesContextState>) => {},
 }
 

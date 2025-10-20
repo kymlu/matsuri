@@ -13,6 +13,7 @@ import {
 	getFromPositionType,
 	NotePosition,
 	ParticipantPosition,
+	PlaceholderPosition,
 	Position,
 	PositionType,
 	PropPosition,
@@ -31,7 +32,7 @@ import { UserContext } from "../../../contexts/UserContext.tsx";
 import { Group } from "konva/lib/Group";
 import { CUSTOM_EVENT } from "../../../lib/consts.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
-import { Participant } from "../../../models/Participant.ts";
+import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts";
 import { Prop } from "../../../models/Prop.ts";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
@@ -45,11 +46,13 @@ export type FormationMainLayerProps = {
 	ref: React.Ref<any>;
 	categories: Record<string, ParticipantCategory>;
 	participants: Record<string, Participant>;
+	placeholders: Record<string, ParticipantPlaceholder>;
 	props: Record<string, Prop>;
 	partPositions: ParticipantPosition[];
 	propPositions: PropPosition[];
 	notePositions: NotePosition[];
 	arrowPositions: ArrowPosition[];
+	placePositions: PlaceholderPosition[];
 };
 
 export function FormationMainLayer(props: FormationMainLayerProps) {
@@ -62,6 +65,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const layerRef = useRef<Konva.Layer>(null);
 	const transformerRef = useRef<Konva.Transformer>(null);
 	const participantRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
+	const placeholderRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const propRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const noteRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
 	const arrowGroupRef = useRef<React.RefObject<Konva.Group | null>[]>([]);
@@ -70,6 +74,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	const [isSinglePropSelected, setIsSinglePropSelected] = useState<boolean>(false);
 	const [isSingleNoteSelected, setIsSingleNoteSelected] = useState<boolean>(false);
 	const [isSingleArrowSelected, setIsSingleArrowSelected] = useState<boolean>(false);
+	const [isSinglePlaceholderSelected, setIsSinglePlaceholderSelected] = useState<boolean>(false);
 
 	const positionContextRef = useRef(positionContext);
 
@@ -461,7 +466,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	}
 
 	function selectItem(
-		item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | null,
+		item: ParticipantPosition | PropPosition | NotePosition | ArrowPosition | PlaceholderPosition | null,
 		type: PositionType,
 		isMoving?: boolean,
 		multiSelect?: boolean,
@@ -470,6 +475,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		var singlePropSelected = false; // todo: set on multiselect
 		var singleNoteSelected = false; // todo: set on multiselect
 		var singleArrowSelected = false;
+		var singlePlaceholderSelected = false;
 
 		if (multiSelect) {
 			var newList: Position[] = [];
@@ -484,6 +490,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						singlePropSelected = true;
 					} else if (type === PositionType.note) {
 						singleNoteSelected = true;
+					} else if (type === PositionType.placeholder) {
+						singlePlaceholderSelected = true;
 					}
 				}
 			} else {
@@ -501,6 +509,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						singlePropSelected = true;
 					} else if (split.notes.length === 1) {
 						singleNoteSelected = true;
+					} else if (split.placeholders.length === 1) {
+						singlePlaceholderSelected = true;
 					}
 				}
 			}
@@ -520,6 +530,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					singleArrowSelected = true;
 				} else if (type === PositionType.note) {
 					singleNoteSelected = true;
+				} else if (type === PositionType.placeholder) {
+					singlePlaceholderSelected = true;
 				}
 			} else if (!isMoving) {
 				updateState({ selectedItems: [] });
@@ -530,6 +542,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		setIsSinglePropSelected(singlePropSelected);
 		setIsSingleNoteSelected(singleNoteSelected);
 		setIsSingleArrowSelected(singleArrowSelected);
+		setIsSinglePlaceholderSelected(singleArrowSelected);
 	}
 
 	return (
@@ -642,7 +655,39 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					ref={participantRef.current[index]}
 					selected={appMode === "edit" && selectedIds.has(placement.id)}
 					following={strEquals(placement.participantId, followingId)}
-					isPlaceholder={props.participants[placement.participantId]?.isPlaceholder}
+					isPlaceholder={false}
+				/>
+			))}
+			{props.placePositions?.map((placement, index) => (
+				<ParticipantObject
+					id={placement.id}
+					key={placement.id}
+					name={props.placeholders[placement.placeholderId]?.displayName ?? ""}
+					colour={
+						placement.categoryId
+							? props.categories[placement?.categoryId]?.color ??
+							  objectColorSettings["amberLight"]
+							: objectColorSettings["amberLight"]
+					}
+					startX={getPixel(gridSize, placement.x, props.sideMargin)}
+					startY={getPixel(gridSize, placement.y, props.topMargin)}
+					updatePosition={(x, y) =>
+						updateParticipantPosition(placement.id, x, y)
+					}
+					onClick={(isMoving?: boolean, multiSelect?: boolean) => {
+						if (appMode === "edit") {
+							selectItem(placement, PositionType.placeholder, isMoving, multiSelect);
+						} else {
+							updateVisualSettingsContext({
+								followingId: strEquals(followingId, placement.placeholderId) ? null : placement.placeholderId
+							});
+						}
+					}}
+					draggable={!isAnimating}
+					ref={placeholderRef.current[index]}
+					selected={appMode === "edit" && selectedIds.has(placement.id)}
+					following={strEquals(placement.placeholderId, followingId)}
+					isPlaceholder={true}
 				/>
 			))}
 			<Transformer

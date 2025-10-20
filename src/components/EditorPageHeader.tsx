@@ -11,8 +11,11 @@ import { FormationContext } from "../contexts/FormationContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
 import { Dialog } from "@base-ui-components/react";
 import { GeneralSiteInfoDialog } from "./dialogs/GeneralSiteInfoDialog.tsx";
+import { EditFestivalDialog } from "./dialogs/editFestival/EditFestivalDialog.tsx";
 
 export function EditorPageHeader() {
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
   const {selectedFestival, selectedSection} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
@@ -26,7 +29,7 @@ export function EditorPageHeader() {
       navigate("../");
     }
   };
-  
+
   return (
     <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey-200'>
       <div className='flex flex-row items-center gap-2'>
@@ -40,17 +43,18 @@ export function EditorPageHeader() {
           userType === "admin" &&
           <CustomMenu
             trigger={
-              <img alt="Festival edit" src={ICON.festivalBlack} className='size-8 max-w-8 max-h-8'/>
+              <img alt="Festival edit" src={ICON.festival} className='size-8 max-w-8 max-h-8'/>
             }>
-            <MenuItem label="祭り編集" onClick={() => {
-              console.log("Todo: implement festival edit");
-            }} />
+            <MenuItem label="祭り編集" onClick={() => {setDialogOpen(true)}} />
+            <MenuSeparator/>
             <MenuItem label="別の隊列を編集" onClick={() => {
               console.log("Todo: implement formation switch");
             }} />
+            <MenuSeparator/>
             <MenuItem label="隊列比較" onClick={() => {
               console.log("Todo: implement formation compare");
             }} />
+            <MenuSeparator/>
             <MenuItem label="別の隊列で上書き" onClick={() => {
               console.log("Todo: overwrite formation");
             }} />
@@ -124,7 +128,11 @@ export function EditorPageHeader() {
           </CustomMenu>
         </div>
       }
+      <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+        <EditFestivalDialog/>
+      </Dialog.Root>
     </header>
+    
   )
 }
 

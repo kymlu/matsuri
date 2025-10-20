@@ -15,7 +15,11 @@ export type EditFestivalParticipantsProps = {
 }
 
 export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
-  const [participants, setParticipants] = useState<Participant[]>([...props.participants.map(x => ({...x}))]);
+  const [participants, setParticipants] = useState<Participant[]>([
+    ...props.participants
+      .map(x => ({...x}))
+      .sort((a, b) => a.displayName.toLowerCase().localeCompare(b.displayName.toLowerCase()))
+    ]);
   const [participantNames, setParticipantNames] = useState<Record<string, number>>({});
   const [editParticipantNameIndex, setEditParticipantNameIndex] = useState<number>(-1);
   const [editingParticipants, setEditingParticipants] = useState<boolean>(false);
@@ -23,14 +27,18 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
   useImperativeHandle(props.ref, () => ({
     getData: () => {return participants;},
     resetData: () => {
-      setParticipants([...props.participants.map(x => ({...x}))]);
+      setParticipants([
+        ...props.participants
+          .map(x => ({...x}))
+          .sort((a, b) => a.displayName.toLowerCase().localeCompare(b.displayName.toLowerCase()))
+      ]);
       updateParticipantNames(props.participants)
     }
   }));
 
   function updateParticipantNames(participants: Participant[]) {
     const updated: Record<string, number> = participants.reduce((acc, f) => {
-      acc[f.displayName] = (acc[f.displayName] || 0) + 1;
+      acc[f.displayName.toLowerCase()] = (acc[f.displayName.toLowerCase()] || 0) + 1;
       return acc;
     }, {});
     setParticipantNames(updated);
@@ -42,8 +50,8 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
 
   const filteredTeam = useMemo(() =>
     teamMembers
-      .filter(x => !Object.keys(participantNames).includes(x.name))
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .filter(x => !Object.keys(participantNames).includes(x.name.toLowerCase()))
+      .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
   , [participantNames]);
   
   const addParticipant = (preset?: ParticipantOption) => {
@@ -54,8 +62,6 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
         displayName: preset?.name || "",
         festivalId: props.festivalId,
         memberId: preset?.id,
-        isPlaceholder: false,
-        placeholderNumber: Math.max(...participants.map(x => x.placeholderNumber)) + 1,
       } as Participant
     ];
     setParticipants(updatedParticipants);
@@ -85,7 +91,7 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
 
   return <div>
     <div className="flex flex-row items-center justify-between mb-3">
-      <label>参加者</label>
+      <label className="font-extrabold">参加者</label>
       <div className="flex flex-row gap-2">
         <button
           disabled={teamMembers.length === 0 || editParticipantNameIndex !== -1}
@@ -112,7 +118,7 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
       tall
       placeholder="参加者の名前、かなを入力する"
       items={filteredTeam}
-      filter={(item: ParticipantOption, query: string) => item.name.includes(query) || (item.kana?.includes(query) ?? false)}
+      filter={(item: ParticipantOption, query: string) => item.name.toLowerCase().includes(query.toLowerCase()) || (item.kana?.toLowerCase().includes(query.toLowerCase()) ?? false)}
       getLabel={(item: ParticipantOption) => item.name}
       canAddUndefined
       selectItem={(item: ParticipantOption | string) => addParticipant(typeof item === "string" ? {
@@ -121,7 +127,7 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
     <div className="flex flex-row items-center gap-2 flex-wrap overflow-auto max-h-[50svh]">
       {
         participants.map((p, i) => {
-          const hasError = participantNames[p.displayName] > 1 || isNullOrUndefinedOrBlank(p.displayName);
+          const hasError = participantNames[p.displayName.toLowerCase()] > 1 || isNullOrUndefinedOrBlank(p.displayName);
           return <React.Fragment key={i}>
             <div
               className={

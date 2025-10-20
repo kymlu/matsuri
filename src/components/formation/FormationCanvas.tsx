@@ -42,8 +42,8 @@ export default function FormationCanvas(props: FormationCanvasProps) {
   const {gridSize, followingId, updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation} = useContext(FormationContext);
   const {enableAnimation} = useContext(SettingsContext);
-  const {participantPositions, propPositions, notePositions, arrowPositions} = useContext(PositionContext);
-  const {participantList, propList} = useContext(EntitiesContext);
+  const {participantPositions, propPositions, notePositions, arrowPositions, placeholderPositions} = useContext(PositionContext);
+  const {participantList, propList, placeholderList} = useContext(EntitiesContext);
   const canvasHeight = (props.height + props.topMargin + props.bottomMargin) * gridSize;
   const canvasWidth = (props.width + props.sideMargin * 2) * gridSize;
   
@@ -137,9 +137,11 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             sideMargin={props.sideMargin}
             participants={participantList}
             props={propList}
+            placeholders={placeholderList}
             partPositions={participantPositions[ghostSectionId]}
             propPositions={propPositions[ghostSectionId]}
             categories={props.categories}
+            placePositions={placeholderPositions[selectedSection!.id]}
             />
         }
         {
@@ -152,10 +154,12 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             categories={props.categories}
             participants={participantList}
             props={propList}
+            placeholders={placeholderList}
             partPositions={participantPositions[selectedSection.id]}
             propPositions={propPositions[selectedSection.id]}
             notePositions={notePositions[selectedSection.id]}
             arrowPositions={arrowPositions[selectedSection.id]}
+            placePositions={placeholderPositions[selectedSection.id]}
             />
         }
         {
@@ -169,6 +173,8 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             previousParticipantPositions={participantPositionsGrouped[userContext.previousSectionId ?? ""] ?? {}}
             props={propList}
             propPositions={propPositions[selectedSection.id]}
+            placeholders={placeholderList}
+            placePositions={placeholderPositions[selectedSection.id]}
             categories={props.categories}/>
         }
       </Stage>

@@ -3,7 +3,7 @@ import { songList } from "../../../data/ImaHitotabi.ts";
 import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import ItemButton from "../../ItemButton.tsx";
-import { ParticipantPosition } from "../../../models/Position.ts";
+import { ParticipantPosition, PlaceholderPosition } from "../../../models/Position.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { isNullOrUndefined, isNullOrUndefinedOrBlank } from "../../../lib/helpers/GlobalHelper.ts";
@@ -16,10 +16,10 @@ import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");
-  const {participantList, updateEntitiesContext} = useContext(EntitiesContext);
+  const {participantList, placeholderList, updateEntitiesContext} = useContext(EntitiesContext);
   const {selectedSection, selectedFestival, currentSections} = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
-  const {participantPositions, updatePositionContextState} = useContext(PositionContext);
+  const {participantPositions, updatePositionContextState, placeholderPositions} = useContext(PositionContext);
   const [participantsInFormation, setParticipantsInFormation] = useState<string[]>([]);
 
   function setFilterTextWrapper(value: string) {
@@ -44,17 +44,12 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     
     if (isNullOrUndefinedOrBlank(selectedParticipant.id)) {
       selectedParticipant.id = crypto.randomUUID();
-      selectedParticipant.placeholderNumber = Math.max(...Object.values(participantList).map(x => x.placeholderNumber)) + 1;
     }
 
     setParticipantsInFormation(prev => prev ? [...prev, selectedParticipant.id] : [selectedParticipant.id]);
     
     var flattenedParticipants = Object.values(participantList);
 
-    if (selectedParticipant.isPlaceholder) {
-      selectedParticipant.displayName = `${selectedParticipant.displayName} ${flattenedParticipants.length + 1}`;
-    }
-    
     var position = props.margins[flattenedParticipants.length % props.margins.length];
     var newPositions = currentSections.map(section => 
       {
@@ -86,9 +81,18 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
 	  var id = crypto.randomUUID();
 	  var newPlaceholder: ParticipantPlaceholder = {
 		  id: id,
-		  displayName: `${name} ${}`, // TODO: add count
-		  formationId: selectedFormation.id,
+		  displayName: `${name} ${Object.keys(placeholderList).length}`, // TODO: add count
+		  formationId: selectedFormation!.id,
 	  }
+
+    var newPositions: PlaceholderPosition[] = currentSections.map(x => ({
+      id: crypto.randomUUID(),
+      placeholderId: id, 
+      categoryId: categoryId,
+      x: 1, // todo
+      y: 1, //todo
+      formationSectionId: x.id,
+    } as PlaceholderPosition));
 	  // todo: update db
 	  // todo: create all placeholderPositions
 	  // todo: update placeholderPositions in db

@@ -76,6 +76,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
   };
+  
   const editFormationType = (index: number, newType: string) => {
     const updatedFormations = [...formations];
     updatedFormations[index].type = +Object.entries(formationTypes).find(([key, name]) => strEquals(name, newType))![0];
@@ -87,7 +88,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     const updatedFormations = [...formations];
     updatedFormations[index][field] = newValue;
     setFormations(updatedFormations);
-  }
+  };
 
   const deleteFormation = (index: number) => {
     const updatedFormations = [...formations];
@@ -98,7 +99,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
 
   return <>
     <div className="flex flex-row items-center justify-between mb-3">
-      <label>隊列</label>
+      <label className="font-extrabold">隊列</label>
       <button
         type="button"
         onClick={addFormation}
@@ -106,7 +107,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
         <img src={ICON.addBlack} className="size-6" alt="Add formation" />
       </button>
     </div>
-    <div className="grid grid-cols-[3fr,2fr,2fr,1fr,1fr,auto] items-center gap-x-2">
+    <div className="grid grid-cols-[3fr,2fr,2fr,1fr,1fr,auto] items-center gap-2">
       <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.textFieldsAltBlack}/>隊列名</div>
       <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.musicNoteBlack}/>曲名</div>
       <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.categoryBlack}/>タイプ</div>

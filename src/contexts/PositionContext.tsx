@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from '../models/Position.ts';
+import { ArrowPosition, NotePosition, ParticipantPosition, PlaceholderPosition, PropPosition } from '../models/Position.ts';
 import { useState } from 'react';
 
 export interface PositionContextState {
@@ -7,6 +7,7 @@ export interface PositionContextState {
   propPositions: Record<string, PropPosition[]>,
   notePositions: Record<string, NotePosition[]>,
   arrowPositions: Record<string, ArrowPosition[]>,
+  placeholderPositions: Record<string, PlaceholderPosition[]>,
   updatePositionContextState: (newState: Partial<PositionContextState>) => void
 }
 
@@ -17,6 +18,7 @@ const defaultState: PositionContextState = {
   propPositions: {},
   notePositions: {},
   arrowPositions: {},
+  placeholderPositions: {},
   updatePositionContextState: (newState: Partial<PositionContextState>) => {},
 }
 

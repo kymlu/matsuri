@@ -77,7 +77,7 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
   
   return <div>
     <div className="flex flex-row items-center justify-between mb-3">
-      <label>大道具</label>
+      <label className="font-extrabold">大道具</label>
       <button
         type="button"
         onClick={() => addProp()}
@@ -89,7 +89,7 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
       <div className="flex flex-col gap-2 max-h-[20svh] overflow-y-auto border-2 border-primary rounded-lg p-2">
         {propsList.map(x => <ItemButton key={x.id} text={`${x.name} (${x.length}m)`} onClick={() => addProp(x)}/>)}
       </div>
-      <div className="grid grid-cols-[5fr,1fr,1fr,auto] items-center gap-x-2">
+      <div className="grid grid-cols-[5fr,1fr,1fr,auto] items-center gap-2">
         <div className="font-bold">ラベル</div>
         <div className="font-bold">長さ(m)</div>
         <div className="font-bold">色</div>
@@ -109,7 +109,7 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
                 hasError={propNames[p.name] > 1}
                 />
               <NumberTextField default={p.length} step={0.1}/>
-              <CustomMenu trigger={
+              <CustomMenu full trigger={
                 <ColorSwatch 
                   full
                   colorHexCode={p.color!.bgColour!} 

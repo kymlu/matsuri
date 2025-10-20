@@ -4,8 +4,8 @@ import { objectColorSettings } from "../../../themes/colours.ts"
 import ParticipantObject from "../formationObjects/ParticipantObject.tsx"
 import PropObject from "../formationObjects/PropObject.tsx"
 import { getPixel } from "../../../lib/helpers/FormationHelper.ts"
-import { ParticipantPosition, PropPosition } from "../../../models/Position.ts"
-import { Participant } from "../../../models/Participant.ts"
+import { ParticipantPosition, PlaceholderPosition, PropPosition } from "../../../models/Position.ts"
+import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts"
 import { Prop } from "../../../models/Prop.ts"
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts"
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx"
@@ -16,9 +16,11 @@ export type FormationGhostLayerProps = {
   sideMargin: number,
   participants: Record<string, Participant>,
   props: Record<string, Prop>,
+  placeholders: Record<string, ParticipantPlaceholder>,
   partPositions: ParticipantPosition[],
   propPositions: PropPosition[],
   categories: Record<string, ParticipantCategory>,
+	placePositions: PlaceholderPosition[];
 }
 
 export function FormationGhostLayer(props: FormationGhostLayerProps) {
@@ -61,7 +63,25 @@ export function FormationGhostLayer(props: FormationGhostLayerProps) {
                 colour={placement.categoryId ? props.categories[placement.categoryId]?.color ?? objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
                 startX={getPixel(gridSize, placement.x, props.sideMargin)} 
                 startY={getPixel(gridSize, placement.y, props.topMargin)}
-					      isPlaceholder={props.participants[placement.participantId]?.isPlaceholder}
+					      isPlaceholder={false}
+              />
+            }
+        )
+      }
+      { props.placePositions
+          ?.map(placement => 
+            {
+              const participant = props.participants[placement.placeholderId];
+              if (!participant) return <></>;
+
+              return <ParticipantObject 
+                id={"ghost" + placement.id}
+                key={placement.id}
+                name={participant.displayName} 
+                colour={placement.categoryId ? props.categories[placement.categoryId]?.color ?? objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
+                startX={getPixel(gridSize, placement.x, props.sideMargin)} 
+                startY={getPixel(gridSize, placement.y, props.topMargin)}
+					      isPlaceholder={true}
               />
             }
         )

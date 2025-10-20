@@ -10,8 +10,6 @@ export interface Participant {
   displayName: string,
   festivalId: string,
   memberId?: string,
-  isPlaceholder: boolean,
-  placeholderNumber: number,
 }
 
 export interface ParticipantPlaceholder {

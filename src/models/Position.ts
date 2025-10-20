@@ -164,6 +164,7 @@ export function splitPositionsByType(positions: Position[]) {
         break;
       case PositionType.arrow:
         arrows.push(pos.arrow);
+        break;
       case PositionType.placeholder:
         placeholders.push(pos.placeholder);
         break;

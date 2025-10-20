@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import CustomDialog from "../CustomDialog.tsx";
 import { Festival } from "../../../models/Festival.ts";
 import Button from "../../Button.tsx";
@@ -10,23 +10,27 @@ import { Participant } from "../../../models/Participant.ts";
 import { EditFestivalGeneral } from "./EditFestivalGeneral.tsx";
 import { EditFestivalParticipants } from "./EditFestivalParticipants.tsx";
 import { EditFestivalProps } from "./EditFestivalProps.tsx";
+import { EditFestivalFormations } from "./EditFestivalFormations.tsx";
+import { UserContext } from "../../../contexts/UserContext.tsx";
+import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 
 export type EditFestivalDialogProps = {
-  festival: Festival | null,
-  resources: FestivalResources | null,
   onSave?: (festival: Festival) => void
 }
 
 export function EditFestivalDialog(props: EditFestivalDialogProps) {
+  const {selectedFestival} = useContext(UserContext);
+  const {participantList, propList} = useContext(EntitiesContext);
+  
   const defaultFestival: Festival & FestivalResources = {
-    id: props.festival?.id || "",
-    name: props.festival?.name || "",
-    startDate: props.festival?.startDate || "",
-    endDate: props.festival?.endDate || "",
-    note: props.festival?.note || "",
-    formations: [...props.festival?.formations || []],
-    participants: [...props.resources?.participants || []],
-    props: [...props.resources?.props || []],
+    id: selectedFestival?.id || "",
+    name: selectedFestival?.name || "",
+    startDate: selectedFestival?.startDate || "",
+    endDate: selectedFestival?.endDate || "",
+    note: selectedFestival?.note || "",
+    formations: [...selectedFestival?.formations || []],
+    participants: [...Object.values(participantList) || []],
+    props: [...Object.values(propList) || []],
   };
 
   const generalRef = React.createRef<any>();
