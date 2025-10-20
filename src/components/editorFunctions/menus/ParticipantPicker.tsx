@@ -47,10 +47,8 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     }
 
     setParticipantsInFormation(prev => prev ? [...prev, selectedParticipant.id] : [selectedParticipant.id]);
-    
-    var flattenedParticipants = Object.values(participantList);
 
-    var position = props.margins[flattenedParticipants.length % props.margins.length];
+    var position = props.margins[getNextMarginIndex()];
     var newPositions = currentSections.map(section => 
       {
         return {
@@ -76,26 +74,34 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     dbController.upsertList("participantPosition", newPositions);
   }
 
+  const getNextMarginIndex = () => {
+    return (Object.values(participantList).length + Object.values(placeholderList).length) % props.margins.length;
+  }
+
   function addPlaceholder(name: string, categoryId: string) {
-    console.log("Todo: implement", name, categoryId);
-	  var id = crypto.randomUUID();
+    var id = crypto.randomUUID();
 	  var newPlaceholder: ParticipantPlaceholder = {
 		  id: id,
 		  displayName: `${name} ${Object.keys(placeholderList).length}`, // TODO: add count
 		  formationId: selectedFormation!.id,
 	  }
+    dbController.upsertItem("placeholder", newPlaceholder);
+    var updatedPlaceholders = addItemToRecord(placeholderList, newPlaceholder.id, newPlaceholder);
+    updateEntitiesContext({placeholderList: updatedPlaceholders})
 
+    var position = props.margins[getNextMarginIndex()];
     var newPositions: PlaceholderPosition[] = currentSections.map(x => ({
       id: crypto.randomUUID(),
       placeholderId: id, 
       categoryId: categoryId,
-      x: 1, // todo
-      y: 1, //todo
+      x: position[0],
+      y: position[1],
       formationSectionId: x.id,
     } as PlaceholderPosition));
-	  // todo: update db
-	  // todo: create all placeholderPositions
-	  // todo: update placeholderPositions in db
+    
+    var updatedPositions = addItemsToRecordByKey(placeholderPositions, newPositions, (item) => item.formationSectionId);
+    updatePositionContextState({placeholderPositions: updatedPositions})
+    dbController.upsertList("placeholderPosition", newPositions);
   }
 
   const participantListDisplay = useMemo(() => {
