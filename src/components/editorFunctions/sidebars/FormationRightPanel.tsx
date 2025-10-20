@@ -5,12 +5,12 @@ import GridSettingsMenu from "../menus/GridSettingsMenu.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import NoteColorPresetPickerMenu from "../menus/NoteColorPickerMenu.tsx";
 import ActionMenu from "../menus/ActionMenu.tsx";
-import NameEditor from "../menus/NameEditor.tsx";
 import NoteEditor from "../menus/NoteEditor.tsx";
 import { PositionType } from "../../../models/Position.ts";
 import ExportMenu from "../menus/ExportMenu.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import ArrowEditor from "../menus/ArrowEditor.tsx";
+import PlacementNameEditor from "../menus/PlacementNameEditor.tsx";
 
 export type FormationRightPanelProps = {
   exportFunc?: (exportName: string) => void
@@ -84,6 +84,12 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       {isSingleSelection && firstItem.type === PositionType.note && (
         <>
           <NoteEditor />
+          <Divider />
+        </>
+      )}
+      {isSingleSelection && firstItem.type === PositionType.placeholder && (
+        <>
+          <PlacementNameEditor />
           <Divider />
         </>
       )}
