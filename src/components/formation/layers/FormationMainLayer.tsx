@@ -181,6 +181,19 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					});
 				}
 
+				const selectedPlaceholderIds: Set<string> = new Set();
+				if (appMode === "edit") {
+					placeholderRef.current?.forEach((elementNode) => {
+						if (elementNode.current) {
+							var node = elementNode as React.RefObject<Group>;
+							const elBox = node.current.getClientRect();
+							if (Konva.Util.haveIntersection(selBox, elBox)) {
+								selectedPlaceholderIds.add(node.current.attrs.id);
+							}
+						}
+					});
+				}
+
 				updateState({
 					selectedItems: [
 						...props.partPositions
@@ -195,6 +208,9 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						...props.arrowPositions
 							?.filter((x) => selectedArrowIds.has(x.id))
 							?.map((x) => ({ type: PositionType.arrow, arrow: x } as Position)) ?? [],
+						...props.placePositions
+							?.filter((x) => selectedArrowIds.has(x.id))
+							?.map((x) => ({ type: PositionType.placeholder, placeholder: x } as Position)) ?? [],
 					],
 				});
 
@@ -203,6 +219,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					...selectedPropIds,
 					...selectedNoteIds,
 					...selectedArrowIds,
+					...selectedPlaceholderIds,
 				]);
 
 				setSelectedIds(allSelectedIds);
@@ -210,6 +227,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				setIsSinglePropSelected(allSelectedIds.size === 1 && selectedPropIds.size === 1);
 				setIsSingleNoteSelected(allSelectedIds.size === 1 && selectedNoteIds.size === 1);
 				setIsSingleArrowSelected(allSelectedIds.size === 1 && selectedArrowIds.size === 1);
+				setIsSinglePlaceholderSelected(allSelectedIds.size === 1 && selectedPlaceholderIds.size === 1);
 
 				updateSelectionRect();
 			}
@@ -291,6 +309,16 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 				setSelectedIds(new Set(arrows.map((x) => x.id)));
 				break;
 
+			case PositionType.placeholder:
+				var placeholders = positionContextRef.current.placeholderPositions[userContext.selectedSection!.id];
+				updateState({
+					selectedItems: placeholders.map(
+						(x) => ({ type: PositionType.placeholder, placeholder: x } as Position)
+					),
+				});
+				setSelectedIds(new Set(placeholders.map((x) => x.id)));
+				break;
+
 			default:
 				break;
 		}
@@ -311,17 +339,21 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	}, [userContext]);
 
 	function selectAllFromCategory(event) {
-		var newSelection = positionContextRef.current.participantPositions[userContext.selectedSection!.id].filter(
+		var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id].filter(
 			(x) =>
 				strEquals((event as CustomEvent)?.detail?.categoryId, x.categoryId)
-		);
+			);
+		var placeholders = positionContextRef.current.placeholderPositions[userContext.selectedSection!.id].filter(
+			(x) =>
+				strEquals((event as CustomEvent)?.detail?.categoryId, x.categoryId)
+			);
 
 		updateState({
-			selectedItems: newSelection.map(
-				(x) => ({ type: PositionType.participant, participant: x } as Position)
-			),
+			selectedItems: [
+				...participants.map((x) => ({ type: PositionType.participant, participant: x } as Position)),
+				...placeholders.map((x) => ({type: PositionType.placeholder, placeholder: x} as Position))]
 		});
-		setSelectedIds(new Set(newSelection.map((x) => x.id)));
+		setSelectedIds(new Set([...participants.map((x) => x.id), ...placeholders.map((x) => x.id)]));
 	}
 
 	useEffect(() => {
@@ -394,6 +426,16 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
       );
 	}, [props.arrowPositions]);
 
+  useEffect(() => {
+		props.placePositions
+      ?.sort((a, b) => a.id.localeCompare(b.id))
+      ?.forEach(
+        (_, index) => {
+					placeholderRef.current[index] = React.createRef<Konva.Group>()
+				}
+      );
+	}, [props.placePositions]);
+
 	function updateParticipantPosition(id: string, x: number, y: number) {
 		var participant = props.partPositions.find((x) => strEquals(x.id, id));
 		if (participant) {
@@ -441,6 +483,15 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			if (arrowRef?.current?.[arrowIndex] !== null) {
 				arrowRef?.current?.[arrowIndex]?.current?.setAttr("points", newPoints.map(x => x * gridSize));
 			}
+		}
+	}
+
+	function updatePlaceholderPosition(id: string, x: number, y: number) {
+		var placeholder = props.placePositions.find((x) => strEquals(x.id, id));
+		if (placeholder) {
+			placeholder.x = x / gridSize - props.sideMargin;
+			placeholder.y = y / gridSize - props.topMargin; // todo: fix off by 2m
+			dbController.upsertItem("placeholderPosition", placeholder);
 		}
 	}
 
