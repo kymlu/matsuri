@@ -18,5 +18,4 @@ export interface ParticipantPlaceholder {
   id: string,
   displayName: string,
   formationId: string,
-  number: number,
 }
