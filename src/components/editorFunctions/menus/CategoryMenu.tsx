@@ -6,7 +6,7 @@ import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
 import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { createPosition, ParticipantPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
+import { createPosition, ParticipantPosition, PlaceholderPosition, Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import Button from "../../Button.tsx";
 import { ICON } from "../../../lib/consts.ts";
@@ -16,7 +16,7 @@ export default function CategoryMenu() {
   const userContext = useContext(UserContext);
   const {categories} = useContext(CategoryContext);
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
-  const {participantPositions, updatePositionContextState} = useContext(PositionContext);
+  const {participantPositions, placeholderPositions, updatePositionContextState} = useContext(PositionContext);
 
 	const categoryOptionRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
 
@@ -53,23 +53,38 @@ export default function CategoryMenu() {
   }
 
   function onChangeCategory(newCategoryId: string) {
-    var participants = splitPositionsByType(selectedItems).participants;
-    var updatedPositions: ParticipantPosition[] = [];
+    var newCategory = categories[newCategoryId]!;
+    setSelectedCategory(newCategory);
+
+    var positionByType = splitPositionsByType(selectedItems);
+    
+    var participants = positionByType.participants;
+    var updatedPartPositions: ParticipantPosition[] = [];
     var ids = new Set(participants.map(x => x.id));
-    var updatedRecord = {...participantPositions};
-    updatedRecord[selectedSection!.id]
+    var updatePartRecord = {...participantPositions};
+    updatePartRecord[selectedSection!.id]
       .filter(x => ids.has(x.id))
       .forEach(x => {
         x.categoryId = newCategoryId
-        updatedPositions.push(x);
+        updatedPartPositions.push(x);
+      });
+
+    var placeholders = positionByType.placeholders;
+    var updatedPlacePositions: PlaceholderPosition[] = [];
+    var ids = new Set(placeholders.map(x => x.id));
+    var updatedPlaceRecord = {...placeholderPositions};
+    updatedPlaceRecord[selectedSection!.id]
+      .filter(x => ids.has(x.id))
+      .forEach(x => {
+        x.categoryId = newCategoryId
+        updatedPlacePositions.push(x);
       });
     
-    var newCategory = categories[newCategoryId]!;
-
-    setSelectedCategory(newCategory);
-    updateState({selectedItems: updatedPositions.map(x => createPosition(x, PositionType.participant))});
-    updatePositionContextState({participantPositions: updatedRecord});
-    dbController.upsertList("participantPosition", updatedPositions);
+    var updatedSelectedItems = [...updatedPartPositions.map(x => createPosition(x, PositionType.participant)), ...updatedPlacePositions.map(x => createPosition(x, PositionType.placeholder))];
+    updateState({selectedItems: updatedSelectedItems});
+    updatePositionContextState({participantPositions: updatePartRecord, placeholderPositions: updatedPlaceRecord});
+    dbController.upsertList("participantPosition", updatedPartPositions);
+    dbController.upsertList("placeholderPosition", updatedPlacePositions);
   }
 
   async function onSetAllToCategory() {
