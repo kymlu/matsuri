@@ -28,7 +28,7 @@ export function EditFestivalGeneral(props: EditFestivalGeneralProps) {
   const noteRef = React.createRef<any>();
 
   useImperativeHandle(props.ref, () => ({
-    getData: () => {return {id, name, startDate, endDate};},
+    getData: () => {return {id, name, startDate, endDate, note};},
     resetData: () => {
       setId(props.id ?? "");
       idRef.current?.changeValue(props.id?.toString() ?? "");

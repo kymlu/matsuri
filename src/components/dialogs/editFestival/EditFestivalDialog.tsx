@@ -13,6 +13,7 @@ import { EditFestivalProps } from "./EditFestivalProps.tsx";
 import { EditFestivalFormations } from "./EditFestivalFormations.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
+import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export type EditFestivalDialogProps = {
   onSave?: (festival: Festival) => void
@@ -58,14 +59,31 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   const save = () => {
     if (hasErrors) return;
 
-    const generalData: {id?: string, name?: string, startDate?: string, endDate?: string} = generalRef.current?.getData();
+    const generalData: {id?: string, name?: string, startDate?: string, endDate?: string, note?: string} = generalRef.current?.getData();
     const participants: Participant[] = participantsRef.current?.getData();
     const props: Prop[] = propsRef.current?.getData();
     const formations: Formation[] = formationsRef.current?.getData();
 
-    // to do: save to indexed db
-    // to do: export to file?
     console.log(generalData, participants, props, formations);
+    // todo: remove all deleted participants 
+    // todo: replace all participant positions with placeholder positions
+    // todo: remove all deleted props and prop positions
+    // todo: remove formations, and participant, prop, note, arrow, and placeholder positions for that formation
+
+    // dbController.removeList("participant", Object.keys(participantList));
+    // dbController.removeList("prop", Object.keys(propList));
+    // todo: show I also have a list of removed ids from the participants/props/formations?
+    // but if I do that, if I delete an object and add an object will the same name, should it keep the id?
+    dbController.upsertItem("festival", {
+      id: generalData.id,
+      name: generalData.name,
+      startDate: generalData.startDate,
+      endDate: generalData.endDate,
+      note: generalData.note,
+      formations: formations,
+    } as Festival);
+    dbController.upsertList("participant", participants);
+    dbController.upsertList("prop", props);
   };
 
   const reset = () => {

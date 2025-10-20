@@ -123,6 +123,7 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
               <CustomMenu
                 trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete prop" />}>
                 <MenuItem label="削除" onClick={() => deleteProp(i)} />
+                {/* TODO: have an are you sure verification dialog with the list of formations it's used in */}
               </CustomMenu>
             </React.Fragment>
           )

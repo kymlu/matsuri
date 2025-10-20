@@ -166,7 +166,8 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
                   }
                   <CustomMenu
                     trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete participant"/>}>
-                    <MenuItem label="削除" onClick={() => deleteParticipant(i)} />
+                    <MenuItem label="削除" onClick={() => deleteParticipant(i)} /> 
+                    {/* // TODO: have a warning dialog that says which formations have that participants, and give them the option to delete positions or replace with placeholders */}
                   </CustomMenu>
                 </>
               }

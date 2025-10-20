@@ -212,7 +212,7 @@ export default function FestivalManagerPage () {
           }}}>
         {
           editingFestival &&
-          <EditFestivalDialog festival={selectedFestival} resources={selectedFestivalResources}/>
+          <EditFestivalDialog/>
         }
       </Dialog.Root>
       

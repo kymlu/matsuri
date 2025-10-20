@@ -149,6 +149,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
             disabled={formations.length === 1}
             trigger={<img src={ICON.deleteBlack} className={"size-6" + (formations.length === 1 ? " opacity-50 cursor-not-allowed" : "")} alt="Delete formation" />}>
             <MenuItem label="削除" onClick={() => deleteFormation(index)} />
+            {/* TODO: have an are you sure verification dialog */}
           </CustomMenu>
         </React.Fragment>
       ))}
