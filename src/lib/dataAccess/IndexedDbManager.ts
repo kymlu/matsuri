@@ -1,14 +1,14 @@
 import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
 import { DB_NAME } from "../consts.ts";
 
-type TableName = "festival" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection";
+type TableName = "festival" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection" | "placeholder" | "placeholderPosition";
 
 export class IndexedDBManager {
   db!: IDBDatabase;
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open(DB_NAME, 5);
+    const request = indexedDB.open(DB_NAME, 6);
     request.onupgradeneeded = async (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       const oldVersion = event.oldVersion;
@@ -33,6 +33,11 @@ export class IndexedDBManager {
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("prop").clear();
       }
 
+      if (!db.objectStoreNames.contains("placeholder")) {
+        const propStore = db.createObjectStore("placeholder", { keyPath: "id", autoIncrement: true });
+        propStore.createIndex("formationId", "formationId", { unique: false });
+      }
+      
       if (!db.objectStoreNames.contains("participantPosition")) {
         const participantPositionStore = db.createObjectStore("participantPosition", { keyPath: "id", autoIncrement: true });
         participantPositionStore.createIndex("participantId", "participantId", { unique: false });
@@ -57,8 +62,13 @@ export class IndexedDBManager {
       }
 
       if (!db.objectStoreNames.contains("arrowPosition")) {
-        const notePositionStore = db.createObjectStore("arrowPosition", { keyPath: "id", autoIncrement: true });
-        notePositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+        const arrowPositionStore = db.createObjectStore("arrowPosition", { keyPath: "id", autoIncrement: true });
+        arrowPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+      }
+
+      if (!db.objectStoreNames.contains("placeholderPosition")) {
+        const placeholderPositionStore = db.createObjectStore("placeholderPosition", { keyPath: "id", autoIncrement: true });
+        placeholderPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       }
 
       if (!db.objectStoreNames.contains("formationSection")) {
@@ -131,6 +141,22 @@ export class IndexedDBManager {
     });
   }
 
+  async getByFormationId(storeName: "placeholder", formationId: string) {
+    console.log(`getByFormationId ${storeName} called on ${formationId}`);
+    return new Promise((resolve, reject) => {
+      const index = this._getStore(storeName, "readonly").index("formationId");
+      const request = index.getAll(festivalId);
+      request.onsuccess = () => {
+        console.log(`resolved getByFormationId ${storeName}: ${request.result.length}`);
+        resolve(request.result || null);
+      };
+      request.onerror = () => {
+        console.error(`error on getByFormationId ${storeName}: ${request.error}`);
+        reject(request.error);
+      };
+    });
+  }
+
   async getPositionsByParticipantId(participantId: string) {
     console.log(`getPositionsByParticipantId called on ${participantId}`);
     return new Promise((resolve, reject) => {
@@ -147,7 +173,7 @@ export class IndexedDBManager {
     });
   }
 
-  async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition" | "arrowPosition", formationSectionId: string) {
+  async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "placeholderPosition", formationSectionId: string) {
     console.log(`getByFormationSectionId ${storeName} called on ${formationSectionId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore(storeName, "readonly").index("formationSectionId");
