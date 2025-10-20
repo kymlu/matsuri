@@ -13,7 +13,7 @@ export type ExportMenuProps = {
 export default function ExportMenu(props: ExportMenuProps) {
   const { selectedFestival } = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
-  var defaultName = selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.id}` : '');
+  var defaultName = selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : '');
   const [exportName, setExportName] = React.useState(defaultName);
 
   function exportPdf() {
