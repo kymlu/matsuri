@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { songList } from "../../../data/ImaHitotabi.ts";
-import { Participant } from "../../../models/Participant.ts";
+import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import ItemButton from "../../ItemButton.tsx";
 import { ParticipantPosition } from "../../../models/Position.ts";
@@ -81,6 +81,19 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     dbController.upsertList("participantPosition", newPositions);
   }
 
+  function addPlaceholder(name: string, categoryId: string) {
+    console.log("Todo: implement", name, categoryId);
+	  var id = crypto.randomUUID();
+	  var newPlaceholder: ParticipantPlaceholder = {
+		  id: id,
+		  displayName: `${name} ${}`, // TODO: add count
+		  formationId: selectedFormation.id,
+	  }
+	  // todo: update db
+	  // todo: create all placeholderPositions
+	  // todo: update placeholderPositions in db
+  }
+
   const participantListDisplay = useMemo(() => {
     console.log("reset", participantsInFormation, Object.values(participantList)
     .filter(x => !participantsInFormation.includes(x.id) && x.displayName.toLowerCase().includes(filterText?.toLowerCase()))
@@ -103,12 +116,10 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
       <div className="flex flex-row flex-wrap flex-1 gap-2 overflow-x-hidden overflow-y-scroll max-h-32">
         <ItemButton
           text="踊り子"
-          //isDisabled={selectedParticipants.includes(participant.id)}
-          onClick={() => addParticipant({isPlaceholder: true, id: "", displayName: "踊り子", festivalId: selectedFestival!.id, placeholderNumber: -1})}/>
+          onClick={() => addPlaceholder("踊り子", "0")}/>
         <ItemButton
           text="スタッフ"
-          //isDisabled={selectedParticipants.includes(participant.id)}
-          onClick={() => addParticipant({isPlaceholder: true, id: "", displayName: "スタッフ", festivalId: selectedFestival!.id, placeholderNumber: -1})}/>
+          onClick={() => addPlaceholder("スタッフ", "1")}/>
         {participantListDisplay
           .map(participant => 
             <ItemButton
