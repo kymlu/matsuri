@@ -723,7 +723,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					startX={getPixel(gridSize, placement.x, props.sideMargin)}
 					startY={getPixel(gridSize, placement.y, props.topMargin)}
 					updatePosition={(x, y) =>
-						updateParticipantPosition(placement.id, x, y)
+						updatePlaceholderPosition(placement.id, x, y)
 					}
 					onClick={(isMoving?: boolean, multiSelect?: boolean) => {
 						if (appMode === "edit") {
