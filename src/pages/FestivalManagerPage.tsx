@@ -23,6 +23,7 @@ import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
+import ItemButton from '../components/ItemButton.tsx';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);
@@ -135,71 +136,74 @@ export default function FestivalManagerPage () {
       <Divider primary/>
       <div className='grid grid-cols-2 gap-4 mx-5'>
         <Button 
-            onClick={() => {
-              setSelectedFestival(null);
-              setEditingFestival(true);
-            }}>
-            <div className='flex flex-row items-center justify-center gap-2'>
-              祭りを追加
-              <img
-                src={ICON.addBlack}
-                className="size-6"
-                alt="Add new festival"/>
-            </div>
-          </Button>
-          <Button 
-            onClick={() => {
-              if(uploadFileElement){
-                uploadFileElement.click();
-              }
-            }}>
-            <div className='flex flex-row items-center justify-center gap-2 p-1'>
-              隊列をアップロード
-              <img
-                src={ICON.uploadBlack}
-                className="size-6"
-                alt="Upload a file"/>
-            </div>
-          </Button>
-          <input className='hidden' type="file" id="uploadFileInput" //accept=".mtr"
-            onChange={(event) => {
-              console.log(event.target.files);
-              if (event.target.files) {
-                var file = event.target.files?.[0];
-                const reader = new FileReader();
-    
-                reader.addEventListener(
-                  "load",
-                  (event) => {
-                    if (event.target?.result) {
-                      const uploadResult = JSON.parse(event.target.result.toString());
-                      console.log(uploadResult);
-                    }
-                  },
-                  false,
-                );
-          
-                reader.readAsText(file);
-              }
-              }
-            }/>
-        {
-          festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-            .map((festival) =>
-            <button
-              key={festival.id}
-              className='flex flex-row items-center justify-between p-5 border-2 rounded-lg lg:hover:bg-grey-100 border-primary'
-              onClick={() => goToEditor(festival, festival.formations[0])}>
-              <div className='text-start'>
-                <h2 className='text-xl font-bold text-primary'>{festival.name}</h2>
-                <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
-                <div className='font-normal'>{festival.note}</div>
-              </div>
-              <img className='size-8' src={ICON.chevronForwardBlack}/>
-            </button>
-          )
-        }
+          onClick={() => {
+            setSelectedFestival(null);
+            setEditingFestival(true);
+          }}>
+          <div className='flex flex-row items-center justify-center gap-2'>
+            祭りを追加
+            <img
+              src={ICON.addBlack}
+              className="size-6"
+              alt="Add new festival"/>
+          </div>
+        </Button>
+        <Button 
+          onClick={() => {
+            if(uploadFileElement){
+              uploadFileElement.click();
+            }
+          }}>
+          <div className='flex flex-row items-center justify-center gap-2 p-1'>
+            隊列をアップロード
+            <img
+              src={ICON.uploadBlack}
+              className="size-6"
+              alt="Upload a file"/>
+          </div>
+        </Button>
+        <input className='hidden' type="file" id="uploadFileInput" //accept=".mtr"
+          onChange={(event) => {
+            console.log(event.target.files);
+            if (event.target.files) {
+              var file = event.target.files?.[0];
+              const reader = new FileReader();
+  
+              reader.addEventListener(
+                "load",
+                (event) => {
+                  if (event.target?.result) {
+                    const uploadResult = JSON.parse(event.target.result.toString());
+                    console.log(uploadResult);
+                  }
+                },
+                false,
+              );
+        
+              reader.readAsText(file);
+            }
+            }
+          }/>
       </div>
+      {
+        festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+          .map((festival) =>
+          <div
+            key={festival.id}
+            className='flex flex-col gap-1 mx-10 mb-4 rounded-lg'>
+            <h2 className='text-xl font-bold text-primary'>{festival.name}</h2>
+            <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
+            <div className='font-normal'>{festival.note}</div>
+            <div className='flex flex-row flex-wrap gap-2'>
+              {
+                festival.formations.map(formation => (
+                  <ItemButton key={formation.name} text={formation.name} onClick={() => goToEditor(festival, formation)}/>
+                ))
+              }
+            </div>
+          </div>
+        )
+      }
       <span className='fixed opacity-50 bottom-2 left-2'>{LAST_UPDATED}</span>
       <Dialog.Root
         open={editingFestival}
