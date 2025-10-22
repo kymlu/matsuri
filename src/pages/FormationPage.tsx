@@ -200,7 +200,7 @@ export default function FormationPage () {
     var fileName = defaultExportName;
 
     if(followingId) {
-      fileName = fileName + ` - ${participantList[followingId].displayName}`;
+      fileName = fileName + ` - ${participantList[followingId]?.displayName ?? placeholderList[followingId]?.displayName}`;
     }
 
     setExportName(fileName);

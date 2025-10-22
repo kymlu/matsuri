@@ -307,27 +307,22 @@ export async function exportToPdf(
       var placeholder = placeholders[p.placeholderId];
       const isFollowing = strEquals(followingId, placeholder.id);
       
-      if (isFollowing) {
-        pdf.setLineWidth(2);
-        pdf.setDrawColor(basePalette.primary.main);
-      } else {
-        pdf.setLineWidth(0.8);
-        pdf.setDrawColor(category?.color.borderColour ?? basePalette.black);
-      }
-
       pdf.setFillColor(category?.color.bgColour ?? basePalette.white);
       pdf.circle((sideMargin + p.x) * grid, (p.y + topMargin) * grid, grid * 0.4, "F");
       
-      const numDots = 25; // Number of dots to create dashed line
-      
-      if (!isFollowing) {
+      if (isFollowing) {
+        pdf.setFillColor(basePalette.primary.main);
+      } else {
         pdf.setFillColor(category?.color.borderColour ?? basePalette.black);
-        for (let i = 0; i < numDots; i++) {
-          const angle = (2 * Math.PI / numDots) * i;
-          const px = (sideMargin + p.x) * grid + grid * 0.4 * Math.cos(angle);
-          const py = (p.y + topMargin) * grid + grid * 0.4 * Math.sin(angle);
-          pdf.circle(px, py, 0.5, "F");
-        }
+      }
+
+      const numDots = 25; // Number of dots to create dashed line
+
+      for (let i = 0; i < numDots; i++) {
+        const angle = (2 * Math.PI / numDots) * i;
+        const px = (sideMargin + p.x) * grid + grid * 0.4 * Math.cos(angle);
+        const py = (p.y + topMargin) * grid + grid * 0.4 * Math.sin(angle);
+        pdf.circle(px, py, isFollowing ? 0.75 : 0.5, "F");
       }
 
       pdf.setTextColor(category?.color.textColour ?? basePalette.black);

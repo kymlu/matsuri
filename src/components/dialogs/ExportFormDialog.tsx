@@ -5,14 +5,13 @@ import CustomSelect from "../CustomSelect.tsx";
 import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { VisualSettingsContext } from "../../contexts/VisualSettingsContext.tsx";
 import { strEquals } from "../../lib/helpers/GlobalHelper.ts";
-import { ICON } from "../../lib/consts.ts";
 
 export type ExportFormDialogProps = {
   onConfirm?: (followingId?: string) => void
 }
 
 export function ExportFormDialog(props: ExportFormDialogProps) {
-  const {participantList} = useContext(EntitiesContext);
+  const {participantList, placeholderList} = useContext(EntitiesContext);
   const {followingId} = useContext(VisualSettingsContext);
   const [participantRecord, setParticipantRecord] = React.useState<Record<string, string>>({});
   const [following, setFollowing] = React.useState<string>("未設定");
@@ -20,32 +19,30 @@ export function ExportFormDialog(props: ExportFormDialogProps) {
   useEffect(() => {
     const record: Record<string, string> = {};
     record["none"] = "未設定";
-    Object.entries(participantList)
+    Object.entries(participantList) // TODO: filter those in the formation 
       .sort((a, b) => a[1].displayName.localeCompare(b[1].displayName))
       .forEach(([id, participant]) => {
         record[id] = participant.displayName;
     });
+    Object.entries(placeholderList)
+      .sort((a, b) => a[1].displayName.localeCompare(b[1].displayName))
+      .forEach(([id, placeholder]) => {
+        record[id] = placeholder.displayName;
+    });
     setParticipantRecord(record);
-  }, [participantList]);
+  }, [participantList, placeholderList]);
 
   useEffect(() => {
-    if (followingId && participantList[followingId]) {
-      setFollowing(participantList[followingId]?.displayName ?? "未設定");
+    if (followingId) {
+      if (participantList[followingId]) {
+        setFollowing(participantList[followingId]?.displayName ?? "未設定");
+      } else {
+        setFollowing(placeholderList[followingId]?.displayName ?? "未設定");
+      }
     } else {
       setFollowing("未設定");
     }
   }, [followingId]);
-
-  useEffect(() => {
-    const record: Record<string, string> = {};
-    record["none"] = "未設定";
-    Object.entries(participantList)
-      .sort((a, b) => a[1].displayName.localeCompare(b[1].displayName))
-      .forEach(([id, participant]) => {
-        record[id] = participant.displayName;
-    });
-    setParticipantRecord(record);
-  }, [participantList]);
 
   return (
     <CustomDialog
