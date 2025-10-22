@@ -12,6 +12,7 @@ export type ColorPalettePickerProps = {
 export default function ColorPalettePicker(props: ColorPalettePickerProps) {
   return (
     <CustomMenu
+      full
       trigger={
         <ColorSwatch
           full
