@@ -4,9 +4,9 @@ import { Festival } from "../../models/Festival.ts";
 import { Formation, FormationType } from "../../models/Formation.ts";
 import { FormationSection } from "../../models/FormationSection.ts";
 import { ImportExportModel } from "../../models/ImportExportModel.ts";
-import { Participant } from "../../models/Participant.ts";
+import { Participant, ParticipantPlaceholder } from "../../models/Participant.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
-import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition } from "../../models/Position.ts";
+import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition, PlaceholderPosition } from "../../models/Position.ts";
 import { Prop } from "../../models/Prop.ts";
 import { basePalette, objectPalette } from "../../themes/colours.ts";
 import { formatExportDate } from "./DateHelper.ts";
@@ -23,7 +23,9 @@ export function exportAllData() {
     dbController.getAll("propPosition"),
     dbController.getAll("notePosition"),
     dbController.getAll("arrowPosition"),
-  ]).then(([festivals, formationSections, participants, participantPositions, props, propPositions, notePositions, arrowPositions]) => {
+    dbController.getAll("placeholder"),
+    dbController.getAll("placeholderPosition"),
+  ]).then(([festivals, formationSections, participants, participantPositions, props, propPositions, notePositions, arrowPositions, placeholders, placeholderPositions]) => {
     var toExport: ImportExportModel = {
       festival: festivals as Festival[],
       formationSections: formationSections as FormationSection[],
@@ -33,6 +35,8 @@ export function exportAllData() {
       propPositions: propPositions as PropPosition[],
       arrowPositions: arrowPositions as ArrowPosition[],
       notes: notePositions as NotePosition[],
+      placeholders: placeholders as ParticipantPlaceholder[],
+      placeholderPositions: placeholderPositions as PlaceholderPosition[],
     };
     downloadJson(JSON.stringify(toExport));
   });
@@ -236,6 +240,7 @@ export async function exportToPdf(
       if (a.points.length === 6) { 
         pdf.line((sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid, (sideMargin + a.x + a.points[4]) * grid, (topMargin + a.y + a.points[5]) * grid);
       }
+      pdf.setLineDashPattern([], 0);
       if (a.pointerAtBeginning) {
         drawTriangleAtPoint([a.points[0], a.points[1]], [a.points[2], a.points[3]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
       }
