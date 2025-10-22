@@ -30,8 +30,8 @@ export default function CategoryMenu() {
   useEffect(() => {
     if (selectedItems.length > 0) {
       var selectedCategories = selectedItems
-        .filter(x => x.type === PositionType.participant)
-        .map(x => x.participant.categoryId);
+        .filter(x => x.type === PositionType.participant || x.type === PositionType.placeholder)
+        .map(x => x.type === PositionType.participant ? x.participant.categoryId : x.placeholder.categoryId);
         
       if (new Set(selectedCategories).size === 1) {
         var category = categories[selectedCategories[0]!];
@@ -63,8 +63,8 @@ export default function CategoryMenu() {
     var ids = new Set(participants.map(x => x.id));
     var updatePartRecord = {...participantPositions};
     updatePartRecord[selectedSection!.id]
-      .filter(x => ids.has(x.id))
-      .forEach(x => {
+      ?.filter(x => ids.has(x.id))
+      ?.forEach(x => {
         x.categoryId = newCategoryId
         updatedPartPositions.push(x);
       });
@@ -74,8 +74,8 @@ export default function CategoryMenu() {
     var ids = new Set(placeholders.map(x => x.id));
     var updatedPlaceRecord = {...placeholderPositions};
     updatedPlaceRecord[selectedSection!.id]
-      .filter(x => ids.has(x.id))
-      .forEach(x => {
+      ?.filter(x => ids.has(x.id))
+      ?.forEach(x => {
         x.categoryId = newCategoryId
         updatedPlacePositions.push(x);
       });
@@ -88,21 +88,35 @@ export default function CategoryMenu() {
   }
 
   async function onSetAllToCategory() {
-    var participantIds = new Set(splitPositionsByType(selectedItems).participants.map(x => x.participantId));
+    var split = splitPositionsByType(selectedItems);
+    var participantIds = new Set(split.participants.map(x => x.participantId));
+    var placeholderIds = new Set(split.placeholders.map(x => x.placeholderId));
     
-    var updatedRecord = {...participantPositions};
-    var updatedPositions: ParticipantPosition[] = [];
-    Object.keys(updatedRecord).forEach(key => {
-      updatedRecord[key]
+    var updatedPartRecord = {...participantPositions};
+    var updatedPartPositions: ParticipantPosition[] = [];
+    Object.keys(updatedPartRecord).forEach(key => {
+      updatedPartRecord[key]
         .filter(x => participantIds.has(x.participantId))
         .forEach(x => {
           x.categoryId = selectedCategory!.id;
-          updatedPositions.push(x);
+          updatedPartPositions.push(x);
+        });
+    });
+
+    var updatedPlaceholderRecord = {...placeholderPositions};
+    var updatedPlaceholderPositions: PlaceholderPosition[] = [];
+    Object.keys(updatedPlaceholderRecord).forEach(key => {
+      updatedPlaceholderRecord[key]
+        .filter(x => placeholderIds.has(x.placeholderId))
+        .forEach(x => {
+          x.categoryId = selectedCategory!.id;
+          updatedPlaceholderPositions.push(x);
         });
     });
     
-    dbController.upsertList("participantPosition", updatedPositions);
-    updatePositionContextState({participantPositions: updatedRecord});
+    dbController.upsertList("participantPosition", updatedPartPositions);
+    dbController.upsertList("placeholderPosition", updatedPlaceholderPositions);
+    updatePositionContextState({participantPositions: updatedPartRecord, placeholderPositions: updatedPlaceholderRecord});
   }
 
   return (
@@ -125,13 +139,10 @@ export default function CategoryMenu() {
                   color: category.color.textColour ?? ""
               }}>
               <div className="flex gap-1">
-                {
-                  selectedCategory?.id === category.id &&
-                  <img
+                <img
                   src={strEquals(category.color.textColour, basePalette.white) ?
-                    ICON.checkWhite : ICON.checkBlack}
-                    className="size-6"/>
-                }
+                  ICON.checkWhite : ICON.checkBlack}
+                  className={"size-6 " + (selectedCategory?.id === category.id ? "opacity-100" : "opacity-15")}/>
               {category.name}
               </div>
             </button>
