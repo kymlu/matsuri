@@ -27,8 +27,8 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   }
 
   useEffect(() => {
-    setParticipantsInFormation(Object.values(participantPositions)[0]?.map(x => x.participantId));
-  }, [selectedFormation]);
+    setParticipantsInFormation(Object.values(participantPositions)[0]?.map(x => x.participantId) ?? []);
+  }, [selectedFormation, participantPositions]);
   
   function addParticipant(selectedParticipant: Participant) {
     if(isNullOrUndefined(selectedFormation) || isNullOrUndefined(selectedSection) === null) return;
@@ -61,7 +61,6 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
           isSelected: false
         } as ParticipantPosition
       });
-
     
     var updatedParticipants = addItemToRecord(participantList, selectedParticipant.id, selectedParticipant);
     updateEntitiesContext({participantList: updatedParticipants});
@@ -105,9 +104,6 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   }
 
   const participantListDisplay = useMemo(() => {
-    console.log("reset", participantsInFormation, Object.values(participantList)
-    .filter(x => !participantsInFormation.includes(x.id) && x.displayName.toLowerCase().includes(filterText?.toLowerCase()))
-    .sort((a, b) => a.displayName.localeCompare(b.displayName)))
     return Object.values(participantList)
       .filter(x => !participantsInFormation.includes(x.id) && x.displayName.toLowerCase().includes(filterText?.toLowerCase()))
       .sort((a, b) => a.displayName.localeCompare(b.displayName));
