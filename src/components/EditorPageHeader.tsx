@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../lib/consts.ts";
-import CustomMenu, { MenuItem, MenuSeparator } from "./CustomMenu.tsx";
+import CustomMenu, { MenuContents, MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
 import { exportAllData, exportFormationData } from "../lib/helpers/ExportHelper.ts";
@@ -9,9 +9,10 @@ import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
 import { FormationContext } from "../contexts/FormationContext.tsx";
 import { VisualSettingsContext } from "../contexts/VisualSettingsContext.tsx";
-import { Dialog } from "@base-ui-components/react";
+import { Dialog, Menu } from "@base-ui-components/react";
 import { GeneralSiteInfoDialog } from "./dialogs/GeneralSiteInfoDialog.tsx";
 import { EditFestivalDialog } from "./dialogs/editFestival/EditFestivalDialog.tsx";
+import { strEquals } from "../lib/helpers/GlobalHelper.ts";
 
 export function EditorPageHeader() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -47,9 +48,30 @@ export function EditorPageHeader() {
             }>
             <MenuItem label="祭り編集" onClick={() => {setDialogOpen(true)}} />
             <MenuSeparator/>
-            <MenuItem label="別の隊列を編集" onClick={() => {
-              console.log("Todo: implement formation switch");
-            }} />
+            <Menu.SubmenuRoot>
+              <Menu.SubmenuTrigger
+                className="flex flex-row p-1 text-center rounded-md cursor-pointer lg:hover:bg-grey-200">
+                  別の隊列を編集 <img className="size-6" src={ICON.chevronForwardBlack}/>
+              </Menu.SubmenuTrigger>
+              <MenuContents position="right">
+                {
+                  selectedFestival?.formations.filter(x => !strEquals(x.id, selectedFestival.id))
+                    .map((formation, index) => (
+                      <>
+                        <MenuItem
+                          key={formation.id}
+                          label={formation.name}
+                          onClick={() => {
+                            console.log("Todo: implement formation switch");
+                          }}/>
+                        {
+                          index !== selectedFestival?.formations.length - 1 && <MenuSeparator/>
+                        }
+                      </>
+                  ))
+                }
+              </MenuContents>
+            </Menu.SubmenuRoot>
             <MenuSeparator/>
             <MenuItem label="隊列比較" onClick={() => {
               console.log("Todo: implement formation compare");
