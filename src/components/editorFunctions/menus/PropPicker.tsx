@@ -19,19 +19,12 @@ export default function PropPicker (props: {margins: number[][]}) {
   function selectProp(selectedProp: Prop) {
     if(selectedSection === null) return;
 
-    var newProp = {
-      ...selectedProp,
-      id: crypto.randomUUID(),
-      color: selectedProp.color ?? objectColorSettings.grey3,
-      festivalId: selectedFestival!.id
-    } as Prop;
-
     var position = props.margins[Object.values(propList).length % props.margins.length]
     
     var newPositions: PropPosition[] = currentSections.map(section => {
       return {
         id: crypto.randomUUID().toString(),
-        propId: newProp.id,
+        propId: selectedProp.id,
         formationSectionId: section.id,
         x: position[0],
         y: position[1],
@@ -40,13 +33,8 @@ export default function PropPicker (props: {margins: number[][]}) {
       } as PropPosition;
     });
 
-    var updatedProps = addItemToRecord(propList, newProp.id, newProp);
-    updateEntitiesContext({propList: updatedProps});
-
     var updatedPositions = addItemsToRecordByKey(propPositions, newPositions, (item) => item.formationSectionId);
     updatePositionContextState({propPositions: updatedPositions});
-
-    dbController.upsertItem("prop", newProp);
     dbController.upsertList("propPosition", newPositions);
   }
   
