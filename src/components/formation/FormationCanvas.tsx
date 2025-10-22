@@ -17,7 +17,7 @@ import { AppModeContext } from "../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../contexts/VisualSettingsContext.tsx";
 import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { PositionContext } from "../../contexts/PositionContext.tsx";
-import { ParticipantPosition } from "../../models/Position.ts";
+import { ParticipantPosition, PlaceholderPosition } from "../../models/Position.ts";
 import { convertToNestedRecord } from "../../lib/helpers/GroupingHelper.ts";
 
 export interface FormationCanvasProps {
@@ -29,7 +29,7 @@ export interface FormationCanvasProps {
   ref: React.Ref<any>,
   categories: Record<string, ParticipantCategory>;
   setAnimationPaths: (participantPaths: AnimationPath[]) => void,
-  setFollowingPositions?: (newPosition: Record<string, ParticipantPosition> | null) => void
+  setFollowingPositions?: (newPosition: Record<string, ParticipantPosition | PlaceholderPosition> | null) => void
 }
 
 export default function FormationCanvas(props: FormationCanvasProps) {
@@ -80,6 +80,12 @@ export default function FormationCanvas(props: FormationCanvasProps) {
       var newFollowingPositions = {};
       Object.keys(participantPositions).forEach((key) => {
         var position = participantPositions[key].filter(x => strEquals(x.participantId, followingId));
+        if (position.length > 0) {
+          newFollowingPositions[key] = position[0];
+        }
+      })
+      Object.keys(placeholderPositions).forEach((key) => {
+        var position = placeholderPositions[key].filter(x => strEquals(x.placeholderId, followingId));
         if (position.length > 0) {
           newFollowingPositions[key] = position[0];
         }

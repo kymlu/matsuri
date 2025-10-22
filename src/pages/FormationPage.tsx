@@ -4,7 +4,7 @@ import { FormationSection } from '../models/FormationSection.ts';
 import { isNullOrUndefined, roundToTenth, strEquals } from '../lib/helpers/GlobalHelper.ts';
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_WIDTH, ICON } from '../lib/consts.ts';
 import { PositionContext } from '../contexts/PositionContext.tsx';
-import { ParticipantPosition } from '../models/Position.ts';
+import { ParticipantPosition, PlaceholderPosition } from '../models/Position.ts';
 import { EditorPageHeader } from '../components/EditorPageHeader.tsx';
 import { ExportProgressDialog } from '../components/dialogs/ExportProgressDialog.tsx';
 import { AnimationPath } from '../models/AnimationPath.ts';
@@ -57,7 +57,7 @@ export default function FormationPage () {
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [exportProgress, setExportProgress] = useState<number>(0);
   const [marginPositions, setMarginPositions] = useState<MarginPositions>({participants: [], props: [], notes: []});
-  const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition> | null>(null);
+  const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition | PlaceholderPosition> | null>(null);
 
   useEffect(() => {
     setDefaultExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
@@ -305,7 +305,7 @@ export default function FormationPage () {
               selectedSection && followingId && followingPositions && selectedFormation &&
               <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] landscape:top-auto landscape:left-3 landscape:bottom-3 landscape:translate-x-0 rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
                 <span className='font-bold'>
-                  {`${participantList[followingId].displayName}`}
+                  {`${participantList[followingId]?.displayName ?? placeholderList[followingId].displayName}`}
                 </span>
                 <div className='flex flex-row gap-2'>
                   <div className='flex gap-1'>
