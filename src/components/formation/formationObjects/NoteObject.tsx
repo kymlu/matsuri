@@ -38,7 +38,7 @@ export default function NoteObject(props: NoteObjectProps) {
       startY={props.startY}
       draggable={props.draggable}>
       {
-        (props.colour.bgColour || props.selected) &&
+        (props.colour.bgColour || props.colour.borderColour || props.selected) &&
         <Rect
           width={props.length * gridSize}
           height={props.height * gridSize}

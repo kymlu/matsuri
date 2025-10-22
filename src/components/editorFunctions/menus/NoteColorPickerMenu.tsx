@@ -134,9 +134,9 @@ export default function NoteColorPickerMenu() {
         <ColorPresetPicker
           selectedColor={selectedColor}
           selectColor={(color) => selectColor(color)}/>
-        <div className="grid grid-cols-[auto,auto,1fr] gap-2">
+        <div className="grid grid-cols-[auto,auto,1fr] grid-rows-3 gap-2">
           <br></br>
-          <label>テキスト</label>
+          <label className="self-center">テキスト</label>
           <ColorPalettePicker
             color={selectedTextColor ?? ""}
             onChange={(colour) => {
@@ -149,7 +149,7 @@ export default function NoteColorPickerMenu() {
             onChange={(newValue: boolean) => {
               setColor(newValue ? objectPalette.orange.main : undefined, "bgColour");
             }}/>
-          <label>背景</label>
+          <label className="self-center">背景</label>
           <ColorPalettePicker
             color={selectedBgColor ?? ""}
             onChange={(colour) => {
@@ -163,7 +163,7 @@ export default function NoteColorPickerMenu() {
             onChange={(newValue: boolean) => {
               setColor(newValue ? basePalette.black : undefined, "borderColour");
             }}/>
-          <label>アウトライン</label>
+          <label className="self-center">アウトライン</label>
           <ColorPalettePicker
             color={selectedBorderColor ?? ""}
             onChange={(colour) => {
