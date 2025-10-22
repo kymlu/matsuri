@@ -100,8 +100,10 @@ export async function exportToPdf(
   sections: FormationSection[],
   participantPositions: Record<string, ParticipantPosition[]>,
   participants: Record<string, Participant>,
-  propPositions: Record<string, PropPosition[]>, // todo: add arrows
+  propPositions: Record<string, PropPosition[]>,
   props: Record<string, Prop>,
+  placeholders: Record<string, ParticipantPlaceholder>,
+  placeholderPositions: Record<string, PlaceholderPosition[]>,
   notePositions: Record<string, NotePosition[]>,
   arrowPositions: Record<string, ArrowPosition[]>,
   categories: Record<string, ParticipantCategory>,
@@ -298,6 +300,51 @@ export async function exportToPdf(
         grid * prop.length);
 
       context.restore();
+    });
+
+    placeholderPositions[section.id]?.forEach(p => {
+      var category = categories[p.categoryId ?? ""];
+      var placeholder = placeholders[p.placeholderId];
+      const isFollowing = strEquals(followingId, placeholder.id);
+      
+      if (isFollowing) {
+        pdf.setLineWidth(2);
+        pdf.setDrawColor(basePalette.primary.main);
+      } else {
+        pdf.setLineWidth(0.8);
+        pdf.setDrawColor(category?.color.borderColour ?? basePalette.black);
+      }
+
+      pdf.setFillColor(category?.color.bgColour ?? basePalette.white);
+      pdf.circle((sideMargin + p.x) * grid, (p.y + topMargin) * grid, grid * 0.4, "F");
+      
+      const numDots = 25; // Number of dots to create dashed line
+      
+      if (!isFollowing) {
+        pdf.setFillColor(category?.color.borderColour ?? basePalette.black);
+        for (let i = 0; i < numDots; i++) {
+          const angle = (2 * Math.PI / numDots) * i;
+          const px = (sideMargin + p.x) * grid + grid * 0.4 * Math.cos(angle);
+          const py = (p.y + topMargin) * grid + grid * 0.4 * Math.sin(angle);
+          pdf.circle(px, py, 0.5, "F");
+        }
+      }
+
+      pdf.setTextColor(category?.color.textColour ?? basePalette.black);
+      var displayName = placeholder?.displayName ?? "";
+      var textHeight = pdf.getTextDimensions(displayName, {maxWidth: grid}).h;
+      pdf.text(displayName, (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});
+
+      if (isFollowing) {
+        pdf.setLineWidth(0.8);
+        pdf.setDrawColor(basePalette.grey[800]);
+        pdf.setFillColor(basePalette.grey[50]);
+        pdf.roundedRect((width - 4.5) * grid, grid/4, grid * 4, grid, 5, 5, "FD");
+        var coordsText = `${displayName} : ↕︎${roundToTenth(p.y)} ↔︎${roundToTenth(Math.abs(formation.width/2 - p.x))}`
+        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 4});
+        var padding = pdf.getTextDimensions("000");
+        pdf.text(coordsText, (width - 2.5) * grid + padding.w/2, grid * 0.75 + coordsDimensions.h/2 - 1, {maxWidth: grid * 4, align: "center"});
+      }
     });
 
     participantPositions[section.id]?.forEach(p => {

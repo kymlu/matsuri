@@ -38,9 +38,9 @@ export default function FormationPage () {
   const {selectedFormation} = useContext(FormationContext);
   const {enableAnimation} = useContext(SettingsContext);
   const {appMode} = useContext(AppModeContext);
-  const {participantPositions, propPositions, notePositions, arrowPositions} = useContext(PositionContext);
+  const {participantPositions, propPositions, placeholderPositions, notePositions, arrowPositions} = useContext(PositionContext);
   const {updateAnimationContext} = useContext(AnimationContext);
-  const {participantList, propList} = useContext(EntitiesContext);
+  const {participantList, propList, placeholderList} = useContext(EntitiesContext);
 
   const [selectedSectionId, setSelectedSectionId] = useState<string>("");
   const [firstSectionId, setFirstSectionId] = useState<string>("");
@@ -213,6 +213,8 @@ export default function FormationPage () {
       participantList,
       propPositions,
       propList,
+      placeholderList,
+      placeholderPositions,
       notePositions,
       arrowPositions,
       categories,
