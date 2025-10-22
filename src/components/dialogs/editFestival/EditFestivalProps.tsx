@@ -61,6 +61,13 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
     updatePropNames(updatedProps);
   };
 
+  const editPropLength = (index: number, newLength: number) => {
+    const updatedProps = [...props];
+    updatedProps[index].length = newLength;
+    setProps(updatedProps);
+    updatePropNames(updatedProps);
+  };
+
   const editPropColour = (index: number, color: ColorStyle) => {
     const updatedProps = [...props];
     updatedProps[index].color = color;
@@ -108,7 +115,14 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
                 required
                 hasError={propNames[p.name] > 1}
                 />
-              <NumberTextField default={p.length} step={0.1}/>
+              <NumberTextField
+                default={p.length}
+                step={0.1}
+                onChange={(val) => {
+                  if (val) {
+                    editPropLength(i, val)
+                  }
+                }}/>
               <CustomMenu full trigger={
                 <ColorSwatch 
                   full
