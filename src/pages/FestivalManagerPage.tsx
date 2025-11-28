@@ -98,19 +98,6 @@ export default function FestivalManagerPage () {
       )
       navigate("/formation");
     });
-
-    readResourcesAndFormation(
-      savedFestival.id,
-      savedFestival.formations[0].name,
-      (msg) => {
-        setErrorMessage(`保存された祭りの隊列データの取得に失敗しました。\n ${msg}`);
-        setHasError(true);
-      },
-      (resources, formationDetails) => {
-
-        setDataBeforeNavigation(savedFestival, savedFestival.formations[0], resources, formationDetails);
-        navigate("/formation");
-      });
   }
 
   function selectExistingFestival(festival: Festival, formation: Formation) {

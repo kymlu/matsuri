@@ -6,6 +6,7 @@ export async function getFestivalMetaFile(
   onError: (msg: string) => void,
   onComplete: (data: Festival) => Promise<void>): Promise<Festival | undefined> {
   try {
+    console.log('Fetching festival meta file for', festival.id);
     var resourceFileName = `${process.env.PUBLIC_URL}/data/festivals/${festival.id}/festival.json`;
     const resourceResponse = await fetch(resourceFileName);
     if (!resourceResponse.ok) {
@@ -25,6 +26,7 @@ export async function getResourceFile(
   onError: (msg: string) => void,
   onComplete: (resources: FestivalResources) => Promise<void>) {
   try {
+    console.log('Fetching resource file for', festivalId);
     var resourceFileName = `${process.env.PUBLIC_URL}/data/festivals/${festivalId}/resources.json`;
     const resourceResponse = await fetch(resourceFileName);
     if (!resourceResponse.ok) {
@@ -45,6 +47,7 @@ export async function getFormationFile(
   onComplete: (formation: FormationDetails) => Promise<void>) 
 {
   try {
+    console.log('Fetching formation file for', { festivalId, formationName });
     var formationFileName = `${process.env.PUBLIC_URL}/data/festivals/${festivalId}/${formationName}.json`;
     const formationResponse = await fetch(formationFileName);
     if (!formationResponse.ok) {
