@@ -63,7 +63,7 @@ export function EditorPageHeader() {
               </Menu.SubmenuTrigger>
               <MenuContents position="right">
                 {
-                  selectedFestival?.formations.filter(x => !strEquals(x.id, selectedFestival.id))
+                  selectedFestival?.formations.filter(x => !strEquals(x.id, selectedFormation?.id))
                     .map((formation, index) => (
                       <>
                         <MenuItem
@@ -133,7 +133,7 @@ export function EditorPageHeader() {
                               });
                           }}/>
                         {
-                          index !== selectedFestival?.formations.length - 1 && <MenuSeparator/>
+                          index !== selectedFestival?.formations.length - 2 && <MenuSeparator/>
                         }
                       </>
                   ))
