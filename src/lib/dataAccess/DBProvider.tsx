@@ -4,14 +4,14 @@ import { CUSTOM_EVENT } from '../consts.ts';
 
 const DBContext = createContext({ dbReady: false });
 
-export const dbController: IndexedDBManager = new IndexedDBManager();
+export const indexedDbManager: IndexedDBManager = new IndexedDBManager();
 
 export const DBProvider = ({ children }) => {
   const [dbReady, setDbReady] = useState(false);
 
   useEffect(() => {
     const init = async () => {
-      await dbController.init();
+      await indexedDbManager.init();
     };
     window.addEventListener(CUSTOM_EVENT.dbInitialized, (e) => {
       console.log("DB is ready");
