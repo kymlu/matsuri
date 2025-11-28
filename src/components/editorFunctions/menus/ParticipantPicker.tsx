@@ -74,7 +74,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   }
 
   const getNextMarginIndex = () => {
-    return (Object.values(participantList).length + Object.values(placeholderList).length) % props.margins.length;
+    return (Object.values(participantPositions).length + Object.values(placeholderList).length) % props.margins.length; // TODO: fix
   }
 
   function addPlaceholder(name: string, categoryId: string) {

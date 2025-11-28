@@ -131,19 +131,15 @@ export default function ActionMenu() {
     if (participants.length > 0) {
       var selectedParticipantIds = new Set(participants.map(x => x.participantId));
       var positionsToRemove = new Set(Object.values(participantPositions).flat().filter(x => selectedParticipantIds.has(x.participantId)).map(x => x.id));
-      removeList("participant", [...selectedParticipantIds]);
       removeList("participantPosition", [...positionsToRemove]);
       updatedPositions.participantPositions = removeItemsByCondition(participantPositions, (item) => positionsToRemove.has(item.id));
-      updatedEntities.participantList = removeKeysFromRecord(participantList, selectedParticipantIds);
     }
 
     if (props.length > 0) {
       var selectedPropIds = new Set(props.map(x => x.propId));
       var positionsToRemove = new Set(Object.values(propPositions).flat().filter(x => selectedPropIds.has(x.propId)).map(x => x.id));
-      removeList("prop", [...selectedPropIds]);
       removeList("propPosition", [...positionsToRemove]);
       updatedPositions.propPositions = removeItemsByCondition(propPositions, (item) => positionsToRemove.has(item.id));
-      updatedEntities.propList = removeKeysFromRecord(propList, selectedPropIds);
     }
 
     if (notes.length > 0) {
