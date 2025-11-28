@@ -53,7 +53,7 @@ export default function FormationGridLayer(props: FormationGridProps) {
           stroke={basePalette.primary.main}/>
         {
           // Stage limits
-          (!props.isParade ?? true) && 
+          (props.isParade ? !props.isParade : true) && 
           <Line
             points={[(props.sideMargin - 1) * gridSize, (props.height + props.topMargin) * gridSize, (props.width + props.sideMargin + 1) * gridSize, (props.height + props.topMargin) * gridSize]}
             strokeWidth={2}

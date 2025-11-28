@@ -28,7 +28,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
   }));
 
   const updateFormationNames = (formations: Formation[]) => {
-    const updated: Record<string, number> = formations.reduce((acc, f) => {
+    const updated: Record<string, number> = formations.reduce<Record<string, number>>((acc, f) => {
       acc[f.name] = (acc[f.name] || 0) + 1;
       return acc;
     }, {});

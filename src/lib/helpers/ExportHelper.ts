@@ -3,7 +3,7 @@ import { dbController } from "../dataAccess/DBProvider.tsx";
 import { Festival } from "../../models/Festival.ts";
 import { Formation, FormationType } from "../../models/Formation.ts";
 import { FormationSection } from "../../models/FormationSection.ts";
-import { ImportExportModel } from "../../models/ImportExportModel.ts";
+import { FestivalMeta, FestivalResources, FormationDetails, ImportExportModel } from "../../models/ImportExportModel.ts";
 import { Participant, ParticipantPlaceholder } from "../../models/Participant.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition, PlaceholderPosition } from "../../models/Position.ts";
@@ -12,20 +12,22 @@ import { basePalette, objectPalette } from "../../themes/colours.ts";
 import { formatExportDate } from "./DateHelper.ts";
 import { roundToTenth, strEquals } from "./GlobalHelper.ts";
 import { DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_BOTTOM_MARGIN } from "../consts.ts";
+import { getAllData } from "../../data/DataController.ts";
+import JSZip from "jszip";
 
 export function exportAllData() {
-  Promise.all([
-    dbController.getAll("festival"),
-    dbController.getAll("formationSection"),
-    dbController.getAll("participant"),
-    dbController.getAll("participantPosition"),
-    dbController.getAll("prop"),
-    dbController.getAll("propPosition"),
-    dbController.getAll("notePosition"),
-    dbController.getAll("arrowPosition"),
-    dbController.getAll("placeholder"),
-    dbController.getAll("placeholderPosition"),
-  ]).then(([festivals, formationSections, participants, participantPositions, props, propPositions, notePositions, arrowPositions, placeholders, placeholderPositions]) => {
+  getAllData((
+    festivals: Festival[],
+    formationSections: FormationSection[],
+    participants: Participant[],
+    props: Prop[],
+    placeholders: ParticipantPlaceholder[],
+    participantPositions: ParticipantPosition[],
+    propPositions: PropPosition[],
+    notePositions: NotePosition[],
+    arrowPositions: ArrowPosition[],
+    placeholderPositions: PlaceholderPosition[],
+  ) => {
     var toExport: ImportExportModel = {
       festival: festivals as Festival[],
       formationSections: formationSections as FormationSection[],
@@ -42,36 +44,61 @@ export function exportAllData() {
   });
 }
 
-export async function exportFormationData(formationId: string) {
-  Promise.all([
-    dbController.getAll("festival"), // todo: fix
-    dbController.getByFormationId("formationSection", formationId),
-  ]).then(async ([festivals, formationSections]) => {
-    Promise.all([
-      dbController.getByFestivalId("participant", festivals![0].id),
-      dbController.getByFestivalId("prop", festivals![0].id),
-    ]).then(async ([participants, props]) => {
-      var sectionIds = (formationSections as FormationSection[]).map(x => x.id);
-      var participantPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("participantPosition", id)))).flatMap(x => x);
-      var propPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("propPosition", id)))).flatMap(x => x);
-      var notePositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("notePosition", id)))).flatMap(x => x);
-      var arrowPositions = (await Promise.all(sectionIds.map(id => dbController.getByFormationSectionId("arrowPosition", id)))).flatMap(x => x);
+export function exportForGithub() {
+  getAllData((
+    festivals: Festival[],
+    formationSections: FormationSection[],
+    participants: Participant[],
+    props: Prop[],
+    placeholders: ParticipantPlaceholder[],
+    participantPositions: ParticipantPosition[],
+    propPositions: PropPosition[],
+    notePositions: NotePosition[],
+    arrowPositions: ArrowPosition[],
+    placeholderPositions: PlaceholderPosition[],
+  ) => {
+    var exportZip = new JSZip();
+    
+    // festival file
+    var festival = festivals[0];
+    exportZip.file("festival.json", JSON.stringify(festival));
 
-      var toExport: ImportExportModel = {
-        festival: (festivals as Festival[]).filter(x => x.formations.map(f => f.id).includes(formationId)),
-        formationSections: formationSections as FormationSection[],
-        participants: participants as Participant[],
-        participantPositions: participantPositions as ParticipantPosition[],
-        props: props as Prop[],
-        propPositions: propPositions as PropPosition[],
-        arrowPositions: arrowPositions as ArrowPosition[],
-        notes: notePositions as NotePosition[],
-        placeholders: [],
-        placeholderPositions: [],
-      };
-      downloadJson(JSON.stringify(toExport));
+    // resources file
+    var festivalResources: FestivalResources = {
+      participants: participants,
+      props: props,
+    }
+    exportZip.file("resources.json", JSON.stringify(festivalResources));
+
+    // individual festival files
+    festival.formations.forEach((formation) => {
+      var sections = formationSections.filter(x => strEquals(x.formationId, formation.id));
+      var sectionIds = new Set(sections.map(x => x.id));
+      var toExport = {
+        sections: sections,
+        participants: participantPositions.filter(x => sectionIds.has(x.formationSectionId)),
+        props: propPositions.filter(x => sectionIds.has(x.formationSectionId)),
+        arrows: arrowPositions.filter(x => sectionIds.has(x.formationSectionId)),
+        notes: notePositions.filter(x => sectionIds.has(x.formationSectionId)),
+        placeholders: placeholders.filter(x => strEquals(x.formationId, formation.id)),
+        placeholderPositions: placeholderPositions.filter(x => sectionIds.has(x.formationSectionId)),
+      }
+      exportZip.file(`${formation.name}.json`, JSON.stringify(toExport));
     })
+    exportZip.generateAsync({type:"blob"})
+      .then(function(content) {
+        const url = URL.createObjectURL(content);
 
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${festival.name}.zip`;
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
   });
 }
 

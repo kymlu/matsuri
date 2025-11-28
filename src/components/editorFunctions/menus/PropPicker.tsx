@@ -4,11 +4,10 @@ import ItemButton from "../../ItemButton.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { Prop } from "../../../models/Prop.ts";
 import { PropPosition } from "../../../models/Position.ts";
-import { objectColorSettings } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
-import { addItemsToRecordByKey, addItemToRecord } from "../../../lib/helpers/GroupingHelper.ts";
+import { addItemsToRecordByKey } from "../../../lib/helpers/GroupingHelper.ts";
 import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 
 export default function PropPicker (props: {margins: number[][]}) {

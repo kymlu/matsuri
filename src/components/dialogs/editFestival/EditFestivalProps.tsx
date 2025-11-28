@@ -30,7 +30,7 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
   }));
 
   function updatePropNames(props: Prop[]) {
-    const updated: Record<string, number> = props.reduce((acc, f) => {
+    const updated: Record<string, number> = props.reduce<Record<string, number>>((acc, f) => {
       acc[f.name] = (acc[f.name] || 0) + 1;
       return acc;
     }, {});

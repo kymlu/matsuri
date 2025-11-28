@@ -3,7 +3,7 @@ import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../lib/consts.t
 import CustomMenu, { MenuContents, MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
-import { exportAllData, exportFormationData } from "../lib/helpers/ExportHelper.ts";
+import { exportAllData, exportForGithub } from "../lib/helpers/ExportHelper.ts";
 import { downloadLogs } from "../lib/helpers/LogHelper.ts";
 import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
@@ -13,13 +13,22 @@ import { Dialog, Menu } from "@base-ui-components/react";
 import { GeneralSiteInfoDialog } from "./dialogs/GeneralSiteInfoDialog.tsx";
 import { EditFestivalDialog } from "./dialogs/editFestival/EditFestivalDialog.tsx";
 import { strEquals } from "../lib/helpers/GlobalHelper.ts";
+import { getFormationFile } from "../lib/helpers/JsonReaderHelper.ts";
+import { dbController } from "../lib/dataAccess/DBProvider.tsx";
+import { FormationSection } from "../models/FormationSection.ts";
+import { PositionContext } from "../contexts/PositionContext.tsx";
+import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
+import { EntitiesContext } from "../contexts/EntitiesContext.tsx";
+import { GetAllForFormation } from "../data/DataController.ts";
 
 export function EditorPageHeader() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const {selectedFestival, selectedSection} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
-  const {selectedFormation} = useContext(FormationContext);
+  const {selectedFormation, updateFormationContext} = useContext(FormationContext);
+  const {updateEntitiesContext} = useContext(EntitiesContext);
+  const {updatePositionContextState} = useContext(PositionContext);
   const {appMode, userType, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate();
 
@@ -62,7 +71,67 @@ export function EditorPageHeader() {
                           key={formation.id}
                           label={formation.name}
                           onClick={() => {
-                            console.log("Todo: implement formation switch");
+                            // if a formation section exists in the database, load it
+                            // TODO: CRITICAL: does not properly grab data on screen reload
+                            console.log(`Switching to formation: ${formation.name}`, formation);
+                            dbController.getByFormationId("formationSection", formation.id)
+                              .then(async (sections) => {
+                                var sectionsExist = (sections as FormationSection[]).length > 0;
+                                if (sectionsExist) {
+                                  GetAllForFormation(selectedFestival.id, formation.id,
+                                    (
+                                      formationSections, participants, props, placeholders, 
+                                      participantPositions, propPositions, notePositions, 
+                                      arrowPositions, placeholderPositions
+                                    ) => {
+                                      updateFormationContext({selectedFormation: formation});
+                                      updatePositionContextState({
+                                        participantPositions: groupByKey(participantPositions, "formationSectionId"),
+                                        propPositions: groupByKey(propPositions, "formationSectionId"),
+                                        notePositions: groupByKey(notePositions, "formationSectionId"),
+                                        arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
+                                        placeholderPositions: groupByKey(placeholderPositions, "formationSectionId"),
+                                      });
+                                      updateEntitiesContext({
+                                        placeholderList: indexByKey(placeholders, "id"),
+                                      });
+                                    }
+                                  );
+                                } else {
+                                  // file may exist, try to load from file
+                                  getFormationFile(
+                                    selectedFestival.id,
+                                    formation.name,
+                                    (msg) => { 
+                                      // todo: throw error message on screen
+                                      console.log(msg);
+                                    },
+                                    async (formationDetails) => {
+                                      Promise.all([
+                                        dbController.upsertList("formationSection", formationDetails.sections),
+                                        dbController.upsertList("participantPosition", formationDetails.participants),
+                                        dbController.upsertList("propPosition", formationDetails.props),
+                                        dbController.upsertList("notePosition", formationDetails.notes),
+                                        dbController.upsertList("arrowPosition", formationDetails.arrows),
+                                        dbController.upsertList("placeholder", formationDetails.placeholders),
+                                        dbController.upsertList("placeholderPosition", formationDetails.placeholderPositions),
+                                      ]).then(() => {
+                                        updateFormationContext({selectedFormation: formation});
+                                        updatePositionContextState({
+                                          participantPositions: groupByKey(formationDetails.participants, "formationSectionId"),
+                                          propPositions: groupByKey(formationDetails.props, "formationSectionId"),
+                                          notePositions: groupByKey(formationDetails.notes, "formationSectionId"),
+                                          arrowPositions: groupByKey(formationDetails.arrows, "formationSectionId"),
+                                          placeholderPositions: groupByKey(formationDetails.placeholderPositions, "formationSectionId"),
+                                        });
+                                        updateEntitiesContext({
+                                          placeholderList: indexByKey(formationDetails.placeholders, "id"),
+                                        });
+                                      })
+                                    }
+                                  )
+                                }
+                              });
                           }}/>
                         {
                           index !== selectedFestival?.formations.length - 1 && <MenuSeparator/>
@@ -72,14 +141,14 @@ export function EditorPageHeader() {
                 }
               </MenuContents>
             </Menu.SubmenuRoot>
-            <MenuSeparator/>
+            {/* <MenuSeparator/>
             <MenuItem label="隊列比較" onClick={() => {
               console.log("Todo: implement formation compare");
             }} />
             <MenuSeparator/>
             <MenuItem label="別の隊列で上書き" onClick={() => {
               console.log("Todo: overwrite formation");
-            }} />
+            }} /> */}
           </CustomMenu>
         }
       </div>
@@ -117,19 +186,28 @@ export function EditorPageHeader() {
               className='size-8 max-w-8 max-h-8'
               src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
           </button>
+          <button
+            onClick={() => {
+              exportAllData()
+            }}>
+            <img
+              alt={"Download Data"}
+              className='size-8 max-w-8 max-h-8'
+              src={ICON.fileSave}/>
+          </button>
+          <button
+            onClick={() => {
+              exportForGithub()
+            }}>
+            <img
+              alt={"Download Data"}
+              className='size-8 max-w-8 max-h-8'
+              src={ICON.fileSave}/>
+          </button>
           <CustomMenu trigger={
             <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
             }>
             <>
-              <MenuItem label="全てのデータダウンロード" onClick={() => { exportAllData() }} /> {/** add function to download for formation/festival only? */}
-              <MenuSeparator />
-              {
-                selectedFormation && 
-                <>
-                  <MenuItem label="当隊列のデータダウンロード" onClick={() => { exportFormationData(selectedFormation!.id) }} /> {/** add function to download for formation/festival only? */}
-                  <MenuSeparator />
-                </>
-              }
               <MenuItem label="ログダウンロード" onClick={() => { downloadLogs(); }} />
               <MenuSeparator />
               <MenuItem label="Clear Cache" onClick={() => {

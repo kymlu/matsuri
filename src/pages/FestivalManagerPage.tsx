@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import '../index.css';
 import Button from '../components/Button.tsx';
@@ -17,13 +17,15 @@ import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
 import { getFestivalMetaFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
-import { FestivalMeta, FestivalResources, FormationDetails, ImportExportModel } from '../models/ImportExportModel.ts';
+import { FestivalMeta, FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import ItemButton from '../components/ItemButton.tsx';
+import { dbController } from '../lib/dataAccess/DBProvider.tsx';
+import { clearAllData, GetAllForFormation } from '../data/DataController.ts';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);
@@ -33,11 +35,14 @@ export default function FestivalManagerPage () {
   const {updatePositionContextState} = useContext(PositionContext);
   const {updateEntitiesContext} = useContext(EntitiesContext);
 
-  const {appMode, updateAppModeContext} = useContext(AppModeContext);
+  const {updateAppModeContext} = useContext(AppModeContext);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasError, setHasError] = useState<boolean>(false);
+  const [showConfirmOverwrite, setShowConfirmOverwrite] = useState<boolean>(false);
   const [editingFestival, setEditingFestival] = useState<boolean>(false);
+  const [savedFestival, setSavedFestival] = useState<Festival | null>(null);
   const [selectedFestival, setSelectedFestival] = useState<Festival | null>(null);
+  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [selectedFestivalResources, setSelectedFestivalResources] = useState<FestivalResources | null>(null);
   const [festivalData, setFestivalData] = useState<Festival[]>([]);
   let navigate = useNavigate();
@@ -46,6 +51,9 @@ export default function FestivalManagerPage () {
   useEffect(() => {
     updateAppModeContext({userType: "admin"});
     getFestivalData();
+    dbController.getAll("festival").then((festival) => {
+      setSavedFestival((festival as Festival[])[0]);
+    })
   }, []);
 
   async function getFestivalData() {
@@ -57,7 +65,69 @@ export default function FestivalManagerPage () {
     });
   }
 
-  function goToEditor(festival: Festival, formation: Formation) {
+  function selectSavedFestival() {
+    if (!savedFestival) return;
+
+    GetAllForFormation(savedFestival.id, savedFestival.formations[0].id, (
+      formationSections,
+      participants,
+      props,
+      placeholders,
+      participantPositions,
+      propPositions,
+      notePositions,
+      arrowPositions,
+      placeholderPositions
+    ) => {
+      setDataBeforeNavigation(
+        savedFestival,
+        savedFestival.formations[0],
+        {
+          participants: participants,
+          props: props
+        },
+        {
+          sections: formationSections,
+          participants: participantPositions,
+          props: propPositions,
+          notes: notePositions,
+          arrows: arrowPositions,
+          placeholderPositions: placeholderPositions,
+          placeholders: placeholders,
+        }
+      )
+      navigate("/formation");
+    });
+
+    readResourcesAndFormation(
+      savedFestival.id,
+      savedFestival.formations[0].name,
+      (msg) => {
+        setErrorMessage(`保存された祭りの隊列データの取得に失敗しました。\n ${msg}`);
+        setHasError(true);
+      },
+      (resources, formationDetails) => {
+
+        setDataBeforeNavigation(savedFestival, savedFestival.formations[0], resources, formationDetails);
+        navigate("/formation");
+      });
+  }
+
+  function selectExistingFestival(festival: Festival, formation: Formation) {
+    if (savedFestival) {
+      setSelectedFestival(festival);
+      setSelectedFormation(formation);
+      setShowConfirmOverwrite(true);
+    } else {
+      loadFormation(festival, formation);
+    }
+  }
+
+  function loadFormation(festival: Festival, formation: Formation) {
+    clearAllData()
+    setSavedFestival(null);
+    setSelectedFestival(null);
+    setSelectedFormation(null);
     readResourcesAndFormation(
       festival.id,
       formation.name,
@@ -66,13 +136,23 @@ export default function FestivalManagerPage () {
         setHasError(true);
       },
       (resources, formationDetails) => {
+        saveToDatabase(festival, resources, formationDetails);
         setDataBeforeNavigation(festival, formation, resources, formationDetails);
         navigate("/formation");
       });
   }
 
-  function onFileLoad(fileContents: ImportExportModel) {
-
+  function saveToDatabase(festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) {
+    dbController.upsertItem("festival", festival);
+    dbController.upsertList("participant", resources.participants);
+    dbController.upsertList("prop", resources.props);
+    dbController.upsertList("formationSection", formationDetails.sections);
+    dbController.upsertList("participantPosition", formationDetails.participants);
+    dbController.upsertList("propPosition", formationDetails.props);
+    dbController.upsertList("notePosition", formationDetails.notes);
+    dbController.upsertList("arrowPosition", formationDetails.arrows);
+    dbController.upsertList("placeholder", formationDetails.placeholders);
+    dbController.upsertList("placeholderPosition", formationDetails.placeholderPositions);
   }
 
   function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {
@@ -109,18 +189,6 @@ export default function FestivalManagerPage () {
     });
 
     updateAppModeContext({userType: "admin", appMode: "edit"});
-  }
-  
-  function onClick(festival: Festival, selectedFormation: Formation) {
-    updateState({
-        selectedFestival: festival,
-        selectedItems: [],
-        showNotes: true,
-    });
-    updateFormationContext({selectedFormation: selectedFormation});    
-    updateVisualSettingsContext({gridSize: DEFAULT_GRID_SIZE});
-    
-    navigate("/formation");
   }
 
   return (
@@ -186,22 +254,16 @@ export default function FestivalManagerPage () {
           }/>
       </div>
       {
+        savedFestival &&
+        <button
+          className='w-full p-2 mx-4 border rounded-md border-primary'
+          onClick={() => {selectSavedFestival()}}>
+          編集中の祭り：<span>{savedFestival.name}</span>
+        </button>
+      }
+      {
         festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-          .map((festival) =>
-          <div
-            key={festival.id}
-            className='flex flex-col gap-1 mx-10 mb-4 rounded-lg'>
-            <h2 className='text-xl font-bold text-primary'>{festival.name}</h2>
-            <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
-            <div className='font-normal'>{festival.note}</div>
-            <div className='flex flex-row flex-wrap gap-2'>
-              {
-                festival.formations.map(formation => (
-                  <ItemButton key={formation.name} text={formation.name} onClick={() => goToEditor(festival, formation)}/>
-                ))
-              }
-            </div>
-          </div>
+          .map((festival) => <FestivalSelector festival={festival} onFormationClick={selectExistingFestival}/>
         )
       }
       <span className='fixed opacity-50 bottom-2 left-2'>{LAST_UPDATED}</span>
@@ -220,14 +282,64 @@ export default function FestivalManagerPage () {
         }
       </Dialog.Root>
       
-      <Dialog.Root dismissible open={hasError} onOpenChange={() => setHasError(false)} onOpenChangeComplete={() => (!hasError) && setErrorMessage(null)}>
-        {errorMessage && <CustomDialog title="エラー">
-          {errorMessage}
-          <div className='flex justify-end mt-4'>
-            <Button label="閉じる" onClick={() => setHasError(false)}>閉じる</Button>
-          </div>
-        </CustomDialog>}
+      <Dialog.Root
+        dismissible
+        open={hasError}
+        onOpenChange={() => setHasError(false)}
+        onOpenChangeComplete={() => (!hasError) && setErrorMessage(null)}>
+        {
+          errorMessage &&
+          <CustomDialog title="エラー">
+            {errorMessage}
+            <div className='flex justify-end mt-4'>
+              <Button label="閉じる" onClick={() => setHasError(false)}>閉じる</Button>
+            </div>
+          </CustomDialog>
+        }
+      </Dialog.Root>
+      
+      <Dialog.Root
+        open={showConfirmOverwrite}>
+        {
+          <CustomDialog title="注意">
+            <b>{savedFestival?.name}</b>のデータは保存されていますが、新しい祭りのデータで上書きしますか？<br/>
+            <div className='flex justify-end gap-2 mt-4'>
+              <Button label="Cancel" onClick={() => setShowConfirmOverwrite(false)}>キャンセル</Button>
+              <Button primary label="Ok"
+                onClick={() => {
+                  if (selectedFestival && selectedFormation) {
+                    loadFormation(selectedFestival, selectedFormation);
+                  }
+                  setShowConfirmOverwrite(false)
+                }}>
+                  OK
+              </Button>
+            </div>
+          </CustomDialog>
+        }
       </Dialog.Root>
     </div>
   )
+}
+
+type FestivalSelectorProps = {
+  festival: Festival,
+  onFormationClick: (festival: Festival, formation: Formation) => void
+}
+
+function FestivalSelector({festival, onFormationClick}: FestivalSelectorProps) {
+  return <div
+    key={festival.id}
+    className='flex flex-col gap-1 mx-10 mb-4 rounded-lg'>
+    <h2 className='text-xl font-bold text-primary'>{festival.name}</h2>
+    <span className='text-sm text-grey-400'>{formatJapaneseDateRange(festival.startDate, festival.endDate)}</span>
+    <div className='font-normal'>{festival.note}</div>
+    <div className='flex flex-row flex-wrap gap-2'>
+      {
+        festival.formations.map(formation => (
+          <ItemButton key={formation.name} text={formation.name} onClick={() => onFormationClick(festival, formation)}/>
+        ))
+      }
+    </div>
+  </div>
 }

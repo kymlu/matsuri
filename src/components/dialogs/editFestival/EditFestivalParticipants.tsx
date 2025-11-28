@@ -37,7 +37,7 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
   }));
 
   function updateParticipantNames(participants: Participant[]) {
-    const updated: Record<string, number> = participants.reduce((acc, f) => {
+    const updated: Record<string, number> = participants.reduce<Record<string, number>>((acc, f) => {
       acc[f.displayName.toLowerCase()] = (acc[f.displayName.toLowerCase()] || 0) + 1;
       return acc;
     }, {});

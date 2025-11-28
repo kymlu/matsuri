@@ -57,6 +57,8 @@ export const ICON = {
   festivalBlack: "icons/festival_black.svg",
   flagBlack: "icons/flag_black.svg",
   fileExportBlack: "icons/file_export_black.svg",
+  fileSave: "icons/file_save.svg",
+  fileSaveBlack: "icons/file_save_black.svg",
   footprintBlack: "icons/footprint_black.svg",
   groups2Black: "icons/groups_2_black.svg",
   heightBlack: "icons/height_black.svg",

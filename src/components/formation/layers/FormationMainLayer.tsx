@@ -89,7 +89,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			setSelectedIds(new Set());
 		},
 
-		onMouseDown: (e) => {
+		onMouseDown: (e: any) => {
 			if (e.target !== e.target.getStage()) return;
 
 			const isElement = e.target.findAncestor(".elements-container");
@@ -107,7 +107,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			updateSelectionRect();
 		},
 
-		onMouseMove: (e) => {
+		onMouseMove: (e: any) => {
 			if (!selection.current.visible || appMode === "view") {
 				return;
 			}
@@ -117,7 +117,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			updateSelectionRect();
 		},
 
-		onMouseUp: (e) => {
+		onMouseUp: (e: any) => {
 			oldPos.current = null;
 			selection.current.visible = false;
 			const { x1, x2, y1, y2 } = selection.current;
@@ -264,8 +264,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		transformerRef.current?.forceUpdate();
 	}
 
-	function selectAllFromPositionType(event) {
-		var positionType = (event as CustomEvent)?.detail
+	function selectAllFromPositionType(event: CustomEvent) {
+		var positionType = event?.detail
 			?.positionType as PositionType;
 		switch (positionType) {
 			case PositionType.participant:
@@ -327,25 +327,25 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	useEffect(() => {
 		window.addEventListener(
 			CUSTOM_EVENT.selectAllPositionType,
-			selectAllFromPositionType
+			(e) => {selectAllFromPositionType(e as CustomEvent)}
 		);
 
 		return () => {
 			window.removeEventListener(
 				CUSTOM_EVENT.selectAllPositionType,
-				selectAllFromPositionType
+				(e) => {selectAllFromPositionType(e as CustomEvent)}
 			);
 		};
 	}, [userContext]);
 
-	function selectAllFromCategory(event) {
+	function selectAllFromCategory(event: CustomEvent) {
 		var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id].filter(
 			(x) =>
-				strEquals((event as CustomEvent)?.detail?.categoryId, x.categoryId)
+				strEquals(event?.detail?.categoryId, x.categoryId)
 			);
 		var placeholders = positionContextRef.current.placeholderPositions[userContext.selectedSection!.id].filter(
 			(x) =>
-				strEquals((event as CustomEvent)?.detail?.categoryId, x.categoryId)
+				strEquals(event?.detail?.categoryId, x.categoryId)
 			);
 
 		updateState({
@@ -359,13 +359,13 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	useEffect(() => {
 		window.addEventListener(
 			CUSTOM_EVENT.selectAllFromCategory,
-			selectAllFromCategory
+			(e) => {selectAllFromCategory(e as CustomEvent)}
 		);
 
 		return () => {
 			window.removeEventListener(
 				CUSTOM_EVENT.selectAllFromCategory,
-				selectAllFromCategory
+				(e) => {selectAllFromCategory(e as CustomEvent)}
 			);
 		};
 	}, [userContext]);

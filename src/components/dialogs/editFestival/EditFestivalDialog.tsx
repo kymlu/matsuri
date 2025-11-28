@@ -46,7 +46,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     props: false,
   });
 
-  const handleValidationChange = useCallback((name, hasError) => {
+  const handleValidationChange = useCallback((name: "general" | "formations" | "participants" | "props", hasError: boolean) => {
     if (errors[name] !== hasError) {
       setErrors(prev => ({
         ...prev,

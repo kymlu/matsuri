@@ -11,7 +11,7 @@ function App() {
     <HashRouter>
       <Routes>
         <Route path="/" element={<FormationSelectionPage />} />
-        <Route path="/manager" element={<FestivalManagerPage/>} />
+        <Route path="/manager" element={<RequireDB><FestivalManagerPage/></RequireDB>} />
         <Route path="/formation" element={<RequireDB><FormationPage /></RequireDB>} />
         <Route path="*" element={<Navigate to="/" replace/>}/>
       </Routes>

@@ -109,7 +109,7 @@ export class IndexedDBManager {
     });
   }
 
-  async getByFormationId(storeName: "formationSection", formationId: string) {
+  async getByFormationId(storeName: "formationSection" | "placeholder", formationId: string) {
     console.log(`getByFormationId ${storeName} called on ${formationId}`);
     return new Promise((resolve, reject) => {
       const index = this._getStore(storeName, "readonly").index("formationId");
@@ -136,22 +136,6 @@ export class IndexedDBManager {
       };
       request.onerror = () => {
         console.error(`error on getByFestivalId ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
-    });
-  }
-
-  async getByFormationId(storeName: "placeholder", formationId: string) {
-    console.log(`getByFormationId ${storeName} called on ${formationId}`);
-    return new Promise((resolve, reject) => {
-      const index = this._getStore(storeName, "readonly").index("formationId");
-      const request = index.getAll(festivalId);
-      request.onsuccess = () => {
-        console.log(`resolved getByFormationId ${storeName}: ${request.result.length}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on getByFormationId ${storeName}: ${request.error}`);
         reject(request.error);
       };
     });
@@ -267,6 +251,21 @@ export class IndexedDBManager {
       tx.onerror = () => {
         console.error(`error on removeList ${storeName}: ${tx.error}`);
         reject(tx.error);
+      };
+    })
+  }
+
+  async deleteAll(storeName: TableName) {
+    console.log(`deleteAll ${storeName} called`);
+    return new Promise<any>((resolve, reject) => {
+      const request = this._getStore(storeName).clear();
+      request.onsuccess = () => {
+        console.log(`resolved deleteAll ${storeName}`);
+        resolve(request.result);
+      };
+      request.onerror = () => {
+        console.error(`error on deleteAll ${storeName}: ${request.error}`);
+        reject(request.error);
       };
     })
   }

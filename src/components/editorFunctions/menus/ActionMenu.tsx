@@ -51,7 +51,7 @@ export default function ActionMenu() {
     var currentCategories = new Set(splitPositionsByType(userContext.selectedItems).participants.map(x => x.categoryId));
     if (currentCategories.size === 1) {
       var catId = currentCategories.values().next().value;
-      setSelectedCategory(categories[catId] ?? null);
+      setSelectedCategory(catId ? categories[catId] ?? null : null);
     } else {
       setSelectedCategory(null);
     }

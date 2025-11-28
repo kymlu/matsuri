@@ -28,8 +28,8 @@ export default function PlacementNameEditor() {
     setInputValue(name);
   }, [userContext.selectedItems]);
 
-  const handleChange = (value) => {
-    var newValue = value.target.value;
+  const handleChange = (value: string) => {
+    var newValue = value;
     setInputValue(newValue);
     
     var updatedPlaceholders = {...placeholderList};
@@ -42,7 +42,7 @@ export default function PlacementNameEditor() {
     <ExpandableSection title="名前修正" titleIcon={ICON.textFieldsAltBlack}>
       <input
         value={inputValue}
-        onInput={(event) => handleChange(event)}
+        onInput={(event) => handleChange(event.currentTarget.value)}
         className="w-full h-8 px-2 mb-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
     </ExpandableSection>
   )

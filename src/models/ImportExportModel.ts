@@ -1,7 +1,7 @@
 import { Festival } from "./Festival.ts"
 import { FormationSection } from "./FormationSection.ts"
-import { Participant } from "./Participant.ts"
-import { ArrowPosition, NotePosition, ParticipantPosition, PropPosition } from "./Position.ts"
+import { Participant, ParticipantPlaceholder } from "./Participant.ts"
+import { ArrowPosition, NotePosition, ParticipantPosition, PlaceholderPosition, PropPosition } from "./Position.ts"
 import { Prop } from "./Prop.ts"
 
 export type ImportExportModel = {
@@ -34,6 +34,6 @@ export type FormationDetails = {
   props: PropPosition[],
   arrows: ArrowPosition[],
   notes: NotePosition[],
-  placeholders: Placeholder[],
+  placeholders: ParticipantPlaceholder[],
   placeholderPositions: PlaceholderPosition[],
 }

@@ -8,6 +8,7 @@
     "classnames": "^2.5.1",
     "cra-template-pwa-typescript": "2.0.0",
     "jspdf": "^3.0.2",
+    "jszip": "^3.10.1",
     "konva": "^9.3.22",
     "prop-types": "^15.8.1",
     "react": "^19.1.1",
