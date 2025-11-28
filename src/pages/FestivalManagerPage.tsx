@@ -256,7 +256,7 @@ export default function FestivalManagerPage () {
       {
         savedFestival &&
         <button
-          className='w-full p-2 mx-4 border rounded-md border-primary'
+          className='w-full p-2 mx-4 transition-colors border-2 rounded-md border-primary hover:bg-grey-100'
           onClick={() => {selectSavedFestival()}}>
           編集中の祭り：<span>{savedFestival.name}</span>
         </button>
