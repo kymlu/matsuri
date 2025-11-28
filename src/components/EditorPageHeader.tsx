@@ -14,12 +14,11 @@ import { GeneralSiteInfoDialog } from "./dialogs/GeneralSiteInfoDialog.tsx";
 import { EditFestivalDialog } from "./dialogs/editFestival/EditFestivalDialog.tsx";
 import { strEquals } from "../lib/helpers/GlobalHelper.ts";
 import { getFormationFile } from "../lib/helpers/JsonReaderHelper.ts";
-import { dbController } from "../lib/dataAccess/DBProvider.tsx";
-import { FormationSection } from "../models/FormationSection.ts";
 import { PositionContext } from "../contexts/PositionContext.tsx";
 import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
 import { EntitiesContext } from "../contexts/EntitiesContext.tsx";
 import { GetAllForFormation } from "../data/DataController.ts";
+import { getByFormationId, upsertList } from "../data/DataRepository.ts";
 
 export function EditorPageHeader() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -74,9 +73,9 @@ export function EditorPageHeader() {
                             // if a formation section exists in the database, load it
                             // TODO: CRITICAL: does not properly grab data on screen reload
                             console.log(`Switching to formation: ${formation.name}`, formation);
-                            dbController.getByFormationId("formationSection", formation.id)
+                            getByFormationId("formationSection", formation.id)
                               .then(async (sections) => {
-                                var sectionsExist = (sections as FormationSection[]).length > 0;
+                                var sectionsExist = sections.length > 0;
                                 if (sectionsExist) {
                                   GetAllForFormation(selectedFestival.id, formation.id,
                                     (
@@ -108,13 +107,13 @@ export function EditorPageHeader() {
                                     },
                                     async (formationDetails) => {
                                       Promise.all([
-                                        dbController.upsertList("formationSection", formationDetails.sections),
-                                        dbController.upsertList("participantPosition", formationDetails.participants),
-                                        dbController.upsertList("propPosition", formationDetails.props),
-                                        dbController.upsertList("notePosition", formationDetails.notes),
-                                        dbController.upsertList("arrowPosition", formationDetails.arrows),
-                                        dbController.upsertList("placeholder", formationDetails.placeholders),
-                                        dbController.upsertList("placeholderPosition", formationDetails.placeholderPositions),
+                                        upsertList("formationSection", formationDetails.sections),
+                                        upsertList("participantPosition", formationDetails.participants),
+                                        upsertList("propPosition", formationDetails.props),
+                                        upsertList("notePosition", formationDetails.notes),
+                                        upsertList("arrowPosition", formationDetails.arrows),
+                                        upsertList("placeholder", formationDetails.placeholders),
+                                        upsertList("placeholderPosition", formationDetails.placeholderPositions),
                                       ]).then(() => {
                                         updateFormationContext({selectedFormation: formation});
                                         updatePositionContextState({

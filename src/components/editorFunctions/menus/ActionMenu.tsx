@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Button from "../../Button.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { EntitiesContext, EntitiesContextState } from "../../../contexts/EntitiesContext.tsx";
 import { PositionContext, PositionContextState } from "../../../contexts/PositionContext.tsx";
@@ -13,6 +12,7 @@ import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { Participant } from "../../../models/Participant.ts";
 import Divider from "../../Divider.tsx";
 import { removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
+import { removeList, upsertList } from "../../../data/DataRepository.ts";
 
 export default function ActionMenu() {
   const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);
@@ -95,7 +95,7 @@ export default function ActionMenu() {
       participantPositions: updatedParticipantPositions,
     });
     
-    dbController.upsertList("participantPosition", updatedPositions);
+    upsertList("participantPosition", updatedPositions);
   }
 
   function selectAllFromCategory() {
@@ -131,8 +131,8 @@ export default function ActionMenu() {
     if (participants.length > 0) {
       var selectedParticipantIds = new Set(participants.map(x => x.participantId));
       var positionsToRemove = new Set(Object.values(participantPositions).flat().filter(x => selectedParticipantIds.has(x.participantId)).map(x => x.id));
-      dbController.removeList("participant", [...selectedParticipantIds]);
-      dbController.removeList("participantPosition", [...positionsToRemove]);
+      removeList("participant", [...selectedParticipantIds]);
+      removeList("participantPosition", [...positionsToRemove]);
       updatedPositions.participantPositions = removeItemsByCondition(participantPositions, (item) => positionsToRemove.has(item.id));
       updatedEntities.participantList = removeKeysFromRecord(participantList, selectedParticipantIds);
     }
@@ -140,8 +140,8 @@ export default function ActionMenu() {
     if (props.length > 0) {
       var selectedPropIds = new Set(props.map(x => x.propId));
       var positionsToRemove = new Set(Object.values(propPositions).flat().filter(x => selectedPropIds.has(x.propId)).map(x => x.id));
-      dbController.removeList("prop", [...selectedPropIds]);
-      dbController.removeList("propPosition", [...positionsToRemove]);
+      removeList("prop", [...selectedPropIds]);
+      removeList("propPosition", [...positionsToRemove]);
       updatedPositions.propPositions = removeItemsByCondition(propPositions, (item) => positionsToRemove.has(item.id));
       updatedEntities.propList = removeKeysFromRecord(propList, selectedPropIds);
     }
@@ -149,13 +149,13 @@ export default function ActionMenu() {
     if (notes.length > 0) {
       var positionsToRemove = new Set(notes.map(x => x.id));
       updatedPositions.notePositions = removeItemsByCondition(notePositions, (item) => positionsToRemove.has(item.id));
-      dbController.removeList("notePosition", [...positionsToRemove]);
+      removeList("notePosition", [...positionsToRemove]);
     }
     
     if (arrows.length > 0) {
       var positionsToRemove = new Set(arrows.map(x => x.id));
       updatedPositions.arrowPositions = removeItemsByCondition(arrowPositions, (item) => positionsToRemove.has(item.id));
-      dbController.removeList("arrowPosition", [...positionsToRemove]);
+      removeList("arrowPosition", [...positionsToRemove]);
     }
     updateEntitiesContext(updatedEntities);
     updatePositionContextState(updatedPositions);

@@ -12,7 +12,7 @@ import TextInput from "../../TextInput.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
 import { addItemsToRecordByKey, addItemToRecord } from "../../../lib/helpers/GroupingHelper.ts";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
 
 export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");
@@ -69,8 +69,8 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     console.log("updatedPositions", updatedPositions);
     updatePositionContextState({participantPositions: updatedPositions});
     
-    dbController.upsertItem("participant", selectedParticipant);
-    dbController.upsertList("participantPosition", newPositions);
+    upsertItem("participant", selectedParticipant);
+    upsertList("participantPosition", newPositions);
   }
 
   const getNextMarginIndex = () => {
@@ -84,7 +84,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
 		  displayName: `${name} ${Object.keys(placeholderList).length}`, // TODO: add count
 		  formationId: selectedFormation!.id,
 	  }
-    dbController.upsertItem("placeholder", newPlaceholder);
+    upsertItem("placeholder", newPlaceholder);
     var updatedPlaceholders = addItemToRecord(placeholderList, newPlaceholder.id, newPlaceholder);
     updateEntitiesContext({placeholderList: updatedPlaceholders})
 
@@ -100,7 +100,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     
     var updatedPositions = addItemsToRecordByKey(placeholderPositions, newPositions, (item) => item.formationSectionId);
     updatePositionContextState({placeholderPositions: updatedPositions})
-    dbController.upsertList("placeholderPosition", newPositions);
+    upsertList("placeholderPosition", newPositions);
   }
 
   const participantListDisplay = useMemo(() => {

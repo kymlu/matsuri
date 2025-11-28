@@ -13,8 +13,8 @@ import { EditFestivalProps } from "./EditFestivalProps.tsx";
 import { EditFestivalFormations } from "./EditFestivalFormations.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { indexByKey } from "../../../lib/helpers/GroupingHelper.ts"
+import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
 
 export type EditFestivalDialogProps = {
   onSave?: (festival: Festival) => void
@@ -71,8 +71,8 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     // todo: remove all deleted props and prop positions
     // todo: remove formations, and participant, prop, note, arrow, and placeholder positions for that formation
 
-    // dbController.removeList("participant", Object.keys(participantList));
-    // dbController.removeList("prop", Object.keys(propList));
+    // removeList("participant", Object.keys(participantList));
+    // removeList("prop", Object.keys(propList));
     // todo: show I also have a list of removed ids from the participants/props/formations?
     // but if I do that, if I delete an object and add an object will the same name, should it keep the id?
     var newFestival: Festival = {
@@ -83,9 +83,9 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
       note: generalData.note,
       formations: formations,
     } as Festival;
-    dbController.upsertItem("festival", newFestival);
-    dbController.upsertList("participant", participants);
-    dbController.upsertList("prop", props);
+    upsertItem("festival", newFestival);
+    upsertList("participant", participants);
+    upsertList("prop", props);
     updateState({
       selectedFestival: newFestival,
     });

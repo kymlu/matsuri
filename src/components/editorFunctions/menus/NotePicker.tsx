@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { NotePosition } from "../../../models/Position.ts";
 import { notePresets } from "../../../data/ImaHitotabi.ts";
 import ItemButton from "../../ItemButton.tsx";
@@ -9,6 +8,7 @@ import { NotePreset } from "../../../models/Note.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { addItemToRecordArray } from "../../../lib/helpers/GroupingHelper.ts";
+import { upsertItem } from "../../../data/DataRepository.ts";
 
 export default function NotePicker (props: {margins: number[][]}) {
   const {selectedSection, updateState} = useContext(UserContext);
@@ -41,7 +41,7 @@ export default function NotePicker (props: {margins: number[][]}) {
     updatePositionContextState({notePositions: updatedNotePositions});
     updateState({selectedItems: []});
 
-    dbController.upsertItem("notePosition", newNote);
+    upsertItem("notePosition", newNote);
   }
 
   return (

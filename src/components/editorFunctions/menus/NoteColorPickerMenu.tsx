@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { basePalette, ColorStyle, objectColorSettings, objectPalette } from "../../../themes/colours.ts";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
@@ -11,6 +10,7 @@ import { ICON } from "../../../lib/consts.ts";
 import { replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 import ColorPresetPicker from "./ColorPresetPicker.tsx";
 import ColorPalettePicker from "./ColorPalettePicker.tsx";
+import { upsertList } from "../../../data/DataRepository.ts";
 
 export type NoteColorPickerMenuProps = {
 }
@@ -52,7 +52,7 @@ export default function NoteColorPickerMenu() {
       ...updatedNotes.map(x => ({note: x, type: PositionType.note} as Position)),
     ]});
 
-    dbController.upsertList("notePosition", updatedNotes);
+    upsertList("notePosition", updatedNotes);
   }
 
   function selectColor(color: ColorStyle) {
@@ -83,7 +83,7 @@ export default function NoteColorPickerMenu() {
     ]});
 
     Promise.all([
-      dbController.upsertList("notePosition", updatedNotes),  
+      upsertList("notePosition", updatedNotes),  
     ]);
   }
 

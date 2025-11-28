@@ -24,8 +24,8 @@ import { CategoryContext } from '../contexts/CategoryContext.tsx';
 import { EntitiesContext } from '../contexts/EntitiesContext.tsx';
 import { PositionContext } from '../contexts/PositionContext.tsx';
 import ItemButton from '../components/ItemButton.tsx';
-import { dbController } from '../lib/dataAccess/DBProvider.tsx';
 import { clearAllData, GetAllForFormation } from '../data/DataController.ts';
+import { getAll, upsertItem, upsertList } from '../data/DataRepository.ts';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);
@@ -51,8 +51,8 @@ export default function FestivalManagerPage () {
   useEffect(() => {
     updateAppModeContext({userType: "admin"});
     getFestivalData();
-    dbController.getAll("festival").then((festival) => {
-      setSavedFestival((festival as Festival[])[0]);
+    getAll("festival").then((festival) => {
+      setSavedFestival(festival[0]);
     })
   }, []);
 
@@ -143,16 +143,16 @@ export default function FestivalManagerPage () {
   }
 
   function saveToDatabase(festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) {
-    dbController.upsertItem("festival", festival);
-    dbController.upsertList("participant", resources.participants);
-    dbController.upsertList("prop", resources.props);
-    dbController.upsertList("formationSection", formationDetails.sections);
-    dbController.upsertList("participantPosition", formationDetails.participants);
-    dbController.upsertList("propPosition", formationDetails.props);
-    dbController.upsertList("notePosition", formationDetails.notes);
-    dbController.upsertList("arrowPosition", formationDetails.arrows);
-    dbController.upsertList("placeholder", formationDetails.placeholders);
-    dbController.upsertList("placeholderPosition", formationDetails.placeholderPositions);
+    upsertItem("festival", festival);
+    upsertList("participant", resources.participants);
+    upsertList("prop", resources.props);
+    upsertList("formationSection", formationDetails.sections);
+    upsertList("participantPosition", formationDetails.participants);
+    upsertList("propPosition", formationDetails.props);
+    upsertList("notePosition", formationDetails.notes);
+    upsertList("arrowPosition", formationDetails.arrows);
+    upsertList("placeholder", formationDetails.placeholders);
+    upsertList("placeholderPosition", formationDetails.placeholderPositions);
   }
 
   function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {

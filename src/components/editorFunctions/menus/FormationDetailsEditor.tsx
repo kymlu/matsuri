@@ -67,7 +67,7 @@ export default function FormationDetailsEditor(props: FormationDetailsEditorProp
           曲
           <CustomSelect
             disabled={isLocked}
-            setValue={(newValue) => {editFormationSong(newValue)}}
+            setValue={(newValue) => {editFormationSong(newValue)}} // TODO: enable no selection for free creation
             defaultValue={songList[props.formation.songId].name}
             items={songs}/>
         </label>

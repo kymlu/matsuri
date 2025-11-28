@@ -1,9 +1,8 @@
 import jsPDF from "jspdf";
-import { dbController } from "../dataAccess/DBProvider.tsx";
 import { Festival } from "../../models/Festival.ts";
 import { Formation, FormationType } from "../../models/Formation.ts";
 import { FormationSection } from "../../models/FormationSection.ts";
-import { FestivalMeta, FestivalResources, FormationDetails, ImportExportModel } from "../../models/ImportExportModel.ts";
+import { FestivalResources, ImportExportModel } from "../../models/ImportExportModel.ts";
 import { Participant, ParticipantPlaceholder } from "../../models/Participant.ts";
 import { ParticipantCategory } from "../../models/ParticipantCategory.ts";
 import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition, PlaceholderPosition } from "../../models/Position.ts";

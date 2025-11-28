@@ -3,8 +3,8 @@ import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { PlaceholderPosition, Position, PositionType, PropPosition } from "../../../models/Position.ts";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { ICON } from "../../../lib/consts.ts";
+import { upsertItem } from "../../../data/DataRepository.ts";
 
 export default function PlacementNameEditor() {
   const userContext = useContext(UserContext);
@@ -35,7 +35,7 @@ export default function PlacementNameEditor() {
     var updatedPlaceholders = {...placeholderList};
     updatedPlaceholders[selectedItem!.placeholderId].displayName = newValue;
     updateEntitiesContext({placeholderList: updatedPlaceholders});
-    dbController.upsertItem("placeholder", updatedPlaceholders[selectedItem!.placeholderId]);
+    upsertItem("placeholder", updatedPlaceholders[selectedItem!.placeholderId]);
   };
   
   return (

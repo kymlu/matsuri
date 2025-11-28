@@ -37,7 +37,7 @@ import { Prop } from "../../../models/Prop.ts";
 import { AppModeContext } from "../../../contexts/AppModeContext.tsx";
 import { VisualSettingsContext } from "../../../contexts/VisualSettingsContext.tsx";
 import ArrowObject from "../formationObjects/ArrowObject.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { upsertItem } from "../../../data/DataRepository.ts";
 
 export type FormationMainLayerProps = {
 	topMargin: number;
@@ -441,7 +441,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (participant) {
 			participant.x = x / gridSize - props.sideMargin;
 			participant.y = y / gridSize - props.topMargin;
-			dbController.upsertItem("participantPosition", participant);
+			upsertItem("participantPosition", participant);
 			layerRef.current?.drawScene();
 		}
 	}
@@ -451,7 +451,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (prop) {
 			prop.x = x / gridSize - props.sideMargin;
 			prop.y = y / gridSize - props.topMargin;
-			dbController.upsertItem("propPosition", prop);
+			upsertItem("propPosition", prop);
 		}
 	}
 
@@ -460,7 +460,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (note) {
 			note.x = x / gridSize - props.sideMargin;
 			note.y = y / gridSize - props.topMargin; // todo: fix off by 2m
-			dbController.upsertItem("notePosition", note);
+			upsertItem("notePosition", note);
 		}
 	}
 
@@ -469,7 +469,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (arrow) {
 			arrow.x = x / gridSize - props.sideMargin;
 			arrow.y = y / gridSize - props.topMargin; // todo: fix off by 2m
-			dbController.upsertItem("arrowPosition", arrow);
+			upsertItem("arrowPosition", arrow);
 		}
 	}
 
@@ -491,7 +491,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		if (placeholder) {
 			placeholder.x = x / gridSize - props.sideMargin;
 			placeholder.y = y / gridSize - props.topMargin; // todo: fix off by 2m
-			dbController.upsertItem("placeholderPosition", placeholder);
+			upsertItem("placeholderPosition", placeholder);
 		}
 	}
 
@@ -501,7 +501,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			prop.angle = angle;
 			prop.x = x / gridSize - props.sideMargin;
 			prop.y = y / gridSize - props.topMargin;
-			dbController.upsertItem("propPosition", prop);
+			upsertItem("propPosition", prop);
 		}
 	}
 
@@ -511,7 +511,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			const snapSize = 0.25;
 			note.width = Math.max(Math.round(note.width * scaleX / snapSize) * snapSize, 0.75);
 			note.height = Math.max(Math.round(note.height * scaleY / snapSize) * snapSize, 0.75);
-			dbController.upsertItem("notePosition", note);
+			upsertItem("notePosition", note);
 			updateState({selectedItems: [{type: PositionType.note, note: note}]});
 		}
 	}
@@ -606,7 +606,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						key={arrow.id}
 						updatePosition={(x, y) => updateArrowPosition(arrow.id, x, y)}
 						updatePoints={(x, y, pointIndex) => updateArrowPoints(arrow.id, x, y, pointIndex, index)}
-						savePoints={() => {dbController.upsertItem("arrowPosition", arrow)}}
+						savePoints={() => {upsertItem("arrowPosition", arrow)}}
 						startX={getPixel(gridSize, arrow.x, props.sideMargin)}
 						startY={getPixel(gridSize, arrow.y, props.topMargin)}
 						ref={arrowGroupRef.current[index]}

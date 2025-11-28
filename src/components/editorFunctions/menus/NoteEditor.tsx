@@ -6,7 +6,7 @@ import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import TextInput from "../../TextInput.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { upsertItem } from "../../../data/DataRepository.ts";
 
 export default function NoteEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -37,7 +37,7 @@ export default function NoteEditor() {
     updatedNote[type] = newValue;
     
     updatePositionContextState({notePositions: updatedRecord})
-    dbController.upsertItem("notePosition", updatedNote);
+    upsertItem("notePosition", updatedNote);
   };
   
   return (

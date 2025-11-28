@@ -1,7 +1,24 @@
 import { isNullOrUndefinedOrBlank } from "../helpers/GlobalHelper.ts";
 import { DB_NAME } from "../consts.ts";
+import { Festival } from "../../models/Festival.ts";
+import { Participant, ParticipantPlaceholder } from "../../models/Participant.ts";
+import { Prop } from "../../models/Prop.ts";
+import { ArrowPosition, NotePosition, ParticipantPosition, PlaceholderPosition, PropPosition } from "../../models/Position.ts";
+import { FormationSection } from "../../models/FormationSection.ts";
 
-type TableName = "festival" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection" | "placeholder" | "placeholderPosition";
+export type TableName = "festival" | "participant" | "prop" | "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "formationSection" | "placeholder" | "placeholderPosition";
+export type TableTypeMap = {
+  "festival": Festival,
+  "participant": Participant,
+  "prop": Prop,
+  "participantPosition": ParticipantPosition,
+  "propPosition": PropPosition,
+  "notePosition": NotePosition,
+  "arrowPosition": ArrowPosition,
+  "formationSection": FormationSection,
+  "placeholder": ParticipantPlaceholder,
+  "placeholderPosition": PlaceholderPosition,
+}
 
 export class IndexedDBManager {
   db!: IDBDatabase;
@@ -173,7 +190,7 @@ export class IndexedDBManager {
     });
   }
 
-  async findById(storeName: TableName, id: string) {
+  async getById(storeName: TableName, id: string) {
     console.log(`findById ${storeName} called on ${id}`);
     return new Promise((resolve, reject) => {
       const request = this._getStore(storeName, "readonly").get(id);

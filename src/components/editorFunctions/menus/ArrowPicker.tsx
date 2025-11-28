@@ -6,12 +6,12 @@ import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ArrowPosition } from "../../../models/Position.ts";
 import { objectPalette } from "../../../themes/colours.ts";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { addItemToRecordArray } from "../../../lib/helpers/GroupingHelper.ts";
 import { ArrowPreset } from "../../../models/Arrow.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
 import { isNullOrUndefined } from "../../../lib/helpers/GlobalHelper.ts";
+import { upsertItem } from "../../../data/DataRepository.ts";
 
 export default function ArrowPicker (props: {margins: number[][]}) {
   const {arrowPositions, updatePositionContextState} = useContext(PositionContext);
@@ -40,7 +40,7 @@ export default function ArrowPicker (props: {margins: number[][]}) {
     var updatedPositions = addItemToRecordArray(arrowPositions, selectedSection!.id, newPosition);
     updatePositionContextState({arrowPositions: updatedPositions});
 
-    dbController.upsertItem("arrowPosition", newPosition);
+    upsertItem("arrowPosition", newPosition);
   }
   
   return (

@@ -15,7 +15,7 @@ import { ICON } from "../../../lib/consts.ts";
 import { MarginPositions } from "../../../pages/FormationPage.tsx";
 import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { removeList, upsertList, upsertItem, removeItem } from "../../../data/DataRepository.ts";
 
 export default function SectionPicker(props: {margins: MarginPositions}) {
 	const { currentSections, selectedSection, updateState, isLoading } =
@@ -133,14 +133,14 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 					.map((x) => x.id);
 				
 				// Remove old
-				dbController.removeList("participantPosition", participantsToRemove);
-				dbController.removeList("propPosition", propsToRemove);
-				dbController.removeList("placeholderPosition", propsToRemove);
+				removeList("participantPosition", participantsToRemove);
+				removeList("propPosition", propsToRemove);
+				removeList("placeholderPosition", placeholdersToRemove);
 		
 				// Upsert new positions
-				dbController.upsertList("participantPosition", copiedParticipantPositions);
-				dbController.upsertList("propPosition", copiedPropPositions);
-				dbController.upsertList("placeholderPosition", copiedPropPositions);
+				upsertList("participantPosition", copiedParticipantPositions);
+				upsertList("propPosition", copiedPropPositions);
+				upsertList("placeholderPosition", copiedPlaceholderPositions);
 
 				var updatedParticipantPositions = replaceItemsFromDifferentSource(
 					participantPositions,
@@ -158,7 +158,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 
 				var updatedPlaceholderPositions = replaceItemsFromDifferentSource(
 					placeholderPositions,
-					propsToRemove,
+					placeholdersToRemove,
 					copiedPlaceholderPositions,
 					(item) => item.formationSectionId,
 					(item) => item.id);
@@ -210,7 +210,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 			order: lastSection.order + 1,
 		} as FormationSection;
 
-		dbController.upsertItem("formationSection", newSection).then(() => {
+		upsertItem("formationSection", newSection).then(() => {
 			updateState({ currentSections: [...currentSections, newSection] });
 			copyPositions(lastSection, newSection as FormationSection)?.then(
 				() => {
@@ -238,7 +238,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 
 		var updatedSectionIds = updatedSections.map(x => x.id);
 
-		dbController.upsertList("formationSection", [...updatedSections, newSection])
+		upsertList("formationSection", [...updatedSections, newSection])
 		updateState({
 			currentSections: [
 				...currentSections.filter(x => !updatedSectionIds.includes(x.id)),
@@ -283,9 +283,9 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 				} as PropPosition));
 
 		try {
-			dbController.upsertList("participantPosition", resetParticipants);
-			dbController.upsertList("propPosition", resetProps);
-			dbController.upsertList("placeholderPosition", resetPlaceholders);
+			upsertList("participantPosition", resetParticipants);
+			upsertList("propPosition", resetProps);
+			upsertList("placeholderPosition", resetPlaceholders);
 
 			var resetParticipantIds = resetParticipants.map(x => x.id);
 			var resetPropIds = resetProps.map(x => x.id);
@@ -313,12 +313,12 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 		const placeholderIdsToRemove = placeholderPositions[section.id].map(x => x.id);
 
 		Promise.all([
-			dbController.removeList("participantPosition", participantIdsToRemove),
-			dbController.removeList("propPosition", propIdsToRemove),
-			dbController.removeList("notePosition", noteIdsToRemove),
-			dbController.removeList("arrowPosition", arrowIdsToRemove),
-			dbController.removeList("placeholderPosition", placeholderIdsToRemove),
-			dbController.removeItem("formationSection", section.id),
+			removeList("participantPosition", participantIdsToRemove),
+			removeList("propPosition", propIdsToRemove),
+			removeList("notePosition", noteIdsToRemove),
+			removeList("arrowPosition", arrowIdsToRemove),
+			removeList("placeholderPosition", placeholderIdsToRemove),
+			removeItem("formationSection", section.id),
 		]).then(()=>{
 			updatePositionContextState({
 				participantPositions: removeKeysFromRecord(participantPositions, new Set(section.id)),
@@ -337,7 +337,7 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 
   function onNameChange(section: FormationSection, newName: string) {
     var updatedSection = {...section, displayName: newName};
-    dbController.upsertItem("formationSection", updatedSection).then(() => {
+    upsertItem("formationSection", updatedSection).then(() => {
       updateState({
         currentSections: currentSections.map(x => strEquals(x.id, section.id) ? updatedSection : x),
         selectedSection: updatedSection,

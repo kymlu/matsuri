@@ -8,7 +8,7 @@ import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { addItemsToRecordByKey } from "../../../lib/helpers/GroupingHelper.ts";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
+import { upsertList } from "../../../data/DataRepository.ts";
 
 export default function PropPicker (props: {margins: number[][]}) {
   const {propPositions, updatePositionContextState} = useContext(PositionContext);
@@ -34,7 +34,7 @@ export default function PropPicker (props: {margins: number[][]}) {
 
     var updatedPositions = addItemsToRecordByKey(propPositions, newPositions, (item) => item.formationSectionId);
     updatePositionContextState({propPositions: updatedPositions});
-    dbController.upsertList("propPosition", newPositions);
+    upsertList("propPosition", newPositions);
   }
   
   return (

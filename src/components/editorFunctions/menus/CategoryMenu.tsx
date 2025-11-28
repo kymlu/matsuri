@@ -4,12 +4,12 @@ import { basePalette } from "../../../themes/colours.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { createPosition, ParticipantPosition, PlaceholderPosition, Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import Button from "../../Button.tsx";
 import { ICON } from "../../../lib/consts.ts";
+import { upsertList } from "../../../data/DataRepository.ts";
 
 export default function CategoryMenu() {
   const {selectedItems, updateState, selectedSection} = useContext(UserContext);
@@ -83,8 +83,8 @@ export default function CategoryMenu() {
     var updatedSelectedItems = [...updatedPartPositions.map(x => createPosition(x, PositionType.participant)), ...updatedPlacePositions.map(x => createPosition(x, PositionType.placeholder))];
     updateState({selectedItems: updatedSelectedItems});
     updatePositionContextState({participantPositions: updatePartRecord, placeholderPositions: updatedPlaceRecord});
-    dbController.upsertList("participantPosition", updatedPartPositions);
-    dbController.upsertList("placeholderPosition", updatedPlacePositions);
+    upsertList("participantPosition", updatedPartPositions);
+    upsertList("placeholderPosition", updatedPlacePositions);
   }
 
   async function onSetAllToCategory() {
@@ -114,8 +114,8 @@ export default function CategoryMenu() {
         });
     });
     
-    dbController.upsertList("participantPosition", updatedPartPositions);
-    dbController.upsertList("placeholderPosition", updatedPlaceholderPositions);
+    upsertList("participantPosition", updatedPartPositions);
+    upsertList("placeholderPosition", updatedPlaceholderPositions);
     updatePositionContextState({participantPositions: updatedPartRecord, placeholderPositions: updatedPlaceholderRecord});
   }
 

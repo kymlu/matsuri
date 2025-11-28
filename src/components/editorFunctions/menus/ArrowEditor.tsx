@@ -5,11 +5,11 @@ import { ArrowPosition, getFromPositionType } from "../../../models/Position.ts"
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import CustomSlider from "../../CustomSlider.tsx";
-import { dbController } from "../../../lib/dataAccess/DBProvider.tsx";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import CustomSelect from "../../CustomSelect.tsx";
 import CustomSwitch from "../../CustomSwitch.tsx";
 import ColorPalettePicker from "./ColorPalettePicker.tsx";
+import { upsertItem } from "../../../data/DataRepository.ts";
 
 export default function ArrowEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -44,7 +44,7 @@ export default function ArrowEditor() {
     updatedArrow.isSelected = false;
     updatedArrow[type] = newValue;
     updatePositionContextState({arrowPositions: updatedRecord});
-    dbController.upsertItem("arrowPosition", updatedArrow);
+    upsertItem("arrowPosition", updatedArrow);
   };
   
   const handleStringValueChange = (newValue: string, type: "color") => {
@@ -53,7 +53,7 @@ export default function ArrowEditor() {
     updatedArrow.isSelected = false;
     updatedArrow[type] = newValue;
     updatePositionContextState({arrowPositions: updatedRecord});
-    dbController.upsertItem("arrowPosition", updatedArrow);
+    upsertItem("arrowPosition", updatedArrow);
   };
 
   const handleBooleanValueChange = (newValue: boolean, type: "pointerAtBeginning" | "pointerAtEnding" | "isDotted") => {
@@ -62,7 +62,7 @@ export default function ArrowEditor() {
     updatedArrow.isSelected = false;
     updatedArrow[type] = newValue;
     updatePositionContextState({arrowPositions: updatedRecord});
-    dbController.upsertItem("arrowPosition", updatedArrow);
+    upsertItem("arrowPosition", updatedArrow);
   };
   
   return (

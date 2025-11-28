@@ -3,7 +3,7 @@ import { FormationSection } from "../models/FormationSection.ts";
 import { Participant, ParticipantPlaceholder } from "../models/Participant.ts";
 import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition, PlaceholderPosition } from "../models/Position.ts";
 import { Prop } from "../models/Prop.ts";
-import { dbController } from "./../lib/dataAccess/DBProvider.tsx";
+import { getByFormationId, getByFestivalId, getAll, deleteAll } from "./DataRepository.ts";
 
 export async function GetAllForFormation(
   festivalId: string,
@@ -22,40 +22,6 @@ export async function GetAllForFormation(
 ): Promise<void> {
   console.log("GetAllForFormation", { festivalId, formationId });
   const [
-    formationSection,
-    participant,
-    prop,
-    placeholder,
-    participantPosition,
-    propPosition,
-    notePosition,
-    arrowPosition,
-    placeholderPosition,
-  ] = await Promise.all([
-    dbController.getByFormationId("formationSection", formationId),
-    dbController.getByFestivalId("participant", festivalId),
-    dbController.getByFestivalId("prop", festivalId),
-    dbController.getByFormationId("placeholder", formationId),
-    dbController.getAll("participantPosition"),
-    dbController.getAll("propPosition"),
-    dbController.getAll("notePosition"),
-    dbController.getAll("arrowPosition"),
-    dbController.getAll("placeholderPosition"),
-  ]);
-
-  const formationSections = formationSection as FormationSection[];
-  const formationIds = new Set(formationSections.map(fs => fs.id));
-  const participants = participant as Participant[];
-  const props = prop as Prop[];
-  const placeholders = placeholder as ParticipantPlaceholder[];
-  const participantPositions = (participantPosition as ParticipantPosition[]).filter(pp => formationIds.has(pp.formationSectionId));
-  const propPositions = (propPosition as PropPosition[]).filter(pp => formationIds.has(pp.formationSectionId));
-  const notePositions = (notePosition as NotePosition[]).filter(np => formationIds.has(np.formationSectionId));
-  const arrowPositions = (arrowPosition as ArrowPosition[]).filter(ap => formationIds.has(ap.formationSectionId));
-  const placeholderPositions = (placeholderPosition as PlaceholderPosition[]).filter(pp => formationIds.has(pp.formationSectionId));
-
-  // Call the callback with all values
-  thenFn(
     formationSections,
     participants,
     props,
@@ -64,7 +30,37 @@ export async function GetAllForFormation(
     propPositions,
     notePositions,
     arrowPositions,
-    placeholderPositions
+    placeholderPositions,
+  ] = await Promise.all([
+    getByFormationId("formationSection", formationId), // TODO URGENT: move all getters and setters to repos
+    getByFestivalId("participant", festivalId),
+    getByFestivalId("prop", festivalId),
+    getByFormationId("placeholder", formationId),
+    getAll("participantPosition"),
+    getAll("propPosition"),
+    getAll("notePosition"),
+    getAll("arrowPosition"),
+    getAll("placeholderPosition"),
+  ]);
+
+  const formationIds = new Set(formationSections.map(fs => fs.id));
+  const filteredParticipantPositions = participantPositions.filter(pp => formationIds.has(pp.formationSectionId));
+  const filteredPropPositions = propPositions.filter(pp => formationIds.has(pp.formationSectionId));
+  const filteredNotePositions = notePositions.filter(np => formationIds.has(np.formationSectionId));
+  const filteredArrowPositions = arrowPositions.filter(ap => formationIds.has(ap.formationSectionId));
+  const filteredPlaceholderPositions = placeholderPositions.filter(pp => formationIds.has(pp.formationSectionId));
+
+  // Call the callback with all values
+  thenFn(
+    formationSections,
+    participants,
+    props,
+    placeholders,
+    filteredParticipantPositions,
+    filteredPropPositions,
+    filteredNotePositions,
+    filteredArrowPositions,
+    filteredPlaceholderPositions
   );
 }
 
@@ -83,39 +79,28 @@ export async function getAllData(
   ) => void
   ) {
   const [
-    festival,
-    formationSection,
-    participant,
-    prop,
-    placeholder,
-    participantPosition,
-    propPosition,
-    notePosition,
-    arrowPosition,
-    placeholderPosition,
+    festivals,
+    formationSections,
+    participants,
+    props,
+    placeholders,
+    participantPositions,
+    propPositions,
+    notePositions,
+    arrowPositions,
+    placeholderPositions,
   ] = await Promise.all([
-    dbController.getAll("festival"),
-    dbController.getAll("formationSection"),
-    dbController.getAll("participant"),
-    dbController.getAll("prop"),
-    dbController.getAll("placeholder"),
-    dbController.getAll("participantPosition"),
-    dbController.getAll("propPosition"),
-    dbController.getAll("notePosition"),
-    dbController.getAll("arrowPosition"),
-    dbController.getAll("placeholderPosition"),
+    getAll("festival"),
+    getAll("formationSection"),
+    getAll("participant"),
+    getAll("prop"),
+    getAll("placeholder"),
+    getAll("participantPosition"),
+    getAll("propPosition"),
+    getAll("notePosition"),
+    getAll("arrowPosition"),
+    getAll("placeholderPosition"),
   ]);
-
-  const festivals = festival as Festival[];
-  const formationSections = formationSection as FormationSection[];
-  const participants = participant as Participant[];
-  const props = prop as Prop[];
-  const placeholders = placeholder as ParticipantPlaceholder[];
-  const participantPositions = participantPosition as ParticipantPosition[];
-  const propPositions = propPosition as PropPosition[];
-  const notePositions = notePosition as NotePosition[];
-  const arrowPositions = arrowPosition as ArrowPosition[];
-  const placeholderPositions = placeholderPosition as PlaceholderPosition[];
 
   // Call the callback with all values
   thenFn(
@@ -134,15 +119,15 @@ export async function getAllData(
 
 export async function clearAllData() {
   await Promise.all([
-    dbController.deleteAll("festival"),
-    dbController.deleteAll("formationSection"),
-    dbController.deleteAll("participant"),
-    dbController.deleteAll("prop"),
-    dbController.deleteAll("placeholder"),
-    dbController.deleteAll("participantPosition"),
-    dbController.deleteAll("propPosition"),
-    dbController.deleteAll("notePosition"),
-    dbController.deleteAll("arrowPosition"),
-    dbController.deleteAll("placeholderPosition"),
+    deleteAll("festival"),
+    deleteAll("formationSection"),
+    deleteAll("participant"),
+    deleteAll("prop"),
+    deleteAll("placeholder"),
+    deleteAll("participantPosition"),
+    deleteAll("propPosition"),
+    deleteAll("notePosition"),
+    deleteAll("arrowPosition"),
+    deleteAll("placeholderPosition"),
   ]);
 }
