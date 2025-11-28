@@ -1,5 +1,5 @@
-import { indexedDbManager } from "../lib/dataAccess/DBProvider";
-import { TableName, TableTypeMap } from "../lib/dataAccess/IndexedDbManager";
+import { indexedDbManager } from "../lib/dataAccess/DBProvider.tsx";
+import { TableName, TableTypeMap } from "../lib/dataAccess/IndexedDbManager.ts";
 
 export async function getAll<T extends TableName>(
   storeName: T
