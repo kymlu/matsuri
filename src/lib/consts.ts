@@ -40,6 +40,7 @@ export const ICON = {
   checkWhite: "icons/check_white.svg",
   chevronBackwardBlack: "icons/chevron_backward_black.svg",
   chevronForwardBlack: "icons/chevron_forward_black.svg",
+  chevronForwardWhite: "icons/chevron_forward_white.svg",
   clearBlack: "icons/clear_black.svg",
   clear: "icons/clear.svg",
   colorsBlack: "icons/colors_black.svg",

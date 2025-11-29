@@ -15,6 +15,7 @@ import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { indexByKey } from "../../../lib/helpers/GroupingHelper.ts"
 import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
+import { FormationSection } from "../../../models/FormationSection.ts";
 
 export type EditFestivalDialogProps = {
   onSave?: (festival: Festival) => void
@@ -40,13 +41,14 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   const participantsRef = React.createRef<any>();
   const propsRef = React.createRef<any>();
   const [errors, setErrors] = React.useState({
-    general: false,
-    formations: false,
+    general: selectedFestival == null,
+    formations: selectedFestival == null,
     participants: false,
     props: false,
   });
 
   const handleValidationChange = useCallback((name: "general" | "formations" | "participants" | "props", hasError: boolean) => {
+    console.log(`Validation change for ${name}: ${hasError}. All errors: `, errors);
     if (errors[name] !== hasError) {
       setErrors(prev => ({
         ...prev,
@@ -62,10 +64,10 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
 
     const generalData: {id?: string, name?: string, startDate?: string, endDate?: string, note?: string} = generalRef.current?.getData();
     const participants: Participant[] = participantsRef.current?.getData();
-    const props: Prop[] = propsRef.current?.getData();
-    const formations: Formation[] = formationsRef.current?.getData();
+    const propsList: Prop[] = propsRef.current?.getData();
+    const formationData: {formations?: Formation[], newSections?: FormationSection[]} = formationsRef.current?.getData();
 
-    console.log(generalData, participants, props, formations);
+    console.log(generalData, participants, propsList, formationData);
     // todo: remove all deleted participants 
     // todo: replace all participant positions with placeholder positions
     // todo: remove all deleted props and prop positions
@@ -81,18 +83,20 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
       startDate: generalData.startDate,
       endDate: generalData.endDate,
       note: generalData.note,
-      formations: formations,
+      formations: formationData.formations || [],
     } as Festival;
     upsertItem("festival", newFestival);
     upsertList("participant", participants);
-    upsertList("prop", props);
+    upsertList("prop", propsList);
+    upsertList("formationSection", formationData.newSections || []);
     updateState({
       selectedFestival: newFestival,
     });
     updateEntitiesContext({
       participantList: indexByKey(participants, "id"),
-      propList: indexByKey(props, "id"),
+      propList: indexByKey(propsList, "id"),
     })
+    props.onSave?.(newFestival);
   };
 
   const reset = () => {

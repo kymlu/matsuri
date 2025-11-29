@@ -45,6 +45,7 @@ export default function FestivalManagerPage () {
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [selectedFestivalResources, setSelectedFestivalResources] = useState<FestivalResources | null>(null);
   const [festivalData, setFestivalData] = useState<Festival[]>([]);
+  const [overwriteMode, setOverwriteMode] = useState<null | "existing" | "new" | "upload">(null);
   let navigate = useNavigate();
   const uploadFileElement = document.getElementById("uploadFileInput");
 
@@ -104,6 +105,7 @@ export default function FestivalManagerPage () {
     if (savedFestival) {
       setSelectedFestival(festival);
       setSelectedFormation(formation);
+      setOverwriteMode("existing");
       setShowConfirmOverwrite(true);
     } else {
       loadFormation(festival, formation);
@@ -112,7 +114,6 @@ export default function FestivalManagerPage () {
 
   function loadFormation(festival: Festival, formation: Formation) {
     clearAllData()
-    setSavedFestival(null);
     setSelectedFestival(null);
     setSelectedFormation(null);
     readResourcesAndFormation(
@@ -178,6 +179,89 @@ export default function FestivalManagerPage () {
     updateAppModeContext({userType: "admin", appMode: "edit"});
   }
 
+  function onAddNewFestivalClick() {
+    if (savedFestival) {
+      setOverwriteMode("new");
+      setShowConfirmOverwrite(true);
+    } else {
+      setSelectedFestival(null);
+      setEditingFestival(true);
+    }
+  }
+
+  function onSaveNewFestival(newFestival: Festival) {
+    setEditingFestival(false);
+    navigate("/formation");
+
+    GetAllForFormation(newFestival.id, newFestival.formations[0].id, (
+      formationSections,
+      participants,
+      props,
+      placeholders,
+      participantPositions,
+      propPositions,
+      notePositions,
+      arrowPositions,
+      placeholderPositions
+    ) => {
+      setDataBeforeNavigation(
+        newFestival,
+        newFestival.formations[0],
+        {
+          participants: participants,
+          props: props
+        },
+        {
+          sections: formationSections,
+          participants: participantPositions,
+          props: propPositions,
+          notes: notePositions,
+          arrows: arrowPositions,
+          placeholderPositions: placeholderPositions,
+          placeholders: placeholders,
+        }
+      )
+      navigate("/formation");
+    });
+  }
+
+  function onUploadButtonClick() {
+    if (savedFestival) {
+      setOverwriteMode("upload");
+      setShowConfirmOverwrite(true);
+    } else {
+      triggerUpload();
+    }
+  }
+
+  function triggerUpload() {
+    if (uploadFileElement){
+      uploadFileElement.click();
+    }
+  }
+
+  function onConfirmOverwrite() {
+    clearAllData();
+    setSavedFestival(null);
+    setShowConfirmOverwrite(false);
+    updateState({selectedFestival: null, selectedSection: null, currentSections: [], selectedItems: []});
+    updateEntitiesContext({participantList: {}, propList: {}, placeholderList: {}});
+
+    switch (overwriteMode) {
+      case "existing":
+        if (selectedFestival && selectedFormation) {
+          loadFormation(selectedFestival, selectedFormation);
+        }
+        break;
+      case "new":
+        setEditingFestival(true);
+        break;
+      case "upload":
+        triggerUpload();
+        break;
+    }
+  }
+
   return (
     <div className='flex flex-col w-full gap-2 mt-10 portrait:my-10 landscape:max-w-[65svw] landscape:mx-auto'>
       <div className='flex items-center justify-between mx-4'>
@@ -189,12 +273,23 @@ export default function FestivalManagerPage () {
         </button>
       </div>
       <Divider primary/>
+      {
+        savedFestival &&
+        <div className='flex-1 mx-5'>
+          <button
+            className='flex flex-row items-center justify-between w-full p-5 font-semibold text-white transition-colors border-2 rounded-md border-primary bg-primary hover:bg-primary-light'
+            onClick={() => {selectSavedFestival()}}>
+            <span>編集中：{savedFestival.name}</span>
+            <div className='flex gap-2'>
+              <span>編集に続く</span>
+              <img src={ICON.chevronForwardWhite} className='size-6' alt='Edit saved formation'/>
+            </div>
+          </button>
+          <Divider primary/>
+        </div>
+      }
       <div className='grid grid-cols-2 gap-4 mx-5'>
-        <Button 
-          onClick={() => {
-            setSelectedFestival(null);
-            setEditingFestival(true);
-          }}>
+        <Button onClick={() => onAddNewFestivalClick()}>
           <div className='flex flex-row items-center justify-center gap-2'>
             祭りを追加
             <img
@@ -203,12 +298,7 @@ export default function FestivalManagerPage () {
               alt="Add new festival"/>
           </div>
         </Button>
-        <Button 
-          onClick={() => {
-            if(uploadFileElement){
-              uploadFileElement.click();
-            }
-          }}>
+        <Button onClick={() => onUploadButtonClick()}>
           <div className='flex flex-row items-center justify-center gap-2 p-1'>
             隊列をアップロード
             <img
@@ -241,14 +331,6 @@ export default function FestivalManagerPage () {
           }/>
       </div>
       {
-        savedFestival &&
-        <button
-          className='w-full p-2 mx-4 transition-colors border-2 rounded-md border-primary hover:bg-grey-100'
-          onClick={() => {selectSavedFestival()}}>
-          編集中の祭り：<span>{savedFestival.name}</span>
-        </button>
-      }
-      {
         festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
           .map((festival) => <FestivalSelector festival={festival} onFormationClick={selectExistingFestival}/>
         )
@@ -265,7 +347,7 @@ export default function FestivalManagerPage () {
           }}}>
         {
           editingFestival &&
-          <EditFestivalDialog/>
+          <EditFestivalDialog onSave={(festival) => onSaveNewFestival(festival)}/>
         }
       </Dialog.Root>
       
@@ -288,19 +370,11 @@ export default function FestivalManagerPage () {
       <Dialog.Root
         open={showConfirmOverwrite}>
         {
-          <CustomDialog title="注意">
-            <b>{savedFestival?.name}</b>のデータは保存されていますが、新しい祭りのデータで上書きしますか？<br/>
+          <CustomDialog title="上書きの確認">
+            <b>{savedFestival?.name}</b>の隊列データは保存されています。<br/>新しい祭りデータで上書きしてもよろしいですか？
             <div className='flex justify-end gap-2 mt-4'>
               <Button label="Cancel" onClick={() => setShowConfirmOverwrite(false)}>キャンセル</Button>
-              <Button primary label="Ok"
-                onClick={() => {
-                  if (selectedFestival && selectedFormation) {
-                    loadFormation(selectedFestival, selectedFormation);
-                  }
-                  setShowConfirmOverwrite(false)
-                }}>
-                  OK
-              </Button>
+              <Button primary label="Ok" onClick={() => onConfirmOverwrite()}>OK</Button>
             </div>
           </CustomDialog>
         }

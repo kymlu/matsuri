@@ -25,7 +25,6 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 	const { participantList, propList } = useContext(EntitiesContext);
 	const { isAnimating } = useContext(AnimationContext);
 	const {enableAnimation} = useContext(SettingsContext);
-	const {selectedFormation} = useContext(FormationContext);
 
 	const sectionButtonRef = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
 
@@ -194,19 +193,12 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 
 	function copyToNewSection(
 		lastSection: FormationSection,
-		nextSectionId: string
 	) {
-		var countOfThisSection = currentSections.filter((x) =>
-			strEquals(x.songSectionId, nextSectionId)
-		).length;
-
 		var newSection = {
 			id: crypto.randomUUID(),
-			displayName:
-				songList[selectedFormation!.songId].sections.find((x) => strEquals(x.id, nextSectionId))!.name +
-				(countOfThisSection ? ` (${countOfThisSection})` : ""),
+			displayName: "新セクション",
 			formationId: lastSection.formationId,
-			songSectionId: nextSectionId,
+			songSectionId: undefined,
 			order: lastSection.order + 1,
 		} as FormationSection;
 
@@ -348,15 +340,6 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 	var lastSection = currentSections
 		.slice()
 		?.sort((a, b) => b.order - a.order)[0];
-	var lastSectionCount = currentSections.filter((x) =>
-		strEquals(x.songSectionId, lastSection?.songSectionId)
-	).length;
-	var lastSectionDetails = songList[selectedFormation!.songId].sections.find((x) =>
-		strEquals(x.id, lastSection?.songSectionId)
-	);
-	var nextSection = lastSectionDetails
-		? songList[selectedFormation!.songId].sections.find((x) => x.order === lastSectionDetails!.order + 1)
-		: undefined;
 
 	return (
 		<ExpandableSection
@@ -397,21 +380,10 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 								className="m-auto size-8"
 								src={ICON.addBlack}/>
 						</div>}>
-          {nextSection && (
-            <>
-              <MenuItem
-                label={`「${nextSection?.name}」追加`}
-                onClick={() => {
-                  copyToNewSection(lastSection!, nextSection!.id);
-                }}
-              />
-              <MenuSeparator />
-            </>
-          )}
 					<MenuItem
-						label={`「${lastSectionDetails?.name} (${lastSectionCount}）」追加`}
+						label={`新しいセクション追加`}
 						onClick={() => {
-							copyToNewSection(lastSection!, lastSection.songSectionId);
+							copyToNewSection(lastSection!);
 						}}
 					/>
 				</CustomMenu>

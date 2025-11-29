@@ -32,7 +32,7 @@ export async function GetAllForFormation(
     arrowPositions,
     placeholderPositions,
   ] = await Promise.all([
-    getByFormationId("formationSection", formationId), // TODO URGENT: move all getters and setters to repos
+    getByFormationId("formationSection", formationId),
     getByFestivalId("participant", festivalId),
     getByFestivalId("prop", festivalId),
     getByFormationId("placeholder", formationId),

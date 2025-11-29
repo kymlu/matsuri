@@ -19,11 +19,12 @@ import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
 import { EntitiesContext } from "../contexts/EntitiesContext.tsx";
 import { GetAllForFormation } from "../data/DataController.ts";
 import { getByFormationId, upsertList } from "../data/DataRepository.ts";
+import { Formation } from "../models/Formation.ts";
 
 export function EditorPageHeader() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
-  const {selectedFestival, selectedSection} = useContext(UserContext);
+  const {selectedFestival, selectedSection, updateState} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation, updateFormationContext} = useContext(FormationContext);
   const {updateEntitiesContext} = useContext(EntitiesContext);
@@ -38,6 +39,76 @@ export function EditorPageHeader() {
       navigate("../");
     }
   };
+
+  const switchFormation = (formation: Formation) => {
+    if (selectedFestival === null) return;
+    
+    console.log(`Switching to formation: ${formation.name}`, formation);
+    
+    getByFormationId("formationSection", formation.id)
+      .then(async (sections) => {
+        var sectionsExist = sections.length > 0;
+        if (sectionsExist) {
+          GetAllForFormation(selectedFestival.id, formation.id,
+            (
+              formationSections, participants, props, placeholders, 
+              participantPositions, propPositions, notePositions, 
+              arrowPositions, placeholderPositions
+            ) => {
+              updateFormationContext({selectedFormation: formation});
+              updateState({
+                currentSections: formationSections,
+                selectedSection: formationSections[0],
+                selectedItems: []
+              });
+              updatePositionContextState({
+                participantPositions: groupByKey(participantPositions, "formationSectionId"),
+                propPositions: groupByKey(propPositions, "formationSectionId"),
+                notePositions: groupByKey(notePositions, "formationSectionId"),
+                arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
+                placeholderPositions: groupByKey(placeholderPositions, "formationSectionId"),
+              });
+              updateEntitiesContext({
+                placeholderList: indexByKey(placeholders, "id"),
+              });
+            }
+          );
+        } else {
+          // file may exist, try to load from file
+          getFormationFile(
+            selectedFestival.id,
+            formation.name,
+            (msg) => { 
+              // todo: throw error message on screen
+              console.log(msg);
+            },
+            async (formationDetails) => {
+              Promise.all([
+                upsertList("formationSection", formationDetails.sections),
+                upsertList("participantPosition", formationDetails.participants),
+                upsertList("propPosition", formationDetails.props),
+                upsertList("notePosition", formationDetails.notes),
+                upsertList("arrowPosition", formationDetails.arrows),
+                upsertList("placeholder", formationDetails.placeholders),
+                upsertList("placeholderPosition", formationDetails.placeholderPositions),
+              ]).then(() => {
+                updateFormationContext({selectedFormation: formation});
+                updatePositionContextState({
+                  participantPositions: groupByKey(formationDetails.participants, "formationSectionId"),
+                  propPositions: groupByKey(formationDetails.props, "formationSectionId"),
+                  notePositions: groupByKey(formationDetails.notes, "formationSectionId"),
+                  arrowPositions: groupByKey(formationDetails.arrows, "formationSectionId"),
+                  placeholderPositions: groupByKey(formationDetails.placeholderPositions, "formationSectionId"),
+                });
+                updateEntitiesContext({
+                  placeholderList: indexByKey(formationDetails.placeholders, "id"),
+                });
+              })
+            }
+          )
+        }
+      });
+  }
 
   return (
     <header className='flex items-center justify-between w-full col-span-3 px-4 py-2 border-b-2 border-solid border-grey-200'>
@@ -55,91 +126,36 @@ export function EditorPageHeader() {
               <img alt="Festival edit" src={ICON.festival} className='size-8 max-w-8 max-h-8'/>
             }>
             <MenuItem label="祭り編集" onClick={() => {setDialogOpen(true)}} />
-            <MenuSeparator/>
-            <Menu.SubmenuRoot>
-              <Menu.SubmenuTrigger
-                className="flex flex-row p-1 text-center rounded-md cursor-pointer lg:hover:bg-grey-200">
-                  別の隊列を編集 <img className="size-6" src={ICON.chevronForwardBlack}/>
-              </Menu.SubmenuTrigger>
-              <MenuContents position="right">
-                {
-                  selectedFestival?.formations.filter(x => !strEquals(x.id, selectedFormation?.id))
-                    .map((formation, index) => (
-                      <>
-                        <MenuItem
-                          key={formation.id}
-                          label={formation.name}
-                          onClick={() => {
-                            // if a formation section exists in the database, load it
-                            // TODO: CRITICAL: does not properly grab data on screen reload
-                            console.log(`Switching to formation: ${formation.name}`, formation);
-                            getByFormationId("formationSection", formation.id)
-                              .then(async (sections) => {
-                                var sectionsExist = sections.length > 0;
-                                if (sectionsExist) {
-                                  GetAllForFormation(selectedFestival.id, formation.id,
-                                    (
-                                      formationSections, participants, props, placeholders, 
-                                      participantPositions, propPositions, notePositions, 
-                                      arrowPositions, placeholderPositions
-                                    ) => {
-                                      updateFormationContext({selectedFormation: formation});
-                                      updatePositionContextState({
-                                        participantPositions: groupByKey(participantPositions, "formationSectionId"),
-                                        propPositions: groupByKey(propPositions, "formationSectionId"),
-                                        notePositions: groupByKey(notePositions, "formationSectionId"),
-                                        arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
-                                        placeholderPositions: groupByKey(placeholderPositions, "formationSectionId"),
-                                      });
-                                      updateEntitiesContext({
-                                        placeholderList: indexByKey(placeholders, "id"),
-                                      });
-                                    }
-                                  );
-                                } else {
-                                  // file may exist, try to load from file
-                                  getFormationFile(
-                                    selectedFestival.id,
-                                    formation.name,
-                                    (msg) => { 
-                                      // todo: throw error message on screen
-                                      console.log(msg);
-                                    },
-                                    async (formationDetails) => {
-                                      Promise.all([
-                                        upsertList("formationSection", formationDetails.sections),
-                                        upsertList("participantPosition", formationDetails.participants),
-                                        upsertList("propPosition", formationDetails.props),
-                                        upsertList("notePosition", formationDetails.notes),
-                                        upsertList("arrowPosition", formationDetails.arrows),
-                                        upsertList("placeholder", formationDetails.placeholders),
-                                        upsertList("placeholderPosition", formationDetails.placeholderPositions),
-                                      ]).then(() => {
-                                        updateFormationContext({selectedFormation: formation});
-                                        updatePositionContextState({
-                                          participantPositions: groupByKey(formationDetails.participants, "formationSectionId"),
-                                          propPositions: groupByKey(formationDetails.props, "formationSectionId"),
-                                          notePositions: groupByKey(formationDetails.notes, "formationSectionId"),
-                                          arrowPositions: groupByKey(formationDetails.arrows, "formationSectionId"),
-                                          placeholderPositions: groupByKey(formationDetails.placeholderPositions, "formationSectionId"),
-                                        });
-                                        updateEntitiesContext({
-                                          placeholderList: indexByKey(formationDetails.placeholders, "id"),
-                                        });
-                                      })
-                                    }
-                                  )
-                                }
-                              });
-                          }}/>
-                        {
-                          index !== selectedFestival?.formations.length - 2 && <MenuSeparator/>
-                        }
-                      </>
-                  ))
-                }
-              </MenuContents>
-            </Menu.SubmenuRoot>
+            {
+              (selectedFestival?.formations.length ?? 0) > 1 &&
+              <>
+                <MenuSeparator/>
+                <Menu.SubmenuRoot>
+                  <Menu.SubmenuTrigger
+                    className="flex flex-row p-1 text-center rounded-md cursor-pointer lg:hover:bg-grey-200">
+                      別の隊列を編集 <img className="size-6" src={ICON.chevronForwardBlack}/>
+                  </Menu.SubmenuTrigger>
+                  <MenuContents position="right">
+                    {
+                      selectedFestival?.formations.filter(x => !strEquals(x.id, selectedFormation?.id))
+                        .map((formation, index) => (
+                          <>
+                            <MenuItem
+                              key={formation.id}
+                              label={formation.name}
+                              onClick={() => {
+                                switchFormation(formation);
+                              }}/>
+                            {
+                              index !== selectedFestival?.formations.length - 2 && <MenuSeparator/>
+                            }
+                          </>
+                      ))
+                    }
+                  </MenuContents>
+                </Menu.SubmenuRoot>
+              </>
+            }
             {/* <MenuSeparator/>
             <MenuItem label="隊列比較" onClick={() => {
               console.log("Todo: implement formation compare");
@@ -228,7 +244,7 @@ export function EditorPageHeader() {
         </div>
       }
       <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-        <EditFestivalDialog/>
+        <EditFestivalDialog onSave={() => setDialogOpen(false)}/>
       </Dialog.Root>
     </header>
     

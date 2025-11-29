@@ -7,6 +7,7 @@ import CustomSelect from "../../CustomSelect.tsx";
 import NumberTextField from "../../NumberTextField.tsx";
 import TextInput from "../../TextInput.tsx";
 import { isNullOrUndefinedOrBlank, strEquals } from "../../../lib/helpers/GlobalHelper.ts";
+import { FormationSection } from "../../../models/FormationSection.ts";
 
 export type EditFestivalFormationsProps = {
   formations: Formation[],
@@ -20,7 +21,10 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
   const [formationNames, setFormationNames] = useState<Record<string, number>>({});
 
   useImperativeHandle(props.ref, () => ({
-    getData: () => {return formations;},
+    getData: () => {
+      const newSections = addFormationSections(formations.filter(x => x.isNew));
+      return {formations, newSections};
+    },
     resetData: () => {
       setFormations([...props.formations.map(x => ({...x, isNew: false}))]);
       updateFormationNames(props.formations);
@@ -34,6 +38,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     }, {});
     setFormationNames(updated);
     props.setError?.(
+      formations.length === 0 ||
       Object.keys(updated).some(key => isNullOrUndefinedOrBlank(key) || key.match(`[~"#%&*:<>?/\\{|}]+`) !== null) ||
       Object.values(updated).some(count => count > 1)
     );
@@ -53,7 +58,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
         songId: Object.keys(songList)[0],
         length: 10,
         width: 20,
-        topMargin: 5,
+        topMargin: 2,
         sideMargin: 5,
         bottomMargin: 5,
         isNew: true,
@@ -62,6 +67,31 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
   };
+
+  const addFormationSections = (formationList: Formation[]): FormationSection[] => {
+    return formationList.map(formation => {
+      var song = songList[formation.songId];
+      if (song == null) {
+        return [{
+          id: crypto.randomUUID(),
+          formationId: formation.id,
+          displayName: "新しいセクション",
+          order: 1,
+        } as FormationSection];
+      } else {
+        return songList[formation.songId]?.sections
+          ?.map(songSection => {
+            return {
+            id: crypto.randomUUID(),
+            formationId: formation.id,
+            songSectionId: songSection.id,
+            displayName: songSection.name,
+            order: songSection.order,
+          } as FormationSection;
+        });
+      }
+    }).flat();
+  }
 
   const editFormationName = (index: number, newName: string) => {
     const updatedFormations = [...formations];

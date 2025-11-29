@@ -1,7 +1,8 @@
-import React, { useCallback, useImperativeHandle, useState } from "react";
+import React, { useCallback, useContext, useImperativeHandle, useState } from "react";
 import DateInput from "../../DateInput.tsx";
 import TextInput from "../../TextInput.tsx";
 import { isNullOrUndefinedOrBlank } from "../../../lib/helpers/GlobalHelper.ts";
+import { UserContext } from "../../../contexts/UserContext.tsx";
 
 export type EditFestivalGeneralProps = {
   id?: string,
@@ -14,6 +15,8 @@ export type EditFestivalGeneralProps = {
 }
 
 export function EditFestivalGeneral(props: EditFestivalGeneralProps) {
+    const {selectedFestival} = useContext(UserContext);
+  
   const [id, setId] = useState(props.id ?? "");
   const [name, setName] = useState(props.name?.toString() ?? "");
   const [startDate, setStartDate] = useState(props.startDate?.toString() ?? "");
@@ -63,6 +66,7 @@ export function EditFestivalGeneral(props: EditFestivalGeneralProps) {
   );
 
   const reevaluateError = (id: string, name: string, startDate: string, endDateError: boolean) => {
+    console.log("reevaluateError", {id, name, startDate, endDateError});
     props.setError?.( 
       isNullOrUndefinedOrBlank(id) || 
       isNullOrUndefinedOrBlank(name) || 
@@ -71,20 +75,32 @@ export function EditFestivalGeneral(props: EditFestivalGeneralProps) {
     );
   }
 
+  const editId = (newId: string) => {
+    if(selectedFestival) return;
+    const formattedId = newId.replace(/[^a-zA-Z0-9]/g, "")
+    setId(formattedId);
+    idRef.current?.changeValue(formattedId);
+    reevaluateError(formattedId, name, startDate, endDateError); // Todo: check id already exists
+  }
+
   return <>
     <label>
-      ID
+      ID (英数字のみ)
+      <span className="block text-xs text-gray-500">
+        ※ 確定後に編集することはできません
+        <br/>
+        例: 20250830Domatsuri
+      </span>
       <TextInput
         name="id"
         ref={idRef}
-        disabled
+        disabled={!!selectedFestival}
         tall
         default={id}
         placeholder="IDを入力"
         required
         onContentChange={(val) => {
-          setId(val);
-          reevaluateError(val, name, startDate, endDateError);
+          editId(val);
         }}
       />
     </label>

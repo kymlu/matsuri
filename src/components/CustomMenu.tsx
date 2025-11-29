@@ -52,15 +52,23 @@ export function MenuSeparator() {
 export interface MenuItemProps {
   label: string;
   onClick: (e: React.MouseEvent) => void;
+  disabled?: boolean;
 }
 
-export function MenuItem({ label, onClick }) {
+export function MenuItem({ label, onClick, disabled = false }: MenuItemProps) {
+  const itemClassNames = classNames("p-1 text-center rounded-md", {
+    "opacity-50 cursor-not-allowed lg:hover:bg-white": disabled,
+    "lg:hover:bg-grey-200 cursor-pointer": !disabled,
+  });
+
   return (
     <Menu.Item
-      className="p-1 text-center rounded-md cursor-pointer lg:hover:bg-grey-200"
+      className={itemClassNames}
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e);
+        if (!disabled) {
+          onClick(e);
+        }
       }}
     >
       {label}
