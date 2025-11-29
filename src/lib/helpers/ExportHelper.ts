@@ -11,7 +11,7 @@ import { basePalette, objectPalette } from "../../themes/colours.ts";
 import { formatExportDate } from "./DateHelper.ts";
 import { roundToTenth, strEquals } from "./GlobalHelper.ts";
 import { DEFAULT_SIDE_MARGIN, DEFAULT_TOP_MARGIN, DEFAULT_BOTTOM_MARGIN } from "../consts.ts";
-import { getAllData } from "../../data/DataController.ts";
+import { getAllData, getAllDataForFestival } from "../../data/DataController.ts";
 import JSZip from "jszip";
 
 export function exportAllData() {
@@ -39,13 +39,42 @@ export function exportAllData() {
       placeholders: placeholders as ParticipantPlaceholder[],
       placeholderPositions: placeholderPositions as PlaceholderPosition[],
     };
-    downloadJson(JSON.stringify(toExport));
+    downloadFile(JSON.stringify(toExport), "application/json", `matsuri_formation_${formatExportDate(new Date)}.mtr`)
   });
 }
 
-export function exportForGithub() {
-  getAllData((
-    festivals: Festival[],
+export function exportFestivalData(festivalId: string) {
+  getAllDataForFestival(festivalId, (
+    festival: Festival,
+    formationSections: FormationSection[],
+    participants: Participant[],
+    props: Prop[],
+    placeholders: ParticipantPlaceholder[],
+    participantPositions: ParticipantPosition[],
+    propPositions: PropPosition[],
+    notePositions: NotePosition[],
+    arrowPositions: ArrowPosition[],
+    placeholderPositions: PlaceholderPosition[],
+  ) => {
+    var toExport: ImportExportModel = {
+      festival: [festival as Festival],
+      formationSections: formationSections as FormationSection[],
+      participants: participants as Participant[],
+      participantPositions: participantPositions as ParticipantPosition[],
+      props: props as Prop[],
+      propPositions: propPositions as PropPosition[],
+      arrowPositions: arrowPositions as ArrowPosition[],
+      notes: notePositions as NotePosition[],
+      placeholders: placeholders as ParticipantPlaceholder[],
+      placeholderPositions: placeholderPositions as PlaceholderPosition[],
+    };
+    downloadFile(JSON.stringify(toExport), "application/json", `${festival.id}.mtr`)
+  });
+}
+
+export function exportForGithub(festivalId: string) {
+  getAllDataForFestival(festivalId, (
+    festival: Festival,
     formationSections: FormationSection[],
     participants: Participant[],
     props: Prop[],
@@ -59,7 +88,6 @@ export function exportForGithub() {
     var exportZip = new JSZip();
     
     // festival file
-    var festival = festivals[0];
     exportZip.file("festival.json", JSON.stringify(festival));
 
     // resources file
@@ -99,10 +127,6 @@ export function exportForGithub() {
         URL.revokeObjectURL(url);
       });
   });
-}
-
-function downloadJson(data: string) {
-  downloadFile(data, "application/json", `matsuri_formation_${formatExportDate(new Date)}.json`)
 }
 
 export function downloadFile(data: string, type: string, fileName: string) {

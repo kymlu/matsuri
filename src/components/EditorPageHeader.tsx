@@ -3,7 +3,7 @@ import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../lib/consts.t
 import CustomMenu, { MenuContents, MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
-import { exportAllData, exportForGithub } from "../lib/helpers/ExportHelper.ts";
+import { exportFestivalData, exportForGithub } from "../lib/helpers/ExportHelper.ts";
 import { downloadLogs } from "../lib/helpers/LogHelper.ts";
 import { SiteInfoDialog } from "./dialogs/SiteInfoDialog.tsx";
 import { AppModeContext } from "../contexts/AppModeContext.tsx";
@@ -203,7 +203,7 @@ export function EditorPageHeader() {
           </button>
           <button
             onClick={() => {
-              exportAllData()
+              exportFestivalData(selectedFestival!.id);
             }}>
             <img
               alt={"Download Data"}
@@ -212,7 +212,7 @@ export function EditorPageHeader() {
           </button>
           <button
             onClick={() => {
-              exportForGithub()
+              exportForGithub(selectedFestival!.id)
             }}>
             <img
               alt={"Download Data"}

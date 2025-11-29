@@ -9,6 +9,15 @@ export async function getAll<T extends TableName>(
   });
 }
 
+export async function getById<T extends TableName>(
+  storeName: T,
+  itemId: string
+): Promise<TableTypeMap[T] | null> {
+  return indexedDbManager.getById(storeName, itemId).then((result) => {
+    return result as TableTypeMap[T] | null;
+  });
+}
+
 export async function getByFestivalId<T extends "participant" | "prop">(
   storeName: T,
   festivalId: string

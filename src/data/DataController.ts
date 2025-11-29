@@ -1,9 +1,10 @@
+import { strEquals } from "../lib/helpers/GlobalHelper.ts";
 import { Festival } from "../models/Festival.ts";
 import { FormationSection } from "../models/FormationSection.ts";
 import { Participant, ParticipantPlaceholder } from "../models/Participant.ts";
 import { ParticipantPosition, PropPosition, NotePosition, ArrowPosition, PlaceholderPosition } from "../models/Position.ts";
 import { Prop } from "../models/Prop.ts";
-import { getByFormationId, getByFestivalId, getAll, deleteAll } from "./DataRepository.ts";
+import { getByFormationId, getByFestivalId, getAll, deleteAll, getById } from "./DataRepository.ts";
 
 export async function GetAllForFormation(
   festivalId: string,
@@ -114,6 +115,65 @@ export async function getAllData(
     notePositions,
     arrowPositions,
     placeholderPositions,
+  );
+}
+
+export async function getAllDataForFestival(
+  festivalId: string,
+  thenFn: (
+    festival: Festival,
+    formationSections: FormationSection[],
+    participants: Participant[],
+    props: Prop[],
+    placeholder: ParticipantPlaceholder[],
+    participantPositions: ParticipantPosition[],
+    propPositions: PropPosition[],
+    notePositions: NotePosition[],
+    arrowPositions: ArrowPosition[],
+    placeholderPosition: PlaceholderPosition[],
+  ) => void
+  ) {
+  const [
+    festivals,
+    formationSections,
+    participants,
+    props,
+    placeholders,
+    participantPositions,
+    propPositions,
+    notePositions,
+    arrowPositions,
+    placeholderPositions,
+  ] = await Promise.all([
+    getById("festival", festivalId),
+    getAll("formationSection"),
+    getByFestivalId("participant", festivalId),
+    getByFestivalId("prop", festivalId),
+    getAll("placeholder"),
+    getAll("participantPosition"),
+    getAll("propPosition"),
+    getAll("notePosition"),
+    getAll("arrowPosition"),
+    getAll("placeholderPosition"),
+  ]);
+
+  if (!festivals) return;
+
+  const formationIds = new Set(festivals?.formations.map(f => f.id));
+  const fsIds = new Set(formationSections.filter(fs => formationIds.has(fs.formationId)).map(fs => fs.id));
+
+  // Call the callback with all values
+  thenFn(
+    festivals,
+    formationSections.filter(fs => formationIds.has(fs.formationId)),
+    participants,
+    props,
+    placeholders.filter(pp => formationIds.has(pp.formationId)),
+    participantPositions.filter(pp => fsIds.has(pp.formationSectionId)),
+    propPositions.filter(pp => fsIds.has(pp.formationSectionId)),
+    notePositions.filter(pp => fsIds.has(pp.formationSectionId)),
+    arrowPositions.filter(pp => fsIds.has(pp.formationSectionId)),
+    placeholderPositions.filter(pp => fsIds.has(pp.formationSectionId)),
   );
 }
 
