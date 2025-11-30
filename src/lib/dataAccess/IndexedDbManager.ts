@@ -108,132 +108,177 @@ export class IndexedDBManager {
   }
 
   _getStore(storeName: TableName, mode: IDBTransactionMode = "readwrite") {
-    return this.db.transaction(storeName, mode).objectStore(storeName);
+    try {
+      return this.db.transaction(storeName, mode).objectStore(storeName);
+    } catch (error) {
+      console.error(`Error getting object store ${storeName}: ${error}`);
+      throw error;
+    }
   }
 
   async getAll(storeName: TableName) {
     console.log(`getAll ${storeName} called`);
     return new Promise((resolve, reject) => {
-      const request = this._getStore(storeName, "readonly").getAll();
-      request.onsuccess = () => {
-        console.log(`resolved getAll ${storeName}: ${request.result.length}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on getAll ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const request = this._getStore(storeName, "readonly").getAll();
+        request.onsuccess = () => {
+          console.log(`resolved getAll ${storeName}: ${request.result.length}`);
+          resolve(request.result || null);
+        };
+        request.onerror = () => {
+          console.error(`error on getAll ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on getAll ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async getByFormationId(storeName: "formationSection" | "placeholder", formationId: string) {
     console.log(`getByFormationId ${storeName} called on ${formationId}`);
     return new Promise((resolve, reject) => {
-      const index = this._getStore(storeName, "readonly").index("formationId");
-      const request = index.getAll(formationId);
-      request.onsuccess = () => {
-        console.log(`resolved getByFormationId ${storeName}: ${request.result.length}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on getByFormationId ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const index = this._getStore(storeName, "readonly").index("formationId");
+        const request = index.getAll(formationId);
+        request.onsuccess = () => {
+          console.log(`resolved getByFormationId ${storeName}: ${request.result.length}`);
+          resolve(request.result || null);
+        };
+        request.onerror = () => {
+          console.error(`error on getByFormationId ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on getByFormationId ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async getByFestivalId(storeName: "participant" | "prop", festivalId: string) {
     console.log(`getByFestivalId ${storeName} called on ${festivalId}`);
     return new Promise((resolve, reject) => {
-      const index = this._getStore(storeName, "readonly").index("festivalId");
-      const request = index.getAll(festivalId);
-      request.onsuccess = () => {
-        console.log(`resolved getByFestivalId ${storeName}: ${request.result.length}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on getByFestivalId ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const index = this._getStore(storeName, "readonly").index("festivalId");
+        const request = index.getAll(festivalId);
+        request.onsuccess = () => {
+          console.log(`resolved getByFestivalId ${storeName}: ${request.result.length}`);
+          resolve(request.result || null);
+        };
+        request.onerror = () => {
+          console.error(`error on getByFestivalId ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on getByFestivalId ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async getPositionsByParticipantId(participantId: string) {
     console.log(`getPositionsByParticipantId called on ${participantId}`);
     return new Promise((resolve, reject) => {
-      const index = this._getStore("participantPosition", "readonly").index("participantId");
-      const request = index.getAll(participantId);
-      request.onsuccess = () => {
-        console.log(`resolved getPositionsByParticipantId: ${request.result.length}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on getPositionsByParticipantId: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const index = this._getStore("participantPosition", "readonly").index("participantId");
+        const request = index.getAll(participantId);
+        request.onsuccess = () => {
+          console.log(`resolved getPositionsByParticipantId: ${request.result.length}`);
+          resolve(request.result || null);
+        };
+        request.onerror = () => {
+          console.error(`error on getPositionsByParticipantId: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on getPositionsByParticipantId: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async getByFormationSectionId(storeName: "participantPosition" | "propPosition" | "notePosition" | "arrowPosition" | "placeholderPosition", formationSectionId: string) {
     console.log(`getByFormationSectionId ${storeName} called on ${formationSectionId}`);
     return new Promise((resolve, reject) => {
-      const index = this._getStore(storeName, "readonly").index("formationSectionId");
-      const request = index.getAll(formationSectionId);
-      request.onsuccess = () => {
-        console.log(`resolved getByFormationSectionId ${storeName}: ${request.result.length}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on getByFormationSectionId ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const index = this._getStore(storeName, "readonly").index("formationSectionId");
+        const request = index.getAll(formationSectionId);
+        request.onsuccess = () => {
+          console.log(`resolved getByFormationSectionId ${storeName}: ${request.result.length}`);
+          resolve(request.result || null);
+        };
+        request.onerror = () => {
+          console.error(`error on getByFormationSectionId ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on getByFormationSectionId ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async getById(storeName: TableName, id: string) {
     console.log(`findById ${storeName} called on ${id}`);
     return new Promise((resolve, reject) => {
-      const request = this._getStore(storeName, "readonly").get(id);
-      request.onsuccess = () => {
-        console.log(`resolved findById ${storeName}: ${request.result}`);
-        resolve(request.result || null);
-      };
-      request.onerror = () => {
-        console.error(`error on findById ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const request = this._getStore(storeName, "readonly").get(id);
+        request.onsuccess = () => {
+          console.log(`resolved findById ${storeName}: ${request.result}`);
+          resolve(request.result || null);
+        };
+        request.onerror = () => {
+          console.error(`error on findById ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on findById ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async upsertItem(storeName: TableName, item: any) {
     console.log(`upsertItem ${storeName} called`);
     return new Promise<number>((resolve, reject) => {
-      const request = this._getStore(storeName).put(item);
-      request.onsuccess = () => {
-        console.log(`resolved upsertItem ${storeName}: ${request.result as number}`);
-        resolve(request.result as number);
-      };
-      request.onerror = () => {
-        console.error(`error on upsertItem ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const request = this._getStore(storeName).put(item);
+        request.onsuccess = () => {
+          console.log(`resolved upsertItem ${storeName}: ${request.result as number}`);
+          resolve(request.result as number);
+        };
+        request.onerror = () => {
+          console.error(`error on upsertItem ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on upsertItem ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
   async upsertList(storeName: TableName, list: Array<any>) {
     console.log(`upsertList ${storeName} called`);
     return new Promise<number>((resolve, reject) => {
-      const tx = this._getTransaction(storeName);
-      const store = tx.objectStore(storeName);
-      list.forEach(item => store.put(item));
-      tx.oncomplete = () => {
-        console.log(`resolved upsertList ${storeName}: ${list.length}`);
-        resolve(list.length);
-      };
-      tx.onerror = () => {
-        console.error(`error on upsertList ${storeName}: ${tx.error}`);
-        reject(tx.error);
-      };
+      try {
+        const tx = this._getTransaction(storeName);
+        const store = tx.objectStore(storeName);
+        list.forEach(item => store.put(item));
+        tx.oncomplete = () => {
+          console.log(`resolved upsertList ${storeName}: ${list.length}`);
+          resolve(list.length);
+        };
+        tx.onerror = () => {
+          console.error(`error on upsertList ${storeName}: ${tx.error}`);
+          reject(tx.error);
+        };
+      } catch (error) {
+        console.error(`exception on upsertList ${storeName}: ${error}`);
+        reject(error);
+      }
     });
   }
 
@@ -241,15 +286,20 @@ export class IndexedDBManager {
     if (isNullOrUndefinedOrBlank(itemId)) return Promise.resolve(0);
     console.log(`removeItem ${storeName} called`);
     return new Promise<any>((resolve, reject) => {
-      const request = this._getStore(storeName).delete(itemId);
-      request.onsuccess = () => {
-        console.log(`resolved removeItem ${storeName}: ${request.result}`);
-        resolve(request.result);
-      };
-      request.onerror = () => {
-        console.error(`error on removeItem ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const request = this._getStore(storeName).delete(itemId);
+        request.onsuccess = () => {
+          console.log(`resolved removeItem ${storeName}: ${request.result}`);
+          resolve(request.result);
+        };
+        request.onerror = () => {
+          console.error(`error on removeItem ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on removeItem ${storeName}: ${error}`);
+        reject(error);
+      }
     })
   }
 
@@ -258,32 +308,42 @@ export class IndexedDBManager {
     if (idList.length === 0) return Promise.resolve(0);
     console.log(`removeList ${storeName} called`);
     return new Promise<any>((resolve, reject) => {
-      const tx = this._getTransaction(storeName);
-      const store = tx.objectStore(storeName);
-      idList.forEach(item => store.delete(item));
-      tx.oncomplete = () => {
-        console.log(`resolved removeList ${storeName}: ${idList.length}`);
-        resolve(idList.length);
-      };
-      tx.onerror = () => {
-        console.error(`error on removeList ${storeName}: ${tx.error}`);
-        reject(tx.error);
-      };
+      try {
+        const tx = this._getTransaction(storeName);
+        const store = tx.objectStore(storeName);
+        idList.forEach(item => store.delete(item));
+        tx.oncomplete = () => {
+          console.log(`resolved removeList ${storeName}: ${idList.length}`);
+          resolve(idList.length);
+        };
+        tx.onerror = () => {
+          console.error(`error on removeList ${storeName}: ${tx.error}`);
+          reject(tx.error);
+        };
+      } catch (error) {
+        console.error(`exception on removeList ${storeName}: ${error}`);
+        reject(error);
+      }
     })
   }
 
   async deleteAll(storeName: TableName) {
     console.log(`deleteAll ${storeName} called`);
     return new Promise<any>((resolve, reject) => {
-      const request = this._getStore(storeName).clear();
-      request.onsuccess = () => {
-        console.log(`resolved deleteAll ${storeName}`);
-        resolve(request.result);
-      };
-      request.onerror = () => {
-        console.error(`error on deleteAll ${storeName}: ${request.error}`);
-        reject(request.error);
-      };
+      try {
+        const request = this._getStore(storeName).clear();
+        request.onsuccess = () => {
+          console.log(`resolved deleteAll ${storeName}`);
+          resolve(request.result);
+        };
+        request.onerror = () => {
+          console.error(`error on deleteAll ${storeName}: ${request.error}`);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`exception on deleteAll ${storeName}: ${error}`);
+        reject(error);
+      }
     })
   }
 }
