@@ -453,7 +453,7 @@ export default function FestivalManagerPage () {
       </div>
       {
         festivalData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-          .map((festival) => <FestivalSelector festival={festival} onFormationClick={selectExistingFestival}/>
+          .map((festival) => <FestivalSelector key={festival.id} festival={festival} onFormationClick={selectExistingFestival}/>
         )
       }
       <span className='fixed opacity-50 bottom-2 left-2'>{LAST_UPDATED}</span>
