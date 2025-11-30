@@ -48,10 +48,19 @@ export default function ActionMenu() {
     
     setSwapMenuExpanded(false);
 
-    var currentCategories = new Set(splitPositionsByType(userContext.selectedItems).participants.map(x => x.categoryId));
-    if (currentCategories.size === 1) {
-      var catId = currentCategories.values().next().value;
-      setSelectedCategory(catId ? categories[catId] ?? null : null);
+    var splitItems = splitPositionsByType(userContext.selectedItems);
+    if (splitItems.participants.length >= 0 &&
+      splitItems.placeholders.length >= 0 &&
+      splitItems.arrows.length === 0 &&
+      splitItems.notes.length === 0 &&
+      splitItems.props.length === 0) {
+      var currentCategories = new Set([...splitItems.participants.map(x => x.categoryId), ...splitItems.placeholders.map(x => x.categoryId)]);
+      if (currentCategories.size === 1) {
+        var catId = currentCategories.values().next().value;
+        setSelectedCategory(catId ? categories[catId] ?? null : null);
+      } else {
+        setSelectedCategory(null);
+      }
     } else {
       setSelectedCategory(null);
     }
