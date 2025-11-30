@@ -17,12 +17,12 @@ import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
 export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");
   const {participantList, placeholderList, updateEntitiesContext} = useContext(EntitiesContext);
-  const {selectedSection, selectedFestival, currentSections} = useContext(UserContext);
+  const {selectedSection, currentSections} = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
   const {participantPositions, updatePositionContextState, placeholderPositions} = useContext(PositionContext);
   const [participantsInFormation, setParticipantsInFormation] = useState<string[]>([]);
 
-  function setFilterTextWrapper(value: string) {
+  const setFilterTextWrapper = (value: string) => {
     setFilterText(value);
   }
 
@@ -30,17 +30,8 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
     setParticipantsInFormation(Object.values(participantPositions)[0]?.map(x => x.participantId) ?? []);
   }, [selectedFormation, participantPositions]);
   
-  function addParticipant(selectedParticipant: Participant) {
+  const addParticipant = (selectedParticipant: Participant) => {
     if(isNullOrUndefined(selectedFormation) || isNullOrUndefined(selectedSection) === null) return;
-
-    // var newParticipant: Participant = {
-    //   id: crypto.randomUUID(),
-    //   displayName: selectedParticipant.name,
-    //   festivalId: selectedFestival!.id,
-    //   isPlaceholder: selectedParticipant.isPlaceholder ?? false,
-    //   placeholderNumber: Object.entries(participantList).length,
-    //   memberId: selectedParticipant.id
-    // }
     
     if (isNullOrUndefinedOrBlank(selectedParticipant.id)) {
       selectedParticipant.id = crypto.randomUUID();
@@ -74,10 +65,10 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   }
 
   const getNextMarginIndex = () => {
-    return (Object.values(participantPositions).length + Object.values(placeholderList).length) % props.margins.length; // TODO: fix
+    return (Object.values(participantPositions[selectedSection!.id]).length + Object.values(placeholderList).length) % props.margins.length; // TODO: fix
   }
 
-  function addPlaceholder(name: string, categoryId: string) {
+  const addPlaceholder = (name: string, categoryId: string) => {
     var id = crypto.randomUUID();
 	  var newPlaceholder: ParticipantPlaceholder = {
 		  id: id,
