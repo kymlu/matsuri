@@ -65,8 +65,16 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     if (hasErrors) return;
 
     const generalData: {id?: string, name?: string, startDate?: string, endDate?: string, note?: string} = generalRef.current?.getData();
-    const participants: ParticipantWithEditState[] = participantsRef.current?.getData();
-    const propsList: PropWithEditState[] = propsRef.current?.getData();
+    const participants: ParticipantWithEditState[] = participantsRef.current?.getData()
+      .map((p: ParticipantWithEditState) => ({
+        ...p,
+        festivalId: generalData.id
+      } as ParticipantWithEditState));
+    const propsList: PropWithEditState[] = propsRef.current?.getData()
+      .map((p: PropWithEditState) => ({
+        ...p,
+        festivalId: generalData.id
+      } as PropWithEditState));
     const formationData: {formations?: FormationWithEditState[], newSections?: FormationSection[]} = formationsRef.current?.getData();
 
     console.log(generalData, participants, propsList, formationData);
