@@ -1,180 +1,177 @@
 import { ICON } from "../lib/consts.ts"
 import { ArrowPreset } from "../models/Arrow.ts"
-import { Festival } from "../models/Festival.ts"
-import { FormationType } from "../models/Formation.ts"
 import { NotePreset } from "../models/Note.ts"
 import { ParticipantOption } from "../models/Participant.ts"
 import { Prop } from "../models/Prop.ts"
 import { Song } from "../models/Song.ts"
 import { objectColorSettings } from "../themes/colours.ts"
 
-// export const festivalList: Array<Festival> = [
-//   {
-//     id: "0",
-//     name: "サンプル",
-//     note: "",
-//     formations: [{
-//       id: "0",
-//       name: "ステージ",
-//       type: FormationType.stage,
-//       songId: "1",
-//       length: 5,
-//       width: 10,
-//       topMargin: 2,
-//       bottomMargin: 4,
-//       sideMargin: 6
-//     }]
-//   },
-//   {
-//     id: "1",
-//     name: "どまつり",
-//     startDate: new Date(2025, 8, 30),
-//     endDate: new Date(2025, 8, 31),
-//     note: "",
-//     formations: [{
-//       id: "1",
-//       name: "パレード",
-//       type: FormationType.parade,
-//       songId: "1",
-//       length: 80,
-//       width: 10,
-//     },
-//     {
-//       id: "2",
-//       name: "ステージ",
-//       type: FormationType.stage,
-//       songId: "1",
-//       length: 18,
-//       width: 20,
-//     },
-//     {
-//       id: "3",
-//       name: "JRステージ",
-//       type: FormationType.stage,
-//       songId: "1",
-//       length: 14,
-//       width: 20,
-//     }]
-//   },
-//   {
-//     id: "2",
-//     name: "こいやまつり",
-//     startDate: new Date(2025, 9, 27),
-//     endDate: new Date(2025, 9, 28),
-//     note: "",
-//     formations: [
-//       {
-//         id: "4",
-//         name: "パレード",
-//         type: FormationType.parade,
-//         songId: "1",
-//         length: 80,
-//         width: 10,
-//       },
-//       {
-//         id: "5",
-//         name: "ステージ",
-//         type: FormationType.stage,
-//         songId: "1",
-//         length: 18,
-//         width: 20,
-//       }
-//     ]
-//   }
-// ]
-
 export const songList: Record<string, Song> = {
-  "1": {
+  "5": {
     name: "陽光へ",
     categories: {
-      "0": { id: "0", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
-      "1": { id: "1", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
-      "2": { id: "2", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
-      "3": { id: "3", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
-      "4": { id: "4", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
-      "5": { id: "5", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
-      "6": { id: "6", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
-      "7": { id: "7", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
-      "8": { id: "8", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
-      "9": { id: "9", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
-      "10": { id: "10", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
-      "11": { id: "11", name: "前隊", color: objectColorSettings["orangeLightest"], order: 4, showInLegend: false, showInParadeGuide: true },
-      "12": { id: "12", name: "後隊", color: objectColorSettings["blueLightest"], order: 5, showInLegend: false, showInParadeGuide: true },
-      "13": { id: "13", name: "女隊", color: objectColorSettings["greenLightest"], order: 6, showInLegend: false, showInParadeGuide: false },
-      "14": { id: "14", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
+      "500": { id: "500", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
+      "501": { id: "501", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
+      "502": { id: "502", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
+      "503": { id: "503", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
+      "504": { id: "504", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
+      "505": { id: "505", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
+      "506": { id: "506", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
+      "507": { id: "507", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
+      "508": { id: "508", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
+      "509": { id: "509", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
+      "510": { id: "510", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
+      "511": { id: "511", name: "前隊", color: objectColorSettings["orangeLightest"], order: 4, showInLegend: false, showInParadeGuide: true },
+      "512": { id: "512", name: "後隊", color: objectColorSettings["blueLightest"], order: 5, showInLegend: false, showInParadeGuide: true },
+      "513": { id: "513", name: "女隊", color: objectColorSettings["greenLightest"], order: 6, showInLegend: false, showInParadeGuide: false },
+      "514": { id: "514", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
     },
-    sections: [{
-      id: "1",
-      songId: "1",
-      name: "OP",
-      order: 1
+    sections: [
+      { id: "501", songId: "5", name: "OP", order: 1 },
+      { id: "502", songId: "5", name: "サビ", order: 2 },
+      { id: "503", songId: "5", name: "入山", order: 3 },
+      { id: "504", songId: "5", name: "滝行", order: 4 },
+      { id: "505", songId: "5", name: "祭り", order: 5 },
+      { id: "506", songId: "5", name: "太陽踊り", order: 6 },
+      { id: "507", songId: "5", name: "迎光祭", order: 7 },
+      { id: "508", songId: "5", name: "ご来光", order: 8 },
+      { id: "509", songId: "5", name: "ラスト1", order: 9 },
+      { id: "510", songId: "5", name: "ラスト2", order: 10 },
+      { id: "511", songId: "5", name: "ラスト3", order: 11 },
+      { id: "512", songId: "5", name: "ラスト4", order: 12 }
+    ]
+  },
+  "1": {
+    name: "今、ひとえに",
+    categories: {
+      "100": { id: "100", name: "一般", color: objectColorSettings["white"], order: 0, showInLegend: true, showInParadeGuide: false },
+      "101": { id: "101", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
+      "102": { id: "102", name: "歌重親衛隊", color: objectColorSettings["greenLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
+      "103": { id: "103", name: "前振り", color: objectColorSettings["white"], order: 3, showInLegend: true, showInParadeGuide: false },
+      "104": { id: "104", name: "後ろ振り", color: objectColorSettings["white"], order: 4, showInLegend: true, showInParadeGuide: false },
+      "105": { id: "105", name: "時計隊", color: objectColorSettings["purpleLightest"], order: 5, showInLegend: true, showInParadeGuide: false },
+      "106": { id: "106", name: "上下", color: objectColorSettings["orangeLightest"], order: 6, showInLegend: true, showInParadeGuide: false },
+      "107": { id: "107", name: "下上", color: objectColorSettings["blueLightest"], order: 7, showInLegend: true, showInParadeGuide: false },
+      "108": { id: "108", name: "山隊", color: objectColorSettings["orangeLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
+      "109": { id: "109", name: "花魁隊", color: objectColorSettings["violetLight"], order: 9, showInLegend: false, showInParadeGuide: false },
+      "110": { id: "110", name: "布隊", color: objectColorSettings["blueLight"], order: 10, showInLegend: false, showInParadeGuide: false },
+      "111": { id: "111", name: "雪隊", color: objectColorSettings["violetMain"], order: 11, showInLegend: false, showInParadeGuide: true },
+      "112": { id: "112", name: "ソフトボール隊", color: objectColorSettings["violetMain"], order: 12, showInLegend: false, showInParadeGuide: true },
+      "113": { id: "113", name: "棒隊", color: objectColorSettings["orangeLight"], order: 13, showInLegend: false, showInParadeGuide: false },
+      "114": { id: "114", name: "後ろ？", color: objectColorSettings["purpleLight"], order: 14, showInLegend: false, showInParadeGuide: false },
     },
-    {
-      id: "2",
-      songId: "1",
-      name: "サビ",
-      order: 2
+    sections: [
+      { id: "101", songId: "1", name: "入り", order: 1 },
+      { id: "102", songId: "1", name: "サビ", order: 2 },
+      { id: "103", songId: "1", name: "川", order: 3 },
+      { id: "104", songId: "1", name: "山", order: 4 },
+      { id: "105", songId: "1", name: "花魁", order: 5 },
+      { id: "106", songId: "1", name: "雪", order: 6 },
+      { id: "107", songId: "1", name: "到着", order: 7 },
+      { id: "108", songId: "1", name: "描きゆく", order: 8 },
+      { id: "109", songId: "1", name: "うみつみち", order: 9 },
+      { id: "110", songId: "1", name: "つむぎあう", order: 10 },
+      { id: "111", songId: "1", name: "ミュージカル", order: 11 }
+    ]
+  },
+  "2": {
+    name: "今をかける",
+    categories: {
+      "200": { id: "200", name: "一般", color: objectColorSettings["white"], order: 0, showInLegend: true, showInParadeGuide: false },
+      "201": { id: "201", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
+      "202": { id: "202", name: "歌重親衛隊", color: objectColorSettings["greenLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
+      "203": { id: "203", name: "前振り", color: objectColorSettings["white"], order: 3, showInLegend: true, showInParadeGuide: false },
+      "204": { id: "204", name: "後ろ振り", color: objectColorSettings["white"], order: 4, showInLegend: true, showInParadeGuide: false },
+      "205": { id: "205", name: "時計隊", color: objectColorSettings["purpleLightest"], order: 5, showInLegend: true, showInParadeGuide: false },
+      "206": { id: "206", name: "上下", color: objectColorSettings["orangeLightest"], order: 6, showInLegend: true, showInParadeGuide: false },
+      "207": { id: "207", name: "下上", color: objectColorSettings["blueLightest"], order: 7, showInLegend: true, showInParadeGuide: false },
+      "208": { id: "208", name: "山隊", color: objectColorSettings["orangeLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
+      "209": { id: "209", name: "花魁隊", color: objectColorSettings["violetLight"], order: 9, showInLegend: false, showInParadeGuide: false },
+      "210": { id: "210", name: "布隊", color: objectColorSettings["blueLight"], order: 10, showInLegend: false, showInParadeGuide: false },
+      "211": { id: "211", name: "雪隊", color: objectColorSettings["violetMain"], order: 11, showInLegend: false, showInParadeGuide: true },
+      "212": { id: "212", name: "ソフトボール隊", color: objectColorSettings["violetMain"], order: 12, showInLegend: false, showInParadeGuide: true },
+      "213": { id: "213", name: "棒隊", color: objectColorSettings["orangeLight"], order: 13, showInLegend: false, showInParadeGuide: false },
+      "214": { id: "214", name: "後ろ？", color: objectColorSettings["purpleLight"], order: 14, showInLegend: false, showInParadeGuide: false },
     },
-    {
-      id: "3",
-      songId: "1",
-      name: "入山",
-      order: 3
+    sections: [
+      { id: "201", songId: "2", name: "入り", order: 1 },
+      { id: "202", songId: "2", name: "サビ", order: 2 },
+      { id: "203", songId: "2", name: "川", order: 3 },
+      { id: "204", songId: "2", name: "山", order: 4 },
+      { id: "205", songId: "2", name: "花魁", order: 5 },
+      { id: "206", songId: "2", name: "雪", order: 6 },
+      { id: "207", songId: "2", name: "到着", order: 7 },
+      { id: "208", songId: "2", name: "描きゆく", order: 8 },
+      { id: "209", songId: "2", name: "うみつみち", order: 9 },
+      { id: "210", songId: "2", name: "つむぎあう", order: 10 },
+      { id: "211", songId: "2", name: "ミュージカル", order: 11 }
+    ]
+  },
+  "3": {
+    name: "To be continued!!!",
+    categories: {
+      "300": { id: "300", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
+      "301": { id: "301", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
+      "302": { id: "302", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
+      "303": { id: "303", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
+      "304": { id: "304", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
+      "305": { id: "305", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
+      "306": { id: "306", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
+      "307": { id: "307", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
+      "308": { id: "308", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
+      "309": { id: "309", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
+      "310": { id: "310", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
+      "311": { id: "311", name: "前隊", color: objectColorSettings["orangeLightest"], order: 4, showInLegend: false, showInParadeGuide: true },
+      "312": { id: "312", name: "後隊", color: objectColorSettings["blueLightest"], order: 5, showInLegend: false, showInParadeGuide: true },
+      "313": { id: "313", name: "女隊", color: objectColorSettings["greenLightest"], order: 6, showInLegend: false, showInParadeGuide: false },
+      "314": { id: "314", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
     },
-    {
-      id: "4",
-      songId: "1",
-      name: "滝行",
-      order: 4
+    sections: [
+      { id: "301", songId: "3", name: "入り", order: 1 },
+      { id: "302", songId: "3", name: "サビ", order: 2 },
+      { id: "303", songId: "3", name: "川", order: 3 },
+      { id: "304", songId: "3", name: "山", order: 4 },
+      { id: "305", songId: "3", name: "花魁", order: 5 },
+      { id: "306", songId: "3", name: "雪", order: 6 },
+      { id: "307", songId: "3", name: "到着", order: 7 },
+      { id: "308", songId: "3", name: "描きゆく", order: 8 },
+      { id: "309", songId: "3", name: "うみつみち", order: 9 },
+      { id: "310", songId: "3", name: "つむぎあう", order: 10 },
+      { id: "311", songId: "3", name: "ミュージカル", order: 11 }
+    ]
+  },
+  "4": {
+    name: "To be continued!!!!!!!!!!",
+    categories: {
+      "400": { id: "400", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
+      "401": { id: "401", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
+      "402": { id: "402", name: "奇", color: objectColorSettings["redLightest"], order: 10, showInLegend: false, showInParadeGuide: false },
+      "403": { id: "403", name: "偶", color: objectColorSettings["blueLightest"], order: 11, showInLegend: true, showInParadeGuide: false },
+      "404": { id: "404", name: "座", color: objectColorSettings["greenLightest"], order: 12, showInLegend: true, showInParadeGuide: false },
+      "405": { id: "405", name: "中", color: objectColorSettings["blueLightest"], order: 13, showInLegend: true, showInParadeGuide: false },
+      "406": { id: "406", name: "高", color: objectColorSettings["redLightest"], order: 14, showInLegend: true, showInParadeGuide: false },
+      "407": { id: "407", name: "左隊", color: objectColorSettings["greenLightest"], order: 8, showInLegend: true, showInParadeGuide: false },
+      "408": { id: "408", name: "右隊", color: objectColorSettings["blueLightest"], order: 9, showInLegend: true, showInParadeGuide: false },
+      "409": { id: "409", name: "旗", color: objectColorSettings["purpleLightest"], order: 2, showInLegend: false, showInParadeGuide: false },
+      "410": { id: "410", name: "山伏", color: objectColorSettings["amberLight"], order: 3, showInLegend: false, showInParadeGuide: false },
+      "411": { id: "411", name: "前隊", color: objectColorSettings["orangeLightest"], order: 4, showInLegend: false, showInParadeGuide: true },
+      "412": { id: "412", name: "後隊", color: objectColorSettings["blueLightest"], order: 5, showInLegend: false, showInParadeGuide: true },
+      "413": { id: "413", name: "女隊", color: objectColorSettings["greenLightest"], order: 6, showInLegend: false, showInParadeGuide: false },
+      "414": { id: "414", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
     },
-    {
-      id: "5",
-      songId: "1",
-      name: "祭り",
-      order: 5
-    },
-    {
-      id: "6",
-      songId: "1",
-      name: "太陽踊り",
-      order: 6
-    },
-    {
-      id: "7",
-      songId: "1",
-      name: "迎光祭",
-      order: 7
-    },
-    {
-      id: "8",
-      songId: "1",
-      name: "ご来光",
-      order: 8
-    },
-    {
-      id: "9",
-      songId: "1",
-      name: "ラスト1",
-      order: 9
-    },
-    {
-      id: "10",
-      songId: "1",
-      name: "ラスト2",
-      order: 10
-    },
-    {
-      id: "11",
-      songId: "1",
-      name: "ラスト3",
-      order: 11
-    },
-    {
-      id: "12",
-      songId: "1",
-      name: "ラスト4",
-      order: 12
-    }]
+    sections: [
+      { id: "401", songId: "4", name: "入り", order: 1 },
+      { id: "402", songId: "4", name: "サビ", order: 2 },
+      { id: "403", songId: "4", name: "川", order: 3 },
+      { id: "404", songId: "4", name: "山", order: 4 },
+      { id: "405", songId: "4", name: "花魁", order: 5 },
+      { id: "406", songId: "4", name: "雪", order: 6 },
+      { id: "407", songId: "4", name: "到着", order: 7 },
+      { id: "408", songId: "4", name: "描きゆく", order: 8 },
+      { id: "409", songId: "4", name: "うみつみち", order: 9 },
+      { id: "410", songId: "4", name: "つむぎあう", order: 10 },
+      { id: "411", songId: "4", name: "ミュージカル", order: 11 }
+    ]
   }
 }
 
@@ -249,6 +246,8 @@ export const propsList: Array<Prop> = [
   { name: "山幕", id: "4", length: 4.5, color: objectColorSettings.grey4 },
   { name: "デカ大旗", id: "5", length: 8, color: objectColorSettings.indigoMain },
   { name: "ご来光幕", id: "6", length: 3.5, color: objectColorSettings.indigoMain },
+  { name: "東西幕", id: "7", length: 6, color: objectColorSettings.indigoMain },
+  { name: "ひとたび幕", id: "8", length: 6, color: objectColorSettings.indigoMain },
 ]
 
 export const notePresets: Array<NotePreset> = [
