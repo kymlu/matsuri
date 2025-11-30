@@ -12,13 +12,13 @@ import { upsertList } from "../../../data/DataRepository.ts";
 
 export default function PropPicker (props: {margins: number[][]}) {
   const {propPositions, updatePositionContextState} = useContext(PositionContext);
-  const {currentSections, selectedFestival, selectedSection} = useContext(UserContext);
-  const {propList, updateEntitiesContext} = useContext(EntitiesContext);
+  const {currentSections, selectedSection} = useContext(UserContext);
+  const {propList} = useContext(EntitiesContext);
 
-  function selectProp(selectedProp: Prop) {
+  const selectProp = (selectedProp: Prop) => {
     if(selectedSection === null) return;
 
-    var position = props.margins[Object.values(propList).length % props.margins.length]
+    var position = props.margins[((selectedSection == null || propPositions[selectedSection.id] == null) ? 0 : Object.values(propPositions[selectedSection.id]).length) % props.margins.length]
     
     var newPositions: PropPosition[] = currentSections.map(section => {
       return {

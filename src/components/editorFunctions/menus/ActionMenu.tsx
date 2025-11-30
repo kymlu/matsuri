@@ -57,7 +57,7 @@ export default function ActionMenu() {
     }
   }, [userContext.selectedItems]);
 
-  function swapParticipants(mode: "current" | "currentOnwards" | "all") {
+  const swapParticipants = (mode: "current" | "currentOnwards" | "all") => {
     if (selectedSection == null) return
     var sectionIds: string[] = [];
     switch (mode) {
@@ -98,7 +98,7 @@ export default function ActionMenu() {
     upsertList("participantPosition", updatedPositions);
   }
 
-  function selectAllFromCategory() {
+  const selectAllFromCategory = () => {
     const selectAllEvent = new CustomEvent(
       CUSTOM_EVENT.selectAllFromCategory, 
       {
@@ -109,7 +109,7 @@ export default function ActionMenu() {
     window.dispatchEvent(selectAllEvent);
   }
 
-  function selectAllOfType() {
+  const selectAllOfType = () => {
     const selectAllEvent = new CustomEvent(
       CUSTOM_EVENT.selectAllPositionType, 
       {
@@ -120,7 +120,7 @@ export default function ActionMenu() {
     window.dispatchEvent(selectAllEvent);
   }
   
-  function deleteObjects() { // todo: update transformer
+  const deleteObjects = () => { // todo: update transformer
     if (selectedItems.length === 0) return;
 
     const {participants, props, notes, arrows, placeholders} = splitPositionsByType(selectedItems);

@@ -13,14 +13,20 @@ import { ICON } from "../../../lib/consts.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
 import { addItemsToRecordByKey, addItemToRecord } from "../../../lib/helpers/GroupingHelper.ts";
 import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
+import { CategoryContext } from "../../../contexts/CategoryContext.tsx";
 
 export default function ParticipantPicker (props: {margins: number[][]}) {
   const [filterText, setFilterText] = useState<string>("");
   const {participantList, placeholderList, updateEntitiesContext} = useContext(EntitiesContext);
   const {selectedSection, currentSections} = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
+  const {categories} = useContext(CategoryContext);
   const {participantPositions, updatePositionContextState, placeholderPositions} = useContext(PositionContext);
   const [participantsInFormation, setParticipantsInFormation] = useState<string[]>([]);
+
+  const songCategories = useMemo(() => 
+    Object.values(categories).sort((a, b) => a.order - b.order), 
+    [categories]);
 
   const setFilterTextWrapper = (value: string) => {
     setFilterText(value);
@@ -48,7 +54,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
           formationSectionId: section!.id,
           x: position[0],
           y: position[1],
-          categoryId: songList[selectedFormation!.songId].categories[0].id,
+          categoryId: songCategories[0].id,
           isSelected: false
         } as ParticipantPosition
       });
@@ -65,7 +71,7 @@ export default function ParticipantPicker (props: {margins: number[][]}) {
   }
 
   const getNextMarginIndex = () => {
-    return (Object.values(participantPositions[selectedSection!.id]).length + Object.values(placeholderList).length) % props.margins.length; // TODO: fix
+    return (((selectedSection == null || participantPositions[selectedSection.id] == null) ? 0 : Object.values(participantPositions[selectedSection.id]).length) + Object.values(placeholderList).length) % props.margins.length;
   }
 
   const addPlaceholder = (name: string, categoryId: string) => {
