@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/matsuri/static/css/main.ae74ffaf.css",
-    "main.js": "/matsuri/static/js/main.0dcc9529.js",
+    "main.css": "/matsuri/static/css/main.6010a3b4.css",
+    "main.js": "/matsuri/static/js/main.b77e633d.js",
     "static/js/239.d6c4dac5.chunk.js": "/matsuri/static/js/239.d6c4dac5.chunk.js",
     "static/js/977.6b7577cd.chunk.js": "/matsuri/static/js/977.6b7577cd.chunk.js",
     "static/js/455.aaccb29e.chunk.js": "/matsuri/static/js/455.aaccb29e.chunk.js",
     "service-worker.js": "/matsuri/service-worker.js",
     "index.html": "/matsuri/index.html",
-    "main.ae74ffaf.css.map": "/matsuri/static/css/main.ae74ffaf.css.map",
-    "main.0dcc9529.js.map": "/matsuri/static/js/main.0dcc9529.js.map",
+    "main.6010a3b4.css.map": "/matsuri/static/css/main.6010a3b4.css.map",
+    "main.b77e633d.js.map": "/matsuri/static/js/main.b77e633d.js.map",
     "239.d6c4dac5.chunk.js.map": "/matsuri/static/js/239.d6c4dac5.chunk.js.map",
     "977.6b7577cd.chunk.js.map": "/matsuri/static/js/977.6b7577cd.chunk.js.map",
     "455.aaccb29e.chunk.js.map": "/matsuri/static/js/455.aaccb29e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ae74ffaf.css",
-    "static/js/main.0dcc9529.js"
+    "static/css/main.6010a3b4.css",
+    "static/js/main.b77e633d.js"
   ]
 }
