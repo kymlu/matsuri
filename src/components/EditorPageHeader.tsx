@@ -18,7 +18,7 @@ import { PositionContext } from "../contexts/PositionContext.tsx";
 import { groupByKey, indexByKey } from "../lib/helpers/GroupingHelper.ts";
 import { EntitiesContext } from "../contexts/EntitiesContext.tsx";
 import { GetAllForFormation } from "../data/DataController.ts";
-import { getByFormationId, upsertList } from "../data/DataRepository.ts";
+import { getByFormationId, getById, upsertList } from "../data/DataRepository.ts";
 import { Formation } from "../models/Formation.ts";
 
 export function EditorPageHeader() {
@@ -60,6 +60,10 @@ export function EditorPageHeader() {
                 currentSections: formationSections,
                 selectedSection: formationSections[0],
                 selectedItems: []
+              });
+              updateEntitiesContext({
+                participantList: indexByKey(participants, "id"),
+                propList: indexByKey(props, "id"),
               });
               updatePositionContextState({
                 participantPositions: groupByKey(participantPositions, "formationSectionId"),
@@ -244,7 +248,14 @@ export function EditorPageHeader() {
         </div>
       }
       <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-        <EditFestivalDialog onSave={() => setDialogOpen(false)}/>
+        <EditFestivalDialog onSave={() => {
+          getById("festival", selectedFestival!.id).then(festival => {
+            updateState({selectedFestival: festival});
+            const formation = festival?.formations.find(f => strEquals(f.id, selectedFormation?.id)) ?? festival?.formations[0];
+            switchFormation(formation!);
+          });
+          setDialogOpen(false);
+        }}/>
       </Dialog.Root>
     </header>
     

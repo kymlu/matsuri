@@ -4,20 +4,15 @@ import { Festival } from "../../../models/Festival.ts";
 import Button from "../../Button.tsx";
 import Divider from "../../Divider.tsx";
 import { FestivalResources } from "../../../models/ImportExportModel.ts";
-import { Formation } from "../../../models/Formation.ts";
-import { Prop } from "../../../models/Prop.ts";
-import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts";
 import { EditFestivalGeneral } from "./EditFestivalGeneral.tsx";
 import { EditFestivalParticipants, ParticipantWithEditState } from "./EditFestivalParticipants.tsx";
 import { EditFestivalProps, PropWithEditState } from "./EditFestivalProps.tsx";
 import { EditFestivalFormations, FormationWithEditState } from "./EditFestivalFormations.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
-import { indexByKey } from "../../../lib/helpers/GroupingHelper.ts"
-import { getAll, getByFormationId, removeList, upsertItem, upsertList } from "../../../data/DataRepository.ts";
+import { getAll, removeList, upsertItem, upsertList } from "../../../data/DataRepository.ts";
 import { FormationSection } from "../../../models/FormationSection.ts";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
-import { PlaceholderPosition } from "../../../models/Position.ts";
 
 export type EditFestivalDialogProps = {
   onSave?: (festival: Festival) => void
@@ -29,9 +24,8 @@ export type EditState = {
 }
 
 export function EditFestivalDialog(props: EditFestivalDialogProps) {
-  const {selectedFestival, updateState} = useContext(UserContext);
-  const {selectedFormation, updateFormationContext} = useContext(FormationContext);
-  const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);
+  const {selectedFestival} = useContext(UserContext);
+  const {participantList, propList} = useContext(EntitiesContext);
   
   const defaultFestival: Festival & FestivalResources = {
     id: selectedFestival?.id || "",
@@ -158,24 +152,16 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
       note: generalData.note,
       formations: formationsToKeep || [],
     } as Festival;
-    upsertItem("festival", newFestival);
-    upsertList("participant", participantsToKeep);
-    upsertList("prop", propsToKeep);
-    upsertList("formationSection", formationData.newSections || []);
 
-    // todo: update the contexts
-    const updatedSelectedFormation = formationData.formations?.find(f => selectedFormation && f.id === selectedFormation.id) ?? formationData.formations?.[0];
-    updateState({
-      selectedFestival: newFestival,
+    Promise.all([
+      upsertItem("festival", newFestival),
+      upsertList("participant", participantsToKeep),
+      upsertList("prop", propsToKeep),
+      upsertList("formationSection", formationData.newSections || []),
+    ]).then(() => {
+      console.log("Festival and related data saved.");
+      props.onSave?.(newFestival);
     });
-    updateFormationContext({
-      selectedFormation: updatedSelectedFormation,
-    });
-    updateEntitiesContext({
-      participantList: indexByKey(participants, "id"),
-      propList: indexByKey(propsList, "id"),
-    });
-    props.onSave?.(newFestival);
   };
 
   const reset = () => {
