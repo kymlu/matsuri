@@ -156,7 +156,7 @@ export default function ActionMenu() {
 
     if (placeholders.length > 0) {
       var selectedPlaceholderIds = new Set(placeholders.map(x => x.placeholderId));
-      var positionsToRemove = new Set(placeholders.map(x => x.id));
+      var positionsToRemove = new Set(Object.values(placeholderPositions).flat().filter(x => selectedPlaceholderIds.has(x.placeholderId)).map(x => x.id));
       updatedPositions.placeholderPositions = removeItemsByCondition(placeholderPositions, (item) => positionsToRemove.has(item.id));
       removeList("placeholderPosition", [...positionsToRemove]);
       removeList("placeholder", [...selectedPlaceholderIds]);
