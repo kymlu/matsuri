@@ -14,6 +14,7 @@ export type FormationToolbarProps = {
   firstSectionId?: string,
   lastSectionId?: string,
   selectedSectionId?: string,
+  alwaysFixed: boolean,
   changeSection?: (section?: FormationSection, isNext?: boolean) => void,
   export?: (followingId?: string) => void,
   changeFollowing?: () => void,
@@ -26,7 +27,7 @@ export function FormationToolbar(props: FormationToolbarProps) {
   const [showPrevious, setShowPrevious] = useState<boolean>(false);
 
   return (
-    <CustomToolbar>
+    <CustomToolbar alwaysFixed={props.alwaysFixed}>
       <NavigateToolbarGroup
         disablePrevious={strEquals(props.firstSectionId, props.selectedSectionId)}
         disableList={currentSections.length <= 1}

@@ -4,18 +4,21 @@ import React from "react";
 import { useIsLandscape } from "../lib/helpers/GlobalHelper.ts";
 
 export type CustomToolbarProps = {
-  children: React.ReactNode
+  children: React.ReactNode,
+  alwaysFixed: boolean,
 }
 
 export function CustomToolbar(props: CustomToolbarProps) {
   const verticalToolbar = useIsLandscape();
+  var classes = classNames("portrait:justify-between flex gap-2 portrait:pb-4 landscape:px-2 portrait:px-5 py-2 align-middle outline outline-grey-200 bg-grey-50 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:items-center portrait:overflow-x-auto portrait:overflow-y-hidden", {
+    "landscape:absolute landscape:rounded-md landscape:bottom-3 landscape:border-grey-800 landscape:right-3 max-h-[calc(100svh-80px)]": !props.alwaysFixed,
+    "landscape:justify-end": props.alwaysFixed,
+  });
   
   return (
     <Toolbar.Root
       orientation={verticalToolbar ? "vertical" : "horizontal"}
-      className="landscape:absolute portrait:justify-between flex gap-2 max-h-[calc(100svh-80px)] portrait:pb-4 landscape:px-2 portrait:px-5 py-2 align-middle landscape:rounded-md landscape:bottom-3 outline landscape:border-grey-800 portrait:outline-grey-200 bg-grey-50 
-        landscape:right-3 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:items-center
-        portrait:overflow-x-auto portrait:overflow-y-hidden">
+      className={classes}>
       {props.children}
     </Toolbar.Root> 
   )

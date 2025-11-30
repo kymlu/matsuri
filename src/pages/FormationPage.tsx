@@ -221,6 +221,15 @@ export default function FormationPage () {
               setDefaultExportName(exportName);
               exportPdf();
             }}/>
+            <FormationToolbar
+              changeSection={changeSection}
+              firstSectionId={firstSectionId}
+              lastSectionId={lastSectionId}
+              selectedSectionId={selectedSectionId}
+              alwaysFixed
+              export={(followingId) => {
+                exportPdf(followingId);
+              }}/>
           </div>
         }
         {
@@ -256,17 +265,19 @@ export default function FormationPage () {
                 </div>
               </div>
             }
+            <FormationToolbar
+              changeSection={changeSection}
+              firstSectionId={firstSectionId}
+              lastSectionId={lastSectionId}
+              selectedSectionId={selectedSectionId}
+              alwaysFixed={false}
+              export={(followingId) => {
+                exportPdf(followingId);
+              }}/>
           </div>
         }
       <div className='col-start-1 row-start-3'>
-        <FormationToolbar
-          changeSection={changeSection}
-          firstSectionId={firstSectionId}
-          lastSectionId={lastSectionId}
-          selectedSectionId={selectedSectionId}
-          export={(followingId) => {
-            exportPdf(followingId);
-          }}/>
+        
       </div>
       <ExportProgressDialog
         exportName={exportName}
