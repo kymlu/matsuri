@@ -7,6 +7,7 @@ import TextInput from "../../TextInput.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { upsertItem } from "../../../data/DataRepository.ts";
+import CustomSlider from "../../CustomSlider.tsx";
 
 export default function NoteEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -14,13 +15,17 @@ export default function NoteEditor() {
   const [note, setNote] = useState<NotePosition | null>(null);
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
+  const [textSize, setTextSize] = useState(0.5);
   const {notePositions, updatePositionContextState} = useContext(PositionContext);
+  const textSizeRef = React.createRef<any>();
 
   useEffect(() => {
     if (selectedItems.length === 0) return;
     var note = getFromPositionType(selectedItems[0]) as NotePosition;
     setLabel(note!.label);
     setText(note!.text);
+    setTextSize(note!.fontGridRatio);
+    textSizeRef?.current?.changeValue(note.fontGridRatio);
     setNote(note);
   }, [selectedItems]);
   
@@ -37,6 +42,16 @@ export default function NoteEditor() {
     updatedNote[type] = newValue;
     
     updatePositionContextState({notePositions: updatedRecord})
+    upsertItem("notePosition", updatedNote);
+  };
+
+
+  const handleTextSizeChange = (newValue: number) => {
+    var updatedRecord = {...notePositions};
+    var updatedNote = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, note!.id))!;
+    updatedNote.isSelected = false;
+    updatedNote.fontGridRatio = newValue;
+    updatePositionContextState({notePositions: updatedRecord});
     upsertItem("notePosition", updatedNote);
   };
   
@@ -60,6 +75,19 @@ export default function NoteEditor() {
         value={text}
         onInput={(event: any) => handleContentChange(event?.target?.value, "text")}
         className="w-full h-16 px-2 mb-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
+
+      <label>テキストサイズ</label>
+      <div className="mx-2">
+        <CustomSlider
+          ref={textSizeRef}
+          min={0.25}
+          max={0.75}
+          step={0.05}
+          defaultValue={textSize}
+          setValue={(newValue) => {
+            handleTextSizeChange(newValue)
+          }}/>
+      </div>
     </ExpandableSection>
   )
 }
