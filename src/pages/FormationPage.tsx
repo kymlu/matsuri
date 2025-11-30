@@ -199,14 +199,45 @@ export default function FormationPage () {
 
   return (
     <div className='h-full overflow-hidden'>
-      <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 portrait:grid-rows-[64px_calc(100svh-136px)_72px] landscape:grid-rows-[60px_calc(100svh-60px)]'>
+      <div className='h-full min-h-0 overflow-hidden grid grid-cols-1 portrait:grid-rows-[64px_calc(100svh-64px)] landscape:grid-rows-[60px_calc(100svh-60px)]'>
         <EditorPageHeader exportFunc={() => exportPdf()}/>
         { 
           appMode === "edit" &&
-          <div className='flex flex-row gap-0'>
-            <FormationLeftPanel
-              marginPositions={marginPositions}/>
-            <div className='flex flex-1 h-full min-h-0 overflow-auto'>
+            <div className='flex flex-row portrait:grid portrait:grid-cols-[min,1fr,min] portrait:grid-rows-[1fr,auto] gap-0'>
+              <FormationLeftPanel
+                marginPositions={marginPositions}/>
+              <div className='flex flex-1 h-full min-h-0 overflow-auto'>
+                <FormationCanvas
+                  ref={formationEditorRef}
+                  width={setValueOrDefault(20, selectedFormation?.width)}
+                  height={setValueOrDefault(20, selectedFormation?.length)}
+                  topMargin={setValueOrDefault(DEFAULT_TOP_MARGIN, selectedFormation?.topMargin)}
+                  bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
+                  sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}
+                  setAnimationPaths={setAnimationPaths}
+                  categories={categories}/>
+              </div>
+              <FormationRightPanel exportFunc={(exportName: string) => {
+                setDefaultExportName(exportName);
+                exportPdf();
+              }}/>
+              <div className='flex landscape:h-full landscape:overflow-y-auto portrait:col-span-3'>
+                <FormationToolbar
+                  changeSection={changeSection}
+                  firstSectionId={firstSectionId}
+                  lastSectionId={lastSectionId}
+                  selectedSectionId={selectedSectionId}
+                  export={(followingId) => {
+                    exportPdf(followingId);
+                  }}/>
+              </div>
+            </div>
+          
+        }
+        {
+          appMode === "view" &&
+          <div className="flex flex-row h-full portrait:flex-col">
+            <div className='flex flex-1 h-full min-h-0 px-5 py-2 overflow-auto'>
               <FormationCanvas
                 ref={formationEditorRef}
                 width={setValueOrDefault(20, selectedFormation?.width)}
@@ -215,70 +246,41 @@ export default function FormationPage () {
                 bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
                 sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}
                 setAnimationPaths={setAnimationPaths}
-                categories={categories}/>
-            </div>
-            <FormationRightPanel exportFunc={(exportName: string) => {
-              setDefaultExportName(exportName);
-              exportPdf();
-            }}/>
-            <FormationToolbar
-              changeSection={changeSection}
-              firstSectionId={firstSectionId}
-              lastSectionId={lastSectionId}
-              selectedSectionId={selectedSectionId}
-              alwaysFixed
-              export={(followingId) => {
-                exportPdf(followingId);
-              }}/>
-          </div>
-        }
-        {
-          appMode === "view" &&
-          <div className='flex flex-1 h-full min-h-0 px-5 py-2 overflow-auto'>
-            <FormationCanvas
-              ref={formationEditorRef}
-              width={setValueOrDefault(20, selectedFormation?.width)}
-              height={setValueOrDefault(20, selectedFormation?.length)}
-              topMargin={setValueOrDefault(DEFAULT_TOP_MARGIN, selectedFormation?.topMargin)}
-              bottomMargin={setValueOrDefault(DEFAULT_BOTTOM_MARGIN, selectedFormation?.bottomMargin)}
-              sideMargin={setValueOrDefault(DEFAULT_SIDE_MARGIN, selectedFormation?.sideMargin)}
-              setAnimationPaths={setAnimationPaths}
-              categories={categories}
-              setFollowingPositions={setFollowingPositions}/>
-            {
-              selectedSection && followingId && followingPositions && selectedFormation &&
-              <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] landscape:top-auto landscape:left-3 landscape:bottom-3 landscape:translate-x-0 rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
-                <span className='font-bold'>
-                  {`${participantList[followingId]?.displayName ?? placeholderList[followingId].displayName}`}
-                </span>
-                <div className='flex flex-row gap-2'>
-                  <div className='flex gap-1'>
-                    <img src={ICON.heightBlack} className='size-6'/>
-                    <span>{`${roundToTenth(selectedFormation.type === FormationType.parade ?
-                      selectedFormation.length - followingPositions[selectedSection.id]?.y :
-                      followingPositions[selectedSection.id]?.y)}m`}</span>
-                  </div>
-                  <div className='flex gap-1'>
-                    <img src={ICON.arrowRangeBlack} className='size-6'/>
-                    <span>{`${roundToTenth(Math.abs(selectedFormation.width/2 - followingPositions[selectedSection.id]?.x))}m`}</span>
+                categories={categories}
+                setFollowingPositions={setFollowingPositions}/>
+              {
+                selectedSection && followingId && followingPositions && selectedFormation &&
+                <div className="flex items-center flex-col absolute top-20 left-1/2 translate-x-[-50%] landscape:top-auto landscape:left-3 landscape:bottom-3 landscape:translate-x-0 rounded-md outline outline-grey-800 bg-grey-50 py-2 px-4">
+                  <span className='font-bold'>
+                    {`${participantList[followingId]?.displayName ?? placeholderList[followingId].displayName}`}
+                  </span>
+                  <div className='flex flex-row gap-2'>
+                    <div className='flex gap-1'>
+                      <img src={ICON.heightBlack} className='size-6'/>
+                      <span>{`${roundToTenth(selectedFormation.type === FormationType.parade ?
+                        selectedFormation.length - followingPositions[selectedSection.id]?.y :
+                        followingPositions[selectedSection.id]?.y)}m`}</span>
+                    </div>
+                    <div className='flex gap-1'>
+                      <img src={ICON.arrowRangeBlack} className='size-6'/>
+                      <span>{`${roundToTenth(Math.abs(selectedFormation.width/2 - followingPositions[selectedSection.id]?.x))}m`}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-            <FormationToolbar
-              changeSection={changeSection}
-              firstSectionId={firstSectionId}
-              lastSectionId={lastSectionId}
-              selectedSectionId={selectedSectionId}
-              alwaysFixed={false}
-              export={(followingId) => {
-                exportPdf(followingId);
-              }}/>
+              }
+            </div>
+            <div className='landscape:h-full landscape:overflow-y-auto'>
+              <FormationToolbar
+                changeSection={changeSection}
+                firstSectionId={firstSectionId}
+                lastSectionId={lastSectionId}
+                selectedSectionId={selectedSectionId}
+                export={(followingId) => {
+                  exportPdf(followingId);
+                }}/>
+            </div>
           </div>
         }
-      <div className='col-start-1 row-start-3'>
-        
-      </div>
       <ExportProgressDialog
         exportName={exportName}
         isOpen={isExporting}
