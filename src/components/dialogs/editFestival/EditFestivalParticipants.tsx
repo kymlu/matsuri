@@ -6,6 +6,7 @@ import CustomMenu, { MenuItem } from "../../CustomMenu.tsx";
 import TextInput from "../../TextInput.tsx";
 import { isNullOrUndefinedOrBlank } from "../../../lib/helpers/GlobalHelper.ts";
 import { CustomAutocomplete } from "../../CustomAutocomplete.tsx";
+import { EditState } from "./EditFestivalDialog.tsx";
 
 export type EditFestivalParticipantsProps = {
   participants: Participant[],
@@ -14,10 +15,12 @@ export type EditFestivalParticipantsProps = {
   setError?: (hasError: boolean) => void
 }
 
+export type ParticipantWithEditState = Participant & EditState;
+
 export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
-  const [participants, setParticipants] = useState<Participant[]>([
+  const [participants, setParticipants] = useState<ParticipantWithEditState[]>([
     ...props.participants
-      .map(x => ({...x}))
+      .map(x => ({...x, isNew: false, isDeleted: false}))
       .sort((a, b) => a.displayName.toLowerCase().localeCompare(b.displayName.toLowerCase()))
     ]);
   const [participantNames, setParticipantNames] = useState<Record<string, number>>({});
@@ -27,20 +30,23 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
   useImperativeHandle(props.ref, () => ({
     getData: () => {return participants;},
     resetData: () => {
-      setParticipants([
+      const updatedParticipants = [
         ...props.participants
-          .map(x => ({...x}))
+          .map(x => ({...x, isNew: false, isDeleted: false}))
           .sort((a, b) => a.displayName.toLowerCase().localeCompare(b.displayName.toLowerCase()))
-      ]);
-      updateParticipantNames(props.participants)
+      ];
+      setParticipants(updatedParticipants);
+      updateParticipantNames(updatedParticipants)
     }
   }));
 
-  function updateParticipantNames(participants: Participant[]) {
-    const updated: Record<string, number> = participants.reduce<Record<string, number>>((acc, f) => {
-      acc[f.displayName.toLowerCase()] = (acc[f.displayName.toLowerCase()] || 0) + 1;
-      return acc;
-    }, {});
+  function updateParticipantNames(participants: ParticipantWithEditState[]) {
+    const updated: Record<string, number> = participants
+      .filter(x => !x.isDeleted)
+      .reduce<Record<string, number>>((acc, f) => {
+        acc[f.displayName.toLowerCase()] = (acc[f.displayName.toLowerCase()] || 0) + 1;
+        return acc;
+      }, {});
     setParticipantNames(updated);
     props.setError?.(
       Object.keys(updated).some(key => isNullOrUndefinedOrBlank(key)) ||
@@ -62,7 +68,9 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
         displayName: preset?.name || "",
         festivalId: props.festivalId,
         memberId: preset?.id,
-      } as Participant
+        isNew: true,
+        isDeleted: false,
+      } as ParticipantWithEditState
     ];
     setParticipants(updatedParticipants);
     updateParticipantNames(updatedParticipants);
@@ -78,9 +86,9 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
   const deleteParticipant = (index: number) => {
     setEditParticipantNameIndex(-1);
     const updatedParticipants = [...participants];
-    updatedParticipants.splice(index, 1);
+    updatedParticipants[index].isDeleted = true;
     setParticipants(updatedParticipants);
-    updateParticipantNames(updatedParticipants);
+    updateParticipantNames(updatedParticipants.filter(p => !p.isDeleted));
   };
 
   const sortParticipants = () => {
@@ -129,49 +137,53 @@ export function EditFestivalParticipants(props: EditFestivalParticipantsProps) {
         participants.map((p, i) => {
           const hasError = participantNames[p.displayName.toLowerCase()] > 1 || isNullOrUndefinedOrBlank(p.displayName);
           return <React.Fragment key={i}>
-            <div
-              className={
-                "flex flex-row gap-2 border-2 border-primary px-2 rounded-lg " +
-                (hasError ? "bg-primary-lighter placeholder:text-primary-darker" : "bg-white")
-              }>
-              { editParticipantNameIndex === i ?
-                <TextInput
-                  compact
-                  hasOutline={false}
-                  default={p.displayName}
-                  onContentChange={(val) =>{ 
-                    editParticipantName(i, val);
-                  }}
-                  required
-                  hasError={hasError}
-                  /> : p.displayName
-              }
-              {
-                editingParticipants && 
-                <>
-                  {
-                    editingParticipants && editParticipantNameIndex === i ?
-                    <button
-                      type="button"
-                      disabled={hasError}
-                      className={hasError ? "opacity-50" : ""}
-                      onClick={() => {setEditParticipantNameIndex(-1)}}>
-                      <img className="size-6" src={ICON.checkBlack}/>
-                    </button> :
-                    <button 
-                      type="button"
-                      onClick={() => {setEditParticipantNameIndex(i)}}>
-                        <img className="size-6" src={ICON.editBlack}/>
-                    </button>
-                  }
-                  <CustomMenu
-                    trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete participant"/>}>
-                    <MenuItem label="削除" onClick={() => deleteParticipant(i)} /> 
-                    {/* // TODO: have a warning dialog that says which formations have that participants, and give them the option to delete positions or replace with placeholders */}
-                  </CustomMenu>
-                </>
-              }
-            </div>
+            { p.isDeleted && <></> }
+            {
+              !p.isDeleted &&
+              <div
+                className={
+                  "flex flex-row gap-2 border-2 border-primary px-2 rounded-lg " +
+                  (hasError ? "bg-primary-lighter placeholder:text-primary-darker" : "bg-white")
+                }>
+                { editParticipantNameIndex === i ?
+                  <TextInput
+                    compact
+                    hasOutline={false}
+                    default={p.displayName}
+                    onContentChange={(val) =>{ 
+                      editParticipantName(i, val);
+                    }}
+                    required
+                    hasError={hasError}
+                    /> : p.displayName
+                }
+                {
+                  editingParticipants && 
+                  <>
+                    {
+                      editingParticipants && editParticipantNameIndex === i ?
+                      <button
+                        type="button"
+                        disabled={hasError}
+                        className={hasError ? "opacity-50" : ""}
+                        onClick={() => {setEditParticipantNameIndex(-1)}}>
+                        <img className="size-6" src={ICON.checkBlack}/>
+                      </button> :
+                      <button 
+                        type="button"
+                        onClick={() => {setEditParticipantNameIndex(i)}}>
+                          <img className="size-6" src={ICON.editBlack}/>
+                      </button>
+                    }
+                    <CustomMenu
+                      trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete participant"/>}>
+                      <MenuItem label="削除" onClick={() => deleteParticipant(i)} /> 
+                      {/* // TODO: have a warning dialog that says which formations have that participants, and give them the option to delete positions or replace with placeholders */}
+                    </CustomMenu>
+                  </>
+                }
+              </div>
+            }
           </React.Fragment>
         })
       }

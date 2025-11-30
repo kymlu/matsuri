@@ -6,23 +6,31 @@ import Divider from "../../Divider.tsx";
 import { FestivalResources } from "../../../models/ImportExportModel.ts";
 import { Formation } from "../../../models/Formation.ts";
 import { Prop } from "../../../models/Prop.ts";
-import { Participant } from "../../../models/Participant.ts";
+import { Participant, ParticipantPlaceholder } from "../../../models/Participant.ts";
 import { EditFestivalGeneral } from "./EditFestivalGeneral.tsx";
-import { EditFestivalParticipants } from "./EditFestivalParticipants.tsx";
-import { EditFestivalProps } from "./EditFestivalProps.tsx";
-import { EditFestivalFormations } from "./EditFestivalFormations.tsx";
+import { EditFestivalParticipants, ParticipantWithEditState } from "./EditFestivalParticipants.tsx";
+import { EditFestivalProps, PropWithEditState } from "./EditFestivalProps.tsx";
+import { EditFestivalFormations, FormationWithEditState } from "./EditFestivalFormations.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { EntitiesContext } from "../../../contexts/EntitiesContext.tsx";
 import { indexByKey } from "../../../lib/helpers/GroupingHelper.ts"
-import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
+import { getAll, getByFormationId, removeList, upsertItem, upsertList } from "../../../data/DataRepository.ts";
 import { FormationSection } from "../../../models/FormationSection.ts";
+import { FormationContext } from "../../../contexts/FormationContext.tsx";
+import { PlaceholderPosition } from "../../../models/Position.ts";
 
 export type EditFestivalDialogProps = {
   onSave?: (festival: Festival) => void
 }
 
+export type EditState = {
+  isNew: boolean,
+  isDeleted: boolean,
+}
+
 export function EditFestivalDialog(props: EditFestivalDialogProps) {
   const {selectedFestival, updateState} = useContext(UserContext);
+  const {selectedFormation, updateFormationContext} = useContext(FormationContext);
   const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);
   
   const defaultFestival: Festival & FestivalResources = {
@@ -59,43 +67,114 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
   
   const hasErrors = Object.values(errors).some(Boolean);
   
-  const save = () => {
+  const save = async () => {
     if (hasErrors) return;
 
     const generalData: {id?: string, name?: string, startDate?: string, endDate?: string, note?: string} = generalRef.current?.getData();
-    const participants: Participant[] = participantsRef.current?.getData();
-    const propsList: Prop[] = propsRef.current?.getData();
-    const formationData: {formations?: Formation[], newSections?: FormationSection[]} = formationsRef.current?.getData();
+    const participants: ParticipantWithEditState[] = participantsRef.current?.getData();
+    const propsList: PropWithEditState[] = propsRef.current?.getData();
+    const formationData: {formations?: FormationWithEditState[], newSections?: FormationSection[]} = formationsRef.current?.getData();
 
     console.log(generalData, participants, propsList, formationData);
-    // todo: remove all deleted participants 
-    // todo: replace all participant positions with placeholder positions
-    // todo: remove all deleted props and prop positions
-    // todo: remove formations, and participant, prop, note, arrow, and placeholder positions for that formation
+    // remove all deleted formations
+    const deletedFormations = formationData.formations?.filter(f => f.isDeleted) || [];
+    const deletedFormationIds = new Set(deletedFormations.map(f => f.id));
+    await Promise.all([
+      getAll("formationSection"),
+      getAll("participantPosition"),
+      getAll("propPosition"),
+      getAll("placeholderPosition"),
+      getAll("notePosition"),
+      getAll("arrowPosition"),
+      getAll("placeholder"),
+    ]).then(async ([formationSections, participantPositions, propPositions, placeholderPositions, notePositions, arrowPositions, placeholders]) => {
+      const sectionsToDelete = formationSections.filter(fs => deletedFormationIds.has(fs.formationId));
+      const sectionIdsToDelete = new Set(sectionsToDelete.map(fs => fs.id));
+      
+      const participantPositionsToDelete = participantPositions.filter(pp => sectionIdsToDelete.has(pp.formationSectionId));
+      const propPositionsToDelete = propPositions.filter(pp => sectionIdsToDelete.has(pp.formationSectionId));
+      const placeholderPositionsToDelete = placeholderPositions.filter(pp => sectionIdsToDelete.has(pp.formationSectionId));
+      const notePositionsToDelete = notePositions.filter(pp => sectionIdsToDelete.has(pp.formationSectionId));
+      const arrowPositionsToDelete = arrowPositions.filter(pp => sectionIdsToDelete.has(pp.formationSectionId));
+      const placeholdersToDelete = placeholders.filter(p => deletedFormationIds.has(p.formationId));
+      
+      await Promise.all([
+        removeList("formationSection", [...sectionIdsToDelete]),
+        removeList("participantPosition", participantPositionsToDelete.map(pp => pp.id)),
+        removeList("propPosition", propPositionsToDelete.map(pp => pp.id)),
+        removeList("placeholderPosition", placeholderPositionsToDelete.map(pp => pp.id)),
+        removeList("notePosition", notePositionsToDelete.map(pp => pp.id)),
+        removeList("arrowPosition", arrowPositionsToDelete.map(pp => pp.id)),
+        removeList("placeholder", placeholdersToDelete.map(p => p.id)),
+      ]);
+      
+    });
 
-    // removeList("participant", Object.keys(participantList));
-    // removeList("prop", Object.keys(propList));
-    // todo: show I also have a list of removed ids from the participants/props/formations?
-    // but if I do that, if I delete an object and add an object will the same name, should it keep the id?
+    // remove all deleted participants and their positions
+    const deletedParticipants = participants.filter(p => p.isDeleted);
+    const deletedParticipantIds = new Set(deletedParticipants.map(p => p.id));
+    removeList("participant", [...deletedParticipantIds]);
+
+    getAll("participantPosition").then((positions) => {
+      const positionsToDelete = positions.filter(pp => deletedParticipantIds.has(pp.participantId));
+      removeList("participantPosition", positionsToDelete.map(pp => pp.id));
+      // Todo: see if replacing deleted participants with placeholders is necessary
+    });
+
+    // remove all deleted props and their positions
+    const deletedPropIds = new Set(propsList.filter(p => p.isDeleted).map(p => p.id));
+    removeList("prop", [...deletedPropIds]);
+    getAll("propPosition").then((positions) => {
+      const positionsToDelete = positions.filter(pp => deletedPropIds.has(pp.propId)).map(pp => pp.id);
+      removeList("propPosition", positionsToDelete);
+    });
+
+    const formationsToKeep = formationData.formations
+      ?.filter(f => !f.isDeleted)
+      .map(f => {
+        const { isNew, isDeleted, ...formation } = f;
+        return formation;
+      });
+
+    const participantsToKeep = participants
+      .filter(p => !p.isDeleted)
+      .map(p => {
+        const { isNew, isDeleted, ...participant } = p;
+        return participant;
+      });
+
+    const propsToKeep = propsList
+      .filter(p => !p.isDeleted)
+      .map(p => {
+        const { isNew, isDeleted, ...prop } = p;
+        return prop;
+      });
+
     var newFestival: Festival = {
       id: generalData.id,
       name: generalData.name,
       startDate: generalData.startDate,
       endDate: generalData.endDate,
       note: generalData.note,
-      formations: formationData.formations || [],
+      formations: formationsToKeep || [],
     } as Festival;
     upsertItem("festival", newFestival);
-    upsertList("participant", participants);
-    upsertList("prop", propsList);
+    upsertList("participant", participantsToKeep);
+    upsertList("prop", propsToKeep);
     upsertList("formationSection", formationData.newSections || []);
+
+    // todo: update the contexts
+    const updatedSelectedFormation = formationData.formations?.find(f => selectedFormation && f.id === selectedFormation.id) ?? formationData.formations?.[0];
     updateState({
       selectedFestival: newFestival,
+    });
+    updateFormationContext({
+      selectedFormation: updatedSelectedFormation,
     });
     updateEntitiesContext({
       participantList: indexByKey(participants, "id"),
       propList: indexByKey(propsList, "id"),
-    })
+    });
     props.onSave?.(newFestival);
   };
 

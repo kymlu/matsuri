@@ -8,6 +8,7 @@ import NumberTextField from "../../NumberTextField.tsx";
 import TextInput from "../../TextInput.tsx";
 import { isNullOrUndefinedOrBlank, strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { FormationSection } from "../../../models/FormationSection.ts";
+import { EditState } from "./EditFestivalDialog.tsx";
 
 export type EditFestivalFormationsProps = {
   formations: Formation[],
@@ -15,27 +16,32 @@ export type EditFestivalFormationsProps = {
   setError?: (hasError: boolean) => void
 }
 
+export type FormationWithEditState = Formation & EditState;
+
 export function EditFestivalFormations(props: EditFestivalFormationsProps) {
-  const [formations, setFormations] = useState<(Formation & {isNew: boolean})[]>([...props.formations.map(x => ({...x, isNew: false}))]);
+  const [formations, setFormations] = useState<FormationWithEditState[]>([...props.formations.map(x => ({...x, isNew: false, isDeleted: false}))]);
   const formationTypes = useMemo(() => ({"1": "ステージ", "0": "パレード"}), []);
   const [formationNames, setFormationNames] = useState<Record<string, number>>({});
 
   useImperativeHandle(props.ref, () => ({
     getData: () => {
-      const newSections = addFormationSections(formations.filter(x => x.isNew));
+      const newSections = addFormationSections(formations.filter(x => x.isNew && !x.isDeleted));
       return {formations, newSections};
     },
     resetData: () => {
-      setFormations([...props.formations.map(x => ({...x, isNew: false}))]);
-      updateFormationNames(props.formations);
+      const updatedFormations = [...props.formations.map(x => ({...x, isNew: false, isDeleted: false}))];
+      setFormations(updatedFormations);
+      updateFormationNames(updatedFormations);
     }
   }));
 
-  const updateFormationNames = (formations: Formation[]) => {
-    const updated: Record<string, number> = formations.reduce<Record<string, number>>((acc, f) => {
-      acc[f.name] = (acc[f.name] || 0) + 1;
-      return acc;
-    }, {});
+  const updateFormationNames = (formations: FormationWithEditState[]) => {
+    const updated: Record<string, number> = formations
+      .filter(x => !x.isDeleted)
+      .reduce<Record<string, number>>((acc, f) => {
+        acc[f.name] = (acc[f.name] || 0) + 1;
+        return acc;
+      }, {});
     setFormationNames(updated);
     props.setError?.(
       formations.length === 0 ||
@@ -62,7 +68,8 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
         sideMargin: 5,
         bottomMargin: 5,
         isNew: true,
-      }
+        isDeleted: false,
+      } as FormationWithEditState
     ];
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
@@ -120,9 +127,9 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
     setFormations(updatedFormations);
   };
 
-  const deleteFormation = (index: number) => {
+  const deleteFormation = (index: number) => { // edit and delete by id instead of index
     const updatedFormations = [...formations];
-    updatedFormations.splice(index, 1);
+    updatedFormations[index].isDeleted = true;
     setFormations(updatedFormations);
     updateFormationNames(updatedFormations);
   };
@@ -144,45 +151,51 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
       <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.heightBlack}/>縦(m)</div>
       <div className="flex flex-row items-center gap-2 font-bold"><img className="size-5" src={ICON.arrowRangeBlack}/>幅(m)</div>
       <div className="size-6"></div>
-      { formations.map((formation, index) => (
-        <React.Fragment key={index}>
-          <TextInput
-            tall
-            disabled={!formation.isNew}
-            compact
-            default={formation.name}
-            onContentChange={(val) =>{ 
-              editFormationName(index, val);
-            }}
-            required
-            hasError={formationNames[formation.name] > 1 || formation.name.match(`[~"#%&*:<>?/\\{|}]+`) !== null}
-          />
-          <CustomSelect
-            disabled={!formation.isNew}
-            setValue={(newValue) => {editFormationSong(index, newValue)}}
-            defaultValue={songList[formation.songId].name}
-            items={songs}/>
-          <CustomSelect
-            disabled={!formation.isNew}
-            setValue={(newValue) => {editFormationType(index, newValue)}}
-            defaultValue={formation.type === FormationType.parade ? "パレード" : "ステージ"}
-            items={formationTypes}/>
-          <NumberTextField
-            onChange={(newValue) => {if (newValue) editFormationSize(index, "length", newValue)}}
-            default={formation.length}
-            min={5} max={300}/>
-          <NumberTextField
-            onChange={(newValue) => {if (newValue) editFormationSize(index, "width", newValue)}}
-            default={formation.width}
-            min={5} max={50}/>
-          <CustomMenu
-            disabled={formations.length === 1}
-            trigger={<img src={ICON.deleteBlack} className={"size-6" + (formations.length === 1 ? " opacity-50 cursor-not-allowed" : "")} alt="Delete formation" />}>
-            <MenuItem label="削除" onClick={() => deleteFormation(index)} />
-            {/* TODO: have an are you sure verification dialog */}
-          </CustomMenu>
-        </React.Fragment>
-      ))}
+      { formations.map((formation, index) =>
+        {
+          return <React.Fragment key={index}>
+            { formation.isDeleted && <></>}
+            { !formation.isDeleted && 
+              <>
+                <TextInput
+                  tall
+                  compact
+                  default={formation.name}
+                  onContentChange={(val) =>{ 
+                    editFormationName(index, val);
+                  }}
+                  required
+                  hasError={formationNames[formation.name] > 1 || formation.name.match(`[~"#%&*:<>?/\\{|}]+`) !== null}
+                />
+                <CustomSelect
+                  disabled={!formation.isNew}
+                  setValue={(newValue) => {editFormationSong(index, newValue)}}
+                  defaultValue={songList[formation.songId].name}
+                  items={songs}/>
+                <CustomSelect
+                  disabled={!formation.isNew}
+                  setValue={(newValue) => {editFormationType(index, newValue)}}
+                  defaultValue={formation.type === FormationType.parade ? "パレード" : "ステージ"}
+                  items={formationTypes}/>
+                <NumberTextField
+                  onChange={(newValue) => {if (newValue) editFormationSize(index, "length", newValue)}}
+                  default={formation.length}
+                  min={5} max={300}/>
+                <NumberTextField
+                  onChange={(newValue) => {if (newValue) editFormationSize(index, "width", newValue)}}
+                  default={formation.width}
+                  min={5} max={50}/>
+                <CustomMenu
+                  disabled={formations.length === 1}
+                  trigger={<img src={ICON.deleteBlack} className={"size-6" + (formations.filter(x => !x.isDeleted).length === 1 ? " opacity-50 cursor-not-allowed" : "")} alt="Delete formation" />}>
+                  <MenuItem label="削除" onClick={() => deleteFormation(index)} />
+                  {/* TODO: have an are you sure verification dialog */}
+                </CustomMenu>
+              </>
+            }
+          </React.Fragment>
+        }
+      )}
     </div>
   </>
 }

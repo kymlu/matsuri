@@ -10,6 +10,7 @@ import ColorPresetPicker from "../../editorFunctions/menus/ColorPresetPicker.tsx
 import ColorSwatch from "../../editorFunctions/menus/ColorSwatch.tsx";
 import ItemButton from "../../ItemButton.tsx";
 import { isNullOrUndefinedOrBlank } from "../../../lib/helpers/GlobalHelper.ts";
+import { EditState } from "./EditFestivalDialog.tsx";
 
 export type EditFestivalPropsProps = {
   props: Prop[],
@@ -17,23 +18,28 @@ export type EditFestivalPropsProps = {
   setError?: (hasError: boolean) => void
 }
 
+export type PropWithEditState = Prop & EditState;
+
 export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
-  const [props, setProps] = useState<Prop[]>([...sectProps.props.map(x => ({...x}))]);
+  const [props, setProps] = useState<PropWithEditState[]>([...sectProps.props.map(x => ({...x, isDeleted: false, isNew: false}))]);
   const [propNames, setPropNames] = useState<Record<string, number>>({});
 
   useImperativeHandle(sectProps.ref, () => ({
     getData: () => {return props;},
     resetData: () => {
-      setProps([...sectProps.props.map(x => ({...x}))]);
-      updatePropNames(sectProps.props)
+      const updatedProps = [...sectProps.props.map(x => ({...x, isDeleted: false, isNew: false}))];
+      setProps(updatedProps);
+      updatePropNames(updatedProps);
     }
   }));
 
-  function updatePropNames(props: Prop[]) {
-    const updated: Record<string, number> = props.reduce<Record<string, number>>((acc, f) => {
-      acc[f.name] = (acc[f.name] || 0) + 1;
-      return acc;
-    }, {});
+  function updatePropNames(props: PropWithEditState[]) {
+    const updated: Record<string, number> = props
+      .filter(x => !x.isDeleted)
+      .reduce<Record<string, number>>((acc, f) => {
+        acc[f.name] = (acc[f.name] || 0) + 1;
+        return acc;
+      }, {});
     setPropNames(updated);
     sectProps.setError?.(
       Object.keys(updated).some(key => isNullOrUndefinedOrBlank(key)) ||
@@ -47,8 +53,10 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
         id: crypto.randomUUID(),
         name: preset?.name || "",
         length: preset?.length || 1,
-        color: preset?.color || objectColorSettings.grey3
-      } as Prop
+        color: preset?.color || objectColorSettings.grey3,
+        isDeleted: false,
+        isNew: true,
+      } as PropWithEditState
     ];
     setProps(updatedProps);
     updatePropNames(updatedProps);
@@ -77,7 +85,7 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
 
   const deleteProp = (index: number) => {
     const updatedProps = [...props];
-    updatedProps.splice(index, 1);
+    updatedProps[index].isDeleted = true;
     setProps(updatedProps);
     updatePropNames(updatedProps);
   };
@@ -105,40 +113,45 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
         {
           props.map((p, i) => 
             <React.Fragment key={i}>
-              <TextInput 
-                tall
-                compact
-                default={p.name}
-                onContentChange={(val) =>{ 
-                  editPropName(i, val);
-                }}
-                required
-                hasError={propNames[p.name] > 1}
-                />
-              <NumberTextField
-                default={p.length}
-                step={0.1}
-                onChange={(val) => {
-                  if (val) {
-                    editPropLength(i, val)
-                  }
-                }}/>
-              <CustomMenu full trigger={
-                <ColorSwatch 
-                  full
-                  colorHexCode={p.color!.bgColour!} 
-                  borderHexCode={p.color!.borderColour}
-                  textHexCode={p.color!.textColour}
-                  onClick={() => {}}
-                  />
-              }>
-                <ColorPresetPicker selectColor={(newColour)=>{editPropColour(i, newColour)}} selectedColor={p.color}/>
-              </CustomMenu>
-              <CustomMenu
-                trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete prop" />}>
-                <MenuItem label="削除" onClick={() => deleteProp(i)} />
-                {/* TODO: have an are you sure verification dialog with the list of formations it's used in */}
-              </CustomMenu>
+              { p.isDeleted && <></> }
+              {
+                !p.isDeleted && <>
+                  <TextInput 
+                    tall
+                    compact
+                    default={p.name}
+                    onContentChange={(val) =>{ 
+                      editPropName(i, val);
+                    }}
+                    required
+                    hasError={propNames[p.name] > 1}
+                    />
+                  <NumberTextField
+                    default={p.length}
+                    step={0.1}
+                    onChange={(val) => {
+                      if (val) {
+                        editPropLength(i, val)
+                      }
+                    }}/>
+                  <CustomMenu full trigger={
+                    <ColorSwatch 
+                      full
+                      colorHexCode={p.color!.bgColour!} 
+                      borderHexCode={p.color!.borderColour}
+                      textHexCode={p.color!.textColour}
+                      onClick={() => {}}
+                      />
+                  }>
+                    <ColorPresetPicker selectColor={(newColour)=>{editPropColour(i, newColour)}} selectedColor={p.color}/>
+                  </CustomMenu>
+                  <CustomMenu
+                    trigger={<img src={ICON.deleteBlack} className="size-6" alt="Delete prop" />}>
+                    <MenuItem label="削除" onClick={() => deleteProp(i)} />
+                    {/* TODO: have an are you sure verification dialog with the list of formations it's used in */}
+                  </CustomMenu>
+                </>
+              }
             </React.Fragment>
           )
         }
