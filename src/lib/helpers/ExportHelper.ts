@@ -68,7 +68,7 @@ export function exportFestivalData(festivalId: string) {
       placeholders: placeholders as ParticipantPlaceholder[],
       placeholderPositions: placeholderPositions as PlaceholderPosition[],
     };
-    downloadFile(JSON.stringify(toExport), "application/json", `${festival.id}.mtr`)
+    downloadFile(JSON.stringify(toExport), "application/json", `${festival.name}.mtr`)
   });
 }
 

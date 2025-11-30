@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { CONTEXT_NAMES, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../lib/consts.ts";
+import { CONTEXT_NAMES, CUSTOM_EVENT, DB_NAME, DEFAULT_GRID_SIZE, ICON } from "../lib/consts.ts";
 import CustomMenu, { MenuContents, MenuItem, MenuSeparator } from "./CustomMenu.tsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext.tsx";
@@ -21,7 +21,11 @@ import { GetAllForFormation } from "../data/DataController.ts";
 import { getByFormationId, getById, upsertList } from "../data/DataRepository.ts";
 import { Formation } from "../models/Formation.ts";
 
-export function EditorPageHeader() {
+export type EditorPageHeaderProps = {
+  exportFunc: () => void
+}
+
+export function EditorPageHeader(props: EditorPageHeaderProps) {
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const {selectedFestival, selectedSection, updateState} = useContext(UserContext);
@@ -112,6 +116,10 @@ export function EditorPageHeader() {
           )
         }
       });
+  }
+
+  const exportToPdf = () => {
+    props.exportFunc()
   }
 
   return (
@@ -205,24 +213,17 @@ export function EditorPageHeader() {
               className='size-8 max-w-8 max-h-8'
               src={appMode === "edit" ? ICON.visibility : ICON.editDocument}/>
           </button>
-          <button
-            onClick={() => {
-              exportFestivalData(selectedFestival!.id);
-            }}>
-            <img
-              alt={"Download Data"}
-              className='size-8 max-w-8 max-h-8'
-              src={ICON.fileSave}/>
-          </button>
-          <button
-            onClick={() => {
-              exportForGithub(selectedFestival!.id)
-            }}>
-            <img
-              alt={"Download Data"}
-              className='size-8 max-w-8 max-h-8'
-              src={ICON.fileSave}/>
-          </button>
+          <CustomMenu trigger={
+            <img alt="Download Festival" src={ICON.fileSave} className='size-8 max-w-8 max-h-8'/>
+            }>
+            <>
+              <MenuItem label="祭りファイル" onClick={() => { exportFestivalData(selectedFestival!.id); }} />
+              <MenuSeparator />
+              <MenuItem label="PDFエクスポート" onClick={() => { exportToPdf()}} />
+              <MenuSeparator />
+              <MenuItem label="GitHub用エクスポート" onClick={() => { exportForGithub(selectedFestival!.id); }} />
+            </>
+          </CustomMenu>
           <CustomMenu trigger={
             <img alt="Extra settings" src={ICON.settings} className='size-8 max-w-8 max-h-8'/>
             }>
