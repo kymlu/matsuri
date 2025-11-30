@@ -13,7 +13,7 @@ export function CustomToolbar(props: CustomToolbarProps) {
   return (
     <Toolbar.Root
       orientation={verticalToolbar ? "vertical" : "horizontal"}
-      className="flex gap-2 py-2 align-middle portrait:border-t-2 landscape:border-l-2 portrait:justify-between landscape:justify-end portrait:pb-4 landscape:px-2 portrait:px-5 border-grey-200 bg-grey-50 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:items-center portrait:w-full portrait:overflow-x-auto portrait:overflow-y-hidden">
+      className="flex gap-2 py-2 align-middle landscape:py-5 portrait:border-t-2 landscape:border-l-2 portrait:justify-between landscape:justify-end portrait:pb-4 landscape:px-2 portrait:px-5 border-grey-200 bg-grey-50 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:items-center portrait:w-full landscape:h-full portrait:overflow-x-auto portrait:overflow-y-hidden">
       {props.children}
     </Toolbar.Root> 
   )
