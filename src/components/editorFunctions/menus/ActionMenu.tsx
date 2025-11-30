@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Button from "../../Button.tsx";
@@ -11,15 +11,15 @@ import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { Participant } from "../../../models/Participant.ts";
 import Divider from "../../Divider.tsx";
-import { removeItemsByCondition, removeKeysFromRecord, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
+import { removeItemsByCondition, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 import { removeList, upsertList } from "../../../data/DataRepository.ts";
 
 export default function ActionMenu() {
-  const {participantList, propList, updateEntitiesContext} = useContext(EntitiesContext);
+  const {participantList, updateEntitiesContext} = useContext(EntitiesContext);
   const userContext = useContext(UserContext);
   const {categories} = useContext(CategoryContext);
   const {selectedItems, currentSections, selectedSection, updateState} = useContext(UserContext);
-  const {participantPositions, propPositions, notePositions, arrowPositions, updatePositionContextState} = useContext(PositionContext);
+  const {participantPositions, propPositions, notePositions, arrowPositions, placeholderPositions, updatePositionContextState} = useContext(PositionContext);
   
   const [selectedPositionType, setSelectedPositionType] = useState<PositionType | null>();
   const [selectedCategory, setSelectedCategory] = useState<ParticipantCategory | null>(null);
@@ -123,7 +123,7 @@ export default function ActionMenu() {
   function deleteObjects() { // todo: update transformer
     if (selectedItems.length === 0) return;
 
-    const {participants, props, notes, arrows} = splitPositionsByType(selectedItems);
+    const {participants, props, notes, arrows, placeholders} = splitPositionsByType(selectedItems);
 
     var updatedPositions: Partial<PositionContextState> = {};
     var updatedEntities: Partial<EntitiesContextState> = {};
@@ -153,6 +153,15 @@ export default function ActionMenu() {
       updatedPositions.arrowPositions = removeItemsByCondition(arrowPositions, (item) => positionsToRemove.has(item.id));
       removeList("arrowPosition", [...positionsToRemove]);
     }
+
+    if (placeholders.length > 0) {
+      var selectedPlaceholderIds = new Set(placeholders.map(x => x.placeholderId));
+      var positionsToRemove = new Set(placeholders.map(x => x.id));
+      updatedPositions.placeholderPositions = removeItemsByCondition(placeholderPositions, (item) => positionsToRemove.has(item.id));
+      removeList("placeholderPosition", [...positionsToRemove]);
+      removeList("placeholder", [...selectedPlaceholderIds]);
+    }
+
     updateEntitiesContext(updatedEntities);
     updatePositionContextState(updatedPositions);
     updateState({selectedItems: []});
