@@ -53,7 +53,7 @@ export async function GetAllForFormation(
 
   // Call the callback with all values
   thenFn(
-    formationSections,
+    formationSections.sort((a, b) => a.order - b.order),
     participants,
     props,
     placeholders,
