@@ -265,58 +265,68 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	}
 
 	function selectAllFromPositionType(event: CustomEvent) {
-		var positionType = event?.detail
-			?.positionType as PositionType;
+		var positionType = event?.detail?.positionType as PositionType;
+		console.log("Select all from position type:", positionType);
 		switch (positionType) {
 			case PositionType.participant:
 				var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id];
-				updateState({
-					selectedItems: participants.map(
-						(x) =>
-							({ type: PositionType.participant, participant: x } as Position)
-					),
-				});
-				setSelectedIds(new Set(participants.map((x) => x.id)));
+				if (participants) {
+					updateState({
+						selectedItems: participants.map(
+							(x) =>
+								({ type: PositionType.participant, participant: x } as Position)
+						),
+					});
+					setSelectedIds(new Set(participants.map((x) => x.id)));
+				}
 				break;
 
 			case PositionType.prop:
 				var props = positionContextRef.current.propPositions[userContext.selectedSection!.id];
-				updateState({
-					selectedItems: props.map(
-						(x) => ({ type: PositionType.prop, prop: x } as Position)
-					),
-				});
-				setSelectedIds(new Set(props.map((x) => x.id)));
+				if (props) {
+					updateState({
+						selectedItems: props.map(
+							(x) => ({ type: PositionType.prop, prop: x } as Position)
+						),
+					});
+					setSelectedIds(new Set(props.map((x) => x.id)));
+				}
 				break;
 
 			case PositionType.note:
 				var notes = positionContextRef.current.notePositions[userContext.selectedSection!.id];
-				updateState({
-					selectedItems: notes.map(
-						(x) => ({ type: PositionType.note, note: x } as Position)
-					),
-				});
-				setSelectedIds(new Set(notes.map((x) => x.id)));
+				if (notes) {
+					updateState({
+						selectedItems: notes.map(
+							(x) => ({ type: PositionType.note, note: x } as Position)
+						),
+					});
+					setSelectedIds(new Set(notes.map((x) => x.id)));
+				}
 				break;
 
 			case PositionType.arrow:
 				var arrows = positionContextRef.current.arrowPositions[userContext.selectedSection!.id];
-				updateState({
-					selectedItems: arrows.map(
-						(x) => ({ type: PositionType.arrow, arrow: x } as Position)
-					),
-				});
-				setSelectedIds(new Set(arrows.map((x) => x.id)));
+				if (arrows) {
+					updateState({
+						selectedItems: arrows.map(
+							(x) => ({ type: PositionType.arrow, arrow: x } as Position)
+						),
+					});
+					setSelectedIds(new Set(arrows.map((x) => x.id)));
+				}
 				break;
 
 			case PositionType.placeholder:
 				var placeholders = positionContextRef.current.placeholderPositions[userContext.selectedSection!.id];
-				updateState({
-					selectedItems: placeholders.map(
-						(x) => ({ type: PositionType.placeholder, placeholder: x } as Position)
-					),
-				});
-				setSelectedIds(new Set(placeholders.map((x) => x.id)));
+				if (placeholders) {
+					updateState({
+						selectedItems: placeholders.map(
+							(x) => ({ type: PositionType.placeholder, placeholder: x } as Position)
+						),
+					});
+					setSelectedIds(new Set(placeholders.map((x) => x.id)));
+				}
 				break;
 
 			default:
@@ -327,18 +337,20 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 	useEffect(() => {
 		window.addEventListener(
 			CUSTOM_EVENT.selectAllPositionType,
-			(e) => {selectAllFromPositionType(e as CustomEvent)}
+			(e) => {selectAllFromPositionType(e as CustomEvent)},
+			{ once: true }
 		);
 
 		return () => {
 			window.removeEventListener(
 				CUSTOM_EVENT.selectAllPositionType,
-				(e) => {selectAllFromPositionType(e as CustomEvent)}
+				(e) => {selectAllFromPositionType(e as CustomEvent)},
 			);
 		};
 	}, [userContext]);
 
 	function selectAllFromCategory(event: CustomEvent) {
+		console.log("Select all from category:", event?.detail?.categoryId);
 		var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id].filter(
 			(x) =>
 				strEquals(event?.detail?.categoryId, x.categoryId)
@@ -593,7 +605,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		setIsSinglePropSelected(singlePropSelected);
 		setIsSingleNoteSelected(singleNoteSelected);
 		setIsSingleArrowSelected(singleArrowSelected);
-		setIsSinglePlaceholderSelected(singleArrowSelected);
+		setIsSinglePlaceholderSelected(singlePlaceholderSelected);
 	}
 
 	return (
