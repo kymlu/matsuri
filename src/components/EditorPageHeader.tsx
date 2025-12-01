@@ -20,13 +20,15 @@ import { EntitiesContext } from "../contexts/EntitiesContext.tsx";
 import { GetAllForFormation } from "../data/DataController.ts";
 import { getByFormationId, getById, upsertList } from "../data/DataRepository.ts";
 import { Formation } from "../models/Formation.ts";
+import { DuplicateFormationDialog } from "./dialogs/DuplicateFormationDialog.tsx";
 
 export type EditorPageHeaderProps = {
   exportFunc: () => void
 }
 
 export function EditorPageHeader(props: EditorPageHeaderProps) {
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [editDialogOpen, setEditDialogOpen] = React.useState(false);
+  const [overwriteFormationDialog, setOverwriteFormationDialog] = React.useState(false);
 
   const {selectedFestival, selectedSection, updateState} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
@@ -137,7 +139,7 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
             trigger={
               <img alt="Festival edit" src={ICON.festival} className='size-8 max-w-8 max-h-8'/>
             }>
-            <MenuItem label="祭り編集" onClick={() => {setDialogOpen(true)}} />
+            <MenuItem label="祭り編集" onClick={() => {setEditDialogOpen(true)}} />
             {
               (selectedFestival?.formations.length ?? 0) > 1 &&
               <>
@@ -171,11 +173,11 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
             {/* <MenuSeparator/>
             <MenuItem label="隊列比較" onClick={() => {
               console.log("Todo: implement formation compare");
-            }} />
-            <MenuSeparator/>
-            <MenuItem label="別の隊列で上書き" onClick={() => {
-              console.log("Todo: overwrite formation");
             }} /> */}
+            <MenuSeparator/>
+            <MenuItem label="別の隊列を複製" onClick={() => {
+              setOverwriteFormationDialog(true);
+            }} />
           </CustomMenu>
         }
       </div>
@@ -248,15 +250,18 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
           </CustomMenu>
         </div>
       }
-      <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog.Root open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <EditFestivalDialog onSave={() => {
           getById("festival", selectedFestival!.id).then(festival => {
             updateState({selectedFestival: festival});
             const formation = festival?.formations.find(f => strEquals(f.id, selectedFormation?.id)) ?? festival?.formations[0];
             switchFormation(formation!);
           });
-          setDialogOpen(false);
+          setEditDialogOpen(false);
         }}/>
+      </Dialog.Root>
+      <Dialog.Root modal open={overwriteFormationDialog} onOpenChange={setOverwriteFormationDialog}>
+        <DuplicateFormationDialog/>
       </Dialog.Root>
     </header>
     
