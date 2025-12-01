@@ -5,6 +5,7 @@ import CustomSelect from "../CustomSelect.tsx";
 import { EntitiesContext } from "../../contexts/EntitiesContext.tsx";
 import { VisualSettingsContext } from "../../contexts/VisualSettingsContext.tsx";
 import { strEquals } from "../../lib/helpers/GlobalHelper.ts";
+import { PositionContext } from "../../contexts/PositionContext.tsx";
 
 export type ExportFormDialogProps = {
   onConfirm?: (followingId?: string) => void
@@ -12,22 +13,29 @@ export type ExportFormDialogProps = {
 
 export function ExportFormDialog(props: ExportFormDialogProps) {
   const {participantList, placeholderList} = useContext(EntitiesContext);
+  const {participantPositions, placeholderPositions} = useContext(PositionContext);
   const {followingId} = useContext(VisualSettingsContext);
   const [participantRecord, setParticipantRecord] = React.useState<Record<string, string>>({});
   const [following, setFollowing] = React.useState<string>("未設定");
 
   useEffect(() => {
     const record: Record<string, string> = {};
+    const validParticipants = new Set(...Object.values(participantPositions).flat().map(pos => pos.participantId));
     record["none"] = "未設定";
-    Object.entries(participantList) // TODO: filter those in the formation 
+    Object.entries(participantList)
       .sort((a, b) => a[1].displayName.localeCompare(b[1].displayName))
       .forEach(([id, participant]) => {
-        record[id] = participant.displayName;
+        if (validParticipants.has(id)) {
+          record[id] = participant.displayName;
+        }
     });
+    const validPlaceholders = new Set(...Object.values(placeholderPositions).flat().map(pos => pos.placeholderId));
     Object.entries(placeholderList)
       .sort((a, b) => a[1].displayName.localeCompare(b[1].displayName))
       .forEach(([id, placeholder]) => {
-        record[id] = placeholder.displayName;
+        if (validPlaceholders.has(id)) {
+          record[id] = placeholder.displayName;
+        }
     });
     setParticipantRecord(record);
   }, [participantList, placeholderList]);
