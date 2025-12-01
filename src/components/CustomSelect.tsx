@@ -39,7 +39,7 @@ export default function CustomSelect(props: CustomSelectProps) {
       </Select.Trigger>
       <Select.Portal>
         <Select.Positioner className="z-10 bg-white rounded-md select-none outline outline-1 outline-grey-300">
-          <Select.Popup className="flex flex-col gap-1 p-2">
+          <Select.Popup className="flex flex-col gap-1 p-2 max-h-[40svh] overflow-y-auto">
             { Object.entries(props.items).map(([label, value]) => (
               <Select.Item
                 key={label}
