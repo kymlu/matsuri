@@ -11,6 +11,7 @@ import ExportMenu from "../menus/ExportMenu.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import ArrowEditor from "../menus/ArrowEditor.tsx";
 import PlacementNameEditor from "../menus/PlacementNameEditor.tsx";
+import PlaceholderReplaceMenu from "../menus/PlaceholderReplaceMenu.tsx";
 
 export type FormationRightPanelProps = {
   exportFunc?: (exportName: string) => void
@@ -90,6 +91,8 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
       {isSingleSelection && firstItem.type === PositionType.placeholder && (
         <>
           <PlacementNameEditor />
+          <Divider />
+          <PlaceholderReplaceMenu />
           <Divider />
         </>
       )}
