@@ -7,7 +7,6 @@ import { ICON } from "../../../lib/consts.ts";
 import { removeItem, removeList, upsertList } from "../../../data/DataRepository.ts";
 import CustomSelect from "../../CustomSelect.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
-import CustomDialog from "../../dialogs/CustomDialog.tsx";
 import { Dialog } from "@base-ui-components/react";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord } from "../../../lib/helpers/GroupingHelper.ts";
@@ -40,7 +39,7 @@ export default function PlaceholderReplaceMenu() {
 
   var exchangeButtonEnabled = selectedParticipant !== "" && selectedParticipant != null && selectedPlaceholder != null;
 
-  const exchange = async () => {
+  const fillPlaceholder = async () => {
     if (selectedPlaceholder == null) return;
     
     // get the key from available participants
@@ -86,7 +85,7 @@ export default function PlaceholderReplaceMenu() {
   };
 
   return (
-    <ExpandableSection title="切り替え" titleIcon={ICON.textFieldsAltBlack}>
+    <ExpandableSection title="差し替え" titleIcon={ICON.textFieldsAltBlack}>
       <div className="flex flex-row gap-2 my-2">
         <CustomSelect
           items={availableParticipants}
@@ -102,7 +101,7 @@ export default function PlaceholderReplaceMenu() {
             </Dialog.Trigger>
             <ActionDialog
               title="置換確認"
-              onConfirm={exchange}>
+              onConfirm={fillPlaceholder}>
               {selectedParticipant} に置換しますか？
             </ActionDialog>
           </Dialog.Root>
