@@ -151,7 +151,9 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
                   </Menu.SubmenuTrigger>
                   <MenuContents position="right">
                     {
-                      selectedFestival?.formations.filter(x => !strEquals(x.id, selectedFormation?.id))
+                      selectedFestival?.formations
+                        .filter(x => !strEquals(x.id, selectedFormation?.id))
+                        .sort((a, b) => a.name.localeCompare(b.name))
                         .map((formation, index) => (
                           <>
                             <MenuItem
