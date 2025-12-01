@@ -57,6 +57,7 @@ export default function PlaceholderReplaceMenu() {
       x: position.x,
       y: position.y,
       participantId: participantId,
+      categoryId: position.categoryId,
       isSelected: false,
     } as ParticipantPosition));
 
