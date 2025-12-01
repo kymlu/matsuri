@@ -11,6 +11,7 @@ import CustomDialog from "../../dialogs/CustomDialog.tsx";
 import { Dialog } from "@base-ui-components/react";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { addItemsToRecordByKey, removeItemsByCondition, removeKeysFromRecord } from "../../../lib/helpers/GroupingHelper.ts";
+import ActionDialog from "../../dialogs/ActionDialog.tsx";
 
 export default function PlaceholderReplaceMenu() {
   const {selectedSection, selectedItems, updateState} = useContext(UserContext);
@@ -98,21 +99,11 @@ export default function PlaceholderReplaceMenu() {
                 置換
               </div>
             </Dialog.Trigger>
-            <CustomDialog title="置換確認">
+            <ActionDialog
+              title="置換確認"
+              onConfirm={exchange}>
               {selectedParticipant} に置換しますか？
-              <div className="flex flex-row items-center justify-end flex-1 gap-1 mt-4">
-                <Dialog.Close>
-                  <div className="px-3 py-1.5 border rounded-xl text-nowrap">
-                    キャンセル
-                  </div>
-                </Dialog.Close>
-                <Dialog.Close onClick={() => {exchange()}}>
-                  <div className="px-3 py-1.5 border rounded-xl text-nowrap bg-primary text-white">
-                    OK
-                  </div>
-                </Dialog.Close>
-              </div>
-            </CustomDialog>
+            </ActionDialog>
           </Dialog.Root>
         </div>
       </div>

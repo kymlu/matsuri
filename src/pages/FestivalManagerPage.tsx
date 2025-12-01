@@ -31,6 +31,7 @@ import { Participant, ParticipantPlaceholder } from '../models/Participant.ts';
 import { ParticipantPosition, PropPosition, ArrowPosition, NotePosition, PlaceholderPosition } from '../models/Position.ts';
 import { Prop } from '../models/Prop.ts';
 import { strEquals } from '../lib/helpers/GlobalHelper.ts';
+import ActionDialog from '../components/dialogs/ActionDialog.tsx';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);
@@ -491,13 +492,12 @@ export default function FestivalManagerPage () {
       <Dialog.Root
         open={showConfirmOverwrite}>
         {
-          <CustomDialog title="上書きの確認">
+          <ActionDialog
+            title="上書きの確認"
+            onCancel={() => setShowConfirmOverwrite(false)}
+            onConfirm={() => onConfirmOverwrite()}>
             <b>{savedFestival?.name}</b>の隊列データは保存されています。<br/>新しい祭りデータで上書きしてもよろしいですか？
-            <div className='flex justify-end gap-2 mt-4'>
-              <Button label="Cancel" onClick={() => setShowConfirmOverwrite(false)}>キャンセル</Button>
-              <Button primary label="Ok" onClick={() => onConfirmOverwrite()}>OK</Button>
-            </div>
-          </CustomDialog>
+          </ActionDialog>
         }
       </Dialog.Root>
     </div>
