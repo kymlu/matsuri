@@ -42,7 +42,7 @@ export default function FormationSelectionPage() {
     getFestivalData();
   }, []);
 
-  async function getFestivalData() {
+  const getFestivalData = async () => {
     Promise.all(
       (allFestivals.festivals as FestivalMeta[])
         .filter(x => x.isVisible)
@@ -52,7 +52,7 @@ export default function FormationSelectionPage() {
     });
   }
 
-  async function selectFormation(festival: Festival, formation: Formation) {
+  const selectFormation = async (festival: Festival, formation: Formation) => {
     readResourcesAndFormation(
       festival.id,
       formation.name,
@@ -66,7 +66,7 @@ export default function FormationSelectionPage() {
       });
   }
 
-  function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {
+  const setDataBeforeNavigation = (festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) => {
     updateVisualSettingsContext({followingId: null});
 
     updateFormationContext({selectedFormation: formation ?? undefined});
@@ -101,7 +101,7 @@ export default function FormationSelectionPage() {
   }
 
   return (
-    <div className='flex flex-col w-full gap-2 mt-10 portrait:my-10 landscape:max-w-[65svw] landscape:mx-auto'>
+    <div className='flex flex-col w-full gap-2 my-10 landscape:max-w-[65svw] landscape:mx-auto'>
       <div className='flex items-center justify-between mx-4'>
         <h1 className='text-2xl font-bold'>祭り</h1>
         <button
