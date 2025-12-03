@@ -8,7 +8,9 @@ import { objectColorSettings } from "../themes/colours.ts"
 
 export const songList: Record<string, Song> = {
   "5": {
+    id: "5",
     name: "陽光へ",
+    order: 5,
     categories: {
       "500": { id: "500", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
       "501": { id: "501", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
@@ -42,7 +44,9 @@ export const songList: Record<string, Song> = {
     ]
   },
   "1": {
+    id: "1",
     name: "今、ひとえに",
+    order: 1,
     categories: {
       "100": { id: "100", name: "一般", color: objectColorSettings["white"], order: 0, showInLegend: true, showInParadeGuide: false },
       "101": { id: "101", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
@@ -75,7 +79,9 @@ export const songList: Record<string, Song> = {
     ]
   },
   "2": {
+    id: "2",
     name: "今をかける",
+    order: 2,
     categories: {
       "200": { id: "200", name: "一般", color: objectColorSettings["white"], order: 0, showInLegend: true, showInParadeGuide: false },
       "201": { id: "201", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
@@ -108,7 +114,9 @@ export const songList: Record<string, Song> = {
     ]
   },
   "3": {
+    id: "3",
     name: "To be continued!!!",
+    order: 3,
     categories: {
       "300": { id: "300", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
       "301": { id: "301", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
@@ -141,7 +149,9 @@ export const songList: Record<string, Song> = {
     ]
   },
   "4": {
+    id: "4",
     name: "To be continued!!!!!!!!!!",
+    order: 4,
     categories: {
       "400": { id: "400", name: "一般", color: objectColorSettings["redLightest"], order: 0, showInLegend: true, showInParadeGuide: false },
       "401": { id: "401", name: "スタッフ", color: objectColorSettings["grey2"], order: 1, showInLegend: true, showInParadeGuide: false },
