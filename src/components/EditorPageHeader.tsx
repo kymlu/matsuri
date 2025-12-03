@@ -21,6 +21,7 @@ import { GetAllForFormation } from "../data/DataController.ts";
 import { getByFormationId, getById, upsertList } from "../data/DataRepository.ts";
 import { Formation } from "../models/Formation.ts";
 import { DuplicateFormationDialog } from "./dialogs/DuplicateFormationDialog.tsx";
+import { CompareFormationDialog } from "./dialogs/CompareFormationDialog.tsx";
 
 export type EditorPageHeaderProps = {
   exportFunc: () => void
@@ -29,11 +30,12 @@ export type EditorPageHeaderProps = {
 export function EditorPageHeader(props: EditorPageHeaderProps) {
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
   const [overwriteFormationDialog, setOverwriteFormationDialog] = React.useState(false);
+  const [compareFormationDialog, setCompareFormationDialog] = React.useState(false);
 
   const {selectedFestival, selectedSection, updateState} = useContext(UserContext);
   const {updateVisualSettingsContext} = useContext(VisualSettingsContext);
   const {selectedFormation, updateFormationContext} = useContext(FormationContext);
-  const {updateEntitiesContext} = useContext(EntitiesContext);
+  const {participantList, updateEntitiesContext} = useContext(EntitiesContext);
   const {updatePositionContextState} = useContext(PositionContext);
   const {appMode, userType, updateAppModeContext} = useContext(AppModeContext);
   const navigate = useNavigate();
@@ -172,11 +174,16 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
                 </Menu.SubmenuRoot>
               </>
             }
-            {/* <MenuSeparator/>
-            <MenuItem label="隊列比較" onClick={() => {
-              console.log("Todo: implement formation compare");
-            }} /> */}
             <MenuSeparator/>
+            {
+              Object.keys(participantList).length > 0 &&
+              <>
+                <MenuItem label="隊列比較" onClick={() => {
+                  setCompareFormationDialog(true);
+                }} />
+                <MenuSeparator/>
+              </>
+            }
             <MenuItem label="別の隊列を複製" onClick={() => {
               setOverwriteFormationDialog(true);
             }} />
@@ -252,7 +259,7 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
           </CustomMenu>
         </div>
       }
-      <Dialog.Root open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+      {editDialogOpen && <Dialog.Root open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <EditFestivalDialog onSave={() => {
           getById("festival", selectedFestival!.id).then(festival => {
             updateState({selectedFestival: festival});
@@ -261,10 +268,13 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
           });
           setEditDialogOpen(false);
         }}/>
-      </Dialog.Root>
-      <Dialog.Root modal open={overwriteFormationDialog} onOpenChange={setOverwriteFormationDialog}>
+      </Dialog.Root>}
+      {overwriteFormationDialog && <Dialog.Root modal open={overwriteFormationDialog} onOpenChange={setOverwriteFormationDialog}>
         <DuplicateFormationDialog/>
-      </Dialog.Root>
+      </Dialog.Root>}
+      {compareFormationDialog && <Dialog.Root modal open={compareFormationDialog} onOpenChange={setCompareFormationDialog}>
+        <CompareFormationDialog/>
+      </Dialog.Root>}
     </header>
     
   )
