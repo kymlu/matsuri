@@ -17,7 +17,7 @@ import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
 import { getFestivalMetaFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
-import { FestivalMeta, FestivalResources, FormationDetails, ImportExportModel } from '../models/ImportExportModel.ts';
+import { FestivalMeta, FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
 import { CategoryContext } from '../contexts/CategoryContext.tsx';
@@ -49,7 +49,6 @@ export default function FestivalManagerPage () {
   const [savedFestival, setSavedFestival] = useState<Festival | null>(null);
   const [selectedFestival, setSelectedFestival] = useState<Festival | null>(null);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
-  const [selectedFestivalResources, setSelectedFestivalResources] = useState<FestivalResources | null>(null);
   const [festivalData, setFestivalData] = useState<Festival[]>([]);
   const [overwriteMode, setOverwriteMode] = useState<null | "existing" | "new" | "upload">(null);
   let navigate = useNavigate();
@@ -63,7 +62,7 @@ export default function FestivalManagerPage () {
     })
   }, []);
 
-  async function getFestivalData() {
+  const getFestivalData = async () => {
     Promise.all((
       allFestivals.festivals as FestivalMeta[])
         .map((x => getFestivalMetaFile(x, () => {}, async () => {})
@@ -76,7 +75,7 @@ export default function FestivalManagerPage () {
     navigate("/formation");
   }
 
-  function selectSavedFestival() {
+  const selectSavedFestival = () => {
     if (!savedFestival) return;
 
     GetAllForFormation(savedFestival.id, savedFestival.formations[0].id, (
@@ -111,7 +110,7 @@ export default function FestivalManagerPage () {
     });
   }
 
-  function selectExistingFestival(festival: Festival, formation: Formation) {
+  const selectExistingFestival =(festival: Festival, formation: Formation) => {
     if (savedFestival) {
       setSelectedFestival(festival);
       setSelectedFormation(formation);
@@ -122,7 +121,7 @@ export default function FestivalManagerPage () {
     }
   }
 
-  function loadFormation(festival: Festival, formation: Formation) {
+  const loadFormation = (festival: Festival, formation: Formation) => {
     clearAllData()
     setSelectedFestival(null);
     setSelectedFormation(null);
@@ -140,7 +139,7 @@ export default function FestivalManagerPage () {
       });
   }
 
-  function saveToDatabase(festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) {
+  const saveToDatabase = (festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) => {
     upsertItem("festival", festival);
     upsertList("participant", resources.participants);
     upsertList("prop", resources.props);
@@ -153,7 +152,7 @@ export default function FestivalManagerPage () {
     upsertList("placeholderPosition", formationDetails.placeholderPositions);
   }
 
-  function setDataBeforeNavigation(festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) {
+  const setDataBeforeNavigation = (festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) => {
     updateVisualSettingsContext({followingId: null, gridSize: DEFAULT_GRID_SIZE});
 
     updateFormationContext({selectedFormation: formation});
@@ -191,7 +190,7 @@ export default function FestivalManagerPage () {
     updateAppModeContext({userType: "admin", appMode: "edit"});
   }
 
-  function onAddNewFestivalClick() {
+  const onAddNewFestivalClick = () => {
     if (savedFestival) {
       setOverwriteMode("new");
       setShowConfirmOverwrite(true);
@@ -201,7 +200,7 @@ export default function FestivalManagerPage () {
     }
   }
 
-  function onSaveNewFestival(newFestival: Festival) {
+  const onSaveNewFestival = (newFestival: Festival) => {
     setEditingFestival(false);
     navigateToFormationEditor();
 
@@ -237,7 +236,7 @@ export default function FestivalManagerPage () {
     });
   }
 
-  function onUploadButtonClick() {
+  const onUploadButtonClick = () => {
     if (savedFestival) {
       setOverwriteMode("upload");
       setShowConfirmOverwrite(true);
@@ -246,13 +245,13 @@ export default function FestivalManagerPage () {
     }
   }
 
-  function triggerUpload() {
+  const triggerUpload = () => {
     if (uploadFileElement){
       uploadFileElement.click();
     }
   }
 
-  function readUploadedFile(file: File) {
+  const readUploadedFile = (file: File) => {
     const reader = new FileReader();
   
     reader.addEventListener(
@@ -376,7 +375,7 @@ export default function FestivalManagerPage () {
     }
   }
 
-  function onConfirmOverwrite() {
+  const onConfirmOverwrite = () => {
     clearAllData();
     setSavedFestival(null);
     setShowConfirmOverwrite(false);
@@ -399,7 +398,7 @@ export default function FestivalManagerPage () {
   }
 
   return (
-    <div className='flex flex-col w-full gap-2 mt-10 portrait:my-10 landscape:max-w-[65svw] landscape:mx-auto'>
+    <div className='flex flex-col w-full gap-2 my-10 landscape:max-w-[65svw] landscape:mx-auto'>
       <div className='flex items-center justify-between mx-4'>
         <h1 className='text-2xl font-bold'>隊列編集</h1>
         <button
@@ -424,9 +423,9 @@ export default function FestivalManagerPage () {
           <Divider primary/>
         </div>
       }
-      <div className='grid grid-cols-2 gap-4 mx-5'>
+      <div className='grid gap-4 mx-5 landscape:grid-cols-2'>
         <Button onClick={() => onAddNewFestivalClick()}>
-          <div className='flex flex-row items-center justify-center gap-2'>
+          <div className='flex flex-row items-center justify-center gap-2 p-1'>
             祭りを追加
             <img
               src={ICON.addBlack}
@@ -465,7 +464,6 @@ export default function FestivalManagerPage () {
           if (!hasError){
             setSelectedFestival(null);
             setEditingFestival(false);
-            setSelectedFestivalResources(null);
           }}}>
         {
           editingFestival &&

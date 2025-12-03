@@ -100,8 +100,8 @@ export function EditFestivalProps(sectProps: EditFestivalPropsProps) {
         <img src={ICON.addBlack} className="size-6" alt="Add participant" />
       </button>
     </div>
-    <div className="grid grid-cols-[1fr,4fr] items-start gap-4">
-      <div className="flex flex-col gap-2 max-h-[20svh] overflow-y-auto border-2 border-primary rounded-lg p-2">
+    <div className="flex flex-col items-start gap-4">
+      <div className="flex flex-row flex-wrap gap-2 max-h-[20svh] portrait:w-full overflow-y-auto border-2 border-primary rounded-lg p-2">
         {propsList.map(x => <ItemButton key={x.id} text={`${x.name} (${x.length}m)`} onClick={() => addProp(x)}/>)}
       </div>
       <div className="grid grid-cols-[5fr,1fr,1fr,auto] items-center gap-2">
