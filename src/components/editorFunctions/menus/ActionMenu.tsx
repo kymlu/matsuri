@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import Button from "../../Button.tsx";
-import { PositionType, splitPositionsByType } from "../../../models/Position.ts";
+import { ArrowPosition, NotePosition, Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { EntitiesContext, EntitiesContextState } from "../../../contexts/EntitiesContext.tsx";
 import { PositionContext, PositionContextState } from "../../../contexts/PositionContext.tsx";
 import { CUSTOM_EVENT, ICON } from "../../../lib/consts.ts";
@@ -11,7 +11,7 @@ import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import { ParticipantCategory } from "../../../models/ParticipantCategory.ts";
 import { Participant } from "../../../models/Participant.ts";
 import Divider from "../../Divider.tsx";
-import { removeItemsByCondition, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
+import { addItemsToRecordArray, removeItemsByCondition, replaceItemsFromDifferentSource, selectValuesByKeys } from "../../../lib/helpers/GroupingHelper.ts";
 import { removeList, upsertList } from "../../../data/DataRepository.ts";
 
 export default function ActionMenu() {
@@ -105,6 +105,51 @@ export default function ActionMenu() {
     });
     
     upsertList("participantPosition", updatedPositions);
+  }
+
+  const duplicate = () => {
+    if (selectedItems.length === 0 || selectedSection === null) return;
+
+    const {participants, props, notes, arrows, placeholders} = splitPositionsByType(selectedItems);
+
+    const newArrows = arrows.map(arrow => ({
+      ...arrow,
+      id: crypto.randomUUID(),
+      x: arrow.x + 0.5,
+      y: arrow.y + 0.5
+    }) as ArrowPosition);
+
+    const newNotes = notes.map(note => ({
+      ...note,
+      id: crypto.randomUUID(),
+      x: note.x + 0.5,
+      y: note.y + 0.5,
+    }) as NotePosition);
+
+    upsertList("arrowPosition", newArrows);
+    upsertList("notePosition", newNotes);
+
+    var updatedArrowList = addItemsToRecordArray(arrowPositions, selectedSection.id, newArrows);
+    var updatedNoteList = addItemsToRecordArray(notePositions, selectedSection.id, newNotes);
+
+    updatePositionContextState({
+      arrowPositions: updatedArrowList,
+      notePositions: updatedNoteList,
+    });
+    
+    updateState({selectedItems: [
+      ...newArrows.map(arrow => ({arrow: arrow, type: PositionType.arrow}) as Position),
+      ...newNotes.map(note => ({note: note, type: PositionType.note}) as Position)
+    ]});
+    
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const rerenderEvent = new CustomEvent(
+          CUSTOM_EVENT.updateSelectionExternal, 
+          {});
+        window.dispatchEvent(rerenderEvent);
+      })
+    });
   }
 
   const selectAllFromCategory = () => {
@@ -233,6 +278,15 @@ export default function ActionMenu() {
             label="Select all from same category"
             onClick={() => {selectAllFromCategory()}}>
             全ての{selectedCategory.name}を選択
+          </Button>
+        }
+        {
+          (selectedPositionType === PositionType.note || selectedPositionType === PositionType.arrow) &&
+          <Button
+            full
+            label="Duplicate"
+            onClick={() => {duplicate()}}>
+              重複
           </Button>
         }
         { 

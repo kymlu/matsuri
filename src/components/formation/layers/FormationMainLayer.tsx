@@ -349,6 +349,35 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		};
 	}, [userContext]);
 
+	const updateSelectionExternal = () => {
+		var positionsByType = splitPositionsByType(selectedItems);
+
+		setSelectedIds(new Set([
+			...positionsByType.notes.map(x => x.id),
+			...positionsByType.participants.map(x => x.id),
+			...positionsByType.placeholders.map(x => x.id),
+			...positionsByType.props.map(x => x.id),
+			...positionsByType.arrows.map(x => x.id),
+		]));
+		updateSelectionRect();
+		refreshTransformer();
+	}
+
+	useEffect(() => {
+		window.addEventListener(
+			CUSTOM_EVENT.updateSelectionExternal,
+			(e) => {(updateSelectionExternal())},
+			{ once: true }
+		);
+
+		return () => {
+			window.removeEventListener(
+				CUSTOM_EVENT.updateSelectionExternal,
+				(e) => {updateSelectionExternal()},
+			);
+		};
+	}, [userContext]);
+
 	function selectAllFromCategory(event: CustomEvent) {
 		console.log("Select all from category:", event?.detail?.categoryId);
 		var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id].filter(
