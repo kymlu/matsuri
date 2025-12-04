@@ -17,7 +17,8 @@ export const DO_NOT_UPDATE_POSITION_ATTR = "doNotUpdatePosition";
 export enum CUSTOM_EVENT {
   "dbInitialized" = "dbInitialized",
   "selectAllFromCategory" = "selectAllFromCategory",
-  "selectAllPositionType" = "selectAllPositionType"
+  "selectAllPositionType" = "selectAllPositionType",
+  "updateSelectionExternal" = "updateSelectionExternal",
 }
 
 export const CONTEXT_NAMES = {

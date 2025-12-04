@@ -151,7 +151,7 @@ export function getPropAnimationPaths(
   var propsList = propPositions
     .filter(x => sectionIds.includes(x.formationSectionId))
     .reduce((acc, item) => {
-      const key = item.propId;
+      const key = item.uniquePropId;
       if (!acc[key]) {
         acc[key] = [];
       }

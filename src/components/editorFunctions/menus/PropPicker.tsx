@@ -19,7 +19,8 @@ export default function PropPicker (props: {margins: number[][]}) {
     if(selectedSection === null) return;
 
     var position = props.margins[((selectedSection == null || propPositions[selectedSection.id] == null) ? 0 : Object.values(propPositions[selectedSection.id]).length) % props.margins.length]
-    
+    var uniquePropId = crypto.randomUUID();
+
     var newPositions: PropPosition[] = currentSections.map(section => {
       return {
         id: crypto.randomUUID().toString(),
@@ -28,7 +29,8 @@ export default function PropPicker (props: {margins: number[][]}) {
         x: position[0],
         y: position[1],
         isSelected: false,
-        angle: 0
+        angle: 0,
+        uniquePropId: uniquePropId,
       } as PropPosition;
     });
 

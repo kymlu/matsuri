@@ -20,6 +20,7 @@ export interface PlaceholderPosition extends BasePosition {
 
 export interface PropPosition extends BasePosition {
   propId: string,
+  uniquePropId: string,
   angle: number
 }
 

@@ -190,8 +190,8 @@ export default function ActionMenu() {
     }
 
     if (props.length > 0) {
-      var selectedPropIds = new Set(props.map(x => x.propId));
-      var positionsToRemove = new Set(Object.values(propPositions).flat().filter(x => selectedPropIds.has(x.propId)).map(x => x.id));
+      var selectedPropIds = new Set(props.map(x => x.uniquePropId));
+      var positionsToRemove = new Set(Object.values(propPositions).flat().filter(x => selectedPropIds.has(x.uniquePropId)).map(x => x.id));
       removeList("propPosition", [...positionsToRemove]);
       updatedPositions.propPositions = removeItemsByCondition(propPositions, (item) => positionsToRemove.has(item.id));
     }

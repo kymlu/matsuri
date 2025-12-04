@@ -45,7 +45,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
       .forEach((_, index) => 
         participantRef.current[index] = React.createRef<Konva.Group>()
       );
-    Object.keys(props.props)
+    Array.from(new Set(props.propPositions.map(x => x.uniquePropId)))
       .forEach((_, index) => 
         propRef.current[index] = React.createRef<Konva.Group>()
       );
@@ -143,7 +143,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
       listening={false}
       useRef={animationLayerRef}>
       {props.propPositions
-        ?.sort((a, b) => a.propId.localeCompare(b.propId))
+        ?.sort((a, b) => a.uniquePropId?.localeCompare(b.uniquePropId))
         .map((placement, index) => {
           const prop = props.props[placement.propId];
           if (!prop) return <></>;
