@@ -78,6 +78,7 @@ export default function FormationPage () {
         userContext.currentSections,
         Object.values(participantPositions).flat(),
         Object.values(propPositions).flat(),
+        Object.values(placeholderPositions).flat(),
         gridSize,
         selectedFormation?.topMargin,
         selectedFormation?.sideMargin));
@@ -101,6 +102,7 @@ export default function FormationPage () {
       currentSections,
       Object.values(participantPositions).flat(),
       Object.values(propPositions).flat(),
+      Object.values(placeholderPositions).flat(),
       gridSize,
       selectedFormation?.topMargin,
       selectedFormation?.sideMargin));
@@ -182,10 +184,12 @@ export default function FormationPage () {
       if (paths) {
         const participantPaths = paths?.participantPaths;
         const propPaths = paths?.propPaths;
-        if (participantPaths || propPaths) {
+        const placePaths = paths?.placeholderPaths;
+        if (participantPaths || propPaths || placePaths) {
           updateAnimationContext({
             participantPaths: participantPaths,
             propPaths: propPaths,
+            placeholderPaths: placePaths,
             isAnimating: true
           });
         }

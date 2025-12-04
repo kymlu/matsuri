@@ -50,7 +50,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
         propRef.current[index] = React.createRef<Konva.Group>()
       );
     Object.keys(props.placeholders)
-      .forEach((_, index) => 
+      .forEach((_, index) =>
         placeholderRef.current[index] = React.createRef<Konva.Group>()
       );
   }, [props.participantPositions, props.propPositions, props.placePositions]);
@@ -81,7 +81,7 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
 
     createAnimations(animationPromises, sortedParticipantPaths, participantRef, false, props.previousParticipantPositions);
     createAnimations(animationPromises, sortedPropPaths, propRef, true);
-    createAnimations(animationPromises, sortedPlacePaths, placeholderRef, true);
+    createAnimations(animationPromises, sortedPlacePaths, placeholderRef, false);
 
     Promise.all(animationPromises).then(() => {
       updateAnimationContext({isAnimating: false});
@@ -183,16 +183,16 @@ export function FormationAnimationLayer(props: FormationAnimationLayerProps) {
       {props.placePositions
         ?.sort((a, b) => a.placeholderId.localeCompare(b.placeholderId))
         .map((placement, index) => {
-          const participant = props.participants[placement.placeholderId];
-          if (!participant) return <></>;
+          const placeholder = props.placeholders[placement.placeholderId];
+          if (!placeholder) return <></>;
           return <ParticipantObject 
             id={"animate" + placement.id}
             key={placement.id}
-            name={participant.displayName!} 
+            name={placeholder.displayName!} 
             colour={placement.categoryId ? props.categories[placement.categoryId]?.color || objectColorSettings["amberLight"] : objectColorSettings["amberLight"]} 
-            startX={props.previousParticipantPositions[placement.placeholderId]?.x ?? 0} 
-            startY={props.previousParticipantPositions[placement.placeholderId]?.y ?? 0}
-            ref={participantRef.current[index]}
+            startX={0} 
+            startY={0}
+            ref={placeholderRef.current[index]}
             following={strEquals(followingId, placement.placeholderId)}
             isPlaceholder={true}
           />;

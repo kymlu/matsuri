@@ -5,7 +5,7 @@ import FormationGridLayer from "./layers/FormationGridLayer.tsx";
 import { isNullOrUndefined, strEquals } from "../../lib/helpers/GlobalHelper.ts";
 import { AnimationContext } from "../../contexts/AnimationContext.tsx";
 import { FormationType } from "../../models/Formation.ts";
-import { getParticipantAnimationPaths, getPropAnimationPaths } from "../../lib/helpers/AnimationHelper.ts";
+import { getParticipantAnimationPaths, getPlaceholderAnimationPaths, getPropAnimationPaths } from "../../lib/helpers/AnimationHelper.ts";
 import { FormationGhostLayer } from "./layers/FormationGhostLayer.tsx";
 import { FormationAnimationLayer } from "./layers/FormationAnimationLayer.tsx";
 import { FormationMainLayer } from "./layers/FormationMainLayer.tsx";
@@ -56,7 +56,7 @@ export default function FormationCanvas(props: FormationCanvasProps) {
 
   useEffect(() => {
     if(isNullOrUndefined(userContext.selectedSection) || appMode === "view") return;
-    if(enableAnimation && userContext.previousSectionId &&userContext.selectedSection) {
+    if(enableAnimation && userContext.previousSectionId && userContext.selectedSection) {
       updateState({isLoading: true});
       var participantPaths = getParticipantAnimationPaths(
         [userContext.previousSectionId!, userContext.selectedSection!.id],
@@ -70,14 +70,26 @@ export default function FormationCanvas(props: FormationCanvasProps) {
         Object.values(propPositions).flat(),
         props.topMargin,
         props.sideMargin);
+      var placeholderPaths = getPlaceholderAnimationPaths(
+        [userContext.previousSectionId!, userContext.selectedSection!.id],
+        gridSize,
+        Object.values(placeholderPositions).flat(),
+        props.topMargin,
+        props.sideMargin);
+        
       updateState({isLoading: false});
-      updateAnimationContext({participantPaths: participantPaths, propPaths: propPaths, isAnimating: true});
+      updateAnimationContext({
+        participantPaths: participantPaths,
+        propPaths: propPaths,
+        placeholderPaths: placeholderPaths,
+        isAnimating: true
+      });
     }
   }, [userContext.selectedSection]);
 
   useEffect(() => {
     if(followingId) {
-      var newFollowingPositions = {};
+      var newFollowingPositions: Record<string, ParticipantPosition | PlaceholderPosition> = {};
       Object.keys(participantPositions).forEach((key) => {
         var position = participantPositions[key].filter(x => strEquals(x.participantId, followingId));
         if (position.length > 0) {

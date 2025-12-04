@@ -1,12 +1,13 @@
 import { AnimationPath, Path } from "../../models/AnimationPath.ts";
 import { FormationSection } from "../../models/FormationSection.ts";
-import { ParticipantPosition, PropPosition } from "../../models/Position.ts";
+import { ParticipantPosition, PlaceholderPosition, PropPosition } from "../../models/Position.ts";
 import { DEFAULT_TOP_MARGIN, DEFAULT_SIDE_MARGIN } from "../consts.ts";
 
 export function generateAnimationPaths(
   sections: Array<FormationSection>,
   participantPositions: ParticipantPosition[],
   propPositions: PropPosition[],
+  placeholderPositions: PlaceholderPosition[],
   gridSize: number,
   topMargin?: number,
   sideMargin?: number,
@@ -31,6 +32,13 @@ export function generateAnimationPaths(
           propPositions,
           topMargin ?? DEFAULT_TOP_MARGIN,
           sideMargin ?? DEFAULT_SIDE_MARGIN
+        ),
+        placeholderPaths: getPlaceholderAnimationPaths(
+          [sections[i].id, sections[i + 1].id],
+          gridSize,
+          placeholderPositions,
+          topMargin ?? DEFAULT_TOP_MARGIN,
+          sideMargin ?? DEFAULT_SIDE_MARGIN
         )
       },
       {
@@ -47,6 +55,13 @@ export function generateAnimationPaths(
           [sections[i + 1].id, sections[i].id],
           gridSize,
           propPositions,
+          topMargin ?? DEFAULT_TOP_MARGIN,
+          sideMargin ?? DEFAULT_SIDE_MARGIN
+        ),
+        placeholderPaths: getPlaceholderAnimationPaths(
+          [sections[i + 1].id, sections[i].id],
+          gridSize,
+          placeholderPositions,
           topMargin ?? DEFAULT_TOP_MARGIN,
           sideMargin ?? DEFAULT_SIDE_MARGIN
         )
@@ -75,6 +90,41 @@ export function getParticipantAnimationPaths(
     }, {} as Record<string, ParticipantPosition[]>);
 
   const animationPaths = Object.fromEntries(Object.entries((participantList))
+    .map(([key, positionList]) => {
+      const path = positionList
+        .sort((a, b) => sectionIds.indexOf(a.formationSectionId) - sectionIds.indexOf(b.formationSectionId))
+        .reduce((acc, point, index) => {
+          if (index === 0) {
+            return `M${(point.x + sideMargin) * gridSize} ${(point.y + topMargin) * gridSize}`;
+          } else {
+            return `${acc} L${(point.x + sideMargin) * gridSize} ${(point.y + topMargin) * gridSize}`;
+          }
+        }, "");
+      return [key, {path: path}];
+    }));
+
+  return animationPaths;
+}
+
+export function getPlaceholderAnimationPaths(
+  sectionIds: string[],
+  gridSize: number,
+  placeholders: Array<PlaceholderPosition>,
+  topMargin: number,
+  sideMargin: number,
+): Record<string, Path> {
+  var placeholderList = placeholders
+    .filter(x => sectionIds.includes(x.formationSectionId))
+    .reduce((acc, item) => {
+      const key = item.placeholderId;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+      return acc;
+    }, {} as Record<string, PlaceholderPosition[]>);
+
+  const animationPaths = Object.fromEntries(Object.entries((placeholderList))
     .map(([key, positionList]) => {
       const path = positionList
         .sort((a, b) => sectionIds.indexOf(a.formationSectionId) - sectionIds.indexOf(b.formationSectionId))
