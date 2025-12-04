@@ -118,7 +118,7 @@ export function exportForGithub(festivalId: string) {
 
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${festival.name}.zip`;
+        link.download = `${festival.id}.zip`;
 
         document.body.appendChild(link);
         link.click();
