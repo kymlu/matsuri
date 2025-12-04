@@ -218,7 +218,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
           />
       </form>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 mt-4">
         <Button onClick={reset} label="Reset">リセット</Button>
         <Button
           disabled={hasErrors}
