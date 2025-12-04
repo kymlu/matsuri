@@ -20,7 +20,7 @@ export function ExportFormDialog(props: ExportFormDialogProps) {
 
   useEffect(() => {
     const record: Record<string, string> = {};
-    const validParticipants = new Set(...Object.values(participantPositions).flat().map(pos => pos.participantId));
+    const validParticipants = new Set(Object.values(participantPositions).flat().map(pos => pos.participantId));
     record["none"] = "未設定";
     Object.entries(participantList)
       .sort((a, b) => a[1].displayName.localeCompare(b[1].displayName))
