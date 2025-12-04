@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { getFromPositionType, NotePosition } from "../../../models/Position.ts";
+import { getFromPositionType, NotePosition, splitPositionsByType } from "../../../models/Position.ts";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import TextInput from "../../TextInput.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
-import { upsertItem } from "../../../data/DataRepository.ts";
+import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
 import CustomSlider from "../../CustomSlider.tsx";
 
 export default function NoteEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
 
-  const [note, setNote] = useState<NotePosition | null>(null);
+  const [notes, setNotes] = useState<NotePosition[]>([]);
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
   const [textSize, setTextSize] = useState(0.5);
@@ -21,15 +21,25 @@ export default function NoteEditor() {
 
   useEffect(() => {
     if (selectedItems.length === 0) return;
-    var note = getFromPositionType(selectedItems[0]) as NotePosition;
-    setLabel(note!.label);
-    setText(note!.text);
-    setTextSize(note!.fontGridRatio);
-    textSizeRef?.current?.changeValue(note.fontGridRatio);
-    setNote(note);
+    var splitItems = splitPositionsByType(selectedItems);
+
+    var notesList = splitItems.notes;
+    if (notesList.length === 1) {
+      setLabel(notesList[0]!.label);
+      setText(notesList[0]!.text);
+    } else {
+      setLabel("");
+      setText("");
+    }
+
+    setTextSize(notesList[0]?.fontGridRatio ?? 0.5);
+    textSizeRef?.current?.changeValue(notesList[0]?.fontGridRatio ?? 0.5);
+    setNotes(notesList);
   }, [selectedItems]);
   
   const handleContentChange = (newValue: string, type: "label" | "text") => {
+    if (notes.length !== 1) return;
+    
     if (type === "label") {
       setLabel(newValue);
     } else {
@@ -37,7 +47,7 @@ export default function NoteEditor() {
     }
     
     var updatedRecord = {...notePositions};
-    var updatedNote = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, note!.id))!;
+    var updatedNote = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, notes[0]!.id))!;
     updatedNote.isSelected = false;
     updatedNote[type] = newValue;
     
@@ -48,34 +58,41 @@ export default function NoteEditor() {
 
   const handleTextSizeChange = (newValue: number) => {
     var updatedRecord = {...notePositions};
-    var updatedNote = updatedRecord[selectedSection!.id].find(x => strEquals(x.id, note!.id))!;
-    updatedNote.isSelected = false;
-    updatedNote.fontGridRatio = newValue;
+    var noteIds = new Set(notes.map(x => x.id));
+    console.log(noteIds);
+    var updatedNotes = updatedRecord[selectedSection!.id].filter(x => noteIds.has(x.id))!;
+    updatedNotes.forEach(x => {
+      x.isSelected = false;
+      x.fontGridRatio = newValue;
+    })
     updatePositionContextState({notePositions: updatedRecord});
-    upsertItem("notePosition", updatedNote);
+    upsertList("notePosition", updatedNotes);
   };
   
   return (
     <ExpandableSection
       title="テキスト修正"
       titleIcon={ICON.textFieldsAltBlack}>
-      <label>
-        タイトル（任意）
-      </label>
-      <TextInput
-        clearable
-        default={label}
-        placeholder="タイトルを入力"
-        onContentChange={(event) => handleContentChange(event, "label")}/>
-        
-      <label>
-        内容
-      </label>
-      <textarea
-        value={text}
-        onInput={(event: any) => handleContentChange(event?.target?.value, "text")}
-        className="w-full h-16 px-2 mb-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
-
+      {
+        notes && notes.length === 1 && <>
+          <label>
+            タイトル（任意）
+          </label>
+          <TextInput
+            clearable
+            default={label}
+            placeholder="タイトルを入力"
+            onContentChange={(event) => handleContentChange(event, "label")}/>
+            
+          <label>
+            内容
+          </label>
+          <textarea
+            value={text}
+            onInput={(event: any) => handleContentChange(event?.target?.value, "text")}
+            className="w-full h-16 px-2 mb-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
+        </>
+      }
       <label>テキストサイズ</label>
       <div className="mx-2">
         <CustomSlider

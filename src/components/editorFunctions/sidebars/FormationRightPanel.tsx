@@ -72,6 +72,8 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
         <>
           <NoteColorPresetPickerMenu />
           <Divider />
+          <NoteEditor />
+          <Divider />
         </>
       )}
 
@@ -82,12 +84,6 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
         </>
       )}
 
-      {isSingleSelection && firstItem.type === PositionType.note && (
-        <>
-          <NoteEditor />
-          <Divider />
-        </>
-      )}
       {isSingleSelection && firstItem.type === PositionType.placeholder && (
         <>
           <PlacementNameEditor />
