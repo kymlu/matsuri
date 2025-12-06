@@ -49,18 +49,6 @@ export function DuplicateFormationDialog() {
     ]).then(async () => {
       await GetAllForFormation(selectedFestival.id, formationToDuplicate.id, 
         async (formationSections, participants, props, placeholders, participantPositions, propPositions, notePositions, arrowPositions, placeholderPositions) => {
-          // overwrite the current formation's data with the duplicated formation's data
-          const newFormation: Formation = {
-            ...formationToDuplicate,
-            id: selectedFormation.id,
-            name: selectedFormation.name,
-          };
-
-          // update the festival's formation list
-          const updatedFestival = {
-            ...selectedFestival,
-            formations: [...selectedFestival.formations.filter(f => !strEquals(f.id, selectedFormation.id)), newFormation],
-          } as Festival;
 
           // overwrite each part of the selected formation
           const mapFormationIds: Record<string, string> = {};
@@ -103,7 +91,6 @@ export function DuplicateFormationDialog() {
 
           // upsert all data
           await Promise.all([
-            upsertItem("festival", updatedFestival),
             upsertList("formationSection", formationSections),
             upsertList("placeholder", placeholders),
             upsertList("participantPosition", participantPositions),
@@ -115,12 +102,8 @@ export function DuplicateFormationDialog() {
 
           // update local state
           updateState({
-            selectedFestival: updatedFestival,
             currentSections: formationSections,
             selectedSection: formationSections.sort((a, b) => a.order - b.order)[0],
-          });
-          updateFormationContext({
-            selectedFormation: newFormation,
           });
           updateEntitiesContext({
             placeholderList: indexByKey(placeholders, "id"),
