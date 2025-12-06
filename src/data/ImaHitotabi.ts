@@ -170,17 +170,18 @@ export const songList: Record<string, Song> = {
       "414": { id: "414", name: "男隊", color: objectColorSettings["blueLightest"], order: 7, showInLegend: false, showInParadeGuide: false },
     },
     sections: [
-      { id: "401", songId: "4", name: "入り", order: 1 },
-      { id: "402", songId: "4", name: "サビ", order: 2 },
-      { id: "403", songId: "4", name: "川", order: 3 },
-      { id: "404", songId: "4", name: "山", order: 4 },
-      { id: "405", songId: "4", name: "花魁", order: 5 },
-      { id: "406", songId: "4", name: "雪", order: 6 },
-      { id: "407", songId: "4", name: "到着", order: 7 },
-      { id: "408", songId: "4", name: "描きゆく", order: 8 },
-      { id: "409", songId: "4", name: "うみつみち", order: 9 },
-      { id: "410", songId: "4", name: "つむぎあう", order: 10 },
-      { id: "411", songId: "4", name: "ミュージカル", order: 11 }
+      { id: "401", songId: "4", name: "OP", order: 1 },
+      { id: "402", songId: "4", name: "ブリッジ", order: 2 },
+      { id: "403", songId: "4", name: "歌Aメロ", order: 3 },
+      { id: "404", songId: "4", name: "HIPHOP", order: 4 },
+      { id: "405", songId: "4", name: "演歌リミックス", order: 5 },
+      { id: "406", songId: "4", name: "三味線", order: 6 },
+      { id: "407", songId: "4", name: "掛け合い", order: 7 },
+      { id: "408", songId: "4", name: "円振り", order: 8 },
+      { id: "409", songId: "4", name: "徐々上げ", order: 9 },
+      { id: "410", songId: "4", name: "仮ラスト", order: 10 },
+      { id: "411", songId: "4", name: "ラス歌サビ", order: 11 },
+      { id: "412", songId: "4", name: "大ラスト", order: 12 }
     ]
   }
 }
@@ -258,6 +259,7 @@ export const propsList: Array<Prop> = [
   { name: "ご来光幕", id: "6", length: 3.5, color: objectColorSettings.indigoMain },
   { name: "東西幕", id: "7", length: 6, color: objectColorSettings.indigoMain },
   { name: "ひとたび幕", id: "8", length: 6, color: objectColorSettings.indigoMain },
+  { name: "ボーナス幕", id: "9", length: 6, color: objectColorSettings.indigoMain },
 ]
 
 export const notePresets: Array<NotePreset> = [
