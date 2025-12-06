@@ -54,7 +54,7 @@ export async function getFormationFile(
       throw new Error(`Formation fetch failed with status: ${formationResponse.status}`);
     }
     const formation = (await formationResponse.json() as FormationDetails);
-    onComplete(formation);
+    await onComplete(formation);
   } catch (err) {
     onError(`${formationName}の隊列データの取得に失敗しました。\n ${err}`);
     console.error('Formation fetch error:', err);
@@ -70,6 +70,27 @@ export async function readResourcesAndFormation(
   await getResourceFile(festivalId, onError, async (resources) => {
     await getFormationFile(festivalId, formationName, onError, async (formation) => {
       onComplete(resources, formation);
+    });
+  });
+}
+
+export async function readResourcesAndAllFormations(
+  festival: Festival,
+  onError: (msg: string) => void,
+  onComplete: (resources: FestivalResources, formation: FormationDetails[]) => void) 
+{
+  var formationDetailsList: FormationDetails[] = [];
+
+  await getResourceFile(festival.id, onError, async (resources: FestivalResources) => {
+    var allFormationPromises = festival.formations.map(formation => 
+      getFormationFile(
+        festival.id,
+        formation.name,
+        onError,
+        async (formationDetails) => { formationDetailsList.push(formationDetails); }));
+
+    await Promise.all(allFormationPromises).then(([]) => {
+      onComplete(resources, formationDetailsList);
     });
   });
 }

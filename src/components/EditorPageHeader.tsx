@@ -53,73 +53,34 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
     
     console.log(`Switching to formation: ${formation.name}`, formation);
     
-    getByFormationId("formationSection", formation.id)
-      .then(async (sections) => {
-        var sectionsExist = sections.length > 0;
-        if (sectionsExist) {
-          GetAllForFormation(selectedFestival.id, formation.id,
-            (
-              formationSections, participants, props, placeholders, 
-              participantPositions, propPositions, notePositions, 
-              arrowPositions, placeholderPositions
-            ) => {
-              updateFormationContext({selectedFormation: formation});
-              updateState({
-                currentSections: formationSections,
-                selectedSection: formationSections[0],
-                selectedItems: []
-              });
-              updateEntitiesContext({
-                participantList: indexByKey(participants, "id"),
-                propList: indexByKey(props, "id"),
-              });
-              updatePositionContextState({
-                participantPositions: groupByKey(participantPositions, "formationSectionId"),
-                propPositions: groupByKey(propPositions, "formationSectionId"),
-                notePositions: groupByKey(notePositions, "formationSectionId"),
-                arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
-                placeholderPositions: groupByKey(placeholderPositions, "formationSectionId"),
-              });
-              updateEntitiesContext({
-                placeholderList: indexByKey(placeholders, "id"),
-              });
-            }
-          );
-        } else {
-          // file may exist, try to load from file
-          getFormationFile(
-            selectedFestival.id,
-            formation.name,
-            (msg) => { 
-              // todo: throw error message on screen
-              console.log(msg);
-            },
-            async (formationDetails) => {
-              Promise.all([
-                upsertList("formationSection", formationDetails.sections),
-                upsertList("participantPosition", formationDetails.participants),
-                upsertList("propPosition", formationDetails.props),
-                upsertList("notePosition", formationDetails.notes),
-                upsertList("arrowPosition", formationDetails.arrows),
-                upsertList("placeholder", formationDetails.placeholders),
-                upsertList("placeholderPosition", formationDetails.placeholderPositions),
-              ]).then(() => {
-                updateFormationContext({selectedFormation: formation});
-                updatePositionContextState({
-                  participantPositions: groupByKey(formationDetails.participants, "formationSectionId"),
-                  propPositions: groupByKey(formationDetails.props, "formationSectionId"),
-                  notePositions: groupByKey(formationDetails.notes, "formationSectionId"),
-                  arrowPositions: groupByKey(formationDetails.arrows, "formationSectionId"),
-                  placeholderPositions: groupByKey(formationDetails.placeholderPositions, "formationSectionId"),
-                });
-                updateEntitiesContext({
-                  placeholderList: indexByKey(formationDetails.placeholders, "id"),
-                });
-              })
-            }
-          )
-        }
-      });
+    GetAllForFormation(selectedFestival.id, formation.id,
+      (
+        formationSections, participants, props, placeholders, 
+        participantPositions, propPositions, notePositions, 
+        arrowPositions, placeholderPositions
+      ) => {
+        updateFormationContext({selectedFormation: formation});
+        updateState({
+          currentSections: formationSections,
+          selectedSection: formationSections[0],
+          selectedItems: []
+        });
+        updateEntitiesContext({
+          participantList: indexByKey(participants, "id"),
+          propList: indexByKey(props, "id"),
+        });
+        updatePositionContextState({
+          participantPositions: groupByKey(participantPositions, "formationSectionId"),
+          propPositions: groupByKey(propPositions, "formationSectionId"),
+          notePositions: groupByKey(notePositions, "formationSectionId"),
+          arrowPositions: groupByKey(arrowPositions, "formationSectionId"),
+          placeholderPositions: groupByKey(placeholderPositions, "formationSectionId"),
+        });
+        updateEntitiesContext({
+          placeholderList: indexByKey(placeholders, "id"),
+        });
+      }
+    );
   }
 
   const exportToPdf = () => {

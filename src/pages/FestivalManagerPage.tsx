@@ -16,7 +16,7 @@ import { formatJapaneseDateRange } from '../lib/helpers/DateHelper.ts';
 import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
-import { getFestivalMetaFile, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
+import { getFestivalMetaFile, readResourcesAndAllFormations, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
 import { FestivalMeta, FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';
@@ -125,31 +125,30 @@ export default function FestivalManagerPage () {
     clearAllData()
     setSelectedFestival(null);
     setSelectedFormation(null);
-    readResourcesAndFormation(
-      festival.id,
-      formation.name,
+    readResourcesAndAllFormations(
+      festival,
       (msg) => {
         setErrorMessage(`${formation.name}の隊列データの取得に失敗しました。\n ${msg}`);
         setHasError(true);
       },
       (resources, formationDetails) => {
         saveToDatabase(festival, resources, formationDetails);
-        setDataBeforeNavigation(festival, formation, resources, formationDetails);
+        setDataBeforeNavigation(festival, formation, resources, formationDetails.find(x => strEquals(x.sections[0].formationId, formation.id))!);
         navigateToFormationEditor();
       });
   }
 
-  const saveToDatabase = (festival: Festival, resources: FestivalResources, formationDetails: FormationDetails) => {
+  const saveToDatabase = (festival: Festival, resources: FestivalResources, formationDetails: FormationDetails[]) => {
     upsertItem("festival", festival);
     upsertList("participant", resources.participants);
     upsertList("prop", resources.props);
-    upsertList("formationSection", formationDetails.sections);
-    upsertList("participantPosition", formationDetails.participants);
-    upsertList("propPosition", formationDetails.props);
-    upsertList("notePosition", formationDetails.notes);
-    upsertList("arrowPosition", formationDetails.arrows);
-    upsertList("placeholder", formationDetails.placeholders);
-    upsertList("placeholderPosition", formationDetails.placeholderPositions);
+    upsertList("formationSection", formationDetails.flatMap(x => x.sections));
+    upsertList("participantPosition", formationDetails.flatMap(x => x.participants));
+    upsertList("propPosition", formationDetails.flatMap(x => x.props));
+    upsertList("notePosition", formationDetails.flatMap(x => x.notes));
+    upsertList("arrowPosition", formationDetails.flatMap(x => x.arrows));
+    upsertList("placeholder", formationDetails.flatMap(x => x.placeholders));
+    upsertList("placeholderPosition", formationDetails.flatMap(x => x.placeholderPositions));
   }
 
   const setDataBeforeNavigation = (festival: Festival, formation: Formation, resources: FestivalResources, formationDetails: FormationDetails) => {
@@ -325,15 +324,17 @@ export default function FestivalManagerPage () {
                 participants: filteredParticipants,
                 props: filteredProps,
               },
-              {
-                sections: formationSections,
-                participants: filteredParticipantPositions,
-                props: filteredPropPositions,
-                notes: filteredNotePositions,
-                arrows: filteredArrowPositions,
-                placeholders: filteredPlaceholders,
-                placeholderPositions: filteredPlaceholderPositions,
-              }
+              [
+                {
+                  sections: formationSections,
+                  participants: filteredParticipantPositions,
+                  props: filteredPropPositions,
+                  notes: filteredNotePositions,
+                  arrows: filteredArrowPositions,
+                  placeholders: filteredPlaceholders,
+                  placeholderPositions: filteredPlaceholderPositions,
+                }
+              ]
             );
 
             const firstFormation = festival.formations[0];
