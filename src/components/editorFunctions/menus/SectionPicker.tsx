@@ -298,11 +298,11 @@ export default function SectionPicker(props: {margins: MarginPositions}) {
 	}
 
 	function onDelete(section: FormationSection) {
-		const participantIdsToRemove = participantPositions[section.id].map(x => x.id);
-		const propIdsToRemove = propPositions[section.id].map(x => x.id);
-		const noteIdsToRemove = notePositions[section.id].map(x => x.id);
-		const arrowIdsToRemove = arrowPositions[section.id].map(x => x.id);
-		const placeholderIdsToRemove = placeholderPositions[section.id].map(x => x.id);
+		const participantIdsToRemove = participantPositions[section.id]?.map(x => x.id) ?? [];
+		const propIdsToRemove = propPositions[section.id]?.map(x => x.id) ?? [];
+		const noteIdsToRemove = notePositions[section.id]?.map(x => x.id) ?? [];
+		const arrowIdsToRemove = arrowPositions[section.id]?.map(x => x.id) ?? [];
+		const placeholderIdsToRemove = placeholderPositions[section.id]?.map(x => x.id) ?? [];
 
 		Promise.all([
 			removeList("participantPosition", participantIdsToRemove),
