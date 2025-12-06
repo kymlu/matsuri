@@ -44,7 +44,7 @@ export default function NoteObject(props: NoteObjectProps) {
           height={props.height * gridSize}
           fill={props.colour.bgColour}
           stroke={props.selected ? basePalette.primary.main : props.colour.borderColour}
-          strokeWidth={props.selected ? gridSize/20 : props.hasBorder ? gridSize/30 : 0}
+          strokeWidth={props.selected ? gridSize/15 : props.hasBorder ? gridSize/20 : 0}
           cornerRadius={props.borderRadius}
           strokeScaleEnabled={false}/>
       }

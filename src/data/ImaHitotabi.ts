@@ -269,7 +269,7 @@ export const notePresets: Array<NotePreset> = [
     height: 0.75,
     borderRadius: 10,
     fontGridRatio: 0.5,
-    color: objectColorSettings.grey4,
+    color: {...objectColorSettings.grey4, borderColour: undefined},
     hasLabel: false,
     defaultContent: "1",
     alwaysBold: true,
@@ -280,7 +280,7 @@ export const notePresets: Array<NotePreset> = [
     height: 1,
     borderRadius: 10,
     fontGridRatio: 0.25,
-    color: objectColorSettings.amberLight,
+    color: {...objectColorSettings.amberLight, borderColour: undefined},
     hasLabel: false,
     defaultContent: "これはメモです。",
     alwaysBold: false
@@ -291,7 +291,7 @@ export const notePresets: Array<NotePreset> = [
     height: 2,
     borderRadius: 10,
     fontGridRatio: 0.25,
-    color: objectColorSettings.amberLight,
+    color: {...objectColorSettings.amberLight, borderColour: undefined},
     hasLabel: false,
     defaultContent: "これはメモです。",
     alwaysBold: false
