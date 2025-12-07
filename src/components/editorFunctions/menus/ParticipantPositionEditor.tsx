@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
 import { createPosition, ParticipantPosition, PlaceholderPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
@@ -7,13 +7,17 @@ import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, ICON } from "../../../lib/c
 import { upsertList } from "../../../data/DataRepository.ts";
 import NumberTextField from "../../NumberTextField.tsx";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
+import Button from "../../Button.tsx";
 
-// Todo: add alignment, arrangement functions
+// Todo: add arrangement functions
 export default function ParticipantPositionEditor() {
   const {selectedItems, selectedSection, updateState} = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
-
   const {participantPositions, placeholderPositions, updatePositionContextState} = useContext(PositionContext);
+
+  const [xValues, setXValues] = useState<number[]>([]);
+  const [yValues, setYValues] = useState<number[]>([]);
+
   const xRef = React.createRef<any>();
   const yRef = React.createRef<any>();
 
@@ -21,16 +25,20 @@ export default function ParticipantPositionEditor() {
     var splitItems = splitPositionsByType(selectedItems);
 
     var items = [...splitItems.participants, ...splitItems.placeholders];
-    var x = Array.from(new Set(items.map(x => x.x)));
-    var y = Array.from(new Set(items.map(x => x.y)));
+    var xList = Array.from(new Set(items.map(x => x.x)));
+    var yList = Array.from(new Set(items.map(x => x.y)));
 
-    if (x.length === 1) {
-      xRef.current?.changeValue?.(x[0]);
+    setXValues(xList);
+    setYValues(yList);
+
+    if (xList.length === 1) {
+      xRef.current?.changeValue?.(xList[0]);
     } else {
       xRef.current?.changeValue?.(null);
     }
-    if (y.length === 1) {
-      yRef.current?.changeValue?.(y[0]);
+    
+    if (yList.length === 1) {
+      yRef.current?.changeValue?.(yList[0]);
     } else {
       yRef.current?.changeValue?.(null);
     }
@@ -67,12 +75,82 @@ export default function ParticipantPositionEditor() {
     upsertList("participantPosition", updatedPartPositions);
     upsertList("placeholderPosition", updatedPlacePositions);
   }
+
+  const alignHorizontal = (type: "left" | "centre" | "right") => {
+    var newValue: number = 0;
+    switch (type) {
+      case "left":
+        newValue = Math.min(...xValues);
+        break;
+      case "centre":
+        newValue = (Math.min(...xValues) + Math.max(...xValues))/2;
+        break;
+      case "right":
+        newValue = Math.max(...xValues);
+        break;
+    }
+    onValueChange(newValue, "x");
+    setXValues([newValue]);
+  }
+
+  const alignVertical = (type: "top" | "centre" | "bottom") => {
+    var newValue: number = 0;
+    switch (type) {
+      case "top":
+        newValue = Math.min(...yValues);
+        break;
+      case "centre":
+        newValue = (Math.min(...yValues) + Math.max(...yValues))/2;
+        break;
+      case "bottom":
+        newValue = Math.max(...yValues);
+        break;
+    }
+    onValueChange(newValue, "y");
+    setYValues([newValue]);
+  }
   
   return (
     <ExpandableSection
       title="位置"
       titleIcon={ICON.textFieldsAltBlack}>
       <div className="grid grid-cols-[1fr,4fr] gap-2 items-center">
+        <label>横調整</label>
+        <div className="flex flex-row gap-1">
+          <Button
+            onClick={() => alignHorizontal("left")}
+            disabled={xValues.length <= 1}>
+            <img className="size-6" alt="Align Left" src={ICON.alignHorizontalLeftBlack}/>
+          </Button>
+          <Button
+            onClick={() => alignHorizontal("centre")}
+            disabled={xValues.length <= 1}>
+            <img className="size-6" alt="Align Centre" src={ICON.alignHorizontalCenterBlack}/>
+          </Button>
+          <Button
+            onClick={() => alignHorizontal("right")}
+            disabled={xValues.length <= 1}>
+            <img className="size-6" alt="Align Right" src={ICON.alignHorizontalRightBlack}/>
+          </Button>
+        </div>
+        <label>縦調整</label>
+        <div className="flex flex-row gap-1">
+          <Button
+            onClick={() => alignVertical("top")}
+            disabled={yValues.length <= 1}>
+            <img className="size-6" alt="Align Top" src={ICON.alignVerticalTopBlack}/>
+          </Button>
+          <Button
+            onClick={() => alignVertical("centre")}
+            disabled={yValues.length <= 1}>
+            <img className="size-6" alt="Align Center" src={ICON.alignVerticalCenterBlack}/>
+          </Button>
+          <Button
+            onClick={() => alignVertical("bottom")}
+            disabled={yValues.length <= 1}>
+            <img className="size-6" alt="Align Right" src={ICON.alignVerticalBottomBlack}/>
+          </Button>
+        </div>
         <label>横</label>
         <NumberTextField
           name="横"

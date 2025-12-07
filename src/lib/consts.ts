@@ -32,6 +32,12 @@ export const CONTEXT_NAMES = {
 
 export const ICON = {
   addBlack: "icons/add_black.svg",
+  alignHorizontalCenterBlack: "icons/align_horizontal_center_black.svg",
+  alignHorizontalLeftBlack: "icons/align_horizontal_left_black.svg",
+  alignHorizontalRightBlack: "icons/align_horizontal_right_black.svg",
+  alignVerticalBottomBlack: "icons/align_vertical_bottom_black.svg",
+  alignVerticalCenterBlack: "icons/align_vertical_center_black.svg",
+  alignVerticalTopBlack: "icons/align_vertical_top_black.svg",
   arrowMenuCloseBlack: "icons/arrow_menu_close_black.svg",
   arrowMenuOpenBlack: "icons/arrow_menu_open_black.svg",
   arrowRangeBlack: "icons/arrow_range_black.svg",
