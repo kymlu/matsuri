@@ -51,7 +51,11 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
   };
   
   const songs = useMemo(
-    () => Object.fromEntries(Object.entries(songList).map(([key, obj]) => [key, obj.name])),
+    () => Object.fromEntries(
+      Object.entries(songList)
+        .sort((a, b) => a[1].order - b[1].order)
+        .map(([key, obj]) => [key, obj.name])
+      ),
     []
   );
 
@@ -61,7 +65,7 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
         id: crypto.randomUUID(),
         name: "",
         type: FormationType.stage,
-        songId: Object.keys(songList)[0],
+        songId: Object.entries(songList).sort((a, b) => b[1].order - a[1].order)[0][0],
         length: 10,
         width: 20,
         topMargin: 2,
