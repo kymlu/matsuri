@@ -380,14 +380,14 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 
 	function selectAllFromCategory(event: CustomEvent) {
 		console.log("Select all from category:", event?.detail?.categoryId);
-		var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id].filter(
+		var participants = positionContextRef.current.participantPositions[userContext.selectedSection!.id]?.filter(
 			(x) =>
 				strEquals(event?.detail?.categoryId, x.categoryId)
-			);
-		var placeholders = positionContextRef.current.placeholderPositions[userContext.selectedSection!.id].filter(
+			) ?? [];
+		var placeholders = positionContextRef.current.placeholderPositions[userContext.selectedSection!.id]?.filter(
 			(x) =>
 				strEquals(event?.detail?.categoryId, x.categoryId)
-			);
+			) ?? [];
 
 		updateState({
 			selectedItems: [
@@ -550,8 +550,8 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		var note = props.notePositions.find((x) => strEquals(x.id, id));
 		if (note) {
 			const snapSize = 0.25;
-			note.width = Math.max(Math.round(note.width * scaleX / snapSize) * snapSize, 0.75);
-			note.height = Math.max(Math.round(note.height * scaleY / snapSize) * snapSize, 0.75);
+			note.width = Math.max(Math.round(note.width * scaleX / snapSize) * snapSize, 0.5);
+			note.height = Math.max(Math.round(note.height * scaleY / snapSize) * snapSize, 0.5);
 			upsertItem("notePosition", note);
 			updateState({selectedItems: [{type: PositionType.note, note: note}]});
 		}
