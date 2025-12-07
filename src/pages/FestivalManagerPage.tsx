@@ -32,6 +32,7 @@ import { ParticipantPosition, PropPosition, ArrowPosition, NotePosition, Placeho
 import { Prop } from '../models/Prop.ts';
 import { strEquals } from '../lib/helpers/GlobalHelper.ts';
 import ActionDialog from '../components/dialogs/ActionDialog.tsx';
+import { exportFestivalData } from '../lib/helpers/ExportHelper.ts';
 
 export default function FestivalManagerPage () {
   const {updateState} = useContext(UserContext);
@@ -46,6 +47,7 @@ export default function FestivalManagerPage () {
   const [hasError, setHasError] = useState<boolean>(false);
   const [showConfirmOverwrite, setShowConfirmOverwrite] = useState<boolean>(false);
   const [editingFestival, setEditingFestival] = useState<boolean>(false);
+  const [enableDownload, setEnableDownload] = useState<boolean>(true);
   const [savedFestival, setSavedFestival] = useState<Festival | null>(null);
   const [selectedFestival, setSelectedFestival] = useState<Festival | null>(null);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
@@ -376,7 +378,11 @@ export default function FestivalManagerPage () {
     }
   }
 
-  const onConfirmOverwrite = () => {
+  const onConfirmOverwrite = async () => {
+    if (savedFestival && enableDownload) {
+      await exportFestivalData(savedFestival.id);
+    }
+    
     clearAllData();
     setSavedFestival(null);
     setShowConfirmOverwrite(false);
@@ -495,7 +501,22 @@ export default function FestivalManagerPage () {
             title="上書きの確認"
             onCancel={() => setShowConfirmOverwrite(false)}
             onConfirm={() => onConfirmOverwrite()}>
-            <b>{savedFestival?.name}</b>の隊列データは保存されています。<br/>新しい祭りデータで上書きしてもよろしいですか？
+            <div className='flex flex-col gap-4'>
+              <span>
+                <b>{savedFestival?.name}</b>の隊列データは保存されています。<br/>
+                新しい祭りデータで上書きしてもよろしいですか？
+              </span>
+              <div>
+                <label>
+                  <input
+                    defaultChecked={enableDownload}
+                    name="download"
+                    type="checkbox"
+                    onChange={(e) => {setEnableDownload(e.target.checked)}}/>
+                  既存のデータをダウンロードする
+                </label>
+              </div>
+            </div>
           </ActionDialog>
         }
       </Dialog.Root>

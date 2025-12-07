@@ -43,8 +43,8 @@ export function exportAllData() {
   });
 }
 
-export function exportFestivalData(festivalId: string) {
-  getAllDataForFestival(festivalId, (
+export async function exportFestivalData(festivalId: string) {
+  await getAllDataForFestival(festivalId, (
     festival: Festival,
     formationSections: FormationSection[],
     participants: Participant[],
