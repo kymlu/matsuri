@@ -180,10 +180,12 @@ export function EditFestivalFormations(props: EditFestivalFormationsProps) {
                 <NumberTextField
                   onChange={(newValue) => {if (newValue) editFormationSize(index, "length", newValue)}}
                   default={formation.length}
+                  step={0.25} buttonStep={1}
                   min={5} max={300}/>
                 <NumberTextField
                   onChange={(newValue) => {if (newValue) editFormationSize(index, "width", newValue)}}
                   default={formation.width}
+                  step={0.25} buttonStep={1}
                   min={5} max={50}/>
                 <CustomMenu
                   disabled={formations.length === 1}

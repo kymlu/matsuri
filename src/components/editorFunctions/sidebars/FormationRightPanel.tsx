@@ -12,6 +12,7 @@ import { Sidebar } from "./Sidebar.tsx";
 import ArrowEditor from "../menus/ArrowEditor.tsx";
 import PlacementNameEditor from "../menus/PlacementNameEditor.tsx";
 import PlaceholderReplaceMenu from "../menus/PlaceholderReplaceMenu.tsx";
+import ParticipantPositionEditor from "../menus/ParticipantPositionEditor.tsx";
 
 export type FormationRightPanelProps = {
   exportFunc?: (exportName: string) => void
@@ -63,8 +64,10 @@ export function FormationEditorRightContent (props: FormationRightPanelProps) {
 
       {onlyParticipantOrPlaceholderSelected && (
         <>
-          <CategoryMenu />
+          <ParticipantPositionEditor/>
           <Divider />
+          <CategoryMenu />
+          <Divider/>
         </>
       )}
 

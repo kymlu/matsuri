@@ -1,22 +1,30 @@
 import { NumberField } from "@base-ui-components/react";
 import classNames from "classnames";
-import React from "react";
+import React, { useImperativeHandle } from "react";
 
 export interface NumberTextFieldProps {
-  label?: string,
+  name?: string,
   default: number,
   min?: number,
   max?: number,
   step?: number,
+  buttonStep?: number,
   onChange?: (newValue: number | null) => void,
   disabled?: boolean,
   compact?: boolean,
+  ref?: React.Ref<any>,
 }
 
 export default function NumberTextField (props: NumberTextFieldProps) {
   const [value, setValue] = React.useState<number | null>(props.default ?? 0);
   const id = React.useId();
 
+  useImperativeHandle(props.ref, () => ({
+    changeValue: (newValue: number) => {
+      setValue(newValue);
+    }
+  }));
+  
   const wrapperClasses = classNames("flex flex-row items-center justify-between w-full",
     {
       "mb-2": props.compact,
@@ -25,6 +33,7 @@ export default function NumberTextField (props: NumberTextFieldProps) {
   return (
     <NumberField.Root
       id={id}
+      name={props.name}
       value={value}
       onValueChange={(newValue) => {
         const step = props.step ?? 1;
@@ -38,7 +47,7 @@ export default function NumberTextField (props: NumberTextFieldProps) {
       className="flex flex-col items-start gap-1"
       min={props?.min ?? 0}
       max={props?.max ?? 1000}
-      step={props?.step ?? 1}
+      step={props?.buttonStep ?? 1}
       disabled={props.disabled}
       >
       <div className={wrapperClasses}>
