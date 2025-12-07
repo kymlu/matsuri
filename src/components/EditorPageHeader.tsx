@@ -142,12 +142,18 @@ export function EditorPageHeader(props: EditorPageHeaderProps) {
                 <MenuItem label="隊列比較" onClick={() => {
                   setCompareFormationDialog(true);
                 }} />
-                <MenuSeparator/>
+                {
+                  appMode === "edit" && 
+                  <MenuSeparator/>
+                }
               </>
             }
-            <MenuItem label="別の隊列を複製" onClick={() => {
-              setOverwriteFormationDialog(true);
-            }} />
+            {
+              appMode === "edit" &&
+              <MenuItem label="別の隊列を複製" onClick={() => {
+                setOverwriteFormationDialog(true);
+              }} />
+            }
           </CustomMenu>
         }
       </div>

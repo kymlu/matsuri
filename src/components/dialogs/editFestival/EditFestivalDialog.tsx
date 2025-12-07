@@ -176,7 +176,7 @@ export function EditFestivalDialog(props: EditFestivalDialogProps) {
     generalRef.current?.resetData();
     participantsRef.current?.resetData();
     propsRef.current?.resetData();
-    formationsRef.current?.resetData(); // TODO: fix
+    formationsRef.current?.resetData();
   }
 
   return (
