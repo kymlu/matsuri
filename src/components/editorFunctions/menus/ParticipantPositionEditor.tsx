@@ -1,20 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { createPosition, ParticipantPosition, PlaceholderPosition, PositionType, splitPositionsByType } from "../../../models/Position.ts";
+import { createPosition, ParticipantPosition, PlaceholderPosition, Position, PositionType, splitPositionsByType } from "../../../models/Position.ts";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { DEFAULT_BOTTOM_MARGIN, DEFAULT_SIDE_MARGIN, ICON } from "../../../lib/consts.ts";
 import { upsertList } from "../../../data/DataRepository.ts";
 import NumberTextField from "../../NumberTextField.tsx";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
 import Button from "../../Button.tsx";
+import { indexByKey } from "../../../lib/helpers/GroupingHelper.ts";
 
-// Todo: add arrangement functions
 export default function ParticipantPositionEditor() {
   const {selectedItems, selectedSection, updateState} = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
   const {participantPositions, placeholderPositions, updatePositionContextState} = useContext(PositionContext);
 
+  const [items, setItems] = useState<(ParticipantPosition | PlaceholderPosition)[]>([]);
   const [xValues, setXValues] = useState<number[]>([]);
   const [yValues, setYValues] = useState<number[]>([]);
 
@@ -28,6 +29,7 @@ export default function ParticipantPositionEditor() {
     var xList = Array.from(new Set(items.map(x => x.x)));
     var yList = Array.from(new Set(items.map(x => x.y)));
 
+    setItems(items);
     setXValues(xList);
     setYValues(yList);
 
@@ -50,8 +52,8 @@ export default function ParticipantPositionEditor() {
     var participants = positionByType.participants;
     var updatedPartPositions: ParticipantPosition[] = [];
     var ids = new Set(participants.map(x => x.id));
-    var updatePartRecord = {...participantPositions};
-    updatePartRecord[selectedSection!.id]
+    var updatedPartRecord = {...participantPositions};
+    updatedPartRecord[selectedSection!.id]
       ?.filter(x => ids.has(x.id))
       ?.forEach(x => {
         x[type] = newValue ?? 0;
@@ -71,7 +73,10 @@ export default function ParticipantPositionEditor() {
     
     var updatedSelectedItems = [...updatedPartPositions.map(x => createPosition(x, PositionType.participant)), ...updatedPlacePositions.map(x => createPosition(x, PositionType.placeholder))];
     updateState({selectedItems: updatedSelectedItems});
-    updatePositionContextState({participantPositions: updatePartRecord, placeholderPositions: updatedPlaceRecord});
+    updatePositionContextState({
+      participantPositions: updatedPartRecord,
+      placeholderPositions: updatedPlaceRecord,
+    });
     upsertList("participantPosition", updatedPartPositions);
     upsertList("placeholderPosition", updatedPlacePositions);
   }
@@ -109,13 +114,55 @@ export default function ParticipantPositionEditor() {
     onValueChange(newValue, "y");
     setYValues([newValue]);
   }
+
+  const distribute = (type: "x" | "y") => {
+    var sortedItems = items.sort((a, b) => {return a[type] - b[type]});
+    var min = sortedItems[0][type];
+    var max = sortedItems[sortedItems.length - 1][type]
+    var interval = (max - min) / (sortedItems.length - 1);
+    sortedItems.forEach((value, index) => {
+      value[type] = min + index * interval;
+    });
+
+    var updatedSelectedItems = sortedItems.map(x => createPosition(x));
+    var splitPositions = splitPositionsByType(updatedSelectedItems);
+    var indexedParticipants = indexByKey(splitPositions.participants, "id");
+    var participantIds = new Set(Object.keys(indexedParticipants));
+    var updatedPartRecord = {...participantPositions};
+    var updatedPartPositions: ParticipantPosition[] = [];
+    updatedPartRecord[selectedSection!.id]
+      ?.filter(x => participantIds.has(x.id))
+      ?.forEach(x => {
+        x[type] = indexedParticipants[x.id][type];
+        updatedPartPositions.push(x);
+      });
+
+    var indexedPlaceholders = indexByKey(splitPositions.placeholders, "id");
+    var placeholdersIds = new Set(Object.keys(indexedPlaceholders));
+    var updatedPlaceRecord = {...placeholderPositions};
+    var updatedPlacePositions: PlaceholderPosition[] = [];
+    updatedPlaceRecord[selectedSection!.id]
+      ?.filter(x => placeholdersIds.has(x.id))
+      ?.forEach(x => {
+        x[type] = indexedPlaceholders[x.id][type];
+        updatedPlacePositions.push(x);
+      });
+
+    updateState({selectedItems: updatedSelectedItems});
+    updatePositionContextState({
+      participantPositions: updatedPartRecord,
+      placeholderPositions: updatedPlaceRecord,
+    });
+    upsertList("participantPosition", updatedPartPositions);
+    upsertList("placeholderPosition", updatedPlacePositions);
+  }
   
   return (
     <ExpandableSection
       title="位置"
       titleIcon={ICON.textFieldsAltBlack}>
       <div className="grid grid-cols-[1fr,4fr] gap-2 items-center">
-        <label>横調整</label>
+        <label>横整列</label>
         <div className="flex flex-row gap-1">
           <Button
             onClick={() => alignHorizontal("left")}
@@ -133,7 +180,7 @@ export default function ParticipantPositionEditor() {
             <img className="size-6" alt="Align Right" src={ICON.alignHorizontalRightBlack}/>
           </Button>
         </div>
-        <label>縦調整</label>
+        <label>縦整列</label>
         <div className="flex flex-row gap-1">
           <Button
             onClick={() => alignVertical("top")}
@@ -149,6 +196,19 @@ export default function ParticipantPositionEditor() {
             onClick={() => alignVertical("bottom")}
             disabled={yValues.length <= 1}>
             <img className="size-6" alt="Align Right" src={ICON.alignVerticalBottomBlack}/>
+          </Button>
+        </div>
+        <label>均等</label>
+        <div className="flex flex-row gap-1">
+          <Button
+            onClick={() => distribute("x")}
+            disabled={selectedItems.length < 3}>
+            <img className="size-6" alt="Distribute horizontally" src={ICON.horizontalDistributeBlack}/>
+          </Button>
+          <Button
+            onClick={() => distribute("y")}
+            disabled={selectedItems.length < 3}>
+            <img className="size-6" alt="Distribute vertically" src={ICON.verticalDistributeBlack}/>
           </Button>
         </div>
         <label>横</label>
