@@ -65,7 +65,7 @@ export default function NoteColorPickerMenu() {
     noteIds.forEach(id => {
       var note = updatedNotes.find(x => strEquals(x.id, id));
       if (note) {
-        note.color = color;
+        note.color = {...color, borderColour: undefined};
       }
     });
 
