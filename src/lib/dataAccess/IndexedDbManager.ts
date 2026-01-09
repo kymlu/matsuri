@@ -25,7 +25,7 @@ export class IndexedDBManager {
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open(DB_NAME, 7);
+    const request = indexedDB.open(DB_NAME, 8);
     request.onupgradeneeded = async (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       const oldVersion = event.oldVersion;
