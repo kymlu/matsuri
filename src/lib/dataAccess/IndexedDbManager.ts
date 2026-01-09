@@ -25,7 +25,7 @@ export class IndexedDBManager {
   isInitialized: boolean = false;
 
   async init() {
-    const request = indexedDB.open(DB_NAME, 6);
+    const request = indexedDB.open(DB_NAME, 7);
     request.onupgradeneeded = async (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       const oldVersion = event.oldVersion;
@@ -41,6 +41,13 @@ export class IndexedDBManager {
         participantStore.createIndex("festivalId", "festivalId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participant").clear();
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participant").index("festivalId");
+        } catch (error) {
+          console.log("Creating missing index festivalId on participant store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participant").createIndex("festivalId", "festivalId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("prop")) {
@@ -48,11 +55,25 @@ export class IndexedDBManager {
         propStore.createIndex("festivalId", "festivalId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("prop").clear();
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("prop").index("festivalId");
+        } catch (error) {
+          console.log("Creating missing index festivalId on prop store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("prop").createIndex("festivalId", "festivalId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("placeholder")) {
         const propStore = db.createObjectStore("placeholder", { keyPath: "id", autoIncrement: true });
         propStore.createIndex("formationId", "formationId", { unique: false });
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("placeholder").index("formationId");
+        } catch (error) {
+          console.log("Creating missing index formationId on placeholder store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("placeholder").createIndex("formationId", "formationId", { unique: false });
+        }
       }
       
       if (!db.objectStoreNames.contains("participantPosition")) {
@@ -61,6 +82,19 @@ export class IndexedDBManager {
         participantPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participantPosition").clear();
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participantPosition").index("participantId");
+        } catch (error) {
+          console.log("Creating missing index participantId on participantPosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participantPosition").createIndex("participantId", "participantId", { unique: false });
+        }
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participantPosition").index("formationSectionId");
+        } catch (error) {
+          console.log("Creating missing index formationSectionId on participantPosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("participantPosition").createIndex("formationSectionId", "formationSectionId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("propPosition")) {
@@ -69,6 +103,19 @@ export class IndexedDBManager {
         propPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("propPosition").clear();
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("propPosition").index("propId");
+        } catch (error) {
+          console.log("Creating missing index propId on propPosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("propPosition").createIndex("propId", "propId", { unique: false });
+        }
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("propPosition").index("formationSectionId");
+        } catch (error) {
+          console.log("Creating missing index formationSectionId on propPosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("propPosition").createIndex("formationSectionId", "formationSectionId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("notePosition")) {
@@ -76,21 +123,49 @@ export class IndexedDBManager {
         notePositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
       } else if (newVersion === 3) { // clear positions as 2.1 makes changes to how x is stored
         (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("notePosition").clear();
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("notePosition").index("formationSectionId");
+        } catch (error) {
+          console.log("Creating missing index formationSectionId on notePosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("notePosition").createIndex("formationSectionId", "formationSectionId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("arrowPosition")) {
         const arrowPositionStore = db.createObjectStore("arrowPosition", { keyPath: "id", autoIncrement: true });
         arrowPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("arrowPosition").index("formationSectionId");
+        } catch (error) {
+          console.log("Creating missing index formationSectionId on arrowPosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("arrowPosition").createIndex("formationSectionId", "formationSectionId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("placeholderPosition")) {
         const placeholderPositionStore = db.createObjectStore("placeholderPosition", { keyPath: "id", autoIncrement: true });
         placeholderPositionStore.createIndex("formationSectionId", "formationSectionId", { unique: false });
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("placeholderPosition").index("formationSectionId");
+        } catch (error) {
+          console.log("Creating missing index formationSectionId on placeholderPosition store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("placeholderPosition").createIndex("formationSectionId", "formationSectionId", { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains("formationSection")) {
         const formationSectionStore = db.createObjectStore("formationSection", { keyPath: "id", autoIncrement: true });
         formationSectionStore.createIndex("formationId", "formationId", { unique: false });
+      } else {
+        try {
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("formationSection").index("formationId");
+        } catch (error) {
+          console.log("Creating missing index formationId on formationSection store");
+          (event.currentTarget as IDBOpenDBRequest)?.transaction?.objectStore("formationSection").createIndex("formationId", "formationId", { unique: false });
+        }
       }
     };
 
