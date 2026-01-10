@@ -9,6 +9,7 @@ import NumberTextField from "../../NumberTextField.tsx";
 import { FormationContext } from "../../../contexts/FormationContext.tsx";
 import Button from "../../Button.tsx";
 import { indexByKey } from "../../../lib/helpers/GroupingHelper.ts";
+import { roundToTenth } from "../../../lib/helpers/GlobalHelper.ts";
 
 export default function ParticipantPositionEditor() {
   const {selectedItems, selectedSection, updateState} = useContext(UserContext);
@@ -121,7 +122,7 @@ export default function ParticipantPositionEditor() {
     var max = sortedItems[sortedItems.length - 1][type]
     var interval = (max - min) / (sortedItems.length - 1);
     sortedItems.forEach((value, index) => {
-      value[type] = min + index * interval;
+      value[type] = roundToTenth(min + index * interval);
     });
 
     var updatedSelectedItems = sortedItems.map(x => createPosition(x));
