@@ -79,7 +79,7 @@ export default function ArrowEditor() {
           <span>線の太さ</span>
           <CustomSlider
             ref={widthSliderRef}
-            min={0.1}
+            min={0.05}
             max={0.4}
             step={0.05}
             defaultValue={arrow!.width}
