@@ -83,37 +83,67 @@ export default function ParticipantPositionEditor() {
   }
 
   const alignHorizontal = (type: "left" | "centre" | "right") => {
+    if (items.length === 0) return;
     var newValue: number = 0;
-    switch (type) {
-      case "left":
-        newValue = Math.min(...xValues);
-        break;
-      case "centre":
-        newValue = (Math.min(...xValues) + Math.max(...xValues))/2;
-        break;
-      case "right":
-        newValue = Math.max(...xValues);
-        break;
+    if (items.length === 1) {
+      switch (type) {
+        case "left":
+          newValue = 0;
+          break;
+        case "centre":
+          newValue = selectedFormation!.width / 2;
+          break;
+        case "right":
+          newValue = selectedFormation!.width;
+          break;
+      }
+    } else {
+      switch (type) {
+        case "left":
+          newValue = Math.min(...xValues);
+          break;
+        case "centre":
+          newValue = (Math.min(...xValues) + Math.max(...xValues))/2;
+          break;
+        case "right":
+          newValue = Math.max(...xValues);
+          break;
+      }
     }
     onValueChange(newValue, "x");
     setXValues([newValue]);
   }
 
   const alignVertical = (type: "top" | "centre" | "bottom") => {
+    if (items.length === 0) return;
     var newValue: number = 0;
-    switch (type) {
-      case "top":
-        newValue = Math.min(...yValues);
-        break;
-      case "centre":
-        newValue = (Math.min(...yValues) + Math.max(...yValues))/2;
-        break;
-      case "bottom":
-        newValue = Math.max(...yValues);
-        break;
+    if (items.length === 1) {
+      switch (type) {
+        case "top":
+          newValue = 0;
+          break;
+        case "centre":
+          newValue = selectedFormation!.length / 2;
+          break;
+        case "bottom":
+          newValue = selectedFormation!.length;
+          break;
+      }
+    } else {
+      switch (type) {
+        case "top":
+          newValue = Math.min(...yValues);
+          break;
+        case "centre":
+          newValue = (Math.min(...yValues) + Math.max(...yValues))/2;
+          break;
+        case "bottom":
+          newValue = Math.max(...yValues);
+          break;
+      }
+      onValueChange(newValue, "y");
+      setYValues([newValue]);
     }
-    onValueChange(newValue, "y");
-    setYValues([newValue]);
   }
 
   const distribute = (type: "x" | "y") => {
@@ -166,36 +196,30 @@ export default function ParticipantPositionEditor() {
         <label>横整列</label>
         <div className="flex flex-row gap-1">
           <Button
-            onClick={() => alignHorizontal("left")}
-            disabled={xValues.length <= 1}>
+            onClick={() => alignHorizontal("left")}>
             <img className="size-6" alt="Align Left" src={ICON.alignHorizontalLeftBlack}/>
           </Button>
           <Button
-            onClick={() => alignHorizontal("centre")}
-            disabled={xValues.length <= 1}>
+            onClick={() => alignHorizontal("centre")}>
             <img className="size-6" alt="Align Centre" src={ICON.alignHorizontalCenterBlack}/>
           </Button>
           <Button
-            onClick={() => alignHorizontal("right")}
-            disabled={xValues.length <= 1}>
+            onClick={() => alignHorizontal("right")}>
             <img className="size-6" alt="Align Right" src={ICON.alignHorizontalRightBlack}/>
           </Button>
         </div>
         <label>縦整列</label>
         <div className="flex flex-row gap-1">
           <Button
-            onClick={() => alignVertical("top")}
-            disabled={yValues.length <= 1}>
+            onClick={() => alignVertical("top")}>
             <img className="size-6" alt="Align Top" src={ICON.alignVerticalTopBlack}/>
           </Button>
           <Button
-            onClick={() => alignVertical("centre")}
-            disabled={yValues.length <= 1}>
+            onClick={() => alignVertical("centre")}>
             <img className="size-6" alt="Align Center" src={ICON.alignVerticalCenterBlack}/>
           </Button>
           <Button
-            onClick={() => alignVertical("bottom")}
-            disabled={yValues.length <= 1}>
+            onClick={() => alignVertical("bottom")}>
             <img className="size-6" alt="Align Right" src={ICON.alignVerticalBottomBlack}/>
           </Button>
         </div>
