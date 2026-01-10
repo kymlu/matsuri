@@ -16,7 +16,7 @@ import { formatJapaneseDateRange } from '../lib/helpers/DateHelper.ts';
 import CustomDialog from '../components/dialogs/CustomDialog.tsx';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { EditFestivalDialog } from '../components/dialogs/editFestival/EditFestivalDialog.tsx';
-import { getFestivalMetaFile, readResourcesAndAllFormations, readResourcesAndFormation } from '../lib/helpers/JsonReaderHelper.ts';
+import { getFestivalMetaFile, readResourcesAndAllFormations } from '../lib/helpers/JsonReaderHelper.ts';
 import { FestivalMeta, FestivalResources, FormationDetails } from '../models/ImportExportModel.ts';
 import { songList } from '../data/ImaHitotabi.ts';
 import { groupByKey, indexByKey } from '../lib/helpers/GroupingHelper.ts';

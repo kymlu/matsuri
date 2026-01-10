@@ -77,7 +77,8 @@ export default function FormationSelectionPage() {
     var groupedPropPositions = groupByKey(formationDetails.props, "formationSectionId")
     updateEntitiesContext({
       participantList: indexByKey(resources.participants, "id"),
-      propList: indexByKey(resources.props, "id")
+      propList: indexByKey(resources.props, "id"),
+      placeholderList: indexByKey(formationDetails.placeholders, "id"),
     });
 
     updatePositionContextState({
@@ -85,6 +86,7 @@ export default function FormationSelectionPage() {
       propPositions: groupedPropPositions,
       notePositions: groupByKey(formationDetails.notes, "formationSectionId"),
       arrowPositions: groupByKey(formationDetails.arrows, "formationSectionId"),
+      placeholderPositions: groupByKey(formationDetails.placeholderPositions, "formationSectionId"),
     });
 
     const currentSections = formationDetails.sections.sort((a,b) => a.order - b.order);
