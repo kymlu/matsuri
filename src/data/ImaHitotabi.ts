@@ -275,6 +275,7 @@ export const notePresets: Array<NotePreset> = [
     hasLabel: false,
     defaultContent: "1",
     alwaysBold: true,
+    textAlignment: "center",
   },
   {
     label: "メモ (小)",
@@ -285,7 +286,8 @@ export const notePresets: Array<NotePreset> = [
     color: {...objectColorSettings.amberLight, borderColour: undefined},
     hasLabel: false,
     defaultContent: "これはメモです。",
-    alwaysBold: false
+    alwaysBold: false,
+    textAlignment: "center"
   },
   {
     label: "メモ (中)",
@@ -296,7 +298,8 @@ export const notePresets: Array<NotePreset> = [
     color: {...objectColorSettings.amberLight, borderColour: undefined},
     hasLabel: false,
     defaultContent: "これはメモです。",
-    alwaysBold: false
+    alwaysBold: false,
+    textAlignment: "left"
   },
   {
     label: "メモ (大)",
@@ -307,7 +310,8 @@ export const notePresets: Array<NotePreset> = [
     color: objectColorSettings.amberLight,
     hasLabel: true,
     defaultContent: "これはメモです。",
-    alwaysBold: false
+    alwaysBold: false,
+    textAlignment: "left"
   }
 ]
 

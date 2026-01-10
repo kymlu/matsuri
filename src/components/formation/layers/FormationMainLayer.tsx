@@ -694,6 +694,7 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						ref={noteRef.current[index]}
 						selected={selectedIds.has(note.id)}
 						hasBorder={true}
+						textAlignment={note.textAlignment}
 					/>
 				))}
 			{props.propPositions?.map((placement, index) => (

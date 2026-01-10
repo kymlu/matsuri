@@ -10,4 +10,5 @@ export interface NotePreset {
   hasLabel: boolean;
   defaultContent: string;
   alwaysBold: boolean;
+  textAlignment: "left" | "center" | "right";
 }

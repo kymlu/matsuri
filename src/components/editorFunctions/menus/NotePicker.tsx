@@ -34,6 +34,7 @@ export default function NotePicker (props: {margins: number[][]}) {
       fontGridRatio: selectedPreset.fontGridRatio,
       alwaysBold: selectedPreset.alwaysBold || false,
       showBackground: true, // todo: allow transparent
+      textAlignment: selectedPreset.textAlignment || "center",
     } as NotePosition;
 
     var updatedNotePositions = addItemToRecordArray(notePositions, selectedSection.id, newNote);

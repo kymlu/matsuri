@@ -8,6 +8,7 @@ import { PositionContext } from "../../../contexts/PositionContext.tsx";
 import { ICON } from "../../../lib/consts.ts";
 import { upsertItem, upsertList } from "../../../data/DataRepository.ts";
 import CustomSlider from "../../CustomSlider.tsx";
+import Button from "../../Button.tsx";
 
 export default function NoteEditor() {
   const {selectedItems, selectedSection} = useContext(UserContext);
@@ -55,6 +56,19 @@ export default function NoteEditor() {
     upsertItem("notePosition", updatedNote);
   };
 
+  const handleTextAlignmentChange = (newValue: "left" | "center" | "right") => {
+    var updatedRecord = {...notePositions};
+    var noteIds = new Set(notes.map(x => x.id));
+    console.log(noteIds);
+    var updatedNotes = updatedRecord[selectedSection!.id].filter(x => noteIds.has(x.id))!;
+    updatedNotes.forEach(x => {
+      x.isSelected = false;
+      x.textAlignment = newValue;
+    })
+    updatePositionContextState({notePositions: updatedRecord});
+    upsertList("notePosition", updatedNotes);
+  }
+
 
   const handleTextSizeChange = (newValue: number) => {
     var updatedRecord = {...notePositions};
@@ -93,6 +107,21 @@ export default function NoteEditor() {
             className="w-full h-16 px-2 mb-2 border-2 border-gray-200 rounded-md focus-within:border-primary focus:outline-none"/>
         </>
       }
+      <label>テキスト揃え</label>
+      <div className="flex flex-row gap-1">
+        <Button
+          onClick={() => handleTextAlignmentChange("left")}>
+          <img className="size-6" alt="Distribute horizontally" src={ICON.formatAlignLeftBlack}/>
+        </Button>
+        <Button
+          onClick={() => handleTextAlignmentChange("center")}>
+          <img className="size-6" alt="Distribute vertically" src={ICON.formatAlignCenterBlack}/>
+        </Button>
+        <Button
+          onClick={() => handleTextAlignmentChange("right")}>
+          <img className="size-6" alt="Distribute vertically" src={ICON.formatAlignRightBlack}/>
+        </Button>
+      </div>
       <label>テキストサイズ</label>
       <div className="mx-2">
         <CustomSlider

@@ -23,6 +23,7 @@ export interface NoteObjectProps {
   hasBorder: boolean,
   ref?: React.Ref<any>,
   selected?: boolean,
+  textAlignment?: "left" | "center" | "right",
 }
 
 export default function NoteObject(props: NoteObjectProps) {
@@ -76,7 +77,7 @@ export default function NoteObject(props: NoteObjectProps) {
         fontStyle={props.alwaysBold ? "bold" : "normal"}
         fill={props.colour.textColour ?? basePalette.black}
         verticalAlign="middle"
-        align="center" />
+        align={props.textAlignment ?? "center"} />
       
     </BaseFormationObject>
   )

@@ -33,6 +33,7 @@ export interface NotePosition extends BasePosition {
   borderRadius: number,
   fontGridRatio: number,
   alwaysBold?: boolean,
+  textAlignment?: "left" | "center" | "right",
 }
 
 export interface ArrowPosition extends BasePosition {
