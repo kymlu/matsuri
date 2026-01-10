@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/matsuri/static/css/main.7d298d27.css",
-    "main.js": "/matsuri/static/js/main.95fc3161.js",
+    "main.js": "/matsuri/static/js/main.8d8229d7.js",
     "static/js/239.d6c4dac5.chunk.js": "/matsuri/static/js/239.d6c4dac5.chunk.js",
     "static/js/977.6b7577cd.chunk.js": "/matsuri/static/js/977.6b7577cd.chunk.js",
     "static/js/455.aaccb29e.chunk.js": "/matsuri/static/js/455.aaccb29e.chunk.js",
     "service-worker.js": "/matsuri/service-worker.js",
     "index.html": "/matsuri/index.html",
     "main.7d298d27.css.map": "/matsuri/static/css/main.7d298d27.css.map",
-    "main.95fc3161.js.map": "/matsuri/static/js/main.95fc3161.js.map",
+    "main.8d8229d7.js.map": "/matsuri/static/js/main.8d8229d7.js.map",
     "239.d6c4dac5.chunk.js.map": "/matsuri/static/js/239.d6c4dac5.chunk.js.map",
     "977.6b7577cd.chunk.js.map": "/matsuri/static/js/977.6b7577cd.chunk.js.map",
     "455.aaccb29e.chunk.js.map": "/matsuri/static/js/455.aaccb29e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7d298d27.css",
-    "static/js/main.95fc3161.js"
+    "static/js/main.8d8229d7.js"
   ]
 }
