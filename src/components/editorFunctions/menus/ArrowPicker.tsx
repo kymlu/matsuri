@@ -13,7 +13,7 @@ import { FormationContext } from "../../../contexts/FormationContext.tsx";
 import { isNullOrUndefined } from "../../../lib/helpers/GlobalHelper.ts";
 import { upsertItem } from "../../../data/DataRepository.ts";
 
-export default function ArrowPicker (props: {margins: number[][]}) {
+export default function ArrowPicker (props: {margins: number[][], enabled?: boolean}) {
   const {arrowPositions, updatePositionContextState} = useContext(PositionContext);
   const {selectedSection} = useContext(UserContext);
   const {selectedFormation} = useContext(FormationContext);
@@ -47,7 +47,8 @@ export default function ArrowPicker (props: {margins: number[][]}) {
     <ExpandableSection
 			canExpand
       title="線"
-      titleIcon={ICON.arrowRightAltBlack}>
+      titleIcon={ICON.arrowRightAltBlack}
+      enabled={props.enabled}>
         <div className="flex flex-row flex-wrap gap-2">
         {arrowPresets
           .map(arrow => 

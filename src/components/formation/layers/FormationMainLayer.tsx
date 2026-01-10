@@ -641,37 +641,6 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 		<Layer ref={layerRef}>
 			{
 				userContext.showNotes &&
-				props.arrowPositions?.map((arrow, index) => 
-					<ArrowObject
-						id={arrow.id}
-						key={arrow.id}
-						updatePosition={(x, y) => updateArrowPosition(arrow.id, x, y)}
-						updatePoints={(x, y, pointIndex) => updateArrowPoints(arrow.id, x, y, pointIndex, index)}
-						savePoints={() => {upsertItem("arrowPosition", arrow)}}
-						startX={getPixel(gridSize, arrow.x, props.sideMargin)}
-						startY={getPixel(gridSize, arrow.y, props.topMargin)}
-						ref={arrowGroupRef.current[index]}
-						arrowRef={arrowRef.current[index]}
-						points={arrow.points.map((x) => x * gridSize)}
-						tension={arrow.tension}
-						width={arrow.width * gridSize}
-						colour={arrow.color ?? objectPalette.purple.light}
-						pointerAtBeginning={arrow.pointerAtBeginning}
-						pointerAtEnding={arrow.pointerAtEnding}
-						draggable
-						selected={selectedIds.has(arrow.id)}
-						isOnlyOneSelected={selectedIds.has(arrow.id) && isSingleArrowSelected}
-						pointerLength={arrow.pointerLength ?? 2}
-						pointerWidth={arrow.pointerWidth ?? 2}
-						onClick={(isMoving?: boolean, multiSelect?: boolean) => {
-							selectItem(arrow, PositionType.arrow, isMoving,multiSelect);
-						}}
-						isDotted={arrow.isDotted}
-						/>
-				)
-			}
-			{
-				userContext.showNotes &&
 				props.notePositions?.map((note, index) => (
 					<NoteObject
 						id={note.id}
@@ -818,6 +787,37 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 					}
 				}}
 			/>
+			{
+				userContext.showNotes &&
+				props.arrowPositions?.map((arrow, index) => 
+					<ArrowObject
+						id={arrow.id}
+						key={arrow.id}
+						updatePosition={(x, y) => updateArrowPosition(arrow.id, x, y)}
+						updatePoints={(x, y, pointIndex) => updateArrowPoints(arrow.id, x, y, pointIndex, index)}
+						savePoints={() => {upsertItem("arrowPosition", arrow)}}
+						startX={getPixel(gridSize, arrow.x, props.sideMargin)}
+						startY={getPixel(gridSize, arrow.y, props.topMargin)}
+						ref={arrowGroupRef.current[index]}
+						arrowRef={arrowRef.current[index]}
+						points={arrow.points.map((x) => x * gridSize)}
+						tension={arrow.tension}
+						width={arrow.width * gridSize}
+						colour={arrow.color ?? objectPalette.purple.light}
+						pointerAtBeginning={arrow.pointerAtBeginning}
+						pointerAtEnding={arrow.pointerAtEnding}
+						draggable
+						selected={selectedIds.has(arrow.id)}
+						isOnlyOneSelected={selectedIds.has(arrow.id) && isSingleArrowSelected}
+						pointerLength={arrow.pointerLength ?? 2}
+						pointerWidth={arrow.pointerWidth ?? 2}
+						onClick={(isMoving?: boolean, multiSelect?: boolean) => {
+							selectItem(arrow, PositionType.arrow, isMoving,multiSelect);
+						}}
+						isDotted={arrow.isDotted}
+						/>
+				)
+			}
 			<Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef} />
 		</Layer>
 	);

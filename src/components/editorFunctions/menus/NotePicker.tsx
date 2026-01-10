@@ -10,7 +10,7 @@ import { ICON } from "../../../lib/consts.ts";
 import { addItemToRecordArray } from "../../../lib/helpers/GroupingHelper.ts";
 import { upsertItem } from "../../../data/DataRepository.ts";
 
-export default function NotePicker (props: {margins: number[][]}) {
+export default function NotePicker (props: {margins: number[][], enabled?: boolean}) {
   const {selectedSection, updateState} = useContext(UserContext);
   const {notePositions, updatePositionContextState} = useContext(PositionContext);
   
@@ -49,7 +49,8 @@ export default function NotePicker (props: {margins: number[][]}) {
     <ExpandableSection
 			canExpand
       title="メモ"
-      titleIcon={ICON.noteStackBlack}>
+      titleIcon={ICON.noteStackBlack}
+      enabled={props.enabled}>
         <div className="flex flex-row flex-wrap gap-2">
         { notePresets.map((preset, index) => (
           <ItemButton

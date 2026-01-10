@@ -281,27 +281,6 @@ export async function exportToPdf(
     pdf.roundedRect(grid/2, grid/4, grid * 4, grid, 5, 5, "FD");
     pdf.text(section.displayName, grid/2 + grid * 2, 0.75 * grid + textDimension.h/2 - 1, {maxWidth: grid * 4, align: "center"})
 
-    arrowPositions[section.id]?.forEach(a => {
-      pdf.setLineWidth(a.width * grid);
-      pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
-      var arrowColor = a.color ?? basePalette.black;
-      pdf.setDrawColor(arrowColor);
-      pdf.setFillColor(arrowColor);
-      // Todo: lines cannot control the tension so not allowing curves
-      pdf.line((sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, (sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid);
-      if (a.points.length === 6) { 
-        pdf.line((sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid, (sideMargin + a.x + a.points[4]) * grid, (topMargin + a.y + a.points[5]) * grid);
-      }
-      pdf.setLineDashPattern([], 0);
-      if (a.pointerAtBeginning) {
-        drawTriangleAtPoint([a.points[0], a.points[1]], [a.points[2], a.points[3]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
-      }
-      if (a.pointerAtEnding) {
-        const endIndex = a.points.length === 6 ? 4 : 2;
-        drawTriangleAtPoint([a.points[endIndex], a.points[endIndex + 1]], [a.points[endIndex - 2], a.points[endIndex - 1]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
-      }
-    });
-
     pdf.setLineDashPattern([], 0);
     pdf.setLineWidth(0.8);
 
@@ -422,6 +401,27 @@ export async function exportToPdf(
         var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 4});
         var padding = pdf.getTextDimensions("000");
         pdf.text(coordsText, (width - 2.5) * grid + padding.w/2, grid * 0.75 + coordsDimensions.h/2 - 1, {maxWidth: grid * 4, align: "center"});
+      }
+    });
+
+    arrowPositions[section.id]?.forEach(a => {
+      pdf.setLineWidth(a.width * grid);
+      pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
+      var arrowColor = a.color ?? basePalette.black;
+      pdf.setDrawColor(arrowColor);
+      pdf.setFillColor(arrowColor);
+      // Todo: lines cannot control the tension so not allowing curves
+      pdf.line((sideMargin + a.x + a.points[0]) * grid, (topMargin + a.y + a.points[1]) * grid, (sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid);
+      if (a.points.length === 6) { 
+        pdf.line((sideMargin + a.x + a.points[2]) * grid, (topMargin + a.y + a.points[3]) * grid, (sideMargin + a.x + a.points[4]) * grid, (topMargin + a.y + a.points[5]) * grid);
+      }
+      pdf.setLineDashPattern([], 0);
+      if (a.pointerAtBeginning) {
+        drawTriangleAtPoint([a.points[0], a.points[1]], [a.points[2], a.points[3]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
+      }
+      if (a.pointerAtEnding) {
+        const endIndex = a.points.length === 6 ? 4 : 2;
+        drawTriangleAtPoint([a.points[endIndex], a.points[endIndex + 1]], [a.points[endIndex - 2], a.points[endIndex - 1]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
       }
     });
 

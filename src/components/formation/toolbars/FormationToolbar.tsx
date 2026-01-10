@@ -34,16 +34,16 @@ export function FormationToolbar(props: FormationToolbarProps) {
         onChange={props.changeSection}/>
       <CustomToolbarSeparator/>
       <ZoomToolbarGroup/>
-      {
-        appMode === "view" && <>
-          <CustomToolbarSeparator/>
-          <CustomToolbarGroup>
-            <CustomToolbarButton
-              isToggle
-              text="メモ表示"
-              iconFileName={ICON.noteStackBlack}
-              isPressed={userContext.showNotes}
-              onClick={() => updateState({showNotes: !userContext.showNotes})}/>
+      <CustomToolbarSeparator/>
+      <CustomToolbarGroup>
+        <CustomToolbarButton
+          isToggle
+          text="メモ表示"
+          iconFileName={ICON.noteStackBlack}
+          isPressed={userContext.showNotes}
+          onClick={() => updateState({showNotes: !userContext.showNotes})}/>
+        {
+          appMode === "view" && <>
             <CustomToolbarButton isToggle
               text="前の隊列表示"
               iconFileName={ICON.footprintBlack}
@@ -52,7 +52,12 @@ export function FormationToolbar(props: FormationToolbarProps) {
                 updateState({compareMode: showPrevious ? "none" : "previous"})
                 setShowPrevious(prev => !prev);
               }}/>
-          </CustomToolbarGroup>
+            </>
+        }
+      </CustomToolbarGroup>
+      {
+        appMode === "view" && 
+        <>
           <CustomToolbarSeparator/>
           <CustomToolbarGroup>
             <Dialog.Root modal>
@@ -68,7 +73,7 @@ export function FormationToolbar(props: FormationToolbarProps) {
                 }}/>
             </Dialog.Root>
           </CustomToolbarGroup>
-        </>
+      </>
       }
     </CustomToolbar>
   )

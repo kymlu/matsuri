@@ -7,7 +7,8 @@ export interface ExpandableSectionProps {
   titleIcon?: string,
   defaultIsExpanded?: boolean,
   canExpand?: boolean,
-  onToggle?: () => void
+  onToggle?: () => void,
+  enabled? : boolean, // TODO: add message for disabled state
 }
 
 export default function ExpandableSection(props: ExpandableSectionProps) {
@@ -31,8 +32,9 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
     <div className={"px-5 " + (expanded ? "flex-col max-h-fit" : "flex-none")}>
       <button
         button-name={`Toggle the ${props.title} section`}
-        className={"flex flex-row justify-between w-full font-bold items-center " + (props.canExpand ? "" : "cursor-default")}
-        onClick={() => toggle()}>
+        className={"flex flex-row justify-between w-full font-bold items-center disabled:opacity-50 disabled:cursor-not-allowed " + (props.canExpand ? "" : "cursor-default")}
+        onClick={() => toggle()}
+        disabled={props.enabled === false}>
         <div className="flex flex-row items-center gap-3">
           {
             props.titleIcon &&
@@ -40,13 +42,15 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
           }
           <span className="text-left">{props.title}</span>
         </div>
-        {props.canExpand && <img 
-          className="size-8" 
-          src={expanded ? ICON.expandLessBlack: ICON.expandMoreBlack}
-          alt={expanded ? "Collapse icon": "Expand icon"}
-          />}
+        {
+          props.canExpand && <img 
+            className="size-8" 
+            src={expanded ? ICON.expandLessBlack: ICON.expandMoreBlack}
+            alt={expanded ? "Collapse icon": "Expand icon"}
+          />
+        }
       </button>
-      {expanded && 
+      {expanded && props.enabled !== false && 
       <div className="flex-1 px-2 mt-2 overflow-auto">
         {props.children}
       </div>}
