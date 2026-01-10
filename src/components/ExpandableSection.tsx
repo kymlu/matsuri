@@ -43,7 +43,7 @@ export default function ExpandableSection(props: ExpandableSectionProps) {
           <span className="text-left">{props.title}</span>
         </div>
         {
-          props.canExpand && <img 
+          props.canExpand && props.enabled !== false && <img 
             className="size-8" 
             src={expanded ? ICON.expandLessBlack: ICON.expandMoreBlack}
             alt={expanded ? "Collapse icon": "Expand icon"}
