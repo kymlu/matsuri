@@ -71,6 +71,7 @@ export const ICON = {
   formatAlignCenterBlack: "icons/format_align_center_black.svg",
   formatAlignLeftBlack: "icons/format_align_left_black.svg",
   formatAlignRightBlack: "icons/format_align_right_black.svg",
+  formatBoldBlack: "icons/format_bold_black.svg",
   groups2Black: "icons/groups_2_black.svg",
   heightBlack: "icons/height_black.svg",
   help: "icons/help.svg",

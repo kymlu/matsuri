@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import ExpandableSection from "../../ExpandableSection.tsx";
 import { UserContext } from "../../../contexts/UserContext.tsx";
-import { getFromPositionType, NotePosition, splitPositionsByType } from "../../../models/Position.ts";
+import { NotePosition, splitPositionsByType } from "../../../models/Position.ts";
 import { strEquals } from "../../../lib/helpers/GlobalHelper.ts";
 import TextInput from "../../TextInput.tsx";
 import { PositionContext } from "../../../contexts/PositionContext.tsx";
@@ -59,7 +59,7 @@ export default function NoteEditor() {
   const handleTextAlignmentChange = (newValue: "left" | "center" | "right") => {
     var updatedRecord = {...notePositions};
     var noteIds = new Set(notes.map(x => x.id));
-    console.log(noteIds);
+    console.log("Changing alignment to", newValue, noteIds);
     var updatedNotes = updatedRecord[selectedSection!.id].filter(x => noteIds.has(x.id))!;
     updatedNotes.forEach(x => {
       x.isSelected = false;
@@ -73,7 +73,7 @@ export default function NoteEditor() {
   const handleTextSizeChange = (newValue: number) => {
     var updatedRecord = {...notePositions};
     var noteIds = new Set(notes.map(x => x.id));
-    console.log(noteIds);
+    console.log("Changing text size to", newValue, noteIds);
     var updatedNotes = updatedRecord[selectedSection!.id].filter(x => noteIds.has(x.id))!;
     updatedNotes.forEach(x => {
       x.isSelected = false;
@@ -82,6 +82,20 @@ export default function NoteEditor() {
     updatePositionContextState({notePositions: updatedRecord});
     upsertList("notePosition", updatedNotes);
   };
+
+  const handleBoldToggle = () => {
+    var updatedRecord = {...notePositions};
+    var noteIds = new Set(notes.map(x => x.id));
+    var newValue = notes.some(x => !x.alwaysBold); // if any selected note is not bold, we set all to bold
+    console.log("Toggling bold to", newValue, noteIds);
+    var updatedNotes = updatedRecord[selectedSection!.id].filter(x => noteIds.has(x.id))!;
+    updatedNotes.forEach(x => {
+      x.isSelected = false;
+      x.alwaysBold = newValue;
+    })
+    updatePositionContextState({notePositions: updatedRecord});
+    upsertList("notePosition", updatedNotes);
+  }
   
   return (
     <ExpandableSection
@@ -133,6 +147,13 @@ export default function NoteEditor() {
           setValue={(newValue) => {
             handleTextSizeChange(newValue)
           }}/>
+      </div>
+      <label>テキストスタイル</label>
+      <div className="mx-2">
+        <Button
+          onClick={() => handleBoldToggle()}>
+          <img className="size-6" alt="Toggle bold" src={ICON.formatBoldBlack}/>
+        </Button>
       </div>
     </ExpandableSection>
   )
