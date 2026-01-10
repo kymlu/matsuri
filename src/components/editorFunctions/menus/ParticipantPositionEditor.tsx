@@ -215,8 +215,8 @@ export default function ParticipantPositionEditor() {
         <NumberTextField
           name="横"
           default={0}
-          min={-(selectedFormation!.width / 2 + (selectedFormation!.sideMargin ?? DEFAULT_SIDE_MARGIN))}
-          max={selectedFormation!.width / 2 + (selectedFormation!.sideMargin ?? DEFAULT_SIDE_MARGIN)}
+          min={-(selectedFormation!.width / 2 + (selectedFormation!.sideMargin ?? DEFAULT_SIDE_MARGIN) * 2)}
+          max={selectedFormation!.width / 2 + (selectedFormation!.sideMargin ?? DEFAULT_SIDE_MARGIN) * 2}
           step={0.01}
           buttonStep={0.1}
           onChange={(value) => {onValueChange(value, "x")}}
