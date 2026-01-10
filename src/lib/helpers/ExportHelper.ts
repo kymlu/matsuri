@@ -416,7 +416,7 @@ export async function exportToPdf(
       if (n.color?.bgColour) {
         pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
         pdf.setFillColor(n?.color?.bgColour ?? basePalette.white);
-        pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, "FD");
+        pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, n?.color?.borderColour ? "FD" : "F");
       }
       pdf.setTextColor(n?.color?.textColour ?? basePalette.black);
       if (n?.label) {
