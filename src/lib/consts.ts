@@ -1,6 +1,6 @@
 export const LAST_UPDATED = "更新 1月10日 8:08"
 
-export const MIN_GRID_SIZE = 20;
+export const MIN_GRID_SIZE = 10;
 export const MAX_GRID_SIZE = 80;
 export const DEFAULT_GRID_SIZE = 40;
 export const GRID_SIZE_INCREMENT = 10;
