@@ -727,34 +727,6 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 			))}
 			{
 				userContext.showNotes &&
-				props.notePositions?.map((note, index) => (
-					<NoteObject
-						id={note.id}
-						key={note.id}
-						colour={note.color ?? objectColorSettings.blueLight}
-						startX={getPixel(gridSize, note.x, props.sideMargin)}
-						startY={getPixel(gridSize, note.y, props.topMargin)}
-						height={note.height}
-						length={note.width}
-						label={note.label}
-						text={note.text}
-						borderRadius={note.borderRadius}
-						fontSize={gridSize * note.fontGridRatio}
-						updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
-						onClick={(isMoving?: boolean, multiSelect?: boolean) =>
-							selectItem(note, PositionType.note, isMoving, multiSelect)
-						}
-						alwaysBold={note.alwaysBold}
-						draggable={appMode === "edit"}
-						ref={noteRef.current[index]}
-						selected={selectedIds.has(note.id)}
-						hasBorder={true}
-						textAlignment={note.textAlignment}
-					/>
-				))
-			}
-			{
-				userContext.showNotes &&
 				props.arrowPositions?.map((arrow, index) => 
 					<ArrowObject
 						id={arrow.id}
@@ -783,6 +755,34 @@ export function FormationMainLayer(props: FormationMainLayerProps) {
 						isDotted={arrow.isDotted}
 						/>
 				)
+			}
+			{
+				userContext.showNotes &&
+				props.notePositions?.map((note, index) => (
+					<NoteObject
+						id={note.id}
+						key={note.id}
+						colour={note.color ?? objectColorSettings.blueLight}
+						startX={getPixel(gridSize, note.x, props.sideMargin)}
+						startY={getPixel(gridSize, note.y, props.topMargin)}
+						height={note.height}
+						length={note.width}
+						label={note.label}
+						text={note.text}
+						borderRadius={note.borderRadius}
+						fontSize={gridSize * note.fontGridRatio}
+						updatePosition={(x, y) => updateNotePosition(note.id, x, y)}
+						onClick={(isMoving?: boolean, multiSelect?: boolean) =>
+							selectItem(note, PositionType.note, isMoving, multiSelect)
+						}
+						alwaysBold={note.alwaysBold}
+						draggable={appMode === "edit"}
+						ref={noteRef.current[index]}
+						selected={selectedIds.has(note.id)}
+						hasBorder={true}
+						textAlignment={note.textAlignment}
+					/>
+				))
 			}
 			<Transformer
 				flipEnabled={false}

@@ -58,6 +58,18 @@ export default function FormationPage () {
   const [exportProgress, setExportProgress] = useState<number>(0);
   const [marginPositions, setMarginPositions] = useState<MarginPositions>({participants: [], props: [], notes: []});
   const [followingPositions, setFollowingPositions] = useState<Record<string, ParticipantPosition | PlaceholderPosition> | null>(null);
+  const [followingXPosition, setFollowingXPosition] = useState<number | null>(null);
+  const [followingXPositionIcon, setFollowingXPositionIcon] = useState<string>("");
+
+  useEffect(() => {
+    if (isNullOrUndefined(followingId) || isNullOrUndefined(followingPositions) || isNullOrUndefined(selectedSection)) {
+      return;
+    }
+    var xPos = selectedFormation!.width/2 - followingPositions![selectedSection!.id]?.x;
+    // if left of center, xPos will be positive, so we invert it
+    setFollowingXPosition(roundToTenth(Math.abs(xPos)));
+    setFollowingXPositionIcon(xPos > 0 ? ICON.arrowLeftAltBlack : xPos < 0 ? ICON.arrowRightAltBlack : ICON.arrowRangeBlack);
+  }, [followingId, followingPositions, selectedSection]);
 
   useEffect(() => {
     setDefaultExportName(userContext.selectedFestival?.name + (selectedFormation ? ` - ${selectedFormation.name}` : ''));
@@ -266,8 +278,8 @@ export default function FormationPage () {
                         followingPositions[selectedSection.id]?.y)}m`}</span>
                     </div>
                     <div className='flex gap-1'>
-                      <img src={ICON.arrowRangeBlack} className='size-6'/>
-                      <span>{`${roundToTenth(Math.abs(selectedFormation.width/2 - followingPositions[selectedSection.id]?.x))}m`}</span>
+                      <img src={followingXPositionIcon} className='size-6'/>
+                      <span>{`${followingXPosition}m`}</span>
                     </div>
                   </div>
                 </div>

@@ -147,7 +147,6 @@ export default function FormationCanvas(props: FormationCanvasProps) {
             isParade={selectedFormation.type === FormationType.parade}
             sectionName={selectedSection.displayName}/>
         }
-        
         { compareMode !== "none" && ghostSectionId &&
           <FormationGhostLayer
             topMargin={props.topMargin}

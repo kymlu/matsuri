@@ -10,7 +10,7 @@ export const DEFAULT_FONT_SIZE = 12;
 export const DEFAULT_WIDTH = 28;
 export const DEFAULT_TOP_MARGIN = 2;
 export const DEFAULT_BOTTOM_MARGIN = 2;
-export const DEFAULT_SIDE_MARGIN = 6;
+export const DEFAULT_SIDE_MARGIN = 10;
 
 export const DO_NOT_UPDATE_POSITION_ATTR = "doNotUpdatePosition";
 
@@ -39,6 +39,7 @@ export const ICON = {
   alignVerticalCenterBlack: "icons/align_vertical_center_black.svg",
   alignVerticalTopBlack: "icons/align_vertical_top_black.svg",
   arrowMenuCloseBlack: "icons/arrow_menu_close_black.svg",
+  arrowLeftAltBlack: "icons/arrow_left_alt_black.svg",
   arrowMenuOpenBlack: "icons/arrow_menu_open_black.svg",
   arrowRangeBlack: "icons/arrow_range_black.svg",
   arrowRightAltBlack: "icons/arrow_right_alt_black.svg",

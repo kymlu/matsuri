@@ -259,6 +259,7 @@ export async function exportToPdf(
     }
 
     pdf.setFontSize(12);
+    pdf.setTextColor(basePalette.black);
     [...Array(length - 2)].forEach((_, i) => {
       // todo: if parade, move up to starting position so that it doesn't span the whole position
       pdf.text((formation.type === FormationType.parade ? Math.abs(length - i) : i).toString() + "m", (width - 2) * grid, (i + topMargin + 0.1) * grid);
@@ -315,6 +316,10 @@ export async function exportToPdf(
       context.restore();
     });
 
+    var followingParticipantName: string | null = null;
+    var followingX: number | null = null;
+    var followingY: number | null = null;
+
     // Draw placeholders
     placeholderPositions[section.id]?.forEach(p => {
       var category = categories[p.categoryId ?? ""];
@@ -345,14 +350,9 @@ export async function exportToPdf(
       pdf.text(displayName, (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});
 
       if (isFollowing) {
-        pdf.setLineWidth(0.8);
-        pdf.setDrawColor(basePalette.grey[800]);
-        pdf.setFillColor(basePalette.grey[50]);
-        pdf.roundedRect((width - 4.5) * grid, grid/4, grid * 4, grid, 5, 5, "FD");
-        var coordsText = `${displayName} : ↕︎${roundToTenth(p.y)} ↔︎${roundToTenth(Math.abs(formation.width/2 - p.x))}`
-        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 4});
-        var padding = pdf.getTextDimensions("000");
-        pdf.text(coordsText, (width - 2.5) * grid + padding.w/2, grid * 0.75 + coordsDimensions.h/2 - 1, {maxWidth: grid * 4, align: "center"});
+        followingParticipantName = displayName;
+        followingX = p.x;
+        followingY = p.y;
       }
     });
 
@@ -379,35 +379,10 @@ export async function exportToPdf(
       pdf.text(displayName, (sideMargin + p.x) * grid, (topMargin + p.y) * grid - textHeight/2, {align: "center", baseline: "top", maxWidth: grid});
 
       if (isFollowing) {
-        pdf.setLineWidth(0.8);
-        pdf.setDrawColor(basePalette.grey[800]);
-        pdf.setFillColor(basePalette.grey[50]);
-        pdf.roundedRect((width - 4.5) * grid, grid/4, grid * 4, grid, 5, 5, "FD");
-        var coordsText = `${displayName} : ↕︎${roundToTenth(p.y)} ↔︎${roundToTenth(Math.abs(formation.width/2 - p.x))}`
-        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 4});
-        var padding = pdf.getTextDimensions("000");
-        pdf.text(coordsText, (width - 2.5) * grid + padding.w/2, grid * 0.75 + coordsDimensions.h/2 - 1, {maxWidth: grid * 4, align: "center"});
+        followingParticipantName = displayName;
+        followingX = p.x;
+        followingY = p.y;
       }
-    });
-
-    // Draw notes
-    pdf.setLineDashPattern([], 0);
-    pdf.setLineWidth(0.8);
-
-    notePositions[section.id]?.forEach(n => {
-      pdf.setFontSize(grid * n.fontGridRatio)
-      if (n.color?.bgColour) {
-        pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
-        pdf.setFillColor(n?.color?.bgColour ?? basePalette.white);
-        pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, "FD");
-      }
-      pdf.setTextColor(n?.color?.textColour ?? basePalette.black);
-      if (n?.label) {
-        pdf.text(n?.label ?? "", (sideMargin + n.x + 0.2) * grid, (topMargin + n.y + 0.2) * grid, {align: "left", baseline: "top", maxWidth: grid * n.width});
-        pdf.line((sideMargin + n.x) * grid, (topMargin + n.y + 0.5) * grid, (sideMargin + n.x + n.width) * grid, (topMargin + n.y + 0.5) * grid);
-      }
-      var textHeight = pdf.getTextDimensions(n?.text ?? "", {maxWidth: grid * (n.width - 0.4)}).h;
-      pdf.text(n?.text ?? "", (sideMargin + n.x + n.width/2) * grid, (topMargin + n.y + n.height/2 + (n?.label ? 0.2 : 0)) * grid - textHeight / 2, {align: n.textAlignment ?? "center", baseline: "top", maxWidth: grid * (n.width - 0.4)});
     });
 
     // Draw arrows
@@ -431,6 +406,57 @@ export async function exportToPdf(
         drawTriangleAtPoint([a.points[endIndex], a.points[endIndex + 1]], [a.points[endIndex - 2], a.points[endIndex - 1]], [a.x, a.y], topMargin, sideMargin, grid, a.pointerWidth * a.width, a.pointerLength * a.width, pdf);
       }
     });
+
+    // Draw notes
+    pdf.setLineDashPattern([], 0);
+    pdf.setLineWidth(0.8);
+
+    notePositions[section.id]?.forEach(n => {
+      pdf.setFontSize(grid * n.fontGridRatio)
+      if (n.color?.bgColour) {
+        pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
+        pdf.setFillColor(n?.color?.bgColour ?? basePalette.white);
+        pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, "FD");
+      }
+      pdf.setTextColor(n?.color?.textColour ?? basePalette.black);
+      if (n?.label) {
+        pdf.text(n?.label ?? "", (sideMargin + n.x + 0.2) * grid, (topMargin + n.y + 0.2) * grid, {align: "left", baseline: "top", maxWidth: grid * n.width});
+        pdf.line((sideMargin + n.x) * grid, (topMargin + n.y + 0.5) * grid, (sideMargin + n.x + n.width) * grid, (topMargin + n.y + 0.5) * grid);
+      }
+      var textHeight = pdf.getTextDimensions(n?.text ?? "", {maxWidth: grid * (n.width - 0.4)}).h;
+      var textAlignment = n.textAlignment ?? "center";
+      var x = 0;
+      switch (textAlignment) {
+        case "left":
+          x = (sideMargin + n.x + 0.2) * grid;
+          break;
+        case "center":
+          x = (sideMargin + n.x + n.width/2) * grid;
+          break;
+        case "right":
+          x = (sideMargin + n.x + n.width - 0.2) * grid;
+          break;
+        
+        default:
+          break;
+      }
+      pdf.text(n?.text ?? "", x, (topMargin + n.y + n.height/2 + (n?.label ? 0.2 : 0)) * grid - textHeight / 2, {align: textAlignment, baseline: "top", maxWidth: grid * (n.width - 0.4)});
+    });
+
+    if (followingParticipantName && followingX !== null && followingY !== null) {
+        pdf.setFontSize(12);
+        pdf.setLineWidth(0.8);
+        pdf.setDrawColor(basePalette.grey[800]);
+        pdf.setFillColor(basePalette.grey[50]);
+        pdf.setTextColor(basePalette.black);
+        pdf.roundedRect((width/2 - 3) * grid, grid/4, grid * 6, grid, 5, 5, "FD");
+        var x = formation.width/2 - followingX;
+        var coordsText = `${followingParticipantName} : ↕︎${roundToTenth(followingY)} ${x < 0 ? "→" : x > 0 ? "←" : "↔︎"} ${roundToTenth(Math.abs(x))}`
+        var coordsDimensions = pdf.getTextDimensions(coordsText, {maxWidth: grid * 6});
+        var padding = pdf.getTextDimensions("00"); // padding due to presence of unicode arrows
+        pdf.text(coordsText, width/2 * grid + padding.w/2, grid * 0.75 + coordsDimensions.h/2 - 1, {maxWidth: grid * 6, align: "center"});
+        pdf.setFontSize(8);
+    }
 
     updateProgress(Math.round(((i + 1) / sections.length) * 100));
 
