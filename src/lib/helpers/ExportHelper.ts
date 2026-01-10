@@ -207,6 +207,7 @@ export async function exportToPdf(
 
     console.log("Exporting section", section.displayName);
 
+    // Draw lines
     pdf.setDrawColor(basePalette.grey[400])
 
     pdf.setLineWidth(0.6);
@@ -273,6 +274,7 @@ export async function exportToPdf(
       }
     });
 
+    // Draw section title box
     pdf.setLineWidth(0.8);
     pdf.setDrawColor(objectPalette.purple.main);
     pdf.setFillColor(objectPalette.purple.main);
@@ -281,25 +283,7 @@ export async function exportToPdf(
     pdf.roundedRect(grid/2, grid/4, grid * 4, grid, 5, 5, "FD");
     pdf.text(section.displayName, grid/2 + grid * 2, 0.75 * grid + textDimension.h/2 - 1, {maxWidth: grid * 4, align: "center"})
 
-    pdf.setLineDashPattern([], 0);
-    pdf.setLineWidth(0.8);
-
-    notePositions[section.id]?.forEach(n => {
-      pdf.setFontSize(grid * n.fontGridRatio)
-      if (n.color?.bgColour) {
-        pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
-        pdf.setFillColor(n?.color?.bgColour ?? basePalette.white);
-        pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, "FD");
-      }
-      pdf.setTextColor(n?.color?.textColour ?? basePalette.black);
-      if (n?.label) {
-        pdf.text(n?.label ?? "", (sideMargin + n.x + 0.2) * grid, (topMargin + n.y + 0.2) * grid, {align: "left", baseline: "top", maxWidth: grid * n.width});
-        pdf.line((sideMargin + n.x) * grid, (topMargin + n.y + 0.5) * grid, (sideMargin + n.x + n.width) * grid, (topMargin + n.y + 0.5) * grid);
-      }
-      var textHeight = pdf.getTextDimensions(n?.text ?? "", {maxWidth: grid * (n.width - 0.4)}).h;
-      pdf.text(n?.text ?? "", (sideMargin + n.x + n.width/2) * grid, (topMargin + n.y + n.height/2 + (n?.label ? 0.2 : 0)) * grid - textHeight / 2, {align: n.textAlignment ?? "center", baseline: "top", maxWidth: grid * (n.width - 0.4)});
-    });
-
+    // Draw props
     pdf.setFontSize(8)
     propPositions[section.id]?.forEach(p => {
       var prop = props[p.propId];
@@ -331,6 +315,7 @@ export async function exportToPdf(
       context.restore();
     });
 
+    // Draw placeholders
     placeholderPositions[section.id]?.forEach(p => {
       var category = categories[p.categoryId ?? ""];
       var placeholder = placeholders[p.placeholderId];
@@ -371,6 +356,7 @@ export async function exportToPdf(
       }
     });
 
+    // Draw participants
     participantPositions[section.id]?.forEach(p => {
       var category = categories[p.categoryId ?? ""];
       var participant = participants[p.participantId];
@@ -404,6 +390,27 @@ export async function exportToPdf(
       }
     });
 
+    // Draw notes
+    pdf.setLineDashPattern([], 0);
+    pdf.setLineWidth(0.8);
+
+    notePositions[section.id]?.forEach(n => {
+      pdf.setFontSize(grid * n.fontGridRatio)
+      if (n.color?.bgColour) {
+        pdf.setDrawColor(n?.color?.borderColour ?? basePalette.black);
+        pdf.setFillColor(n?.color?.bgColour ?? basePalette.white);
+        pdf.roundedRect((sideMargin + n.x) * grid, (n.y + topMargin) * grid, n.width * grid, n.height * grid, n.borderRadius/2, n.borderRadius/2, "FD");
+      }
+      pdf.setTextColor(n?.color?.textColour ?? basePalette.black);
+      if (n?.label) {
+        pdf.text(n?.label ?? "", (sideMargin + n.x + 0.2) * grid, (topMargin + n.y + 0.2) * grid, {align: "left", baseline: "top", maxWidth: grid * n.width});
+        pdf.line((sideMargin + n.x) * grid, (topMargin + n.y + 0.5) * grid, (sideMargin + n.x + n.width) * grid, (topMargin + n.y + 0.5) * grid);
+      }
+      var textHeight = pdf.getTextDimensions(n?.text ?? "", {maxWidth: grid * (n.width - 0.4)}).h;
+      pdf.text(n?.text ?? "", (sideMargin + n.x + n.width/2) * grid, (topMargin + n.y + n.height/2 + (n?.label ? 0.2 : 0)) * grid - textHeight / 2, {align: n.textAlignment ?? "center", baseline: "top", maxWidth: grid * (n.width - 0.4)});
+    });
+
+    // Draw arrows
     arrowPositions[section.id]?.forEach(a => {
       pdf.setLineWidth(a.width * grid);
       pdf.setLineDashPattern(a.isDotted ? [grid / 5, grid / 10] : [], 0);
